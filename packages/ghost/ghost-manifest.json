@@ -1,0 +1,5805 @@
+{
+  "source": "https://docs.ghost.org/admin-api",
+  "fetched": "2026-11-28",
+  "operations": [
+    {
+      "id": "content.authors.get",
+      "method": "GET",
+      "path": "/content/authors/{id}/",
+      "tag": "Content",
+      "summary": "Read a published author by id",
+      "request": "none",
+      "response": "json",
+      "host": "content",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "authors": {
+            "type": "array",
+            "items": {
+              "$ref": "Author"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "content.authors.getBySlug",
+      "method": "GET",
+      "path": "/content/authors/slug/{slug}/",
+      "tag": "Content",
+      "summary": "Read a published author by slug",
+      "request": "none",
+      "response": "json",
+      "host": "content",
+      "input": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["slug"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "authors": {
+            "type": "array",
+            "items": {
+              "$ref": "Author"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "content.authors.list",
+      "method": "GET",
+      "path": "/content/authors/",
+      "tag": "Content",
+      "summary": "Browse published authors",
+      "request": "none",
+      "response": "json",
+      "host": "content",
+      "input": {
+        "type": "object",
+        "properties": {
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          },
+          "filter": {
+            "type": "string",
+            "description": "An NQL filter, for example tag:getting-started+featured:true.",
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "string",
+                "enum": ["all"]
+              }
+            ],
+            "description": "Records per page (15 by default), or all.",
+            "x-corsair-in": "query"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Which page of results.",
+            "x-corsair-in": "query"
+          },
+          "order": {
+            "type": "string",
+            "description": "Sort order, for example published_at DESC.",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "authors": {
+            "type": "array",
+            "items": {
+              "$ref": "Author"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "content.pages.get",
+      "method": "GET",
+      "path": "/content/pages/{id}/",
+      "tag": "Content",
+      "summary": "Read a published page by id",
+      "request": "none",
+      "response": "json",
+      "host": "content",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          },
+          "formats": {
+            "type": "string",
+            "description": "Content formats to return, comma-separated: lexical (default), html, mobiledoc, plaintext.",
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "pages": {
+            "type": "array",
+            "items": {
+              "$ref": "Post"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "content.pages.getBySlug",
+      "method": "GET",
+      "path": "/content/pages/slug/{slug}/",
+      "tag": "Content",
+      "summary": "Read a published page by slug",
+      "request": "none",
+      "response": "json",
+      "host": "content",
+      "input": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          },
+          "formats": {
+            "type": "string",
+            "description": "Content formats to return, comma-separated: lexical (default), html, mobiledoc, plaintext.",
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["slug"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "pages": {
+            "type": "array",
+            "items": {
+              "$ref": "Post"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "content.pages.list",
+      "method": "GET",
+      "path": "/content/pages/",
+      "tag": "Content",
+      "summary": "Browse published pages",
+      "request": "none",
+      "response": "json",
+      "host": "content",
+      "input": {
+        "type": "object",
+        "properties": {
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          },
+          "filter": {
+            "type": "string",
+            "description": "An NQL filter, for example tag:getting-started+featured:true.",
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "string",
+                "enum": ["all"]
+              }
+            ],
+            "description": "Records per page (15 by default), or all.",
+            "x-corsair-in": "query"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Which page of results.",
+            "x-corsair-in": "query"
+          },
+          "order": {
+            "type": "string",
+            "description": "Sort order, for example published_at DESC.",
+            "x-corsair-in": "query"
+          },
+          "formats": {
+            "type": "string",
+            "description": "Content formats to return, comma-separated: lexical (default), html, mobiledoc, plaintext.",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "pages": {
+            "type": "array",
+            "items": {
+              "$ref": "Post"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "content.posts.get",
+      "method": "GET",
+      "path": "/content/posts/{id}/",
+      "tag": "Content",
+      "summary": "Read a published post by id",
+      "request": "none",
+      "response": "json",
+      "host": "content",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          },
+          "formats": {
+            "type": "string",
+            "description": "Content formats to return, comma-separated: lexical (default), html, mobiledoc, plaintext.",
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "posts": {
+            "type": "array",
+            "items": {
+              "$ref": "Post"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "content.posts.getBySlug",
+      "method": "GET",
+      "path": "/content/posts/slug/{slug}/",
+      "tag": "Content",
+      "summary": "Read a published post by slug",
+      "request": "none",
+      "response": "json",
+      "host": "content",
+      "input": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          },
+          "formats": {
+            "type": "string",
+            "description": "Content formats to return, comma-separated: lexical (default), html, mobiledoc, plaintext.",
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["slug"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "posts": {
+            "type": "array",
+            "items": {
+              "$ref": "Post"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "content.posts.list",
+      "method": "GET",
+      "path": "/content/posts/",
+      "tag": "Content",
+      "summary": "Browse published posts",
+      "request": "none",
+      "response": "json",
+      "host": "content",
+      "input": {
+        "type": "object",
+        "properties": {
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          },
+          "filter": {
+            "type": "string",
+            "description": "An NQL filter, for example tag:getting-started+featured:true.",
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "string",
+                "enum": ["all"]
+              }
+            ],
+            "description": "Records per page (15 by default), or all.",
+            "x-corsair-in": "query"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Which page of results.",
+            "x-corsair-in": "query"
+          },
+          "order": {
+            "type": "string",
+            "description": "Sort order, for example published_at DESC.",
+            "x-corsair-in": "query"
+          },
+          "formats": {
+            "type": "string",
+            "description": "Content formats to return, comma-separated: lexical (default), html, mobiledoc, plaintext.",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "posts": {
+            "type": "array",
+            "items": {
+              "$ref": "Post"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "content.settings.get",
+      "method": "GET",
+      "path": "/content/settings/",
+      "tag": "Content",
+      "summary": "Read public settings",
+      "request": "none",
+      "response": "json",
+      "host": "content",
+      "input": {
+        "type": "object",
+        "properties": {}
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "settings": {
+            "$ref": "Settings"
+          },
+          "meta": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    {
+      "id": "content.tags.get",
+      "method": "GET",
+      "path": "/content/tags/{id}/",
+      "tag": "Content",
+      "summary": "Read a published tag by id",
+      "request": "none",
+      "response": "json",
+      "host": "content",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "Tag"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "content.tags.getBySlug",
+      "method": "GET",
+      "path": "/content/tags/slug/{slug}/",
+      "tag": "Content",
+      "summary": "Read a published tag by slug",
+      "request": "none",
+      "response": "json",
+      "host": "content",
+      "input": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["slug"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "Tag"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "content.tags.list",
+      "method": "GET",
+      "path": "/content/tags/",
+      "tag": "Content",
+      "summary": "Browse published tags",
+      "request": "none",
+      "response": "json",
+      "host": "content",
+      "input": {
+        "type": "object",
+        "properties": {
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          },
+          "filter": {
+            "type": "string",
+            "description": "An NQL filter, for example tag:getting-started+featured:true.",
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "string",
+                "enum": ["all"]
+              }
+            ],
+            "description": "Records per page (15 by default), or all.",
+            "x-corsair-in": "query"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Which page of results.",
+            "x-corsair-in": "query"
+          },
+          "order": {
+            "type": "string",
+            "description": "Sort order, for example published_at DESC.",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "Tag"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "content.tiers.list",
+      "method": "GET",
+      "path": "/content/tiers/",
+      "tag": "Content",
+      "summary": "Browse tiers",
+      "request": "none",
+      "response": "json",
+      "host": "content",
+      "input": {
+        "type": "object",
+        "properties": {
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          },
+          "filter": {
+            "type": "string",
+            "description": "An NQL filter, for example tag:getting-started+featured:true.",
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "string",
+                "enum": ["all"]
+              }
+            ],
+            "description": "Records per page (15 by default), or all.",
+            "x-corsair-in": "query"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Which page of results.",
+            "x-corsair-in": "query"
+          },
+          "order": {
+            "type": "string",
+            "description": "Sort order, for example published_at DESC.",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "tiers": {
+            "type": "array",
+            "items": {
+              "$ref": "Tier"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "files.upload",
+      "method": "POST",
+      "path": "/admin/files/upload/",
+      "tag": "Admin",
+      "summary": "Upload a file",
+      "request": "multipart",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "description": "The file."
+          },
+          "ref": {
+            "type": "string"
+          }
+        },
+        "required": ["file"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string"
+                },
+                "ref": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "images.upload",
+      "method": "POST",
+      "path": "/admin/images/upload/",
+      "tag": "Admin",
+      "summary": "Upload an image",
+      "request": "multipart",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "description": "The file."
+          },
+          "purpose": {
+            "type": "string",
+            "enum": ["image", "profile_image", "icon"],
+            "description": "Changes the checks Ghost runs (image by default)."
+          },
+          "ref": {
+            "type": "string",
+            "description": "Returned as-is: the original path, to replace it in your content."
+          }
+        },
+        "required": ["file"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "images": {
+            "type": "array",
+            "items": {
+              "$ref": "Image"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "invites.create",
+      "method": "POST",
+      "path": "/admin/invites/",
+      "tag": "Admin",
+      "summary": "Invite a staff user",
+      "request": "json",
+      "response": "json",
+      "bodyEnvelope": "invites",
+      "input": {
+        "type": "object",
+        "properties": {
+          "role_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "expires": {
+            "type": "integer"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": ["role_id", "email"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "invites": {
+            "type": "array",
+            "items": {
+              "$ref": "Invite"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "invites.delete",
+      "method": "DELETE",
+      "path": "/admin/invites/{id}/",
+      "tag": "Admin",
+      "summary": "Revoke a staff invitation",
+      "request": "none",
+      "response": "empty",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      }
+    },
+    {
+      "id": "invites.list",
+      "method": "GET",
+      "path": "/admin/invites/",
+      "tag": "Admin",
+      "summary": "Browse pending staff invitations",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          },
+          "filter": {
+            "type": "string",
+            "description": "An NQL filter, for example tag:getting-started+featured:true.",
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "string",
+                "enum": ["all"]
+              }
+            ],
+            "description": "Records per page (15 by default), or all.",
+            "x-corsair-in": "query"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Which page of results.",
+            "x-corsair-in": "query"
+          },
+          "order": {
+            "type": "string",
+            "description": "Sort order, for example published_at DESC.",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "invites": {
+            "type": "array",
+            "items": {
+              "$ref": "Invite"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "labels.create",
+      "method": "POST",
+      "path": "/admin/labels/",
+      "tag": "Admin",
+      "summary": "Add a label",
+      "request": "json",
+      "response": "json",
+      "bodyEnvelope": "labels",
+      "input": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": ["name"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "labels": {
+            "type": "array",
+            "items": {
+              "$ref": "Label"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "labels.delete",
+      "method": "DELETE",
+      "path": "/admin/labels/{id}/",
+      "tag": "Admin",
+      "summary": "Delete a label",
+      "request": "none",
+      "response": "empty",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      }
+    },
+    {
+      "id": "labels.get",
+      "method": "GET",
+      "path": "/admin/labels/{id}/",
+      "tag": "Admin",
+      "summary": "Read a label by id",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "labels": {
+            "type": "array",
+            "items": {
+              "$ref": "Label"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "labels.getBySlug",
+      "method": "GET",
+      "path": "/admin/labels/slug/{slug}/",
+      "tag": "Admin",
+      "summary": "Read a label by slug",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["slug"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "labels": {
+            "type": "array",
+            "items": {
+              "$ref": "Label"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "labels.list",
+      "method": "GET",
+      "path": "/admin/labels/",
+      "tag": "Admin",
+      "summary": "Browse labels",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          },
+          "filter": {
+            "type": "string",
+            "description": "An NQL filter, for example tag:getting-started+featured:true.",
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "string",
+                "enum": ["all"]
+              }
+            ],
+            "description": "Records per page (15 by default), or all.",
+            "x-corsair-in": "query"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Which page of results.",
+            "x-corsair-in": "query"
+          },
+          "order": {
+            "type": "string",
+            "description": "Sort order, for example published_at DESC.",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "labels": {
+            "type": "array",
+            "items": {
+              "$ref": "Label"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "labels.update",
+      "method": "PUT",
+      "path": "/admin/labels/{id}/",
+      "tag": "Admin",
+      "summary": "Edit a label",
+      "request": "json",
+      "response": "json",
+      "bodyEnvelope": "labels",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "labels": {
+            "type": "array",
+            "items": {
+              "$ref": "Label"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "media.upload",
+      "method": "POST",
+      "path": "/admin/media/upload/",
+      "tag": "Admin",
+      "summary": "Upload a video or audio file",
+      "request": "multipart",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "description": "The file."
+          },
+          "ref": {
+            "type": "string"
+          }
+        },
+        "required": ["file"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "media": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string"
+                },
+                "ref": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "members.create",
+      "method": "POST",
+      "path": "/admin/members/",
+      "tag": "Admin",
+      "summary": "Add a member",
+      "request": "json",
+      "response": "json",
+      "bodyEnvelope": "members",
+      "input": {
+        "type": "object",
+        "properties": {
+          "send_email": {
+            "type": "boolean",
+            "description": "true: email the member a sign-in link.",
+            "x-corsair-in": "query"
+          },
+          "email_type": {
+            "type": "string",
+            "enum": ["signin", "signup", "subscribe"],
+            "description": "Which email send_email sends.",
+            "x-corsair-in": "query"
+          },
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          },
+          "subscribed": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["free", "paid", "comped", "gift"]
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "Label"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "comped": {
+            "type": "boolean"
+          },
+          "commenting": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "newsletters": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "Newsletter"
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              ]
+            }
+          },
+          "tiers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "metafields": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "required": ["email"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "Member"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "members.customFields.create",
+      "method": "POST",
+      "path": "/admin/members/metafields/custom/",
+      "tag": "Admin",
+      "summary": "Add a member custom field",
+      "request": "json",
+      "response": "json",
+      "bodyEnvelope": "members_metafields",
+      "input": {
+        "type": "object",
+        "properties": {
+          "namespace": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["short_text", "long_text", "list", "address", "phone"]
+          },
+          "settings": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "archived"]
+          },
+          "access": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": ["name", "type"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "members_metafields": {
+            "type": "array",
+            "items": {
+              "$ref": "CustomField"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "members.customFields.delete",
+      "method": "DELETE",
+      "path": "/admin/members/metafields/custom/{key}/",
+      "tag": "Admin",
+      "summary": "Delete a member custom field",
+      "request": "none",
+      "response": "empty",
+      "input": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["key"]
+      }
+    },
+    {
+      "id": "members.customFields.get",
+      "method": "GET",
+      "path": "/admin/members/metafields/custom/{key}/",
+      "tag": "Admin",
+      "summary": "Read a member custom field",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["key"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "members_metafields": {
+            "type": "array",
+            "items": {
+              "$ref": "CustomField"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "members.customFields.list",
+      "method": "GET",
+      "path": "/admin/members/metafields/custom/",
+      "tag": "Admin",
+      "summary": "Browse member custom fields",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "filter": {
+            "type": "string",
+            "description": "status:archived or status:[active,archived].",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "members_metafields": {
+            "type": "array",
+            "items": {
+              "$ref": "CustomField"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "members.customFields.reorder",
+      "method": "PUT",
+      "path": "/admin/members/metafields/custom/",
+      "tag": "Admin",
+      "summary": "Reorder member custom fields",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "members_metafields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string"
+                }
+              },
+              "required": ["key"]
+            }
+          }
+        },
+        "required": ["members_metafields"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "members_metafields": {
+            "type": "array",
+            "items": {
+              "$ref": "CustomField"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "members.customFields.update",
+      "method": "PUT",
+      "path": "/admin/members/metafields/custom/{key}/",
+      "tag": "Admin",
+      "summary": "Edit a member custom field",
+      "request": "json",
+      "response": "json",
+      "bodyEnvelope": "members_metafields",
+      "input": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "namespace": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["short_text", "long_text", "list", "address", "phone"]
+          },
+          "settings": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "archived"]
+          },
+          "access": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": ["key"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "members_metafields": {
+            "type": "array",
+            "items": {
+              "$ref": "CustomField"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "members.delete",
+      "method": "DELETE",
+      "path": "/admin/members/{id}/",
+      "tag": "Admin",
+      "summary": "Delete a member",
+      "request": "none",
+      "response": "empty",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      }
+    },
+    {
+      "id": "members.get",
+      "method": "GET",
+      "path": "/admin/members/{id}/",
+      "tag": "Admin",
+      "summary": "Read a member by id",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "Member"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "members.list",
+      "method": "GET",
+      "path": "/admin/members/",
+      "tag": "Admin",
+      "summary": "Browse members",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          },
+          "filter": {
+            "type": "string",
+            "description": "An NQL filter, for example tag:getting-started+featured:true.",
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "string",
+                "enum": ["all"]
+              }
+            ],
+            "description": "Records per page (15 by default), or all.",
+            "x-corsair-in": "query"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Which page of results.",
+            "x-corsair-in": "query"
+          },
+          "order": {
+            "type": "string",
+            "description": "Sort order, for example published_at DESC.",
+            "x-corsair-in": "query"
+          },
+          "search": {
+            "type": "string",
+            "description": "Members whose name or email contains this text.",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "Member"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "members.update",
+      "method": "PUT",
+      "path": "/admin/members/{id}/",
+      "tag": "Admin",
+      "summary": "Edit a member",
+      "request": "json",
+      "response": "json",
+      "bodyEnvelope": "members",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          },
+          "subscribed": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["free", "paid", "comped", "gift"]
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "Label"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "comped": {
+            "type": "boolean"
+          },
+          "commenting": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "newsletters": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "Newsletter"
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              ]
+            }
+          },
+          "tiers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "metafields": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "Member"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "newsletters.create",
+      "method": "POST",
+      "path": "/admin/newsletters/",
+      "tag": "Admin",
+      "summary": "Add a newsletter",
+      "request": "json",
+      "response": "json",
+      "bodyEnvelope": "newsletters",
+      "input": {
+        "type": "object",
+        "properties": {
+          "opt_in_existing": {
+            "type": "boolean",
+            "description": "true: subscribe every member who gets the default newsletter to this one too.",
+            "x-corsair-in": "query"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "sender_name": {
+            "type": "string"
+          },
+          "sender_email": {
+            "type": "string"
+          },
+          "sender_reply_to": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "archived"]
+          },
+          "visibility": {
+            "type": "string"
+          },
+          "subscribe_on_signup": {
+            "type": "boolean"
+          },
+          "sort_order": {
+            "type": "integer"
+          },
+          "header_image": {
+            "type": "string"
+          },
+          "show_header_icon": {
+            "type": "boolean"
+          },
+          "show_header_title": {
+            "type": "boolean"
+          },
+          "title_font_category": {
+            "type": "string"
+          },
+          "title_alignment": {
+            "type": "string"
+          },
+          "show_feature_image": {
+            "type": "boolean"
+          },
+          "body_font_category": {
+            "type": "string"
+          },
+          "footer_content": {
+            "type": "string"
+          },
+          "show_badge": {
+            "type": "boolean"
+          },
+          "show_header_name": {
+            "type": "boolean"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": ["name"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "newsletters": {
+            "type": "array",
+            "items": {
+              "$ref": "Newsletter"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "newsletters.get",
+      "method": "GET",
+      "path": "/admin/newsletters/{id}/",
+      "tag": "Admin",
+      "summary": "Read a newsletter by id",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "newsletters": {
+            "type": "array",
+            "items": {
+              "$ref": "Newsletter"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "newsletters.list",
+      "method": "GET",
+      "path": "/admin/newsletters/",
+      "tag": "Admin",
+      "summary": "Browse newsletters",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          },
+          "filter": {
+            "type": "string",
+            "description": "An NQL filter, for example tag:getting-started+featured:true.",
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "string",
+                "enum": ["all"]
+              }
+            ],
+            "description": "Records per page (15 by default), or all.",
+            "x-corsair-in": "query"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Which page of results.",
+            "x-corsair-in": "query"
+          },
+          "order": {
+            "type": "string",
+            "description": "Sort order, for example published_at DESC.",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "newsletters": {
+            "type": "array",
+            "items": {
+              "$ref": "Newsletter"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "newsletters.update",
+      "method": "PUT",
+      "path": "/admin/newsletters/{id}/",
+      "tag": "Admin",
+      "summary": "Edit a newsletter",
+      "request": "json",
+      "response": "json",
+      "bodyEnvelope": "newsletters",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "sender_name": {
+            "type": "string"
+          },
+          "sender_email": {
+            "type": "string"
+          },
+          "sender_reply_to": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "archived"]
+          },
+          "visibility": {
+            "type": "string"
+          },
+          "subscribe_on_signup": {
+            "type": "boolean"
+          },
+          "sort_order": {
+            "type": "integer"
+          },
+          "header_image": {
+            "type": "string"
+          },
+          "show_header_icon": {
+            "type": "boolean"
+          },
+          "show_header_title": {
+            "type": "boolean"
+          },
+          "title_font_category": {
+            "type": "string"
+          },
+          "title_alignment": {
+            "type": "string"
+          },
+          "show_feature_image": {
+            "type": "boolean"
+          },
+          "body_font_category": {
+            "type": "string"
+          },
+          "footer_content": {
+            "type": "string"
+          },
+          "show_badge": {
+            "type": "boolean"
+          },
+          "show_header_name": {
+            "type": "boolean"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "newsletters": {
+            "type": "array",
+            "items": {
+              "$ref": "Newsletter"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "offers.create",
+      "method": "POST",
+      "path": "/admin/offers/",
+      "tag": "Admin",
+      "summary": "Add a offer",
+      "request": "json",
+      "response": "json",
+      "bodyEnvelope": "offers",
+      "input": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "display_title": {
+            "type": "string"
+          },
+          "display_description": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["percent", "fixed", "trial", "free_months"]
+          },
+          "cadence": {
+            "type": "string",
+            "enum": ["month", "year"]
+          },
+          "amount": {
+            "type": "number"
+          },
+          "duration": {
+            "type": "string",
+            "enum": ["once", "forever", "repeating", "trial", "free_months"]
+          },
+          "duration_in_months": {
+            "type": "integer"
+          },
+          "currency_restriction": {
+            "type": "boolean"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "archived"]
+          },
+          "tier": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "offers": {
+            "type": "array",
+            "items": {
+              "$ref": "Offer"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "offers.get",
+      "method": "GET",
+      "path": "/admin/offers/{id}/",
+      "tag": "Admin",
+      "summary": "Read a offer by id",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "offers": {
+            "type": "array",
+            "items": {
+              "$ref": "Offer"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "offers.list",
+      "method": "GET",
+      "path": "/admin/offers/",
+      "tag": "Admin",
+      "summary": "Browse offers",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          },
+          "filter": {
+            "type": "string",
+            "description": "An NQL filter, for example tag:getting-started+featured:true.",
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "string",
+                "enum": ["all"]
+              }
+            ],
+            "description": "Records per page (15 by default), or all.",
+            "x-corsair-in": "query"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Which page of results.",
+            "x-corsair-in": "query"
+          },
+          "order": {
+            "type": "string",
+            "description": "Sort order, for example published_at DESC.",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "offers": {
+            "type": "array",
+            "items": {
+              "$ref": "Offer"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "offers.update",
+      "method": "PUT",
+      "path": "/admin/offers/{id}/",
+      "tag": "Admin",
+      "summary": "Edit a offer",
+      "request": "json",
+      "response": "json",
+      "bodyEnvelope": "offers",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "name": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "display_title": {
+            "type": "string"
+          },
+          "display_description": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["percent", "fixed", "trial", "free_months"]
+          },
+          "cadence": {
+            "type": "string",
+            "enum": ["month", "year"]
+          },
+          "amount": {
+            "type": "number"
+          },
+          "duration": {
+            "type": "string",
+            "enum": ["once", "forever", "repeating", "trial", "free_months"]
+          },
+          "duration_in_months": {
+            "type": "integer"
+          },
+          "currency_restriction": {
+            "type": "boolean"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "archived"]
+          },
+          "tier": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "offers": {
+            "type": "array",
+            "items": {
+              "$ref": "Offer"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "pages.copy",
+      "method": "POST",
+      "path": "/admin/pages/{id}/copy/",
+      "tag": "Admin",
+      "summary": "Copy a page",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "pages": {
+            "type": "array",
+            "items": {
+              "$ref": "Post"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "pages.create",
+      "method": "POST",
+      "path": "/admin/pages/",
+      "tag": "Admin",
+      "summary": "Add a page",
+      "request": "json",
+      "response": "json",
+      "bodyEnvelope": "pages",
+      "input": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string",
+            "enum": ["html"],
+            "description": "html: the body holds html, which Ghost converts to Lexical.",
+            "x-corsair-in": "query"
+          },
+          "title": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "lexical": {
+            "type": "string"
+          },
+          "html": {
+            "type": "string"
+          },
+          "mobiledoc": {
+            "type": "string"
+          },
+          "feature_image": {
+            "type": "string"
+          },
+          "feature_image_alt": {
+            "type": "string"
+          },
+          "feature_image_caption": {
+            "type": "string"
+          },
+          "featured": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["draft", "published", "scheduled", "sent"]
+          },
+          "visibility": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "published_at": {
+            "type": "string"
+          },
+          "custom_excerpt": {
+            "type": "string"
+          },
+          "codeinjection_head": {
+            "type": "string"
+          },
+          "codeinjection_foot": {
+            "type": "string"
+          },
+          "custom_template": {
+            "type": "string"
+          },
+          "canonical_url": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "Tag"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "authors": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "Author"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "tiers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "og_image": {
+            "type": "string"
+          },
+          "og_title": {
+            "type": "string"
+          },
+          "og_description": {
+            "type": "string"
+          },
+          "twitter_image": {
+            "type": "string"
+          },
+          "twitter_title": {
+            "type": "string"
+          },
+          "twitter_description": {
+            "type": "string"
+          },
+          "meta_title": {
+            "type": "string"
+          },
+          "meta_description": {
+            "type": "string"
+          },
+          "email_subject": {
+            "type": "string"
+          },
+          "email_only": {
+            "type": "boolean"
+          },
+          "frontmatter": {
+            "type": "string"
+          }
+        },
+        "required": ["title"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "pages": {
+            "type": "array",
+            "items": {
+              "$ref": "Post"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "pages.delete",
+      "method": "DELETE",
+      "path": "/admin/pages/{id}/",
+      "tag": "Admin",
+      "summary": "Delete a page",
+      "request": "none",
+      "response": "empty",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      }
+    },
+    {
+      "id": "pages.get",
+      "method": "GET",
+      "path": "/admin/pages/{id}/",
+      "tag": "Admin",
+      "summary": "Read a page by id",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          },
+          "formats": {
+            "type": "string",
+            "description": "Content formats to return, comma-separated: lexical (default), html, mobiledoc, plaintext.",
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "pages": {
+            "type": "array",
+            "items": {
+              "$ref": "Post"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "pages.getBySlug",
+      "method": "GET",
+      "path": "/admin/pages/slug/{slug}/",
+      "tag": "Admin",
+      "summary": "Read a page by slug",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          },
+          "formats": {
+            "type": "string",
+            "description": "Content formats to return, comma-separated: lexical (default), html, mobiledoc, plaintext.",
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["slug"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "pages": {
+            "type": "array",
+            "items": {
+              "$ref": "Post"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "pages.list",
+      "method": "GET",
+      "path": "/admin/pages/",
+      "tag": "Admin",
+      "summary": "Browse pages",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          },
+          "filter": {
+            "type": "string",
+            "description": "An NQL filter, for example tag:getting-started+featured:true.",
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "string",
+                "enum": ["all"]
+              }
+            ],
+            "description": "Records per page (15 by default), or all.",
+            "x-corsair-in": "query"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Which page of results.",
+            "x-corsair-in": "query"
+          },
+          "order": {
+            "type": "string",
+            "description": "Sort order, for example published_at DESC.",
+            "x-corsair-in": "query"
+          },
+          "formats": {
+            "type": "string",
+            "description": "Content formats to return, comma-separated: lexical (default), html, mobiledoc, plaintext.",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "pages": {
+            "type": "array",
+            "items": {
+              "$ref": "Post"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "pages.update",
+      "method": "PUT",
+      "path": "/admin/pages/{id}/",
+      "tag": "Admin",
+      "summary": "Edit a page",
+      "request": "json",
+      "response": "json",
+      "bodyEnvelope": "pages",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "source": {
+            "type": "string",
+            "enum": ["html"],
+            "description": "html: the body holds html, which Ghost converts to Lexical.",
+            "x-corsair-in": "query"
+          },
+          "title": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "lexical": {
+            "type": "string"
+          },
+          "html": {
+            "type": "string"
+          },
+          "mobiledoc": {
+            "type": "string"
+          },
+          "feature_image": {
+            "type": "string"
+          },
+          "feature_image_alt": {
+            "type": "string"
+          },
+          "feature_image_caption": {
+            "type": "string"
+          },
+          "featured": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["draft", "published", "scheduled", "sent"]
+          },
+          "visibility": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "published_at": {
+            "type": "string"
+          },
+          "custom_excerpt": {
+            "type": "string"
+          },
+          "codeinjection_head": {
+            "type": "string"
+          },
+          "codeinjection_foot": {
+            "type": "string"
+          },
+          "custom_template": {
+            "type": "string"
+          },
+          "canonical_url": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "Tag"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "authors": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "Author"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "tiers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "og_image": {
+            "type": "string"
+          },
+          "og_title": {
+            "type": "string"
+          },
+          "og_description": {
+            "type": "string"
+          },
+          "twitter_image": {
+            "type": "string"
+          },
+          "twitter_title": {
+            "type": "string"
+          },
+          "twitter_description": {
+            "type": "string"
+          },
+          "meta_title": {
+            "type": "string"
+          },
+          "meta_description": {
+            "type": "string"
+          },
+          "email_subject": {
+            "type": "string"
+          },
+          "email_only": {
+            "type": "boolean"
+          },
+          "frontmatter": {
+            "type": "string"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "pages": {
+            "type": "array",
+            "items": {
+              "$ref": "Post"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "posts.copy",
+      "method": "POST",
+      "path": "/admin/posts/{id}/copy/",
+      "tag": "Admin",
+      "summary": "Copy a post",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "posts": {
+            "type": "array",
+            "items": {
+              "$ref": "Post"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "posts.create",
+      "method": "POST",
+      "path": "/admin/posts/",
+      "tag": "Admin",
+      "summary": "Add a post",
+      "request": "json",
+      "response": "json",
+      "bodyEnvelope": "posts",
+      "input": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string",
+            "enum": ["html"],
+            "description": "html: the body holds html, which Ghost converts to Lexical.",
+            "x-corsair-in": "query"
+          },
+          "title": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "lexical": {
+            "type": "string"
+          },
+          "html": {
+            "type": "string"
+          },
+          "mobiledoc": {
+            "type": "string"
+          },
+          "feature_image": {
+            "type": "string"
+          },
+          "feature_image_alt": {
+            "type": "string"
+          },
+          "feature_image_caption": {
+            "type": "string"
+          },
+          "featured": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["draft", "published", "scheduled", "sent"]
+          },
+          "visibility": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "published_at": {
+            "type": "string"
+          },
+          "custom_excerpt": {
+            "type": "string"
+          },
+          "codeinjection_head": {
+            "type": "string"
+          },
+          "codeinjection_foot": {
+            "type": "string"
+          },
+          "custom_template": {
+            "type": "string"
+          },
+          "canonical_url": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "Tag"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "authors": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "Author"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "tiers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "og_image": {
+            "type": "string"
+          },
+          "og_title": {
+            "type": "string"
+          },
+          "og_description": {
+            "type": "string"
+          },
+          "twitter_image": {
+            "type": "string"
+          },
+          "twitter_title": {
+            "type": "string"
+          },
+          "twitter_description": {
+            "type": "string"
+          },
+          "meta_title": {
+            "type": "string"
+          },
+          "meta_description": {
+            "type": "string"
+          },
+          "email_subject": {
+            "type": "string"
+          },
+          "email_only": {
+            "type": "boolean"
+          },
+          "frontmatter": {
+            "type": "string"
+          }
+        },
+        "required": ["title"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "posts": {
+            "type": "array",
+            "items": {
+              "$ref": "Post"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "posts.delete",
+      "method": "DELETE",
+      "path": "/admin/posts/{id}/",
+      "tag": "Admin",
+      "summary": "Delete a post",
+      "request": "none",
+      "response": "empty",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      }
+    },
+    {
+      "id": "posts.get",
+      "method": "GET",
+      "path": "/admin/posts/{id}/",
+      "tag": "Admin",
+      "summary": "Read a post by id",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          },
+          "formats": {
+            "type": "string",
+            "description": "Content formats to return, comma-separated: lexical (default), html, mobiledoc, plaintext.",
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "posts": {
+            "type": "array",
+            "items": {
+              "$ref": "Post"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "posts.getBySlug",
+      "method": "GET",
+      "path": "/admin/posts/slug/{slug}/",
+      "tag": "Admin",
+      "summary": "Read a post by slug",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          },
+          "formats": {
+            "type": "string",
+            "description": "Content formats to return, comma-separated: lexical (default), html, mobiledoc, plaintext.",
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["slug"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "posts": {
+            "type": "array",
+            "items": {
+              "$ref": "Post"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "posts.list",
+      "method": "GET",
+      "path": "/admin/posts/",
+      "tag": "Admin",
+      "summary": "Browse posts",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          },
+          "filter": {
+            "type": "string",
+            "description": "An NQL filter, for example tag:getting-started+featured:true.",
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "string",
+                "enum": ["all"]
+              }
+            ],
+            "description": "Records per page (15 by default), or all.",
+            "x-corsair-in": "query"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Which page of results.",
+            "x-corsair-in": "query"
+          },
+          "order": {
+            "type": "string",
+            "description": "Sort order, for example published_at DESC.",
+            "x-corsair-in": "query"
+          },
+          "formats": {
+            "type": "string",
+            "description": "Content formats to return, comma-separated: lexical (default), html, mobiledoc, plaintext.",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "posts": {
+            "type": "array",
+            "items": {
+              "$ref": "Post"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "posts.update",
+      "method": "PUT",
+      "path": "/admin/posts/{id}/",
+      "tag": "Admin",
+      "summary": "Edit a post",
+      "request": "json",
+      "response": "json",
+      "bodyEnvelope": "posts",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "source": {
+            "type": "string",
+            "enum": ["html"],
+            "description": "html: the body holds html, which Ghost converts to Lexical.",
+            "x-corsair-in": "query"
+          },
+          "newsletter": {
+            "type": "string",
+            "description": "Slug of the newsletter to email the post to when this edit publishes it.",
+            "x-corsair-in": "query"
+          },
+          "email_segment": {
+            "type": "string",
+            "description": "Which members get the email: all (default), status:free, status:-free, or an NQL filter.",
+            "x-corsair-in": "query"
+          },
+          "title": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "lexical": {
+            "type": "string"
+          },
+          "html": {
+            "type": "string"
+          },
+          "mobiledoc": {
+            "type": "string"
+          },
+          "feature_image": {
+            "type": "string"
+          },
+          "feature_image_alt": {
+            "type": "string"
+          },
+          "feature_image_caption": {
+            "type": "string"
+          },
+          "featured": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["draft", "published", "scheduled", "sent"]
+          },
+          "visibility": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "published_at": {
+            "type": "string"
+          },
+          "custom_excerpt": {
+            "type": "string"
+          },
+          "codeinjection_head": {
+            "type": "string"
+          },
+          "codeinjection_foot": {
+            "type": "string"
+          },
+          "custom_template": {
+            "type": "string"
+          },
+          "canonical_url": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "Tag"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "authors": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "Author"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "tiers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "og_image": {
+            "type": "string"
+          },
+          "og_title": {
+            "type": "string"
+          },
+          "og_description": {
+            "type": "string"
+          },
+          "twitter_image": {
+            "type": "string"
+          },
+          "twitter_title": {
+            "type": "string"
+          },
+          "twitter_description": {
+            "type": "string"
+          },
+          "meta_title": {
+            "type": "string"
+          },
+          "meta_description": {
+            "type": "string"
+          },
+          "email_subject": {
+            "type": "string"
+          },
+          "email_only": {
+            "type": "boolean"
+          },
+          "frontmatter": {
+            "type": "string"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "posts": {
+            "type": "array",
+            "items": {
+              "$ref": "Post"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "roles.list",
+      "method": "GET",
+      "path": "/admin/roles/",
+      "tag": "Admin",
+      "summary": "Browse staff roles",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          },
+          "permissions": {
+            "type": "string",
+            "enum": ["assign"],
+            "description": "assign: only roles the caller may assign.",
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string",
+                "enum": ["all"]
+              }
+            ],
+            "description": "Records per page.",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "Role"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "site.get",
+      "method": "GET",
+      "path": "/admin/site/",
+      "tag": "Admin",
+      "summary": "Read site details",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {}
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "site": {
+            "$ref": "Site"
+          }
+        }
+      }
+    },
+    {
+      "id": "tags.create",
+      "method": "POST",
+      "path": "/admin/tags/",
+      "tag": "Admin",
+      "summary": "Add a tag",
+      "request": "json",
+      "response": "json",
+      "bodyEnvelope": "tags",
+      "input": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "feature_image": {
+            "type": "string"
+          },
+          "visibility": {
+            "type": "string",
+            "enum": ["public", "internal"]
+          },
+          "og_image": {
+            "type": "string"
+          },
+          "og_title": {
+            "type": "string"
+          },
+          "og_description": {
+            "type": "string"
+          },
+          "twitter_image": {
+            "type": "string"
+          },
+          "twitter_title": {
+            "type": "string"
+          },
+          "twitter_description": {
+            "type": "string"
+          },
+          "meta_title": {
+            "type": "string"
+          },
+          "meta_description": {
+            "type": "string"
+          },
+          "codeinjection_head": {
+            "type": "string"
+          },
+          "codeinjection_foot": {
+            "type": "string"
+          },
+          "canonical_url": {
+            "type": "string"
+          },
+          "accent_color": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": ["name"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "Tag"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "tags.delete",
+      "method": "DELETE",
+      "path": "/admin/tags/{id}/",
+      "tag": "Admin",
+      "summary": "Delete a tag",
+      "request": "none",
+      "response": "empty",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      }
+    },
+    {
+      "id": "tags.get",
+      "method": "GET",
+      "path": "/admin/tags/{id}/",
+      "tag": "Admin",
+      "summary": "Read a tag by id",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "Tag"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "tags.getBySlug",
+      "method": "GET",
+      "path": "/admin/tags/slug/{slug}/",
+      "tag": "Admin",
+      "summary": "Read a tag by slug",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["slug"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "Tag"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "tags.list",
+      "method": "GET",
+      "path": "/admin/tags/",
+      "tag": "Admin",
+      "summary": "Browse tags",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          },
+          "filter": {
+            "type": "string",
+            "description": "An NQL filter, for example tag:getting-started+featured:true.",
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "string",
+                "enum": ["all"]
+              }
+            ],
+            "description": "Records per page (15 by default), or all.",
+            "x-corsair-in": "query"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Which page of results.",
+            "x-corsair-in": "query"
+          },
+          "order": {
+            "type": "string",
+            "description": "Sort order, for example published_at DESC.",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "Tag"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "tags.update",
+      "method": "PUT",
+      "path": "/admin/tags/{id}/",
+      "tag": "Admin",
+      "summary": "Edit a tag",
+      "request": "json",
+      "response": "json",
+      "bodyEnvelope": "tags",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "feature_image": {
+            "type": "string"
+          },
+          "visibility": {
+            "type": "string",
+            "enum": ["public", "internal"]
+          },
+          "og_image": {
+            "type": "string"
+          },
+          "og_title": {
+            "type": "string"
+          },
+          "og_description": {
+            "type": "string"
+          },
+          "twitter_image": {
+            "type": "string"
+          },
+          "twitter_title": {
+            "type": "string"
+          },
+          "twitter_description": {
+            "type": "string"
+          },
+          "meta_title": {
+            "type": "string"
+          },
+          "meta_description": {
+            "type": "string"
+          },
+          "codeinjection_head": {
+            "type": "string"
+          },
+          "codeinjection_foot": {
+            "type": "string"
+          },
+          "canonical_url": {
+            "type": "string"
+          },
+          "accent_color": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "Tag"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "themes.activate",
+      "method": "PUT",
+      "path": "/admin/themes/{name}/activate/",
+      "tag": "Admin",
+      "summary": "Activate a theme",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["name"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "themes": {
+            "type": "array",
+            "items": {
+              "$ref": "Theme"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "themes.upload",
+      "method": "POST",
+      "path": "/admin/themes/upload/",
+      "tag": "Admin",
+      "summary": "Upload a theme",
+      "request": "multipart",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "description": "The file."
+          }
+        },
+        "required": ["file"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "themes": {
+            "type": "array",
+            "items": {
+              "$ref": "Theme"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "tiers.create",
+      "method": "POST",
+      "path": "/admin/tiers/",
+      "tag": "Admin",
+      "summary": "Add a tier",
+      "request": "json",
+      "response": "json",
+      "bodyEnvelope": "tiers",
+      "input": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["free", "paid"]
+          },
+          "welcome_page_url": {
+            "type": "string"
+          },
+          "visibility": {
+            "type": "string"
+          },
+          "monthly_price": {
+            "type": "integer"
+          },
+          "yearly_price": {
+            "type": "integer"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "trial_days": {
+            "type": "integer"
+          },
+          "benefits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": ["name"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "tiers": {
+            "type": "array",
+            "items": {
+              "$ref": "Tier"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "tiers.get",
+      "method": "GET",
+      "path": "/admin/tiers/{id}/",
+      "tag": "Admin",
+      "summary": "Read a tier by id",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "tiers": {
+            "type": "array",
+            "items": {
+              "$ref": "Tier"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "tiers.list",
+      "method": "GET",
+      "path": "/admin/tiers/",
+      "tag": "Admin",
+      "summary": "Browse tiers",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          },
+          "filter": {
+            "type": "string",
+            "description": "An NQL filter, for example tag:getting-started+featured:true.",
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "string",
+                "enum": ["all"]
+              }
+            ],
+            "description": "Records per page (15 by default), or all.",
+            "x-corsair-in": "query"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Which page of results.",
+            "x-corsair-in": "query"
+          },
+          "order": {
+            "type": "string",
+            "description": "Sort order, for example published_at DESC.",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "tiers": {
+            "type": "array",
+            "items": {
+              "$ref": "Tier"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "tiers.update",
+      "method": "PUT",
+      "path": "/admin/tiers/{id}/",
+      "tag": "Admin",
+      "summary": "Edit a tier",
+      "request": "json",
+      "response": "json",
+      "bodyEnvelope": "tiers",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["free", "paid"]
+          },
+          "welcome_page_url": {
+            "type": "string"
+          },
+          "visibility": {
+            "type": "string"
+          },
+          "monthly_price": {
+            "type": "integer"
+          },
+          "yearly_price": {
+            "type": "integer"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "trial_days": {
+            "type": "integer"
+          },
+          "benefits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "tiers": {
+            "type": "array",
+            "items": {
+              "$ref": "Tier"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "users.delete",
+      "method": "DELETE",
+      "path": "/admin/users/{id}/",
+      "tag": "Admin",
+      "summary": "Delete a staff user",
+      "request": "none",
+      "response": "empty",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      }
+    },
+    {
+      "id": "users.get",
+      "method": "GET",
+      "path": "/admin/users/{id}/",
+      "tag": "Admin",
+      "summary": "Read a staff user by id",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "User"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "users.getByEmail",
+      "method": "GET",
+      "path": "/admin/users/email/{email}/",
+      "tag": "Admin",
+      "summary": "Read a staff user by email",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["email"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "User"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "users.getBySlug",
+      "method": "GET",
+      "path": "/admin/users/slug/{slug}/",
+      "tag": "Admin",
+      "summary": "Read a staff user by slug",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["slug"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "User"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "users.list",
+      "method": "GET",
+      "path": "/admin/users/",
+      "tag": "Admin",
+      "summary": "Browse staff users",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "include": {
+            "type": "string",
+            "description": "Related data to include, comma-separated (for example tags,authors).",
+            "x-corsair-in": "query"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Only these fields, comma-separated.",
+            "x-corsair-in": "query"
+          },
+          "filter": {
+            "type": "string",
+            "description": "An NQL filter, for example tag:getting-started+featured:true.",
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "string",
+                "enum": ["all"]
+              }
+            ],
+            "description": "Records per page (15 by default), or all.",
+            "x-corsair-in": "query"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Which page of results.",
+            "x-corsair-in": "query"
+          },
+          "order": {
+            "type": "string",
+            "description": "Sort order, for example published_at DESC.",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "User"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "users.update",
+      "method": "PUT",
+      "path": "/admin/users/{id}/",
+      "tag": "Admin",
+      "summary": "Edit a staff user",
+      "request": "json",
+      "response": "json",
+      "bodyEnvelope": "users",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "profile_image": {
+            "type": "string"
+          },
+          "cover_image": {
+            "type": "string"
+          },
+          "bio": {
+            "type": "string"
+          },
+          "website": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "facebook": {
+            "type": "string"
+          },
+          "twitter": {
+            "type": "string"
+          },
+          "accessibility": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "meta_title": {
+            "type": "string"
+          },
+          "meta_description": {
+            "type": "string"
+          },
+          "tour": {
+            "type": "string"
+          },
+          "comment_notifications": {
+            "type": "boolean"
+          },
+          "free_member_signup_notification": {
+            "type": "boolean"
+          },
+          "paid_subscription_started_notification": {
+            "type": "boolean"
+          },
+          "paid_subscription_canceled_notification": {
+            "type": "boolean"
+          },
+          "mention_notifications": {
+            "type": "boolean"
+          },
+          "milestone_notifications": {
+            "type": "boolean"
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "User"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "webhooks.create",
+      "method": "POST",
+      "path": "/admin/webhooks/",
+      "tag": "Admin",
+      "summary": "Add a webhook",
+      "request": "json",
+      "response": "json",
+      "bodyEnvelope": "webhooks",
+      "input": {
+        "type": "object",
+        "properties": {
+          "event": {
+            "type": "string"
+          },
+          "target_url": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "secret": {
+            "type": "string"
+          },
+          "api_version": {
+            "type": "string"
+          },
+          "integration_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "last_triggered_at": {
+            "type": "string"
+          },
+          "last_triggered_status": {
+            "type": "string"
+          },
+          "last_triggered_error": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": ["event", "target_url"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "webhooks": {
+            "type": "array",
+            "items": {
+              "$ref": "Webhook"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    },
+    {
+      "id": "webhooks.delete",
+      "method": "DELETE",
+      "path": "/admin/webhooks/{id}/",
+      "tag": "Admin",
+      "summary": "Delete a webhook",
+      "request": "none",
+      "response": "empty",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      }
+    },
+    {
+      "id": "webhooks.update",
+      "method": "PUT",
+      "path": "/admin/webhooks/{id}/",
+      "tag": "Admin",
+      "summary": "Edit a webhook",
+      "request": "json",
+      "response": "json",
+      "bodyEnvelope": "webhooks",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "event": {
+            "type": "string"
+          },
+          "target_url": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "secret": {
+            "type": "string"
+          },
+          "api_version": {
+            "type": "string"
+          },
+          "integration_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "last_triggered_at": {
+            "type": "string"
+          },
+          "last_triggered_status": {
+            "type": "string"
+          },
+          "last_triggered_error": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "webhooks": {
+            "type": "array",
+            "items": {
+              "$ref": "Webhook"
+            }
+          },
+          "meta": {
+            "$ref": "Meta"
+          }
+        }
+      }
+    }
+  ],
+  "definitions": {
+    "Author": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "profile_image": {
+          "type": "string"
+        },
+        "cover_image": {
+          "type": "string"
+        },
+        "bio": {
+          "type": "string"
+        },
+        "website": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "facebook": {
+          "type": "string"
+        },
+        "twitter": {
+          "type": "string"
+        },
+        "accessibility": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "meta_title": {
+          "type": "string"
+        },
+        "meta_description": {
+          "type": "string"
+        },
+        "tour": {
+          "type": "string"
+        },
+        "last_seen": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "url": {
+          "type": "string"
+        },
+        "count": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "CustomField": {
+      "type": "object",
+      "properties": {
+        "namespace": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["short_text", "long_text", "list", "address", "phone"]
+        },
+        "settings": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "archived"]
+        },
+        "access": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      }
+    },
+    "Image": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "ref": {
+          "type": "string"
+        }
+      }
+    },
+    "Invite": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "role_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "expires": {
+          "type": "integer"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      }
+    },
+    "Label": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      }
+    },
+    "Member": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "geolocation": {
+          "type": "string"
+        },
+        "subscribed": {
+          "type": "boolean"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["free", "paid", "comped", "gift"]
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "Label"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "subscriptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "avatar_image": {
+          "type": "string"
+        },
+        "email_count": {
+          "type": "integer"
+        },
+        "email_opened_count": {
+          "type": "integer"
+        },
+        "email_open_rate": {
+          "type": "number"
+        },
+        "last_seen_at": {
+          "type": "string"
+        },
+        "comped": {
+          "type": "boolean"
+        },
+        "unsubscribe_url": {
+          "type": "string"
+        },
+        "can_comment": {
+          "type": "boolean"
+        },
+        "commenting": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "email_suppression": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "newsletters": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "Newsletter"
+              },
+              {
+                "type": "object",
+                "additionalProperties": true
+              }
+            ]
+          }
+        },
+        "tiers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "metafields": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "Meta": {
+      "type": "object",
+      "properties": {
+        "pagination": {
+          "$ref": "Pagination"
+        }
+      }
+    },
+    "Newsletter": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "sender_name": {
+          "type": "string"
+        },
+        "sender_email": {
+          "type": "string"
+        },
+        "sender_reply_to": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "archived"]
+        },
+        "visibility": {
+          "type": "string"
+        },
+        "subscribe_on_signup": {
+          "type": "boolean"
+        },
+        "sort_order": {
+          "type": "integer"
+        },
+        "header_image": {
+          "type": "string"
+        },
+        "show_header_icon": {
+          "type": "boolean"
+        },
+        "show_header_title": {
+          "type": "boolean"
+        },
+        "title_font_category": {
+          "type": "string"
+        },
+        "title_alignment": {
+          "type": "string"
+        },
+        "show_feature_image": {
+          "type": "boolean"
+        },
+        "body_font_category": {
+          "type": "string"
+        },
+        "footer_content": {
+          "type": "string"
+        },
+        "show_badge": {
+          "type": "boolean"
+        },
+        "show_header_name": {
+          "type": "boolean"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "count": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "Offer": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        },
+        "display_title": {
+          "type": "string"
+        },
+        "display_description": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["percent", "fixed", "trial", "free_months"]
+        },
+        "cadence": {
+          "type": "string",
+          "enum": ["month", "year"]
+        },
+        "amount": {
+          "type": "number"
+        },
+        "duration": {
+          "type": "string",
+          "enum": ["once", "forever", "repeating", "trial", "free_months"]
+        },
+        "duration_in_months": {
+          "type": "integer"
+        },
+        "currency_restriction": {
+          "type": "boolean"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "archived"]
+        },
+        "redemption_count": {
+          "type": "integer"
+        },
+        "tier": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      }
+    },
+    "Pagination": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "pages": {
+          "type": "integer"
+        },
+        "total": {
+          "type": "integer"
+        },
+        "next": {
+          "type": "integer"
+        },
+        "prev": {
+          "type": "integer"
+        }
+      }
+    },
+    "Post": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "lexical": {
+          "type": "string"
+        },
+        "html": {
+          "type": "string"
+        },
+        "mobiledoc": {
+          "type": "string"
+        },
+        "comment_id": {
+          "type": "string"
+        },
+        "feature_image": {
+          "type": "string"
+        },
+        "feature_image_alt": {
+          "type": "string"
+        },
+        "feature_image_caption": {
+          "type": "string"
+        },
+        "featured": {
+          "type": "boolean"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["draft", "published", "scheduled", "sent"]
+        },
+        "visibility": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "published_at": {
+          "type": "string"
+        },
+        "custom_excerpt": {
+          "type": "string"
+        },
+        "codeinjection_head": {
+          "type": "string"
+        },
+        "codeinjection_foot": {
+          "type": "string"
+        },
+        "custom_template": {
+          "type": "string"
+        },
+        "canonical_url": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "Tag"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "authors": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "Author"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "primary_author": {
+          "$ref": "Author"
+        },
+        "primary_tag": {
+          "$ref": "Tag"
+        },
+        "tiers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "url": {
+          "type": "string"
+        },
+        "excerpt": {
+          "type": "string"
+        },
+        "reading_time": {
+          "type": "integer"
+        },
+        "og_image": {
+          "type": "string"
+        },
+        "og_title": {
+          "type": "string"
+        },
+        "og_description": {
+          "type": "string"
+        },
+        "twitter_image": {
+          "type": "string"
+        },
+        "twitter_title": {
+          "type": "string"
+        },
+        "twitter_description": {
+          "type": "string"
+        },
+        "meta_title": {
+          "type": "string"
+        },
+        "meta_description": {
+          "type": "string"
+        },
+        "email_subject": {
+          "type": "string"
+        },
+        "email_only": {
+          "type": "boolean"
+        },
+        "newsletter": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "email": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "email_segment": {
+          "type": "string"
+        },
+        "frontmatter": {
+          "type": "string"
+        },
+        "plaintext": {
+          "type": "string"
+        }
+      }
+    },
+    "Role": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      }
+    },
+    "Settings": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "logo": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "accent_color": {
+          "type": "string"
+        },
+        "cover_image": {
+          "type": "string"
+        },
+        "facebook": {
+          "type": "string"
+        },
+        "twitter": {
+          "type": "string"
+        },
+        "lang": {
+          "type": "string"
+        },
+        "locale": {
+          "type": "string"
+        },
+        "timezone": {
+          "type": "string"
+        },
+        "codeinjection_head": {
+          "type": "string"
+        },
+        "codeinjection_foot": {
+          "type": "string"
+        },
+        "navigation": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "secondary_navigation": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "meta_title": {
+          "type": "string"
+        },
+        "meta_description": {
+          "type": "string"
+        },
+        "og_image": {
+          "type": "string"
+        },
+        "og_title": {
+          "type": "string"
+        },
+        "og_description": {
+          "type": "string"
+        },
+        "twitter_image": {
+          "type": "string"
+        },
+        "twitter_title": {
+          "type": "string"
+        },
+        "twitter_description": {
+          "type": "string"
+        },
+        "members_support_address": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
+    "Site": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "logo": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "accent_color": {
+          "type": "string"
+        },
+        "locale": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "Tag": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "feature_image": {
+          "type": "string"
+        },
+        "visibility": {
+          "type": "string",
+          "enum": ["public", "internal"]
+        },
+        "og_image": {
+          "type": "string"
+        },
+        "og_title": {
+          "type": "string"
+        },
+        "og_description": {
+          "type": "string"
+        },
+        "twitter_image": {
+          "type": "string"
+        },
+        "twitter_title": {
+          "type": "string"
+        },
+        "twitter_description": {
+          "type": "string"
+        },
+        "meta_title": {
+          "type": "string"
+        },
+        "meta_description": {
+          "type": "string"
+        },
+        "codeinjection_head": {
+          "type": "string"
+        },
+        "codeinjection_foot": {
+          "type": "string"
+        },
+        "canonical_url": {
+          "type": "string"
+        },
+        "accent_color": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "count": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "Theme": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "package": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "templates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    "Tier": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["free", "paid"]
+        },
+        "welcome_page_url": {
+          "type": "string"
+        },
+        "visibility": {
+          "type": "string"
+        },
+        "monthly_price": {
+          "type": "integer"
+        },
+        "yearly_price": {
+          "type": "integer"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "trial_days": {
+          "type": "integer"
+        },
+        "benefits": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      }
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "profile_image": {
+          "type": "string"
+        },
+        "cover_image": {
+          "type": "string"
+        },
+        "bio": {
+          "type": "string"
+        },
+        "website": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "facebook": {
+          "type": "string"
+        },
+        "twitter": {
+          "type": "string"
+        },
+        "accessibility": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "meta_title": {
+          "type": "string"
+        },
+        "meta_description": {
+          "type": "string"
+        },
+        "tour": {
+          "type": "string"
+        },
+        "last_seen": {
+          "type": "string"
+        },
+        "comment_notifications": {
+          "type": "boolean"
+        },
+        "free_member_signup_notification": {
+          "type": "boolean"
+        },
+        "paid_subscription_started_notification": {
+          "type": "boolean"
+        },
+        "paid_subscription_canceled_notification": {
+          "type": "boolean"
+        },
+        "mention_notifications": {
+          "type": "boolean"
+        },
+        "milestone_notifications": {
+          "type": "boolean"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "count": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
+    "Webhook": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "event": {
+          "type": "string"
+        },
+        "target_url": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "secret": {
+          "type": "string"
+        },
+        "api_version": {
+          "type": "string"
+        },
+        "integration_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "last_triggered_at": {
+          "type": "string"
+        },
+        "last_triggered_status": {
+          "type": "string"
+        },
+        "last_triggered_error": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

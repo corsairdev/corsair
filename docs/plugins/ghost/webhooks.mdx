@@ -1,0 +1,2654 @@
+---
+title: "Ghost webhooks"
+sidebarTitle: "Webhooks"
+description: "Ghost incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The Ghost plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/ghost/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `members`
+  - `added` (`members.added`)
+  - `deleted` (`members.deleted`)
+  - `edited` (`members.edited`)
+- `pages`
+  - `added` (`pages.added`)
+  - `deleted` (`pages.deleted`)
+  - `edited` (`pages.edited`)
+  - `published` (`pages.published`)
+  - `publishedEdited` (`pages.publishedEdited`)
+  - `rescheduled` (`pages.rescheduled`)
+  - `scheduled` (`pages.scheduled`)
+  - `tagAttached` (`pages.tagAttached`)
+  - `tagDetached` (`pages.tagDetached`)
+  - `unpublished` (`pages.unpublished`)
+  - `unscheduled` (`pages.unscheduled`)
+- `posts`
+  - `added` (`posts.added`)
+  - `deleted` (`posts.deleted`)
+  - `edited` (`posts.edited`)
+  - `published` (`posts.published`)
+  - `publishedEdited` (`posts.publishedEdited`)
+  - `rescheduled` (`posts.rescheduled`)
+  - `scheduled` (`posts.scheduled`)
+  - `tagAttached` (`posts.tagAttached`)
+  - `tagDetached` (`posts.tagDetached`)
+  - `unpublished` (`posts.unpublished`)
+  - `unscheduled` (`posts.unscheduled`)
+- `site`
+  - `changed` (`site.changed`)
+- `tags`
+  - `added` (`tags.added`)
+  - `deleted` (`tags.deleted`)
+  - `edited` (`tags.edited`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
+}
+```
+
+## Events
+
+## Members
+
+### Added
+
+`members.added`
+
+A member was created (member.added).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `member.added` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `member` | `object` | Yes | The member before and after. |
+
+<AccordionGroup>
+<Accordion title="member full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: member.added,
+  member: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        members: {
+            added: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Deleted
+
+`members.deleted`
+
+A member was deleted (member.deleted).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `member.deleted` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `member` | `object` | Yes | The member before and after. |
+
+<AccordionGroup>
+<Accordion title="member full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: member.deleted,
+  member: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        members: {
+            deleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Edited
+
+`members.edited`
+
+A member was edited (member.edited).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `member.edited` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `member` | `object` | Yes | The member before and after. |
+
+<AccordionGroup>
+<Accordion title="member full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: member.edited,
+  member: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        members: {
+            edited: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Pages
+
+### Added
+
+`pages.added`
+
+A page was created (page.added).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `page.added` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `page` | `object` | Yes | The page before and after. |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: page.added,
+  page: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        pages: {
+            added: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Deleted
+
+`pages.deleted`
+
+A page was deleted (page.deleted).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `page.deleted` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `page` | `object` | Yes | The page before and after. |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: page.deleted,
+  page: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        pages: {
+            deleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Edited
+
+`pages.edited`
+
+A page was edited (page.edited).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `page.edited` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `page` | `object` | Yes | The page before and after. |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: page.edited,
+  page: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        pages: {
+            edited: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Published
+
+`pages.published`
+
+A page was published (page.published).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `page.published` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `page` | `object` | Yes | The page before and after. |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: page.published,
+  page: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        pages: {
+            published: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Published Edited
+
+`pages.publishedEdited`
+
+A page was edited after it was published (page.published.edited).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `page.published.edited` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `page` | `object` | Yes | The page before and after. |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: page.published.edited,
+  page: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        pages: {
+            publishedEdited: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Rescheduled
+
+`pages.rescheduled`
+
+A page was rescheduled (page.rescheduled).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `page.rescheduled` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `page` | `object` | Yes | The page before and after. |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: page.rescheduled,
+  page: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        pages: {
+            rescheduled: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Scheduled
+
+`pages.scheduled`
+
+A page was scheduled (page.scheduled).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `page.scheduled` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `page` | `object` | Yes | The page before and after. |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: page.scheduled,
+  page: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        pages: {
+            scheduled: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Tag Attached
+
+`pages.tagAttached`
+
+A page got a tag (page.tag.attached).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `page.tag.attached` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `page` | `object` | Yes | The page before and after. |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: page.tag.attached,
+  page: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        pages: {
+            tagAttached: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Tag Detached
+
+`pages.tagDetached`
+
+A page lost a tag (page.tag.detached).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `page.tag.detached` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `page` | `object` | Yes | The page before and after. |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: page.tag.detached,
+  page: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        pages: {
+            tagDetached: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Unpublished
+
+`pages.unpublished`
+
+A page went back to draft (page.unpublished).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `page.unpublished` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `page` | `object` | Yes | The page before and after. |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: page.unpublished,
+  page: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        pages: {
+            unpublished: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Unscheduled
+
+`pages.unscheduled`
+
+A page was unscheduled (page.unscheduled).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `page.unscheduled` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `page` | `object` | Yes | The page before and after. |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: page.unscheduled,
+  page: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        pages: {
+            unscheduled: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Posts
+
+### Added
+
+`posts.added`
+
+A post was created (post.added).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `post.added` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `post` | `object` | Yes | The post before and after. |
+
+<AccordionGroup>
+<Accordion title="post full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: post.added,
+  post: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        posts: {
+            added: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Deleted
+
+`posts.deleted`
+
+A post was deleted (post.deleted).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `post.deleted` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `post` | `object` | Yes | The post before and after. |
+
+<AccordionGroup>
+<Accordion title="post full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: post.deleted,
+  post: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        posts: {
+            deleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Edited
+
+`posts.edited`
+
+A post was edited (post.edited).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `post.edited` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `post` | `object` | Yes | The post before and after. |
+
+<AccordionGroup>
+<Accordion title="post full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: post.edited,
+  post: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        posts: {
+            edited: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Published
+
+`posts.published`
+
+A post was published (post.published).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `post.published` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `post` | `object` | Yes | The post before and after. |
+
+<AccordionGroup>
+<Accordion title="post full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: post.published,
+  post: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        posts: {
+            published: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Published Edited
+
+`posts.publishedEdited`
+
+A post was edited after it was published (post.published.edited).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `post.published.edited` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `post` | `object` | Yes | The post before and after. |
+
+<AccordionGroup>
+<Accordion title="post full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: post.published.edited,
+  post: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        posts: {
+            publishedEdited: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Rescheduled
+
+`posts.rescheduled`
+
+A post was rescheduled (post.rescheduled).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `post.rescheduled` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `post` | `object` | Yes | The post before and after. |
+
+<AccordionGroup>
+<Accordion title="post full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: post.rescheduled,
+  post: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        posts: {
+            rescheduled: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Scheduled
+
+`posts.scheduled`
+
+A post was scheduled (post.scheduled).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `post.scheduled` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `post` | `object` | Yes | The post before and after. |
+
+<AccordionGroup>
+<Accordion title="post full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: post.scheduled,
+  post: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        posts: {
+            scheduled: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Tag Attached
+
+`posts.tagAttached`
+
+A post got a tag (post.tag.attached).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `post.tag.attached` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `post` | `object` | Yes | The post before and after. |
+
+<AccordionGroup>
+<Accordion title="post full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: post.tag.attached,
+  post: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        posts: {
+            tagAttached: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Tag Detached
+
+`posts.tagDetached`
+
+A post lost a tag (post.tag.detached).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `post.tag.detached` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `post` | `object` | Yes | The post before and after. |
+
+<AccordionGroup>
+<Accordion title="post full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: post.tag.detached,
+  post: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        posts: {
+            tagDetached: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Unpublished
+
+`posts.unpublished`
+
+A post went back to draft (post.unpublished).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `post.unpublished` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `post` | `object` | Yes | The post before and after. |
+
+<AccordionGroup>
+<Accordion title="post full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: post.unpublished,
+  post: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        posts: {
+            unpublished: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Unscheduled
+
+`posts.unscheduled`
+
+A post was unscheduled (post.unscheduled).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `post.unscheduled` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `post` | `object` | Yes | The post before and after. |
+
+<AccordionGroup>
+<Accordion title="post full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: post.unscheduled,
+  post: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        posts: {
+            unscheduled: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Site
+
+### Changed
+
+`site.changed`
+
+Any content on the site changed (site.changed).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `site.changed` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: site.changed
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        site: {
+            changed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Tags
+
+### Added
+
+`tags.added`
+
+A tag was created (tag.added).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `tag.added` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `tag` | `object` | Yes | The tag before and after. |
+
+<AccordionGroup>
+<Accordion title="tag full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: tag.added,
+  tag: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        tags: {
+            added: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Deleted
+
+`tags.deleted`
+
+A tag was deleted (tag.deleted).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `tag.deleted` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `tag` | `object` | Yes | The tag before and after. |
+
+<AccordionGroup>
+<Accordion title="tag full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: tag.deleted,
+  tag: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        tags: {
+            deleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Edited
+
+`tags.edited`
+
+A tag was edited (tag.edited).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `tag.edited` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
+| `tag` | `object` | Yes | The tag before and after. |
+
+<AccordionGroup>
+<Accordion title="tag full type">
+
+```ts
+{
+  current: {
+    id?: string | null,
+    uuid?: string | null,
+    title?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    status?: string | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    published_at?: string | null
+  } | {
+  },
+  previous: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: tag.edited,
+  tag: {
+    current: {
+      id?: string | null,
+      uuid?: string | null,
+      title?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      status?: string | null,
+      url?: string | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      published_at?: string | null
+    } | {
+    },
+    previous: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ghost({
+    webhookHooks: {
+        tags: {
+            edited: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
