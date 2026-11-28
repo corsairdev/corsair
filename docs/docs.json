@@ -1246,6 +1246,14 @@
                 ]
               },
               {
+                "group": "Chargebee",
+                "pages": [
+                  "plugins/chargebee/overview",
+                  "plugins/chargebee/api",
+                  "plugins/chargebee/database"
+                ]
+              },
+              {
                 "group": "Chaser",
                 "pages": [
                   "plugins/chaser/overview",

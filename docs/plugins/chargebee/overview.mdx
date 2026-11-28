@@ -1,0 +1,135 @@
+---
+title: "Chargebee plugin"
+sidebarTitle: "Overview"
+description: "Subscription billing with Chargebee: customers, subscriptions, items and prices, invoices, credit notes, payments, coupons, quotes, estimates, hosted pages, usage, entitlements and exports, on Product Catalog 2.0 and 1.0 sites (546 operations)."
+---
+
+Use **Chargebee** through Corsair: one client, typed API calls.
+
+Connect with a Chargebee API key and your site name (the part before `.chargebee.com`; a test site's name ends in `-test`). Test and live sites have separate keys. Things to know before you write:
+
+- **Product Catalog.** Sites made since 2021 use Product Catalog 2.0: items, item prices and `customers.createSubscriptionForItems`. Older sites use 1.0: plans, addons and the routes marked "Product Catalog 1.0 sites only". A route from the other catalog answers 400 `configuration_incompatible`, unless Chargebee has turned on catalog coexistence for the site.
+- **Money moves.** Creating or updating a subscription, invoicing, collecting payment, charging, refunding and voiding are `destructive`: on a live site they charge real cards. Estimates (`estimates.*`, `*Estimate`) compute the same numbers without changing anything.
+- **Lists** take `limit` (up to 100) and `offset`; pass the response's `next_offset` back as `offset`. Filters use Chargebee's operators: `status: { is: 'active' }`, `created_at: { after: 1700000000 }`.
+- **Nested fields** follow the API reference: `billing_address: { city }`, `subscription_items: { item_price_id: ['plan-USD-monthly'], quantity: [1] }` (one list per field, index by index). The plugin sends them in Chargebee's bracket form. `meta_data` is a JSON object.
+- **Time machine** (`timeMachines.*`) works on test sites only and resets or moves the whole site.
+
+**What you get:**
+
+- 546 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/chargebee better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/chargebee better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/chargebee better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/chargebee better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { chargebee } from '@corsair-dev/chargebee';
+
+export const corsair = createCorsair({
+	plugins: [
+		chargebee(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Chargebee API key before the first call: `pnpm corsair setup --plugin=chargebee --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+chargebee()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'chargebee',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List customers**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.chargebee.api.customers.list({ limit: 10 });
+```
+
+
+**Create a customer**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.chargebee.api.customers.create({ first_name: 'Ada', last_name: 'Lovelace', email: 'ada@example.com' });
+```
+
+
+See the full list on the [API](/plugins/chargebee/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/chargebee/api">
+    Every `chargebee.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

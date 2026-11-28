@@ -145,6 +145,7 @@ export const BaseProviders = [
 	'celigo',
 	'certifier',
 	'certspotter',
+	'chargebee',
 	'chaser',
 	'chatbotkit',
 	'chatfai',
@@ -965,6 +966,7 @@ export const ProviderDisplayNames = {
 	celigo: 'Celigo',
 	certifier: 'Certifier',
 	certspotter: 'SSLMate Cert Spotter',
+	chargebee: 'Chargebee',
 	chaser: 'Chaser',
 	chatbotkit: 'ChatBotKit',
 	chatfai: 'ChatFAI',
@@ -1792,6 +1794,7 @@ export type AllProviders =
 	| 'celigo'
 	| 'certifier'
 	| 'certspotter'
+	| 'chargebee'
 	| 'chaser'
 	| 'chatbotkit'
 	| 'chatfai'
