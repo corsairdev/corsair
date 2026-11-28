@@ -239,7 +239,7 @@ describe('describeDocRaptorErrorBody', () => {
 	it('stays fast on a body built to make a regex backtrack', () => {
 		const started = Date.now();
 		const body = '<error\t'.repeat(50_000);
-		expect(describeDocRaptorErrorBody(body, 'fallback')).toBe(body);
+		expect(describeDocRaptorErrorBody(body, 'fallback')).toBe(body.trim());
 		expect(Date.now() - started).toBeLessThan(500);
 	});
 
