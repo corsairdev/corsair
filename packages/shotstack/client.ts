@@ -1,4 +1,3 @@
-import { createHash } from 'node:crypto';
 import { asRecord } from 'corsair/core';
 import type {
 	ApiRequestOptions,
@@ -318,13 +317,10 @@ export async function configuredEnvironment(
 	);
 }
 
-// Which environment a key answered on, by a hash of the key, so a key is
-// probed once per process rather than on every call.
+// Which environment a key answered on, so a key is probed once per process
+// rather than on every call. In memory only, like the key in ctx.key; never
+// logged or persisted.
 const environmentOf = new Map<string, ShotstackEnvironment>();
-
-function fingerprint(apiKey: string): string {
-	return createHash('sha256').update(apiKey).digest('hex').slice(0, 32);
-}
 
 /** Forget learned environments (tests). */
 export function resetShotstackEnvironmentCache(): void {
@@ -345,7 +341,7 @@ export async function shotstackRequest(
 	const configured = await configuredEnvironment(ctx);
 	if (configured) return makeShotstackRequest(ctx.key, req, configured);
 
-	const id = fingerprint(ctx.key);
+	const id = ctx.key;
 	const known = environmentOf.get(id);
 	if (known) {
 		try {
