@@ -59,6 +59,34 @@ export type DocRaptorRequest = {
  * `{ errors: [...] }` on expire failures, and an EMPTY body on some 403s.
  * This pulls a human message out of any of the three and falls back otherwise.
  */
+/**
+ * The text of each `<error ...>...</error>` element, found with a linear
+ * scan instead of a backtracking regex (the body is untrusted).
+ */
+function xmlErrorMessages(text: string): string[] {
+	const lower = text.toLowerCase();
+	const messages: string[] = [];
+	let from = 0;
+	for (;;) {
+		const open = lower.indexOf('<error', from);
+		if (open === -1) break;
+		const next = lower.charAt(open + 6);
+		// `<errors>` or `<error-x>` is another element; skip past it.
+		if (next !== '>' && !/\s/.test(next)) {
+			from = open + 6;
+			continue;
+		}
+		const tagEnd = lower.indexOf('>', open);
+		if (tagEnd === -1) break;
+		const close = lower.indexOf('</error>', tagEnd + 1);
+		if (close === -1) break;
+		const message = text.slice(tagEnd + 1, close).trim();
+		if (message) messages.push(message);
+		from = close + 8;
+	}
+	return messages;
+}
+
 export function describeDocRaptorErrorBody(
 	body: unknown,
 	fallback: string,
@@ -66,11 +94,7 @@ export function describeDocRaptorErrorBody(
 	if (typeof body === 'string') {
 		const trimmed = body.trim();
 		if (!trimmed) return fallback;
-		const xmlMessages = [
-			...trimmed.matchAll(/<error(?:\s[^>]*)?>([\s\S]*?)<\/error>/gi),
-		]
-			.map((match) => (match[1] ?? '').trim())
-			.filter(Boolean);
+		const xmlMessages = xmlErrorMessages(trimmed);
 		if (xmlMessages.length > 0) return xmlMessages.join('; ');
 		if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
 			try {

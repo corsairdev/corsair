@@ -227,6 +227,22 @@ describe('makeDocRaptorRequest', () => {
 });
 
 describe('describeDocRaptorErrorBody', () => {
+	it('reads an error element with attributes and skips <errors>', () => {
+		expect(
+			describeDocRaptorErrorBody(
+				'<errors><error code="x">First</error><error>Second</error></errors>',
+				'',
+			),
+		).toBe('First; Second');
+	});
+
+	it('stays fast on a body built to make a regex backtrack', () => {
+		const started = Date.now();
+		const body = '<error\t'.repeat(50_000);
+		expect(describeDocRaptorErrorBody(body, 'fallback')).toBe(body);
+		expect(Date.now() - started).toBeLessThan(500);
+	});
+
 	it('joins several XML error messages', () => {
 		expect(
 			describeDocRaptorErrorBody(
