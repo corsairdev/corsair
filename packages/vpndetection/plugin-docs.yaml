@@ -1,9 +1,13 @@
 displayName: VPNDetection
-description: Check whether an IP address is a VPN, a Tor node or a privacy relay such as iCloud Private Relay, with its country and ASN, with or without an API key.
+description: Check whether an IP address is a VPN, a Tor node, a privacy relay such as iCloud Private Relay, a proxy or a hosting address, one address or up to 1000 at a time, with its country and ASN; download VPNDetection's IP databases, read the plan and usage, manage API keys, and receive signed database-update webhooks.
 domain: vpndetection.io
 recommendedAuth: api_key
 overviewNote: |
-  The API answers without a key, so the plugin works with none stored: leave the key unset and each lookup goes out keyless. A key from vpndetection.io adds the fields its plan includes, which pass through unchanged. Keyless use is covered by the API's [terms](https://vpndetection.io/terms) and [privacy policy](https://vpndetection.io/privacy).
+  The API answers lookups without a key, so the plugin works with none stored: leave the key unset and each lookup goes out keyless. A key from vpndetection.io (free, made in the console under API > Keys) adds the fields its plan includes, which pass through unchanged, and is needed for everything else. Keyless use is covered by the API's [terms](https://vpndetection.io/terms) and [privacy policy](https://vpndetection.io/privacy).
+
+  - **Scopes.** A key carries `ip.lookup` (the lookups) and `db.download` (the `databases.*` routes). The account, organization and `apiKeys.*` routes need an OAuth scope (`account.read`, `org.read`, `apikeys.read`, `apikeys.manage`, `apikeys.reveal`) that an API key cannot hold: with a key they answer 403 `FORBIDDEN`. Store an OAuth access token from VPNDetection's authorization server as the key to use them.
+  - **Plans.** `ip.batch` needs a paid plan; on the free plan a batch of one is answered and anything larger is a 402. A field the plan does not include is absent rather than `false`, so test for presence.
+  - **Webhooks.** In the console under Database > Delivery, add a webhook destination pointing at your Corsair webhook URL, tick the databases to announce, and give the plugin the destination's signing secret (`whsec_...`) as `webhookSecret` (or store it as the account's webhook signature). Deliveries are checked to the Standard Webhooks spec and refused when older than five minutes.
 examples:
   read:
     path: ip.lookup
@@ -12,7 +16,31 @@ examples:
       ip: 185.65.135.230
 apiNotes:
   ip.lookup: |
-    Omit `ip` and the service looks up the caller address. Every answer carries `ip`, `is_vpn`, `is_tor`, `is_relay`, `is_bogon`, `is_anycast`, `tor`, `relay`, `location`, `asn` and `hostname`. A lookup with an explicit `ip` is saved to the `lookups` table under that address, replacing the previous row for it; a lookup without `ip` is returned but not saved, and a failed save does not fail the lookup. Anything but an IPv4 or IPv6 address in `ip` is refused before the request.
+    Omit `ip` and the service looks up the caller address. Only `ip` and `is_vpn` are always present. A keyless or free-plan answer usually also carries `is_tor`, `is_relay`, `is_bogon`, `is_anycast`, `tor`, `relay`, `location`, `asn` and `hostname`, and a paid plan or a trial adds the other `is_*` flags and their detail objects; any field the plan does not include is absent, so test for presence. A lookup with an explicit `ip` is saved to the `lookups` table under that address, replacing the previous row for it; a lookup without `ip` is returned but not saved, and a failed save does not fail the lookup. Anything but an IPv4 or IPv6 address in `ip` is refused before the request. `userAgent` adds a verdict on the visitor's User-Agent and is never kept.
+  ip.batch: |
+    Up to 1000 strings in `ips`; each distinct string costs what one lookup costs. Both maps in the answer are keyed by the string as sent: `results` holds the answers, `errors` the strings that could not be answered (a non-address is a 400 there). Each answer is saved to `lookups` like a single lookup. The free plan answers a batch of one address and refuses anything larger with 402.
+  databases.list: |
+    Every database family with the organization's license `standing` (`licensed`, `expired`, `unlicensed`) and its versions. Pass a `versions[].id` (e.g. `tor_ip_v1`) to the other `databases.*` routes. Every organization holds a license to the Open databases (Tor, relay).
+  databases.download: |
+    Returns `{ url }`: the time-limited object-storage link the API redirects to. The redirect is not followed, so no file is downloaded; fetch `url` yourself. A database the organization holds no license for answers 403 `NOT_LICENSED`; a format a database is not built in answers 400 `INVALID_FORMAT`; a `build` older than 7 days answers 410 `BUILD_GONE`.
+  databases.metadata: |
+    The version's update frequency, last update, entry count and column schema per format, without a license.
+  databases.downloads: |
+    Recent download attempts for the organization, refusals included, newest first.
+  entitlement.get: |
+    The plan behind the key (`free` is named Unlimited) and the requests used against its quota between `window_start` and `window_end`.
+  apiKeys.create: |
+    Needs an OAuth token with `apikeys.manage`. The answer carries the new secret once; read it back later with `apiKeys.reveal`.
+  apiKeys.rotate: |
+    The old secret stops working at once and the new one comes back in the answer.
 apiExamples:
   ip.lookup:
     call: "{ ip: '185.65.135.230' }"
+  ip.batch:
+    call: "{ ips: ['185.65.135.230', '185.220.101.1'] }"
+  databases.download:
+    call: "{ id: 'tor_ip_v1', format: 'mmdb' }"
+  databases.checksum:
+    call: "{ id: 'tor_ip_v1', format: 'csvgz' }"
+  apiKeys.create:
+    call: "{ name: 'ci', allowedScopes: ['ip.lookup'] }"

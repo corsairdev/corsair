@@ -1,0 +1,364 @@
+---
+title: "VPNDetection webhooks"
+sidebarTitle: "Webhooks"
+description: "VPNDetection incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The VPNDetection plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/vpndetection/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `database`
+  - `delivered` (`database.delivered`)
+  - `deliveryFailed` (`database.deliveryFailed`)
+  - `test` (`database.test`)
+  - `updated` (`database.updated`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
+}
+```
+
+## Events
+
+## Database
+
+### Delivered
+
+`database.delivered`
+
+New files reached one of the organization's storage destinations
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `database.delivered` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  destination?: {
+    id?: string,
+    name?: string,
+    kind?: string
+  },
+  build?: string,
+  files?: {
+    format?: string,
+    size?: number,
+    sha256?: string,
+    url?: string,
+    dataset?: string,
+    path?: string,
+    build?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: database.delivered,
+  timestamp: string,
+  data: {
+    destination?: {
+      id?: string,
+      name?: string,
+      kind?: string
+    },
+    build?: string,
+    files?: {
+      format?: string,
+      size?: number,
+      sha256?: string,
+      url?: string,
+      dataset?: string,
+      path?: string,
+      build?: string
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+vpndetection({
+    webhookHooks: {
+        database: {
+            delivered: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Delivery Failed
+
+`database.deliveryFailed`
+
+Deliveries to one of the organization's storage destinations have failed for a day
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `database.delivery_failed` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  destination?: {
+    id?: string,
+    name?: string,
+    kind?: string
+  },
+  failing_since?: string,
+  error_code?: string,
+  error?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: database.delivery_failed,
+  timestamp: string,
+  data: {
+    destination?: {
+      id?: string,
+      name?: string,
+      kind?: string
+    },
+    failing_since?: string,
+    error_code?: string,
+    error?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+vpndetection({
+    webhookHooks: {
+        database: {
+            deliveryFailed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Test
+
+`database.test`
+
+Test connection was clicked for this destination in the console
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `database.test` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: database.test,
+  timestamp: string,
+  data?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+vpndetection({
+    webhookHooks: {
+        database: {
+            test: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Updated
+
+`database.updated`
+
+A database the destination announces was published with new contents; carries the build and each file with its size, SHA-256 and download URL
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `database.updated` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  dataset: string,
+  name?: string,
+  build: string,
+  published_at?: string,
+  files?: {
+    format?: string,
+    size?: number,
+    sha256?: string,
+    url?: string,
+    dataset?: string,
+    path?: string,
+    build?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: database.updated,
+  timestamp: string,
+  data: {
+    dataset: string,
+    name?: string,
+    build: string,
+    published_at?: string,
+    files?: {
+      format?: string,
+      size?: number,
+      sha256?: string,
+      url?: string,
+      dataset?: string,
+      path?: string,
+      build?: string
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+vpndetection({
+    webhookHooks: {
+        database: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

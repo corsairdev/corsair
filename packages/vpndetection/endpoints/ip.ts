@@ -1,10 +1,20 @@
 import type { CorsairEndpoint } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
-import { makeVpndetectionRequest } from '../client';
+import { makeVpndetectionRequest, vpndetectionRequest } from '../client';
 import type { VpndetectionContext } from '../context';
 import { VpndetectionLookupEntity } from '../schema/database';
-import type { LookupIpInput, LookupIpResponse } from './types';
-import { LookupIpInputSchema, LookupIpResponseSchema } from './types';
+import type {
+	BatchLookupInput,
+	BatchLookupResponse,
+	LookupIpInput,
+	LookupIpResponse,
+} from './types';
+import {
+	BatchLookupInputSchema,
+	BatchLookupResponseSchema,
+	LookupIpInputSchema,
+	LookupIpResponseSchema,
+} from './types';
 
 export const lookup: CorsairEndpoint<
 	VpndetectionContext,
@@ -13,7 +23,11 @@ export const lookup: CorsairEndpoint<
 > = async (ctx, input) => {
 	const parsed = LookupIpInputSchema.parse(input);
 	// `unknown` until LookupIpResponseSchema parses it: the body is untrusted provider JSON.
-	const body = await makeVpndetectionRequest<unknown>(ctx.key ?? '', parsed.ip);
+	const body = await makeVpndetectionRequest<unknown>(
+		ctx.key ?? '',
+		parsed.ip,
+		parsed.userAgent,
+	);
 	const result = LookupIpResponseSchema.parse(body);
 
 	await storeLookup(ctx, parsed.ip, result);
@@ -62,4 +76,40 @@ function toRow(result: LookupIpResponse): Record<string, unknown> {
 	};
 }
 
-export const Ip = { lookup };
+/**
+ * Up to 1000 addresses in one call (a paid plan; a free key answers a batch
+ * of one). Each answer is saved to `lookups` like a single lookup's; an
+ * address that could not be answered stays in `errors` and is not saved.
+ */
+export const batch: CorsairEndpoint<
+	VpndetectionContext,
+	BatchLookupInput,
+	BatchLookupResponse
+> = async (ctx, input) => {
+	const parsed = BatchLookupInputSchema.parse(input);
+	// `unknown` until BatchLookupResponseSchema parses it: untrusted provider JSON.
+	const body = await vpndetectionRequest<unknown>(ctx.key ?? '', {
+		method: 'POST',
+		path: '/batch',
+		body: { ips: parsed.ips, user_agents: parsed.userAgents },
+	});
+	const result = BatchLookupResponseSchema.parse(body);
+
+	for (const answer of Object.values(result.results)) {
+		await storeLookup(ctx, answer.ip, answer);
+	}
+	await logEventFromContext(
+		ctx,
+		'vpndetection.ip.batch',
+		{
+			requested: parsed.ips.length,
+			answered: Object.keys(result.results).length,
+			failed: Object.keys(result.errors).length,
+		},
+		'completed',
+	);
+
+	return result;
+};
+
+export const Ip = { lookup, batch };

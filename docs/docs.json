@@ -6487,7 +6487,8 @@
                 "pages": [
                   "plugins/vpndetection/overview",
                   "plugins/vpndetection/api",
-                  "plugins/vpndetection/database"
+                  "plugins/vpndetection/database",
+                  "plugins/vpndetection/webhooks"
                 ]
               },
               {
