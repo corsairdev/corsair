@@ -68,14 +68,20 @@ describe('chargebee-manifest.json', () => {
 					loose.push(`${operation.id}.${name}`);
 				}
 			}
-			for (const match of operation.path.matchAll(/\{(\w+)\}/g)) {
+			// Chargebee's placeholders are hyphenated (`{customer-id}`).
+			for (const match of operation.path.matchAll(/\{([\w-]+)\}/g)) {
 				const wire = match[1];
-				const declared = Object.entries(properties).some(
+				const declared = Object.entries(properties).filter(
 					([name, schema]) =>
 						schema['x-corsair-in'] === 'path' &&
 						(schema['x-corsair-name'] ?? name) === wire,
 				);
-				if (!declared) loose.push(`${operation.id}: {${wire}} undeclared`);
+				// Exactly one field per placeholder: a second one would overwrite
+				// the first in the request's path values.
+				if (declared.length !== 1)
+					loose.push(
+						`${operation.id}: {${wire}} declared ${declared.length} times`,
+					);
 			}
 		}
 		expect(loose).toEqual([]);
@@ -152,9 +158,13 @@ describe('schemas', () => {
 });
 
 describe('risk levels (R8)', () => {
-	it('marks every DELETE destructive', () => {
-		const wrong = chargebeeOperations
-			.filter((o) => o.method === 'DELETE')
+	it('marks every delete route destructive', () => {
+		// Chargebee deletes with POST /<resource>/{id}/delete, never DELETE.
+		const deletes = chargebeeOperations.filter(
+			(o) => o.method === 'DELETE' || /\/delete\w*$/.test(o.path),
+		);
+		expect(deletes.length).toBeGreaterThan(20);
+		const wrong = deletes
 			.filter(
 				(o) =>
 					chargebeeEndpointMeta[o.id as keyof typeof chargebeeEndpointMeta]

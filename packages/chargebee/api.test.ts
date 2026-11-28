@@ -240,6 +240,12 @@ describeIfKey('chargebee live', () => {
 				...failed.map((s) => `  FAILED ${s.id} ${s.status ?? ''} ${s.note}`),
 			].join('\n'),
 		);
+		// Every cleanup has run by now; one that failed left a record behind.
+		expect(
+			steps
+				.filter((s) => s.id.startsWith('cleanup:') && !s.ok)
+				.map((s) => `${s.id}: ${s.note}`),
+		).toEqual([]);
 	});
 
 	it('reads every list route and one record from each', async () => {
