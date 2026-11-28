@@ -632,12 +632,15 @@ export async function makeAzureDevopsHeaderRequest(
 		...options,
 		query: { ...options.query, ...target.query },
 	});
+	// The sent body is here so an error that quotes it back is scrubbed;
+	// the rebuilt error replaces it with a placeholder.
 	const requestOptions: ApiRequestOptions = {
 		method: options.method,
 		url: options.path,
 		path: options.pathParameters,
 		query: options.query,
 		headers: options.headers,
+		body: sent,
 	};
 	const maxRetries = options.singleAttempt
 		? 0

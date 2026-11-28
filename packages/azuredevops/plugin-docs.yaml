@@ -29,7 +29,7 @@ examples:
     args: {"project": "Fabrikam-Fiber", "type": "Task", "body": [{"op": "add", "path": "/fields/System.Title", "value": "Write the release notes"}]}
 apiExamples:
   account.accounts.list:
-    args: {}
+    args: {"memberId": "35d99968-0000-4000-8000-000000000001"}
   approvalsAndChecks.approvals.get:
     args: {"project": "Fabrikam-Fiber", "approvalId": "example"}
   approvalsAndChecks.approvals.query:
@@ -339,7 +339,7 @@ apiExamples:
   build.definitions.list:
     args: {"project": "Fabrikam-Fiber"}
   build.definitions.restoreDefinition:
-    args: {"project": "Fabrikam-Fiber", "definitionId": 12, "deleted": true}
+    args: {"project": "Fabrikam-Fiber", "definitionId": 12, "deleted": false}
   build.definitions.update:
     args: {"project": "Fabrikam-Fiber", "definitionId": 12}
   build.folders.create:
@@ -1871,7 +1871,7 @@ apiExamples:
   wit.attachments.get:
     args: {"id": "1", "project": "Fabrikam-Fiber"}
   wit.attachments.uploadChunk:
-    args: {"id": "1", "project": "Fabrikam-Fiber", "file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+    args: {"project": "Fabrikam-Fiber", "id": "5a2c1f3e-7b1d-4c8e-9f20-3d4a5b6c7d8e", "fileName": "notes.txt", "contentRange": "bytes 0-15/16", "file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
   wit.classificationNodes.createOrUpdate:
     args: {"project": "Fabrikam-Fiber", "structureGroup": "areas", "path": "Web", "name": "Frontend"}
   wit.classificationNodes.delete:

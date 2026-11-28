@@ -1356,11 +1356,6 @@
 				"api-version": "7.1"
 			},
 			"host": "feeds.dev.azure.com",
-			"headerCursor": {
-				"header": "x-ms-continuationtoken",
-				"items": "items",
-				"input": "continuationToken"
-			},
 			"input": {
 				"type": "object",
 				"properties": {
@@ -1403,11 +1398,6 @@
 				"api-version": "7.1"
 			},
 			"host": "feeds.dev.azure.com",
-			"headerCursor": {
-				"header": "x-ms-continuationtoken",
-				"items": "items",
-				"input": "continuationToken"
-			},
 			"input": {
 				"type": "object",
 				"properties": {
@@ -12027,9 +12017,16 @@
 						"x-corsair-in": "query"
 					},
 					"continuationToken": {
-						"type": "integer",
 						"description": "Pointer that shows how many projects already been fetched.",
-						"x-corsair-in": "query"
+						"x-corsair-in": "query",
+						"anyOf": [
+							{
+								"type": "integer"
+							},
+							{
+								"type": "string"
+							}
+						]
 					},
 					"getDefaultTeamImageUrl": {
 						"type": "boolean",
@@ -17286,9 +17283,16 @@
 						"x-corsair-in": "query"
 					},
 					"continuationToken": {
-						"type": "integer",
 						"description": "Gets the variable groups after the continuation token provided.",
-						"x-corsair-in": "query"
+						"x-corsair-in": "query",
+						"anyOf": [
+							{
+								"type": "integer"
+							},
+							{
+								"type": "string"
+							}
+						]
 					},
 					"queryOrder": {
 						"type": "string",
@@ -33159,14 +33163,21 @@
 						"x-corsair-in": "path"
 					},
 					"$expand": {
-						"type": "string",
-						"enum": [
-							"none",
-							"states",
-							"behaviors",
-							"layout"
-						],
 						"description": "Flag to determine what properties of work item type to return",
+						"anyOf": [
+							{
+								"type": "string",
+								"enum": [
+									"none",
+									"states",
+									"behaviors",
+									"layout"
+								]
+							},
+							{
+								"type": "integer"
+							}
+						],
 						"x-corsair-in": "query"
 					}
 				},
@@ -33199,14 +33210,21 @@
 						"x-corsair-in": "path"
 					},
 					"$expand": {
-						"type": "string",
-						"enum": [
-							"none",
-							"states",
-							"behaviors",
-							"layout"
-						],
 						"description": "Flag to determine what properties of work item type to return",
+						"anyOf": [
+							{
+								"type": "string",
+								"enum": [
+									"none",
+									"states",
+									"behaviors",
+									"layout"
+								]
+							},
+							{
+								"type": "integer"
+							}
+						],
 						"x-corsair-in": "query"
 					}
 				},
@@ -33623,9 +33641,16 @@
 						"x-corsair-in": "query"
 					},
 					"continuationToken": {
-						"type": "integer",
 						"description": "Gets the approvals after the continuation token provided.",
-						"x-corsair-in": "query"
+						"x-corsair-in": "query",
+						"anyOf": [
+							{
+								"type": "integer"
+							},
+							{
+								"type": "string"
+							}
+						]
 					},
 					"queryOrder": {
 						"type": "string",
@@ -34770,8 +34795,15 @@
 						"x-corsair-in": "query"
 					},
 					"continuationToken": {
-						"type": "integer",
-						"x-corsair-in": "query"
+						"x-corsair-in": "query",
+						"anyOf": [
+							{
+								"type": "integer"
+							},
+							{
+								"type": "string"
+							}
+						]
 					},
 					"createdFor": {
 						"type": "string",
@@ -35625,9 +35657,16 @@
 						"x-corsair-in": "query"
 					},
 					"continuationToken": {
-						"type": "integer",
 						"description": "Gets the releases after the continuation token provided.",
-						"x-corsair-in": "query"
+						"x-corsair-in": "query",
+						"anyOf": [
+							{
+								"type": "integer"
+							},
+							{
+								"type": "string"
+							}
+						]
 					},
 					"$expand": {
 						"type": "string",
@@ -37763,9 +37802,16 @@
 						"x-corsair-in": "query"
 					},
 					"continuationToken": {
-						"type": "integer",
 						"description": "A continuation token, returned by a previous call to this method, that can be used to return the next set of records",
-						"x-corsair-in": "query"
+						"x-corsair-in": "query",
+						"anyOf": [
+							{
+								"type": "integer"
+							},
+							{
+								"type": "string"
+							}
+						]
 					}
 				},
 				"required": [
@@ -41462,13 +41508,20 @@
 						"x-corsair-in": "query"
 					},
 					"excludeFlags": {
-						"type": "string",
-						"enum": [
-							"none",
-							"pointAssignments",
-							"extraInformation"
-						],
 						"description": "Flag to exclude various values from payload. For example to remove point assignments pass exclude = 1. To remove extra information (links, test plan , test suite) pass exclude = 2. To remove both extra information and point assignments pass exclude = 3 (1 + 2).",
+						"anyOf": [
+							{
+								"type": "string",
+								"enum": [
+									"none",
+									"pointAssignments",
+									"extraInformation"
+								]
+							},
+							{
+								"type": "integer"
+							}
+						],
 						"x-corsair-in": "query"
 					},
 					"isRecursive": {
@@ -51368,12 +51421,19 @@
 						"x-corsair-in": "query"
 					},
 					"errorPolicy": {
-						"type": "string",
-						"enum": [
-							"fail",
-							"omit"
-						],
 						"description": "Flag to handle errors in getting some nodes. Possible options are Fail and Omit.",
+						"anyOf": [
+							{
+								"type": "string",
+								"enum": [
+									"fail",
+									"omit"
+								]
+							},
+							{
+								"type": "integer"
+							}
+						],
 						"x-corsair-in": "query"
 					}
 				},
@@ -52862,9 +52922,17 @@
 					},
 					"errorPolicy": {
 						"description": "The flag to control error policy in a query batch request. Possible options are { Fail, Omit }.",
-						"enum": [
-							"fail",
-							"omit"
+						"anyOf": [
+							{
+								"type": "string",
+								"enum": [
+									"fail",
+									"omit"
+								]
+							},
+							{
+								"type": "integer"
+							}
 						]
 					},
 					"ids": {
@@ -55209,9 +55277,17 @@
 					},
 					"errorPolicy": {
 						"description": "The flag to control error policy in a bulk get work items request. Possible options are {Fail, Omit}.",
-						"enum": [
-							"fail",
-							"omit"
+						"anyOf": [
+							{
+								"type": "string",
+								"enum": [
+									"fail",
+									"omit"
+								]
+							},
+							{
+								"type": "integer"
+							}
 						]
 					},
 					"fields": {
@@ -55294,12 +55370,19 @@
 						"x-corsair-in": "query"
 					},
 					"errorPolicy": {
-						"type": "string",
-						"enum": [
-							"fail",
-							"omit"
-						],
 						"description": "The flag to control error policy in a bulk get work items request. Possible options are {Fail, Omit}.",
+						"anyOf": [
+							{
+								"type": "string",
+								"enum": [
+									"fail",
+									"omit"
+								]
+							},
+							{
+								"type": "integer"
+							}
+						],
 						"x-corsair-in": "query"
 					}
 				},

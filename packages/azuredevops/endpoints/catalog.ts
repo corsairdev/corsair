@@ -4951,9 +4951,8 @@ export const azuredevopsEndpointMeta = {
 	},
 	'artifacts.feedManagement.deleteFeed': {
 		riskLevel: 'destructive',
-		irreversible: true,
 		description:
-			'Remove a feed and all its packages. The feed moves to the recycle bin and is reversible. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. Token scope: vso.packaging_manage. Cannot be undone.',
+			'Remove a feed and all its packages. The feed moves to the recycle bin and is reversible. The project parameter must be supplied if the feed was created in a project. If the feed is not associated with any project, omit the project parameter from the request. Token scope: vso.packaging_manage. Goes to the recycle bin, restorable for 30 days.',
 	},
 	'artifacts.feedManagement.deleteFeedView': {
 		riskLevel: 'destructive',
@@ -5575,9 +5574,8 @@ export const azuredevopsEndpointMeta = {
 	},
 	'build.definitions.delete': {
 		riskLevel: 'destructive',
-		irreversible: true,
 		description:
-			'Deletes a definition and all associated builds. Token scope: vso.build_execute. Cannot be undone.',
+			'Deletes a definition and all associated builds. Token scope: vso.build_execute. Goes to the recycle bin, restorable for 30 days.',
 	},
 	'build.definitions.get': {
 		riskLevel: 'read',
@@ -6936,9 +6934,8 @@ export const azuredevopsEndpointMeta = {
 	},
 	'git.repositories.delete': {
 		riskLevel: 'destructive',
-		irreversible: true,
 		description:
-			'Delete a git repository. Token scope: vso.code_manage. Cannot be undone.',
+			'Delete a git repository. Token scope: vso.code_manage. Goes to the recycle bin, restorable for 30 days.',
 	},
 	'git.repositories.deleteRepositoryFromRecycleBin': {
 		riskLevel: 'destructive',
@@ -9738,9 +9735,8 @@ export const azuredevopsEndpointMeta = {
 	},
 	'wit.workItems.delete': {
 		riskLevel: 'destructive',
-		irreversible: true,
 		description:
-			'Deletes the specified work item and sends it to the Recycle Bin, so that it can be restored back, if required. Optionally, if the destroy parameter has been set to true, it destroys the work item permanently. Token scope: vso.work_write. Cannot be undone.',
+			'Deletes the specified work item and sends it to the Recycle Bin, so that it can be restored back, if required. Optionally, if the destroy parameter has been set to true, it destroys the work item permanently. Token scope: vso.work_write. Goes to the recycle bin, restorable for 30 days.',
 	},
 	'wit.workItems.deleteWorkItems': {
 		riskLevel: 'write',

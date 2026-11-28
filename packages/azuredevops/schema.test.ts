@@ -154,7 +154,15 @@ describe('schemas', () => {
 			const parsed = getAzureDevopsOutputSchema(operation.id).safeParse({
 				__added_later__: { nested: true },
 			});
-			if (!parsed.success) failed.push(operation.id);
+			if (
+				!parsed.success ||
+				!(
+					typeof parsed.data === 'object' &&
+					parsed.data !== null &&
+					'__added_later__' in parsed.data
+				)
+			)
+				failed.push(operation.id);
 		}
 		expect(failed).toEqual([]);
 	});

@@ -19398,7 +19398,7 @@ export type AzureDevopsOperationInputs = {
 		$top?: number;
 		$skip?: number;
 		/** Pointer that shows how many projects already been fetched. */
-		continuationToken?: number;
+		continuationToken?: (number | string);
 		getDefaultTeamImageUrl?: boolean;
 	};
 	'core.projects.setProjectProperties': {
@@ -20620,7 +20620,7 @@ export type AzureDevopsOperationInputs = {
 		/** Number of variable groups to get. */
 		$top?: number;
 		/** Gets the variable groups after the continuation token provided. */
-		continuationToken?: number;
+		continuationToken?: (number | string);
 		/** Gets the results in the defined order. Default is 'IdDescending'. */
 		queryOrder?: "idAscending" | "idDescending";
 	};
@@ -24210,13 +24210,13 @@ export type AzureDevopsOperationInputs = {
 		/** The reference name of the work item type */
 		witRefName: string;
 		/** Flag to determine what properties of work item type to return */
-		$expand?: "none" | "states" | "behaviors" | "layout";
+		$expand?: ("none" | "states" | "behaviors" | "layout" | number);
 	};
 	'processes.workItemTypes.list': {
 		/** The ID of the process */
 		processId: string;
 		/** Flag to determine what properties of work item type to return */
-		$expand?: "none" | "states" | "behaviors" | "layout";
+		$expand?: ("none" | "states" | "behaviors" | "layout" | number);
 	};
 	'processes.workItemTypes.update': {
 		/** The ID of the process */
@@ -24310,7 +24310,7 @@ export type AzureDevopsOperationInputs = {
 		/** Number of approvals to get. Default is 50. */
 		top?: number;
 		/** Gets the approvals after the continuation token provided. */
-		continuationToken?: number;
+		continuationToken?: (number | string);
 		/** Gets the results in the defined order of created approvals. Default is 'descending'. */
 		queryOrder?: "descending" | "ascending";
 		/** 'true' to include my group approvals. Default is 'false'. */
@@ -24603,7 +24603,7 @@ export type AzureDevopsOperationInputs = {
 		latestAttemptsOnly?: boolean;
 		queryOrder?: "descending" | "ascending";
 		$top?: number;
-		continuationToken?: number;
+		continuationToken?: (number | string);
 		createdFor?: string;
 		minStartedTime?: string;
 		maxStartedTime?: string;
@@ -24792,7 +24792,7 @@ export type AzureDevopsOperationInputs = {
 		/** Number of releases to get. Default is 50. */
 		$top?: number;
 		/** Gets the releases after the continuation token provided. */
-		continuationToken?: number;
+		continuationToken?: (number | string);
 		/** The property that should be expanded in the list of releases. */
 		$expand?: "none" | "environments" | "artifacts" | "approvals" | "manualInterventions" | "variables" | "tags";
 		/** Releases with given artifactTypeId will be returned. Values can be Build, Jenkins, GitHub, Nuget, Team Build (external), ExternalTFSBuild, Git, TFVC, ExternalTfsXamlBuild. */
@@ -25288,7 +25288,7 @@ export type AzureDevopsOperationInputs = {
 		/** Number of service endpoint execution records to get. */
 		top?: number;
 		/** A continuation token, returned by a previous call to this method, that can be used to return the next set of records */
-		continuationToken?: number;
+		continuationToken?: (number | string);
 	};
 	'serviceEndpoint.types.list': {
 		/** Type of service endpoint. */
@@ -26165,7 +26165,7 @@ export type AzureDevopsOperationInputs = {
 		/** If set to false, will get a smaller payload containing only basic details about the suite test case object */
 		expand?: boolean;
 		/** Flag to exclude various values from payload. For example to remove point assignments pass exclude = 1. To remove extra information (links, test plan , test suite) pass exclude = 2. To remove both extra information and point assignments pass exclude = 3 (1 + 2). */
-		excludeFlags?: "none" | "pointAssignments" | "extraInformation";
+		excludeFlags?: ("none" | "pointAssignments" | "extraInformation" | number);
 		isRecursive?: boolean;
 	};
 	'testPlan.suiteTestCase.removeTestCasesFromSuite': {
@@ -28216,7 +28216,7 @@ export type AzureDevopsOperationInputs = {
 		/** Depth of children to fetch. */
 		$depth?: number;
 		/** Flag to handle errors in getting some nodes. Possible options are Fail and Omit. */
-		errorPolicy?: "fail" | "omit";
+		errorPolicy?: ("fail" | "omit" | number);
 	};
 	'wit.classificationNodes.getRootNodes': {
 		/** Project ID or project name */
@@ -28545,7 +28545,7 @@ export type AzureDevopsOperationInputs = {
 		/** The expand parameters for queries. Possible options are { None, Wiql, Clauses, All, Minimal } */
 		$expand?: "none" | "wiql" | "clauses" | "all" | "minimal";
 		/** The flag to control error policy in a query batch request. Possible options are { Fail, Omit }. */
-		errorPolicy?: "fail" | "omit";
+		errorPolicy?: ("fail" | "omit" | number);
 		/** The requested query ids */
 		ids?: Array<string>;
 	};
@@ -29017,7 +29017,7 @@ export type AzureDevopsOperationInputs = {
 		/** AsOf UTC date time string */
 		asOf?: string;
 		/** The flag to control error policy in a bulk get work items request. Possible options are {Fail, Omit}. */
-		errorPolicy?: "fail" | "omit";
+		errorPolicy?: ("fail" | "omit" | number);
 		/** The requested fields */
 		fields?: Array<string>;
 		/** The requested work item ids */
@@ -29035,7 +29035,7 @@ export type AzureDevopsOperationInputs = {
 		/** The expand parameters for work item attributes. Possible options are { None, Relations, Fields, Links, All }. */
 		$expand?: "none" | "relations" | "fields" | "links" | "all";
 		/** The flag to control error policy in a bulk get work items request. Possible options are {Fail, Omit}. */
-		errorPolicy?: "fail" | "omit";
+		errorPolicy?: ("fail" | "omit" | number);
 	};
 	'wit.workItems.update': {
 		/** The id of the work item to update */
@@ -29639,18 +29639,8 @@ export type AzureDevopsOperationOutputs = {
 		value?: Array<AzureDevopsPackageVersionMetrics> | null;
 	};
 	'artifacts.changeTracking.getFeedChange': AzureDevopsFeedChange;
-	'artifacts.changeTracking.getFeedChanges': {
-		/** This page of results. */
-		items: AzureDevopsFeedChangesResponse;
-		/** Pass as continuationToken to read the next page; null on the last page. */
-		nextCursor: string | null;
-	};
-	'artifacts.changeTracking.getPackageChanges': {
-		/** This page of results. */
-		items: AzureDevopsPackageChangesResponse;
-		/** Pass as continuationToken to read the next page; null on the last page. */
-		nextCursor: string | null;
-	};
+	'artifacts.changeTracking.getFeedChanges': AzureDevopsFeedChangesResponse;
+	'artifacts.changeTracking.getPackageChanges': AzureDevopsPackageChangesResponse;
 	'artifacts.feedManagement.createFeed': AzureDevopsFeed;
 	'artifacts.feedManagement.createFeedView': AzureDevopsFeedView;
 	'artifacts.feedManagement.deleteFeed': {

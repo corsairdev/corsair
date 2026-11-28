@@ -153,7 +153,18 @@ function mergeAllOf(members: unknown[]): OpenApiDocument | undefined {
 	for (const member of members) {
 		let part = resolve(member);
 		if (isRecord(part) && Array.isArray(part.allOf)) {
-			part = mergeAllOf(part.allOf);
+			// A member that inherits through its own allOf keeps the properties it
+			// declares itself (BuildDefinitionReference's queue beside its parent's).
+			const own = isRecord(part.properties)
+				? [
+						{
+							type: 'object',
+							properties: part.properties,
+							required: part.required,
+						},
+					]
+				: [];
+			part = mergeAllOf([...part.allOf, ...own]);
 		}
 		if (!isRecord(part)) return undefined;
 		if (Array.isArray(part.oneOf) || Array.isArray(part.anyOf)) {

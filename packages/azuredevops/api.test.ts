@@ -115,7 +115,7 @@ const SKIPPED: Array<[RegExp, string]> = [
 		'notification settings and mail subscriptions',
 	],
 	[
-		/^distributedTask\.(agentclouds|agents|elasticpools|pools)\.(add|create|delete|update|replaceAgent)$/,
+		/^distributedTask\.(agentclouds|agents|elasticpools|pools|nodes)\.(add|create|delete|update|replaceAgent)$/,
 		'organization agent pools',
 	],
 	[/^distributedTask\.kubernetes\.(add|delete)$/, 'needs a cluster'],
@@ -329,6 +329,24 @@ describeIfKey('azure devops live', () => {
 	const raw = (id: string, input: Record<string, unknown>) =>
 		op(id)(withProject(id, input));
 
+	/**
+	 * Every run gets retention leases (the branch's and the pipeline's own);
+	 * a build with a lease can't be deleted.
+	 */
+	async function dropLeases(buildId: unknown, asStep = false) {
+		const leases = await raw('build.builds.getRetentionLeasesForBuild', {
+			buildId,
+		}).catch(() => undefined);
+		const ids = (
+			(pick(leases, 'value') as Array<{ leaseId?: number }> | undefined) ?? []
+		)
+			.map((lease) => lease.leaseId)
+			.filter((leaseId) => leaseId !== undefined);
+		if (ids.length === 0) return;
+		if (asStep) await step('build.leases.delete', { ids: ids.join(',') });
+		else await raw('build.leases.delete', { ids: ids.join(',') });
+	}
+
 	beforeAll(async () => {
 		client = await createClient();
 	});
@@ -337,6 +355,8 @@ describeIfKey('azure devops live', () => {
 		// Anything the last test could not delete gets one more try.
 		for (const item of teardown.reverse()) {
 			try {
+				if (item.id === 'build.builds.delete')
+					await dropLeases(item.input.buildId).catch(() => undefined);
 				await raw(item.id, item.input);
 			} catch (error) {
 				const message = (error as Error).message;
@@ -654,9 +674,9 @@ describeIfKey('azure devops live', () => {
 			const label = await step('git.pullRequestLabels.create', {
 				repositoryId,
 				pullRequestId,
-				name: 'ct-label',
+				name: `${NAME}-label`,
 			});
-			P.labelIdOrName = pick(label, 'id') ?? 'ct-label';
+			P.labelIdOrName = pick(label, 'id') ?? `${NAME}-label`;
 			const status = await step('git.pullRequestStatuses.create', {
 				repositoryId,
 				pullRequestId,
@@ -782,11 +802,11 @@ describeIfKey('azure devops live', () => {
 				);
 			}
 			// A pull request label is also a project tag.
-			later('wit.tags.delete', { tagIdOrName: 'ct-label' });
+			later('wit.tags.delete', { tagIdOrName: `${NAME}-label` });
 			later('git.pullRequestLabels.delete', {
 				repositoryId,
 				pullRequestId,
-				labelIdOrName: 'ct-label',
+				labelIdOrName: `${NAME}-label`,
 			});
 		}
 
@@ -933,6 +953,7 @@ describeIfKey('azure devops live', () => {
 		const run = await step('pipelines.runs.runPipeline', { pipelineId });
 		const runId = pick(run, 'id') as number;
 		if (runId) {
+			later('build.builds.delete', { buildId: runId });
 			P['pipelines:runId'] = runId;
 			P.buildId = runId;
 			P['build:buildId'] = runId;
@@ -942,7 +963,7 @@ describeIfKey('azure devops live', () => {
 				240_000,
 			);
 			expect(pick(finished, 'state')).toBe('completed');
-			later('build.builds.delete', { buildId: runId });
+			expect(pick(finished, 'result')).toBe('succeeded');
 			const timeline = await raw('build.timeline.get', {
 				buildId: runId,
 			}).catch(() => undefined);
@@ -995,20 +1016,20 @@ describeIfKey('azure devops live', () => {
 			}
 			await step('build.tags.addDefinitionTag', {
 				definitionId,
-				tag: 'ct-def',
+				tag: `${NAME}-d1`,
 			});
 			await step('build.tags.addDefinitionTags', {
 				definitionId,
-				body: ['ct-def2'],
+				body: [`${NAME}-d2`],
 			});
 			await step('build.tags.updateDefinitionTags', {
 				definitionId,
-				tagsToAdd: ['ct-def3'],
-				tagsToRemove: ['ct-def2'],
+				tagsToAdd: [`${NAME}-d3`],
+				tagsToRemove: [`${NAME}-d2`],
 			});
 			await step('build.tags.deleteDefinitionTag', {
 				definitionId,
-				tag: 'ct-def',
+				tag: `${NAME}-d1`,
 			});
 			await step('build.properties.updateDefinitionProperties', {
 				definitionId,
@@ -1026,14 +1047,17 @@ describeIfKey('azure devops live', () => {
 					(v) => pick(v, 'status') === 'completed',
 					240_000,
 				);
-				await step('build.tags.addBuildTag', { buildId, tag: 'ct-build' });
-				await step('build.tags.addBuildTags', { buildId, body: ['ct-build2'] });
+				await step('build.tags.addBuildTag', { buildId, tag: `${NAME}-b1` });
+				await step('build.tags.addBuildTags', {
+					buildId,
+					body: [`${NAME}-b2`],
+				});
 				await step('build.tags.updateBuildTags', {
 					buildId,
-					tagsToAdd: ['ct-build3'],
-					tagsToRemove: ['ct-build2'],
+					tagsToAdd: [`${NAME}-b3`],
+					tagsToRemove: [`${NAME}-b2`],
 				});
-				await step('build.tags.deleteBuildTag', { buildId, tag: 'ct-build' });
+				await step('build.tags.deleteBuildTag', { buildId, tag: `${NAME}-b1` });
 				await step('build.properties.updateBuildProperties', {
 					buildId,
 					body: [{ op: 'add', path: '/ct', value: 'ct-value' }],
@@ -1092,6 +1116,8 @@ describeIfKey('azure devops live', () => {
 			path: `\\${NAME}`,
 			description: 'Corsair live folder',
 		});
+		// Until the rename lands the folder is at its first path.
+		later('build.folders.delete', { path: `\\${NAME}` }, /Azure DevOps 404/);
 		await step('build.folders.update', {
 			path: `\\${NAME}`,
 			bodyPath: `\\${NAME}-moved`,
@@ -1375,11 +1401,6 @@ describeIfKey('azure devops live', () => {
 			planId: plan,
 			jobId: ZERO_GUID,
 		});
-		await probe('distributedTask.nodes.update', {
-			poolId: P.poolId,
-			elasticNodeId: MISSING_INT,
-			state: 'deleted',
-		});
 		await probe('distributedTask.queues.delete', { queueId: MISSING_INT });
 		await probe('distributedTask.targets.delete', {
 			deploymentGroupId: MISSING_INT,
@@ -1497,6 +1518,12 @@ describeIfKey('azure devops live', () => {
 			await step('wit.workItems.delete', { id: issueId });
 			P['wit.recyclebin:id'] = issueId;
 			later('wit.recyclebin.destroyWorkItem', { id: issueId });
+			// If a soft delete above failed, the issue is still active.
+			later(
+				'wit.workItems.delete',
+				{ id: issueId, destroy: true },
+				/Azure DevOps 404/,
+			);
 		}
 		const extra = await step('wit.workItems.create', {
 			type: 'Task',
@@ -1508,11 +1535,17 @@ describeIfKey('azure devops live', () => {
 				},
 			],
 		});
-		if (pick(extra, 'id'))
+		if (pick(extra, 'id')) {
+			later(
+				'wit.workItems.delete',
+				{ id: pick(extra, 'id'), destroy: true },
+				/Azure DevOps 404/,
+			);
 			await step('wit.workItems.deleteWorkItems', {
 				ids: [pick(extra, 'id')],
 				destroy: true,
 			});
+		}
 		const comment = await step('wit.comments.addComment', {
 			workItemId: id,
 			text: 'Comment from the Corsair live run',
@@ -1659,6 +1692,12 @@ describeIfKey('azure devops live', () => {
 					structureGroup: group,
 					path: `${NAME}-${group}/child`,
 				});
+				// The first name, in case the rename below doesn't land.
+				later(
+					'wit.classificationNodes.delete',
+					{ structureGroup: group, path: `${NAME}-${group}` },
+					/Azure DevOps 404/,
+				);
 				later('wit.classificationNodes.delete', {
 					structureGroup: group,
 					path: `${NAME}-${group}-edited`,
@@ -2131,6 +2170,20 @@ describeIfKey('azure devops live', () => {
 					(v) => v !== undefined,
 					60_000,
 				);
+				// Readable is not yet writable: the update can answer VS1530019
+				// ("not selected for your team") for a few seconds more.
+				for (let attempt = 0; attempt < 5; attempt++) {
+					const ok = await raw('work.teamdaysoff.update', {
+						team,
+						iterationId: sprint,
+						daysOff: [],
+					}).then(
+						() => true,
+						() => false,
+					);
+					if (ok) break;
+					await sleep(5000);
+				}
 				await step('work.teamdaysoff.update', {
 					team,
 					iterationId: sprint,
@@ -2255,6 +2308,7 @@ describeIfKey('azure devops live', () => {
 			path: `\\${NAME}`,
 			description: 'Corsair live folder',
 		});
+		later('release.folders.delete', { path: `\\${NAME}` }, /Azure DevOps 404/);
 		// A rename: the route names the folder, the body its new path.
 		await step('release.folders.update', {
 			path: `\\${NAME}`,
@@ -3128,21 +3182,8 @@ describeIfKey('azure devops live', () => {
 	it('deletes what it created', async () => {
 		while (teardown.length > 0) {
 			const item = teardown.pop() as (typeof teardown)[number];
-			if (item.id === 'build.builds.delete') {
-				// Every run gets retention leases (the branch's and the pipeline's
-				// own); a build with a lease can't be deleted.
-				const leases = await raw('build.builds.getRetentionLeasesForBuild', {
-					buildId: item.input.buildId,
-				}).catch(() => undefined);
-				const ids = (
-					(pick(leases, 'value') as Array<{ leaseId?: number }> | undefined) ??
-					[]
-				)
-					.map((lease) => lease.leaseId)
-					.filter((leaseId) => leaseId !== undefined);
-				if (ids.length > 0)
-					await step('build.leases.delete', { ids: ids.join(',') });
-			}
+			if (item.id === 'build.builds.delete')
+				await dropLeases(item.input.buildId, true);
 			await step(item.id, item.input, {
 				expected: item.expected ?? /Azure DevOps 404/,
 			});
@@ -3176,14 +3217,19 @@ describeIfKey('azure devops live', () => {
 				await step('build.definitions.delete', item.input);
 			}
 		}
-		await step('build.tags.deleteTag', { tag: 'ct-build3' }, { probe: true });
+		if (called.has('build.tags.updateBuildTags'))
+			await step(
+				'build.tags.deleteTag',
+				{ tag: `${NAME}-b3` },
+				{ probe: true },
+			);
 		// A pull request label's tag outlives its pull request, and deleting it
 		// by name answers 204 without deleting it: by id it goes.
 		// The pull request teardown can bring it back for a few seconds: delete,
 		// wait, look again.
 		for (let attempt = 0; attempt < 3; attempt++) {
 			const label = await raw('wit.tags.get', {
-				tagIdOrName: 'ct-label',
+				tagIdOrName: `${NAME}-label`,
 			}).catch(() => undefined);
 			if (!pick(label, 'id')) break;
 			await step('wit.tags.delete', { tagIdOrName: pick(label, 'id') });

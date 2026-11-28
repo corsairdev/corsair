@@ -8,6 +8,7 @@ import {
 	azuredevopsEndpointsNested as api,
 	azuredevopsEndpointMeta,
 } from './endpoints/catalog';
+import { getAzureDevopsOutputSchema } from './endpoints/openapi-schema';
 import type { AzureDevopsContext } from './index';
 import { azuredevops } from './index';
 
@@ -276,6 +277,52 @@ describe('requests', () => {
 		expect(JSON.parse(String(calls[0]?.body))).toEqual({
 			path: '\\Web\\Nightly',
 		});
+	});
+
+	it('takes a returned page token back, even where the route types it as a number', async () => {
+		reply(
+			200,
+			{ count: 1, value: [{ id: 'p1', name: 'Fabrikam' }] },
+			{
+				'x-ms-continuationtoken': '1',
+			},
+		);
+		const page = (await api.core.projects.list(ctx(), { $top: 1 })) as {
+			nextCursor: string | null;
+		};
+		expect(page.nextCursor).toBe('1');
+		reply(200, { count: 0, value: [] });
+		await api.core.projects.list(ctx(), {
+			$top: 1,
+			continuationToken: page.nextCursor ?? undefined,
+		});
+		expect(
+			new URL(calls[1]?.url ?? '').searchParams.get('continuationToken'),
+		).toBe('1');
+	});
+
+	it('keeps the properties an inherited allOf member declares itself', () => {
+		const schema = getAzureDevopsOutputSchema('build.definitions.get');
+		expect(schema.safeParse({ id: 12, queue: { id: 3 } }).success).toBe(true);
+		expect(schema.safeParse({ id: 12 }).success).toBe(true);
+		expect(schema.safeParse({ id: 12, queue: 'unexpected' }).success).toBe(
+			false,
+		);
+	});
+
+	it('keeps a wiki page sent with an ETag call out of its error', async () => {
+		reply(400, { message: 'Could not save: # Secret roadmap for Q3' });
+		const error = await api.wiki.pages
+			.update(ctx(), {
+				project: 'Fabrikam-Fiber',
+				wikiIdentifier: 'Fabrikam-Fiber.wiki',
+				id: 3,
+				ifMatch: '"v1"',
+				content: '# Secret roadmap for Q3',
+			})
+			.catch((e: unknown) => e as Error);
+		expect(String(error)).toMatch(/Azure DevOps 400/);
+		expect(String(error)).not.toContain('Secret roadmap');
 	});
 
 	it('sends a work item as a JSON Patch list', async () => {
