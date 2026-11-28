@@ -1,0 +1,430 @@
+# Display copy for the generated docs and the catalog, plus one call
+# example per operation. Generated with the plugin from n8n's OpenAPI spec;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: n8n
+domain: n8n.io
+description: "Manage an n8n instance: workflows, executions, credentials, data tables, tags, variables, projects, users, AI agents and instance settings (202 operations)."
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key on the instance under **Settings > n8n API** and connect it with the instance URL (`https://n8n.example.com`; the plugin adds `/api/v1`). Things to know before you write:
+
+  - **Where the API exists.** Every self-hosted n8n (Community edition included) has the public API. n8n Cloud has it on paid plans only, not during the free trial.
+  - **Licensed features.** On a Community instance, projects, variables, source control, environment promotions, custom roles, role mapping, changing a user's global role, LDAP, SAML, OIDC, log streaming, security policy, node and credential type policies and evaluation runs answer 403 `Your license does not allow for feat:...`: they need a Business or Enterprise licence. Folders need the free registered Community licence. Each operation's description names the feature it needs.
+  - **Versions.** The operations follow n8n 2.50. An instance on 2.49 or older answers 404 to the newer routes (AI agent versions and runs, AI preferences, `workflows.run`, promotion reviews and settings): each one says "Added in n8n 2.50".
+  - **Key scopes.** A key created with limited scopes answers 403 on routes outside them.
+  - **Paging.** List routes take `limit` (up to 250) and `cursor`, and return `{ data, nextCursor }`; pass `nextCursor` back as `cursor` until it is null.
+  - **What runs.** `workflows.run`, `executions.retry`, `agents.run` and `evaluations.startRun` run automation that may call other services; `workflows.activate`/`publish` turn triggers on; `communityPackages.install` installs code on the server. They are `destructive`, like every delete.
+examples:
+  read:
+    path: workflows.list
+    title: List active workflows
+    args: {"active": true, "limit": 50}
+  write:
+    path: tags.create
+    title: Create a tag
+    args: {"name": "reports"}
+apiExamples:
+  agents.archive:
+    args: {"agentId": "example"}
+  agents.create:
+    args: {"name": "example"}
+  agents.delete:
+    args: {"agentId": "example"}
+  agents.executions.list:
+    args: {"agentId": "example"}
+  agents.executions.stop:
+    args: {"agentId": "agt_6TfR2kLm", "executionId": "aexec_9QwE3rTy"}
+  agents.get:
+    args: {"agentId": "example"}
+  agents.list:
+    args: {}
+  agents.publish:
+    args: {"agentId": "example"}
+  agents.run:
+    args: {"agentId": "example", "message": "example"}
+  agents.unarchive:
+    args: {"agentId": "example"}
+  agents.unpublish:
+    args: {"agentId": "example"}
+  agents.update:
+    args: {"agentId": "example", "config": {}}
+  agents.versions.get:
+    args: {"agentId": "example", "versionId": "example"}
+  agents.versions.list:
+    args: {"agentId": "example"}
+  aiPreferences.create:
+    args: {"content": "example", "scope": "user"}
+  aiPreferences.delete:
+    args: {"aiPreferenceId": "example"}
+  aiPreferences.get:
+    args: {"aiPreferenceId": "example"}
+  aiPreferences.list:
+    args: {}
+  aiPreferences.update:
+    args: {"aiPreferenceId": "example", "content": "example", "scope": "user"}
+  audit.generate:
+    args: {}
+  communityPackages.install:
+    args: {"name": "example"}
+  communityPackages.list:
+    args: {}
+  communityPackages.uninstall:
+    args: {"name": "example"}
+  communityPackages.update:
+    args: {"name": "example"}
+  credentialTypePolicies.attachments.get:
+    args: {"scopeId": "example"}
+  credentialTypePolicies.attachments.replace:
+    args: {"scopeId": "example", "attachments": [{"policyId": "example", "priority": 1, "isFloor": true}], "version": 1}
+  credentialTypePolicies.documents.create:
+    args: {"rules": [{"id": "doc_8f2k1x9q", "action": "allow", "selector": {"kind": "name", "value": "example"}}]}
+  credentialTypePolicies.documents.delete:
+    args: {"policyId": "example"}
+  credentialTypePolicies.documents.get:
+    args: {"policyId": "example"}
+  credentialTypePolicies.documents.list:
+    args: {}
+  credentialTypePolicies.documents.update:
+    args: {"policyId": "example", "rules": [{"id": "doc_8f2k1x9q", "action": "allow", "selector": {"kind": "name", "value": "example"}}], "version": 1}
+  credentialTypePolicies.getInstance:
+    args: {}
+  credentialTypePolicies.getProject:
+    args: {"projectId": "VmwOO9HeTEj20kxM"}
+  credentialTypePolicies.setInstance:
+    args: {"rules": [{"id": "doc_8f2k1x9q", "action": "allow", "selector": {"kind": "name", "value": "example"}}], "defaultAction": "allow", "version": 1}
+  credentialTypePolicies.setProject:
+    args: {"projectId": "VmwOO9HeTEj20kxM", "rules": [{"id": "doc_8f2k1x9q", "action": "allow", "selector": {"kind": "name", "value": "example"}}], "defaultAction": "allow", "version": 1}
+  credentials.create:
+    args: {"name": "example", "type": "example", "data": {}}
+  credentials.delete:
+    args: {"credentialId": "R2DjclaysHbqn778"}
+  credentials.get:
+    args: {"credentialId": "R2DjclaysHbqn778"}
+  credentials.getDependencies:
+    args: {"credentialId": "R2DjclaysHbqn778"}
+  credentials.getSchema:
+    args: {"credentialTypeName": "example"}
+  credentials.list:
+    args: {}
+  credentials.test:
+    args: {"credentialId": "R2DjclaysHbqn778"}
+  credentials.transfer:
+    args: {"credentialId": "R2DjclaysHbqn778", "destinationProjectId": "example"}
+  credentials.update:
+    args: {"credentialId": "R2DjclaysHbqn778"}
+  dataTables.columns.create:
+    args: {"dataTableId": "Ab3dEf6hIj9kLm2N", "name": "example", "type": "string"}
+  dataTables.columns.delete:
+    args: {"dataTableId": "Ab3dEf6hIj9kLm2N", "columnId": "Zx8cVb7nMq1wEr4T"}
+  dataTables.columns.list:
+    args: {"dataTableId": "Ab3dEf6hIj9kLm2N"}
+  dataTables.columns.update:
+    args: {"dataTableId": "Ab3dEf6hIj9kLm2N", "columnId": "Zx8cVb7nMq1wEr4T"}
+  dataTables.create:
+    args: {"name": "example", "columns": [{"name": "example", "type": "string"}]}
+  dataTables.delete:
+    args: {"dataTableId": "Ab3dEf6hIj9kLm2N"}
+  dataTables.get:
+    args: {"dataTableId": "Ab3dEf6hIj9kLm2N"}
+  dataTables.getDependencies:
+    args: {"dataTableId": "Ab3dEf6hIj9kLm2N"}
+  dataTables.list:
+    args: {}
+  dataTables.rows.clear:
+    args: {"dataTableId": "Ab3dEf6hIj9kLm2N"}
+  dataTables.rows.delete:
+    args: {"dataTableId": "Ab3dEf6hIj9kLm2N", "filter": "example"}
+  dataTables.rows.insert:
+    args: {"dataTableId": "Ab3dEf6hIj9kLm2N", "data": [{}]}
+  dataTables.rows.list:
+    args: {"dataTableId": "Ab3dEf6hIj9kLm2N"}
+  dataTables.rows.update:
+    args: {"dataTableId": "Ab3dEf6hIj9kLm2N", "filter": {"filters": [{"columnName": "example", "condition": "eq", "value": "example"}]}, "data": {}}
+  dataTables.rows.upsert:
+    args: {"dataTableId": "Ab3dEf6hIj9kLm2N", "filter": {"filters": [{"columnName": "example", "condition": "eq", "value": "example"}]}, "data": {}}
+  dataTables.update:
+    args: {"dataTableId": "Ab3dEf6hIj9kLm2N", "name": "example"}
+  discover.get:
+    args: {}
+  evaluations.cancelRun:
+    args: {"workflowId": "2tUt1wbLX592XDdX", "runId": "example"}
+  evaluations.getRun:
+    args: {"workflowId": "2tUt1wbLX592XDdX", "runId": "example"}
+  evaluations.listCases:
+    args: {"workflowId": "2tUt1wbLX592XDdX", "runId": "example"}
+  evaluations.listRuns:
+    args: {"workflowId": "2tUt1wbLX592XDdX"}
+  evaluations.startRun:
+    args: {"workflowId": "2tUt1wbLX592XDdX"}
+  executions.delete:
+    args: {"executionId": 1000}
+  executions.get:
+    args: {"executionId": 1000}
+  executions.getTags:
+    args: {"executionId": 1000}
+  executions.list:
+    args: {"status": "error", "limit": 20}
+  executions.retry:
+    args: {"executionId": 1000}
+  executions.setTags:
+    args: {"executionId": 1000, "tags": [{"id": "doc_8f2k1x9q"}]}
+  executions.stop:
+    args: {"executionId": 1000}
+  executions.stopMany:
+    args: {"status": ["queued"]}
+  folders.create:
+    args: {"projectId": "VmwOO9HeTEj20kxM", "name": "example"}
+  folders.delete:
+    args: {"projectId": "VmwOO9HeTEj20kxM", "folderId": "example"}
+  folders.get:
+    args: {"projectId": "VmwOO9HeTEj20kxM", "folderId": "example"}
+  folders.list:
+    args: {"projectId": "VmwOO9HeTEj20kxM"}
+  folders.update:
+    args: {"projectId": "VmwOO9HeTEj20kxM", "folderId": "example"}
+  insights.getSummary:
+    args: {}
+  nodeTypePolicies.attachments.get:
+    args: {"scopeId": "example"}
+  nodeTypePolicies.attachments.replace:
+    args: {"scopeId": "example", "attachments": [{"policyId": "example", "priority": 1, "isFloor": true}], "version": 1}
+  nodeTypePolicies.documents.create:
+    args: {"rules": [{"id": "doc_8f2k1x9q", "action": "allow", "selector": {"kind": "name", "value": "example"}}]}
+  nodeTypePolicies.documents.delete:
+    args: {"policyId": "example"}
+  nodeTypePolicies.documents.get:
+    args: {"policyId": "example"}
+  nodeTypePolicies.documents.list:
+    args: {}
+  nodeTypePolicies.documents.update:
+    args: {"policyId": "example", "rules": [{"id": "doc_8f2k1x9q", "action": "allow", "selector": {"kind": "name", "value": "example"}}], "version": 1}
+  nodeTypePolicies.getInstance:
+    args: {}
+  nodeTypePolicies.getProject:
+    args: {"projectId": "VmwOO9HeTEj20kxM"}
+  nodeTypePolicies.setInstance:
+    args: {"rules": [{"id": "doc_8f2k1x9q", "action": "allow", "selector": {"kind": "name", "value": "example"}}], "defaultAction": "allow", "version": 1}
+  nodeTypePolicies.setProject:
+    args: {"projectId": "VmwOO9HeTEj20kxM", "rules": [{"id": "doc_8f2k1x9q", "action": "allow", "selector": {"kind": "name", "value": "example"}}], "defaultAction": "allow", "version": 1}
+  packages.export:
+    args: {}
+  packages.import:
+    args: {"package": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}, "conflictPolicy": "new-version"}
+  packages.importSelection:
+    args: {"package": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}, "selectedProjectId": "example", "selectedWorkflowIds": "example"}
+  projects.create:
+    args: {"name": "example"}
+  projects.delete:
+    args: {"projectId": "VmwOO9HeTEj20kxM"}
+  projects.list:
+    args: {}
+  projects.update:
+    args: {"projectId": "VmwOO9HeTEj20kxM", "name": "example"}
+  projects.users.add:
+    args: {"projectId": "VmwOO9HeTEj20kxM", "relations": [{"userId": "example", "role": "example"}]}
+  projects.users.changeRole:
+    args: {"projectId": "VmwOO9HeTEj20kxM", "userId": "example", "role": "example"}
+  projects.users.list:
+    args: {"projectId": "VmwOO9HeTEj20kxM"}
+  projects.users.remove:
+    args: {"projectId": "VmwOO9HeTEj20kxM", "userId": "example"}
+  promotions.environments.addProject:
+    args: {"promotionEnvironmentId": "example", "projectId": "VmwOO9HeTEj20kxM"}
+  promotions.environments.apply:
+    args: {"promotionEnvironmentId": "example"}
+  promotions.environments.connect:
+    args: {"promotionEnvironmentId": "example"}
+  promotions.environments.continueApply:
+    args: {"promotionEnvironmentId": "example", "expectedSource": {"environmentId": "example", "branchName": "example", "commitSha": "9fceb02d0ae598e95dc970b74767f19372d61af8"}}
+  promotions.environments.create:
+    args: {"name": "example", "scope": "instance", "providerId": "example", "remote": {"schemaVersion": 1, "remoteUrl": "https://example.com/callback"}, "direction": "apply", "settings": {"schemaVersion": 1, "branchName": "example"}}
+  promotions.environments.delete:
+    args: {"promotionEnvironmentId": "example"}
+  promotions.environments.disconnect:
+    args: {"promotionEnvironmentId": "example"}
+  promotions.environments.get:
+    args: {"promotionEnvironmentId": "example"}
+  promotions.environments.getChangeDetails:
+    args: {"promotionEnvironmentId": "example", "commitSha": "9fceb02d0ae598e95dc970b74767f19372d61af8", "keys": ["example"]}
+  promotions.environments.list:
+    args: {}
+  promotions.environments.listChanges:
+    args: {"promotionEnvironmentId": "example"}
+  promotions.environments.listMissingProjects:
+    args: {"promotionEnvironmentId": "example"}
+  promotions.environments.listProjects:
+    args: {"promotionEnvironmentId": "example"}
+  promotions.environments.promote:
+    args: {"promotionEnvironmentId": "example"}
+  promotions.environments.removeProject:
+    args: {"promotionEnvironmentId": "example", "projectId": "VmwOO9HeTEj20kxM"}
+  promotions.environments.update:
+    args: {"promotionEnvironmentId": "example"}
+  promotions.projects.apply:
+    args: {"projectId": "VmwOO9HeTEj20kxM"}
+  promotions.projects.continueApply:
+    args: {"projectId": "VmwOO9HeTEj20kxM", "expectedSource": {"environmentId": "example", "branchName": "example", "commitSha": "9fceb02d0ae598e95dc970b74767f19372d61af8"}}
+  promotions.projects.getChangeDetails:
+    args: {"projectId": "VmwOO9HeTEj20kxM", "direction": "apply", "commitSha": "9fceb02d0ae598e95dc970b74767f19372d61af8", "keys": ["example"]}
+  promotions.projects.listChanges:
+    args: {"projectId": "VmwOO9HeTEj20kxM", "direction": "apply"}
+  promotions.projects.promote:
+    args: {"projectId": "VmwOO9HeTEj20kxM"}
+  promotions.providers.create:
+    args: {"name": "example", "type": "git", "auth": {"authType": "ssh-key"}}
+  promotions.providers.delete:
+    args: {"promotionProviderId": "example"}
+  promotions.providers.get:
+    args: {"promotionProviderId": "example"}
+  promotions.providers.list:
+    args: {}
+  promotions.providers.listBranches:
+    args: {"promotionProviderId": "example", "repositoryId": "example"}
+  promotions.providers.listRepositories:
+    args: {"promotionProviderId": "example"}
+  promotions.providers.update:
+    args: {"promotionProviderId": "example"}
+  promotions.reviews.get:
+    args: {"promotionReviewId": "example"}
+  promotions.reviews.list:
+    args: {}
+  promotions.settings.get:
+    args: {}
+  promotions.settings.update:
+    args: {}
+  roleMappingRules.create:
+    args: {"expression": "example", "role": "example", "type": "instance"}
+  roleMappingRules.delete:
+    args: {"roleMappingRuleId": "example"}
+  roleMappingRules.list:
+    args: {}
+  roleMappingRules.move:
+    args: {"roleMappingRuleId": "example", "targetIndex": 1}
+  roleMappingRules.update:
+    args: {"roleMappingRuleId": "example"}
+  roles.create:
+    args: {"displayName": "example", "roleType": "project", "scopes": ["example"]}
+  roles.delete:
+    args: {"roleSlug": "example"}
+  roles.get:
+    args: {"roleSlug": "example"}
+  roles.list:
+    args: {}
+  roles.update:
+    args: {"roleSlug": "example", "displayName": "example", "description": "example", "scopes": ["example"]}
+  settings.ldap.get:
+    args: {}
+  settings.ldap.listSyncs:
+    args: {}
+  settings.ldap.runSync:
+    args: {"type": "live"}
+  settings.ldap.update:
+    args: {"loginEnabled": true, "loginLabel": "example", "connectionUrl": "https://example.com/callback", "allowUnauthorizedCerts": true, "connectionSecurity": "none", "connectionPort": 1, "baseDn": "example", "bindingAdminDn": "example", "bindingAdminPassword": "example", "firstNameAttribute": "example", "lastNameAttribute": "example", "emailAttribute": "ada@example.com", "loginIdAttribute": "example", "ldapIdAttribute": "example", "userFilter": "example", "synchronizationEnabled": true, "synchronizationInterval": 1, "searchPageSize": 1, "searchTimeout": 1, "enforceEmailUniqueness": true}
+  settings.logStreaming.createDestination:
+    args: {"type": "webhook"}
+  settings.logStreaming.deleteDestination:
+    args: {"destinationId": "example"}
+  settings.logStreaming.getDestination:
+    args: {"destinationId": "example"}
+  settings.logStreaming.listDestinations:
+    args: {}
+  settings.logStreaming.listEventTypes:
+    args: {}
+  settings.logStreaming.testDestination:
+    args: {"destinationId": "example"}
+  settings.logStreaming.updateDestination:
+    args: {"destinationId": "example", "type": "webhook"}
+  settings.oidc.get:
+    args: {}
+  settings.oidc.update:
+    args: {"clientId": "example", "clientSecret": "example", "discoveryEndpoint": "example", "loginEnabled": true, "prompt": "none", "authenticationContextClassReference": ["example"], "additionalScopes": "example", "emailVerifiedRequired": true, "rpInitiatedLogoutEnabled": true}
+  settings.otel.get:
+    args: {}
+  settings.otel.testTrace:
+    args: {"exporterEndpoint": "https://otel.example.com:4318", "exporterTracingPath": "example", "exporterServiceName": "example", "exporterHeaders": "example", "startupConnectivityTimeoutMs": 1}
+  settings.otel.update:
+    args: {"enabled": true, "exporterEndpoint": "https://otel.example.com:4318", "exporterTracingPath": "example", "exporterServiceName": "example", "exporterHeaders": "example", "tracesSampleRate": 1, "startupConnectivityTimeoutMs": 1, "includeNodeSpans": true, "injectOutbound": true, "productionExecutionsOnly": true}
+  settings.rateLimits.get:
+    args: {}
+  settings.rateLimits.update:
+    args: {"enabled": true, "globalReadLimit": 1, "globalReadWindowSeconds": 2, "globalWriteLimit": 1, "globalWriteWindowSeconds": 2, "endpointReadLimit": 1, "endpointReadWindowSeconds": 2, "endpointWriteLimit": 1, "endpointWriteWindowSeconds": 2}
+  settings.saml.get:
+    args: {}
+  settings.saml.update:
+    args: {"mapping": {"email": "ada@example.com", "firstName": "example", "lastName": "example", "userPrincipalName": "example", "emailVerified": "ada@example.com", "n8nInstanceRole": "example", "n8nProjectRoles": ["example"]}, "metadata": "example", "metadataUrl": "https://example.com/callback", "ignoreSSL": true, "loginBinding": "redirect", "loginEnabled": true, "loginLabel": "example", "authnRequestsSigned": true, "wantAssertionsSigned": true, "wantMessageSigned": true, "emailVerifiedRequired": true, "signingPrivateKey": "example", "signingCertificate": "example", "acsBinding": "redirect", "signatureConfig": {"prefix": "example", "location": {"reference": "example", "action": "before"}}, "relayState": "example"}
+  settings.securityPolicy.get:
+    args: {}
+  settings.securityPolicy.update:
+    args: {"personalSpacePublishing": true, "personalSpaceSharing": true, "redactionEnforcement": {"floor": "off"}}
+  sourceControl.getStatus:
+    args: {"direction": "push"}
+  sourceControl.pull:
+    args: {}
+  sourceControl.push:
+    args: {"commitMessage": "example", "fileNames": [{"id": "doc_8f2k1x9q", "type": "credential"}]}
+  tags.create:
+    args: {"name": "reports"}
+  tags.delete:
+    args: {"tagId": "2tUt1wbLX592XDdX"}
+  tags.get:
+    args: {"tagId": "2tUt1wbLX592XDdX"}
+  tags.list:
+    args: {}
+  tags.update:
+    args: {"tagId": "2tUt1wbLX592XDdX", "name": "example"}
+  users.changeRole:
+    args: {"userId": "example", "newRoleName": "global:admin"}
+  users.delete:
+    args: {"userId": "example"}
+  users.get:
+    args: {"userId": "example"}
+  users.invite:
+    args: {"users": [{"email": "ada@example.com"}]}
+  users.list:
+    args: {}
+  variables.create:
+    args: {"key": "example", "value": "example"}
+  variables.delete:
+    args: {"id": "doc_8f2k1x9q"}
+  variables.list:
+    args: {}
+  variables.update:
+    args: {"id": "doc_8f2k1x9q", "key": "example", "value": "example"}
+  workflows.activate:
+    args: {"workflowId": "2tUt1wbLX592XDdX"}
+  workflows.archive:
+    args: {"workflowId": "2tUt1wbLX592XDdX"}
+  workflows.create:
+    args: {"name": "Hello webhook", "nodes": [{"id": "1f2e3d4c-0000-4000-8000-000000000001", "name": "Webhook", "type": "n8n-nodes-base.webhook", "typeVersion": 2, "position": [0, 0], "parameters": {"path": "hello", "httpMethod": "GET"}}], "connections": {}, "settings": {"executionOrder": "v1"}}
+  workflows.deactivate:
+    args: {"workflowId": "2tUt1wbLX592XDdX"}
+  workflows.delete:
+    args: {"workflowId": "2tUt1wbLX592XDdX"}
+  workflows.get:
+    args: {"workflowId": "2tUt1wbLX592XDdX"}
+  workflows.getDependencies:
+    args: {"workflowId": "2tUt1wbLX592XDdX"}
+  workflows.getTags:
+    args: {"workflowId": "2tUt1wbLX592XDdX"}
+  workflows.getVersion:
+    args: {"workflowId": "2tUt1wbLX592XDdX", "workflowVersionId": "example"}
+  workflows.getVersionLegacy:
+    args: {"workflowId": "2tUt1wbLX592XDdX", "workflowVersionId": "example"}
+  workflows.list:
+    args: {"active": true, "limit": 50}
+  workflows.listHistory:
+    args: {"workflowId": "2tUt1wbLX592XDdX"}
+  workflows.publish:
+    args: {"workflowId": "2tUt1wbLX592XDdX"}
+  workflows.run:
+    args: {"workflowId": "2tUt1wbLX592XDdX", "runData": {}, "destinationNode": {"nodeName": "example", "mode": "inclusive"}}
+  workflows.setTags:
+    args: {"workflowId": "2tUt1wbLX592XDdX", "tags": [{"id": "doc_8f2k1x9q"}]}
+  workflows.transfer:
+    args: {"workflowId": "2tUt1wbLX592XDdX", "destinationProjectId": "example"}
+  workflows.unarchive:
+    args: {"workflowId": "2tUt1wbLX592XDdX"}
+  workflows.unpublish:
+    args: {"workflowId": "2tUt1wbLX592XDdX"}
+  workflows.update:
+    args: {"workflowId": "2tUt1wbLX592XDdX", "name": "example", "nodes": [{}], "connections": {}, "settings": {}}
