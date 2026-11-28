@@ -36,7 +36,7 @@ pnpm add @corsair-dev/docuseal
 | `templates.list` | `docuseal.api.templates.list` | `read` | List templates with search and folder filters, newest id first, one page at a time |
 | `templates.merge` | `docuseal.api.templates.merge` | `write` | Combine several templates into one new template; the sources are kept; may require a paid (Pro) plan |
 | `templates.update` | `docuseal.api.templates.update` | `write` | Rename a template, move it to a folder, rename its roles, or archive and restore it with the archived flag |
-| `templates.updateDocuments` | `docuseal.api.templates.updateDocuments` | `write` | Add, replace or remove the documents attached to a template; may require a paid (Pro) plan |
+| `templates.updateDocuments` | `docuseal.api.templates.updateDocuments` | `destructive` | Add, replace or remove the documents attached to a template, or merge them into one PDF; a removed document can only come back by uploading it again; may require a paid (Pro) plan |
 | `tools.mergePdfs` | `docuseal.api.tools.mergePdfs` | `read` | Merge two or more base64-encoded PDFs into one and return it base64-encoded; stores nothing |
 | `tools.verifyPdf` | `docuseal.api.tools.verifyPdf` | `read` | Check a base64-encoded signed PDF's digital signatures and whether it matches a document this account completed |
 | `users.me` | `docuseal.api.users.me` | `read` | Read the user the API key belongs to: id, first and last name, and email |

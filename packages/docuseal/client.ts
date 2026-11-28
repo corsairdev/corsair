@@ -12,6 +12,7 @@ export const DOCUSEAL_API_BASE = 'https://api.docuseal.com';
 export const DOCUSEAL_EU_API_BASE = 'https://api.docuseal.eu';
 
 const CLOUD_API_HOSTS = new Set(['api.docuseal.com', 'api.docuseal.eu']);
+const LOOPBACK_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]', '::1']);
 
 /**
  * The API root for a DocuSeal server. Cloud keys go to `api.docuseal.com`
@@ -32,6 +33,13 @@ export function normalizeDocuSealBaseUrl(raw: string | undefined): string {
 	}
 	if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
 		throw new Error('[docuseal] baseUrl must use http or https');
+	}
+	// The API key and signer data travel on every call: plain http only for a
+	// server on this machine.
+	if (parsed.protocol === 'http:' && !LOOPBACK_HOSTS.has(parsed.hostname)) {
+		throw new Error(
+			'[docuseal] baseUrl must use https (http is allowed only for localhost)',
+		);
 	}
 	if (parsed.username || parsed.password || parsed.search || parsed.hash) {
 		throw new Error(
@@ -63,7 +71,16 @@ export const DOCUSEAL_RATE_LIMIT_CONFIG: RateLimitConfig = {
 // answered with.
 function readErrorMessage(body: unknown): string | undefined {
 	const value = asRecord(body)?.error;
-	return typeof value === 'string' && value.length > 0 ? value : undefined;
+	return typeof value === 'string' && value.length > 0
+		? redactEmails(value)
+		: undefined;
+}
+
+const EMAIL_PATTERN = /[^\s@"'<>(),;:]+@[^\s@"'<>(),;:]+\.[^\s@"'<>(),;:]+/g;
+
+/** DocuSeal echoes submitter input in some messages; addresses are replaced. */
+export function redactEmails(text: string): string {
+	return text.replace(EMAIL_PATTERN, '[email]');
 }
 
 // unknown: the error body is an open shape, narrowed below one field at a time.
@@ -126,12 +143,18 @@ export function withoutRequestData(error: ApiError): ApiError {
 export class DocuSealTransportError extends Error {
 	readonly method: string;
 
-	constructor(method: string, cause: unknown) {
-		const message =
+	constructor(method: string, cause: unknown, key?: string) {
+		const raw =
 			cause instanceof Error || cause instanceof DOMException
 				? cause.message
 				: 'DocuSeal request failed before a response';
-		super(message, { cause });
+		// A key Headers refuses (a newline in it) makes fetch throw a message
+		// that quotes it: scrub it, and keep a cause only when it is clean.
+		const leaks = Boolean(key) && raw.includes(String(key));
+		super(
+			leaks ? raw.split(String(key)).join('[REDACTED]') : raw,
+			leaks ? undefined : { cause },
+		);
 		this.name = 'DocuSealTransportError';
 		this.method = method;
 	}
@@ -189,6 +212,6 @@ export async function makeDocuSealRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) throw withoutRequestData(error);
-		throw new DocuSealTransportError(method, error);
+		throw new DocuSealTransportError(method, error, ctx.key);
 	}
 }

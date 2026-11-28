@@ -107,7 +107,7 @@ describe('docuseal plugin definition', () => {
 			'templates.createFromDocx': 'write',
 			'templates.clone': 'write',
 			'templates.merge': 'write',
-			'templates.updateDocuments': 'write',
+			'templates.updateDocuments': 'destructive',
 			'submissions.list': 'read',
 			'submissions.get': 'read',
 			'submissions.create': 'destructive',
@@ -136,13 +136,13 @@ describe('docuseal plugin definition', () => {
 		}
 	});
 
-	it('has input and output schemas for every endpoint', () => {
-		expect(Object.keys(docuSealEndpointSchemas).sort()).toEqual(
-			[...OPERATIONS].sort(),
-		);
-		for (const schemas of Object.values(docuSealEndpointSchemas)) {
-			expect(typeof schemas.input.safeParse).toBe('function');
-			expect(typeof schemas.output.safeParse).toBe('function');
+	it('registers input and output schemas for every endpoint on the plugin', () => {
+		const registered = plugin.endpointSchemas ?? {};
+		expect(Object.keys(registered).sort()).toEqual([...OPERATIONS].sort());
+		expect(registered).toBe(docuSealEndpointSchemas);
+		for (const schemas of Object.values(registered)) {
+			expect(typeof schemas.input?.safeParse).toBe('function');
+			expect(typeof schemas.output?.safeParse).toBe('function');
 		}
 	});
 

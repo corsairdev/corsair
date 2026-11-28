@@ -45,7 +45,7 @@ apiExamples:
   templates.merge:
     call: "{ template_ids: [123456, 123457], name: 'Combined agreement' }"
   templates.updateDocuments:
-    call: "{ id: 123456, documents: [{ html: '<p>Appendix</p>', replace: true }] }"
+    call: "{ id: 123456, documents: [{ html: '<p>Appendix</p>', position: 0, replace: true }] }"
   submissions.list:
     call: "{ status: 'completed', limit: 20 }"
   submissions.get:
@@ -88,7 +88,7 @@ apiNotes:
   templates.createFromPdf: 'Files travel base64-encoded. May require a paid (Pro) plan.'
   templates.createFromDocx: 'Files travel base64-encoded. DOCX templates may require a paid (Pro) plan.'
   templates.merge: 'The source templates are kept; the merge produces a new one. May require a paid (Pro) plan.'
-  templates.updateDocuments: 'Add, replace or remove documents on an existing template. May require a paid (Pro) plan.'
+  templates.updateDocuments: 'Add, replace or remove documents on an existing template. `replace` and `remove` act on the document at `position` (without it, a document is added at the end). `merge: true` alone merges the existing documents. May require a paid (Pro) plan.'
   submissions.list: 'Pages by id cursor: pass `pagination.next` from one page as `after` on the next. Page size is capped at 100; DocuSeal defaults to 10.'
   submissions.create: 'Sends the signature-request emails immediately unless you pass `send_email: false`. Answers a bare array, one submitter per entry.'
   submissions.createFromPdf: 'One-off submissions from uploaded files. May require a paid (Pro) plan.'

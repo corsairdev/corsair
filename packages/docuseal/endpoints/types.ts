@@ -83,14 +83,16 @@ const AfterSchema = z
 	.positive()
 	.optional()
 	.describe(
-		'Only records with a larger id. Pass `pagination.next` from the previous page.',
+		'Id cursor: pass `pagination.next` from the previous page. Cloud returns records with a larger id; self-hosted 3.4.0 pages by descending id, so the cursor selects smaller ids there.',
 	);
 const BeforeSchema = z
 	.number()
 	.int()
 	.positive()
 	.optional()
-	.describe('Only records with a smaller id.');
+	.describe(
+		'Id cursor for the other direction (`pagination.prev`); its sense is reversed on self-hosted 3.4.0 like `after`.',
+	);
 
 const MessageSchema = z
 	.object({
@@ -672,8 +674,16 @@ const TemplatesUpdateDocumentsInputSchema = z.object({
 				remove: z.boolean().optional().describe('DocuSeal defaults to false.'),
 			}),
 		)
-		.describe('Add, replace or remove documents on the template.'),
-	merge: z.boolean().optional().describe('DocuSeal defaults to false.'),
+		.optional()
+		.describe(
+			'Add, replace or remove documents on the template; leave out to only merge the existing ones.',
+		),
+	merge: z
+		.boolean()
+		.optional()
+		.describe(
+			"Merge all of the template's documents into one PDF. DocuSeal defaults to false.",
+		),
 });
 
 export type TemplatesUpdateDocumentsInput = z.input<
@@ -726,7 +736,21 @@ export type SubmissionsGetResponse = DocuSealSubmission;
 const SubmissionsCreateInputSchema = z.object({
 	template_id: IdSchema.describe('The template to fill.'),
 	submitters: z
-		.array(SubmitterInputSchema)
+		.array(
+			SubmitterInputSchema.refine(
+				(submitter) =>
+					Boolean(
+						submitter.email ||
+							submitter.phone ||
+							submitter.name ||
+							submitter.invite_by,
+					),
+				{
+					message:
+						'Each submitter needs an email, phone, name or invite_by: DocuSeal refuses a role alone',
+				},
+			),
+		)
 		.min(1)
 		.describe('One entry per signing role on the template.'),
 	send_email: z

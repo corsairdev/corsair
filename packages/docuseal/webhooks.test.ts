@@ -191,12 +191,38 @@ describe('handler', () => {
 		);
 	});
 
-	it('answers 401 for a bad signature without parsing the body', async () => {
+	it('answers 401 for a fresh signature made with another secret, before parsing the body', async () => {
+		// Fresh timestamp, wrong secret, and a body that would also fail the
+		// schema: only the signature check may answer.
+		const bad = { event_type: 'form.completed', timestamp: 'x', data: {} };
+		const rawBody = JSON.stringify(bad);
+		const now = Math.floor(Date.now() / 1000);
 		const result = await docuSealWebhooksNested.form.completed.handler(
 			ctx(SECRET),
-			delivery(formCompleted, `${NOW}.deadbeef`) as never,
+			{
+				payload: bad,
+				rawBody,
+				headers: { 'x-docuseal-signature': sign(rawBody, now, 'whsec_other') },
+			} as never,
 		);
-		expect(result).toMatchObject({ success: false, statusCode: 401 });
+		expect(result).toEqual({
+			success: false,
+			statusCode: 401,
+			error: 'Invalid DocuSeal webhook signature',
+		});
+	});
+
+	it('reads the signature header in any case', () => {
+		const rawBody = JSON.stringify(formCompleted);
+		const headers = { 'X-Docuseal-Signature': sign(rawBody) };
+		expect(
+			verifyDocuSealWebhook(
+				{ payload: formCompleted, rawBody, headers },
+				SECRET,
+				NOW,
+			),
+		).toEqual({ valid: true });
+		expect(isDocuSealDelivery({ headers, body: formCompleted })).toBe(true);
 	});
 
 	it('answers 400 for a payload that is not the documented shape, naming paths only', async () => {

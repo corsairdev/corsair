@@ -1271,8 +1271,8 @@ await corsair.docuseal.api.submissions.list({ status: 'completed', limit: 20 });
 | `template_folder` | `string` | No | — |
 | `archived` | `boolean` | No | List archived submissions instead of active ones. |
 | `limit` | `number` | No | Results per page, 1-100. DocuSeal defaults to 10. |
-| `after` | `number` | No | Only records with a larger id. Pass `pagination.next` from the previous page. |
-| `before` | `number` | No | Only records with a smaller id. |
+| `after` | `number` | No | Id cursor: pass `pagination.next` from the previous page. Cloud returns records with a larger id; self-hosted 3.4.0 pages by descending id, so the cursor selects smaller ids there. |
+| `before` | `number` | No | Id cursor for the other direction (`pagination.prev`); its sense is reversed on self-hosted 3.4.0 like `after`. |
 
 Pages by id cursor: pass `pagination.next` from one page as `after` on the next. Page size is capped at 100; DocuSeal defaults to 10.
 
@@ -1588,8 +1588,8 @@ await corsair.docuseal.api.submitters.list({ submission_id: 654321, limit: 20 })
 | `completed_before` | `string` | No | A date-time DocuSeal can parse, e.g. `2024-03-05 9:32:20` or `2024-08-01T12:00:00Z`. |
 | `external_id` | `string` | No | — |
 | `limit` | `number` | No | Results per page, 1-100. DocuSeal defaults to 10. |
-| `after` | `number` | No | Only records with a larger id. Pass `pagination.next` from the previous page. |
-| `before` | `number` | No | Only records with a smaller id. |
+| `after` | `number` | No | Id cursor: pass `pagination.next` from the previous page. Cloud returns records with a larger id; self-hosted 3.4.0 pages by descending id, so the cursor selects smaller ids there. |
+| `before` | `number` | No | Id cursor for the other direction (`pagination.prev`); its sense is reversed on self-hosted 3.4.0 like `after`. |
 
 Pages by id cursor: pass `pagination.next` from one page as `after` on the next. Page size is capped at 100; DocuSeal defaults to 10.
 
@@ -2644,8 +2644,8 @@ await corsair.docuseal.api.templates.list({ limit: 20 });
 | `archived` | `boolean` | No | List archived templates instead of active ones. |
 | `shared` | `boolean` | No | — |
 | `limit` | `number` | No | Results per page, 1-100. DocuSeal defaults to 10. |
-| `after` | `number` | No | Only records with a larger id. Pass `pagination.next` from the previous page. |
-| `before` | `number` | No | Only records with a smaller id. |
+| `after` | `number` | No | Id cursor: pass `pagination.next` from the previous page. Cloud returns records with a larger id; self-hosted 3.4.0 pages by descending id, so the cursor selects smaller ids there. |
+| `before` | `number` | No | Id cursor for the other direction (`pagination.prev`); its sense is reversed on self-hosted 3.4.0 like `after`. |
 
 Pages by id cursor: pass `pagination.next` from one page as `after` on the next. Page size is capped at 100; DocuSeal defaults to 10.
 
@@ -2924,12 +2924,12 @@ await corsair.docuseal.api.templates.update({ id: 123456, name: 'Rental agreemen
 
 `templates.updateDocuments`
 
-Add, replace or remove the documents attached to a template; may require a paid (Pro) plan
+Add, replace or remove the documents attached to a template, or merge them into one PDF; a removed document can only come back by uploading it again; may require a paid (Pro) plan
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
-await corsair.docuseal.api.templates.updateDocuments({ id: 123456, documents: [{ html: '<p>Appendix</p>', replace: true }] });
+await corsair.docuseal.api.templates.updateDocuments({ id: 123456, documents: [{ html: '<p>Appendix</p>', position: 0, replace: true }] });
 ```
 
 **Input**
@@ -2937,10 +2937,10 @@ await corsair.docuseal.api.templates.updateDocuments({ id: 123456, documents: [{
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | The template whose documents change. |
-| `documents` | `object[]` | Yes | Add, replace or remove documents on the template. |
-| `merge` | `boolean` | No | DocuSeal defaults to false. |
+| `documents` | `object[]` | No | Add, replace or remove documents on the template; leave out to only merge the existing ones. |
+| `merge` | `boolean` | No | Merge all of the template's documents into one PDF. DocuSeal defaults to false. |
 
-Add, replace or remove documents on an existing template. May require a paid (Pro) plan.
+Add, replace or remove documents on an existing template. `replace` and `remove` act on the document at `position` (without it, a document is added at the end). `merge: true` alone merges the existing documents. May require a paid (Pro) plan.
 
 <AccordionGroup>
 <Accordion title="documents full type">

@@ -341,9 +341,9 @@ const docuSealEndpointMeta = {
 			'Combine several templates into one new template; the sources are kept; may require a paid (Pro) plan',
 	},
 	'templates.updateDocuments': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Add, replace or remove the documents attached to a template; may require a paid (Pro) plan',
+			'Add, replace or remove the documents attached to a template, or merge them into one PDF; a removed document can only come back by uploading it again; may require a paid (Pro) plan',
 	},
 	'submissions.list': {
 		riskLevel: 'read',
@@ -480,7 +480,9 @@ export function docuseal<const T extends DocuSealPluginOptions>(
 		keyBuilder: async (ctx: DocuSealKeyBuilderContext, source) => {
 			if (source === 'webhook') {
 				if (options.webhookSecret) return options.webhookSecret;
-				return (await ctx.keys.get_webhook_signature()) ?? '';
+				// Without a key store (no database) the verifier reports the
+				// missing secret as a 401 instead of a 500 here.
+				return (await ctx.keys?.get_webhook_signature?.()) ?? '';
 			}
 
 			if (source === 'endpoint' && options.key) {

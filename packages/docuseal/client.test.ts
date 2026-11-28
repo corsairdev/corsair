@@ -285,3 +285,26 @@ describe('normalizeDocuSealBaseUrl', () => {
 		expect(() => normalizeDocuSealBaseUrl('https://example.com?x=1')).toThrow();
 	});
 });
+
+describe('transport errors and insecure hosts', () => {
+	it('refuses plain http for a remote host, allows it for localhost', () => {
+		expect(() => normalizeDocuSealBaseUrl('http://sign.example.com')).toThrow(
+			/https/,
+		);
+		expect(normalizeDocuSealBaseUrl('http://127.0.0.1:13100')).toBe(
+			'http://127.0.0.1:13100/api',
+		);
+	});
+
+	it('keeps a key that Headers refuses out of the transport error', () => {
+		const key = 'docuseal-key\nINJECTED';
+		const error = new DocuSealTransportError(
+			'GET',
+			new TypeError(`Headers.append: "${key}" is an invalid header value.`),
+			key,
+		);
+		expect(error.message).not.toContain(key);
+		expect(error.cause).toBeUndefined();
+		expect(util.inspect(error, { depth: 10 })).not.toContain('INJECTED');
+	});
+});

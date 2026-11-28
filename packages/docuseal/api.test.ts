@@ -385,18 +385,21 @@ live('DocuSeal live', () => {
 	});
 
 	it('archives, and reads back the archived state', async () => {
-		const extra = submissions.pop();
+		// Ids leave the cleanup lists only once their archive succeeded.
+		const extra = submissions.at(-1);
 		if (extra === undefined) throw new Error('no submission to archive');
 		const archived = await step('submissions.archive', () =>
 			api.submissions.archive({ id: extra }),
 		);
+		submissions.pop();
 		expect(archived.archived_at).toBeTruthy();
 
-		const template = templates.pop();
+		const template = templates.at(-1);
 		if (template === undefined) throw new Error('no template to archive');
 		const archivedTemplate = await step('templates.archive', () =>
 			api.templates.archive({ id: template }),
 		);
+		templates.pop();
 		expect(archivedTemplate.archived_at).toBeTruthy();
 	});
 

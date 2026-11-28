@@ -135,7 +135,7 @@ describe('retries through createCorsair', () => {
 			await expect(
 				corsair.docuseal.api.submissions.create({
 					template_id: 12,
-					submitters: [{ role: 'Tenant' }],
+					submitters: [{ role: 'Tenant', email: 'tenant@example.com' }],
 				}),
 			).rejects.toThrow('DocuSeal 503');
 			expect(fetchMock).toHaveBeenCalledTimes(1);

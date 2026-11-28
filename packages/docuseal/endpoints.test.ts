@@ -214,6 +214,11 @@ describe('input rejections', () => {
 			},
 		],
 		['Templates.merge empty ids', Templates.merge, { template_ids: [] }],
+		[
+			'Submissions.create submitter with a role only',
+			Submissions.create,
+			{ template_id: 12, submitters: [{ role: 'Tenant' }] },
+		],
 		['Templates.get id', Templates.get, { id: 'abc' }],
 		[
 			'Templates.createFromHtml without html or documents',
@@ -256,7 +261,7 @@ describe('output rejections', () => {
 		await expect(
 			invoke(Submissions.create, {
 				template_id: 12,
-				submitters: [{ role: 'Tenant' }],
+				submitters: [{ role: 'Tenant', email: 'tenant@example.com' }],
 			}),
 		).rejects.toThrow();
 	});

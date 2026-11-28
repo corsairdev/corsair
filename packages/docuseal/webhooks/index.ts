@@ -23,6 +23,18 @@ import type { DocuSealContext } from '../index';
  */
 export const DOCUSEAL_SIGNATURE_TOLERANCE_SECONDS = 5 * 60;
 
+/** A header by name, whatever case the caller's object uses. */
+function headerValue(
+	headers: Record<string, string | string[] | undefined>,
+	name: string,
+): string | undefined {
+	const direct = getHeader(headers, name);
+	if (direct) return direct;
+	const key = Object.keys(headers).find((k) => k.toLowerCase() === name);
+	const value = key === undefined ? undefined : headers[key];
+	return Array.isArray(value) ? value[0] : value;
+}
+
 function safeEqual(left: string, right: string): boolean {
 	const a = Buffer.from(left);
 	const b = Buffer.from(right);
@@ -50,7 +62,7 @@ export function verifyDocuSealWebhook(
 	if (request.rawBody === undefined) {
 		return { valid: false, error: 'Missing raw body' };
 	}
-	const header = getHeader(request.headers, 'x-docuseal-signature')?.trim();
+	const header = headerValue(request.headers, 'x-docuseal-signature')?.trim();
 	if (!header) {
 		return { valid: false, error: 'Missing X-Docuseal-Signature header' };
 	}
@@ -162,7 +174,10 @@ const TemplateEventDataSchema = z
 	})
 	.loose();
 
-function envelope<Data extends z.ZodType>(eventType: string, data: Data) {
+function envelope<EventType extends string, Data extends z.ZodType>(
+	eventType: EventType,
+	data: Data,
+) {
 	return z
 		.object({
 			event_type: z.literal(eventType),
@@ -264,7 +279,7 @@ export function webhookIdFor(
  * event type alone could be another vendor's.
  */
 export function isDocuSealDelivery(request: RawWebhookRequest): boolean {
-	if (!getHeader(request.headers, 'x-docuseal-signature')) return false;
+	if (!headerValue(request.headers, 'x-docuseal-signature')) return false;
 	return webhookIdFor(eventTypeOf(request.body)) !== undefined;
 }
 
