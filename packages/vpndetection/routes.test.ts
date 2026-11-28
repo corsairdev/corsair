@@ -174,7 +174,7 @@ describe('ip.batch', () => {
 		mockRequest.mockRejectedValue(error);
 		await expect(
 			Ip.batch(context(), { ips: ['1.1.1.1', '8.8.8.8'] }),
-		).rejects.toBe(error);
+		).rejects.toMatchObject({ status: 402, body: error.body });
 	});
 });
 
@@ -342,7 +342,7 @@ describe('entitlement and account', () => {
 		expect(lastCall().config?.TOKEN).toBe('test-key');
 	});
 
-	it('passes the 403 FORBIDDEN a plain key gets through unchanged', async () => {
+	it('passes the 403 FORBIDDEN a plain key gets through as ApiError', async () => {
 		const error = new ApiError(
 			{ method: 'GET', url: '/api/v1/iam/identity' },
 			{
@@ -355,7 +355,10 @@ describe('entitlement and account', () => {
 			'Forbidden',
 		);
 		mockRequest.mockRejectedValue(error);
-		await expect(Account.identity(context(), {})).rejects.toBe(error);
+		await expect(Account.identity(context(), {})).rejects.toMatchObject({
+			status: 403,
+			body: { rc: 'FORBIDDEN' },
+		});
 	});
 });
 
@@ -408,5 +411,41 @@ describe('apiKeys', () => {
 			}),
 		).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();
+	});
+});
+
+describe('errors keep no visitor data', () => {
+	it('rebuilds a lookup ApiError without the address or User-Agent', async () => {
+		const original = new ApiError(
+			{
+				method: 'GET',
+				url: '/{ip}',
+				path: { ip: '203.0.113.9' },
+				query: { user_agent: 'Mozilla/5.0 (visitor)' },
+			},
+			{
+				url: 'https://api.vpndetection.io/203.0.113.9?user_agent=Mozilla',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: { error: 'rate limited' },
+			},
+			'Too Many Requests',
+			{ retryAfter: 3000 },
+		);
+		mockRequest.mockRejectedValue(original);
+
+		const error = (await Ip.lookup(context(), {
+			ip: '203.0.113.9',
+			userAgent: 'Mozilla/5.0 (visitor)',
+		}).catch((e: unknown) => e)) as ApiError;
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error.status).toBe(429);
+		expect(error.retryAfter).toBe(3000);
+		expect(error.body).toEqual({ error: 'rate limited' });
+		const dump = JSON.stringify({ url: error.url, request: error.request });
+		expect(dump).not.toContain('203.0.113.9');
+		expect(dump).not.toContain('visitor');
 	});
 });

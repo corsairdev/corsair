@@ -128,8 +128,20 @@ describeKeyed('VPNDetection live, keyed', () => {
 	});
 
 	it('databases.download of an unlicensed database is refused (403)', async () => {
+		const list = await Databases.list(ctx, {});
+		const version = list.databases.find((db) => db.standing === 'unlicensed')
+			?.versions?.[0];
+		if (!version) {
+			console.warn(
+				'Every database is licensed to this key; skipping the 403 check',
+			);
+			return;
+		}
+		const format = version.formats?.some((f) => f.format === 'mmdb')
+			? 'mmdb'
+			: 'csvgz';
 		const status = await statusOf(
-			Databases.download(ctx, { id: 'vpn_ip_v1', format: 'mmdb' }),
+			Databases.download(ctx, { id: version.id, format }),
 		);
 		expect(status).toBe(403);
 	});
@@ -147,9 +159,17 @@ describeKeyed('VPNDetection live, keyed', () => {
 
 	it('apiKeys create/rotate/reveal/revoke are refused for an API key', async () => {
 		const unknownId = '00000000-0000-0000-0000-000000000000';
-		expect([403]).toContain(
-			await statusOf(ApiKeys.create(ctx, { name: 'corsair-live-check' })),
-		);
+		// With an OAuth token holding apikeys.manage the create succeeds: the
+		// new key is revoked at once so no run leaves a live credential.
+		const created = await ApiKeys.create(ctx, {
+			name: 'corsair-live-check',
+		}).catch((error: unknown) => error);
+		if (created instanceof ApiError) {
+			expect(created.status).toBe(403);
+		} else {
+			const { id } = created as { id: string };
+			await ApiKeys.revoke(ctx, { id });
+		}
 		for (const run of [ApiKeys.rotate, ApiKeys.reveal, ApiKeys.revoke]) {
 			expect([403, 404]).toContain(await statusOf(run(ctx, { id: unknownId })));
 		}

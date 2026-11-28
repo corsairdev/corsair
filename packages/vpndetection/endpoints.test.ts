@@ -195,7 +195,7 @@ describe('ip.lookup', () => {
 		await expect(lookup(context(''), { ip: '8.8.8.8' })).rejects.toThrow();
 	});
 
-	it('lets an API error through unchanged', async () => {
+	it('lets an API error through as core ApiError, without the address', async () => {
 		const error = new ApiError(
 			{ method: 'GET', url: '/{ip}' },
 			{
@@ -209,7 +209,16 @@ describe('ip.lookup', () => {
 		);
 		mockRequest.mockRejectedValue(error);
 
-		await expect(lookup(context(''), { ip: '192.0.2.1' })).rejects.toBe(error);
+		const thrown = await lookup(context(''), { ip: '192.0.2.1' }).catch(
+			(e: unknown) => e,
+		);
+		expect(thrown).toBeInstanceOf(ApiError);
+		expect(thrown).toMatchObject({
+			status: 429,
+			message: 'Too Many Requests',
+			body: { error: 'rate limited' },
+		});
+		expect((thrown as ApiError).url).not.toContain('192.0.2.1');
 	});
 
 	it('accepts an IPv6 address', async () => {

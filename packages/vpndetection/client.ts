@@ -64,9 +64,39 @@ export async function vpndetectionRequest<T>(
 		body,
 		mediaType: body === undefined ? undefined : 'application/json',
 	};
-	return await request<T>(configFor(apiKey), requestOptions, {
-		rateLimitConfig: NO_TRANSPORT_RETRIES,
-	});
+	try {
+		return await request<T>(configFor(apiKey), requestOptions, {
+			rateLimitConfig: NO_TRANSPORT_RETRIES,
+		});
+	} catch (error) {
+		throw error instanceof ApiError ? withoutRequestData(error, path) : error;
+	}
+}
+
+/**
+ * Core's ApiError keeps the request: the looked-up address in the path, the
+ * visitor's User-Agent in the query, the batch of addresses in the body. They
+ * are a visitor's data, so the error is rebuilt with only the path template
+ * (R8 allows this), keeping status, body and the rate-limit fields.
+ */
+function withoutRequestData(error: ApiError, template: string): ApiError {
+	return new ApiError(
+		{ method: error.request.method, url: template },
+		{
+			url: `${VPNDETECTION_API_BASE}${template}`,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		error.message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }
 
 /**
@@ -86,6 +116,9 @@ export async function makeVpndetectionRequest<T>(
 		query: userAgent ? { user_agent: userAgent } : undefined,
 	});
 }
+
+// The shared transport aborts after 20 seconds; the download call matches it.
+const DOWNLOAD_TIMEOUT_MS = 20_000;
 
 // unknown: an error body is untrusted JSON (`{"rc": "NOT_LICENSED"}`) or text.
 async function readErrorBody(response: Response): Promise<unknown> {
@@ -118,9 +151,12 @@ export async function resolveVpndetectionDownload(
 			...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
 		},
 		redirect: 'manual',
+		signal: AbortSignal.timeout(DOWNLOAD_TIMEOUT_MS),
 	});
 	const location = response.headers.get('location');
 	if (response.status >= 300 && response.status < 400 && location) {
+		// The redirect's own body is never read; release the connection.
+		await response.body?.cancel().catch(() => undefined);
 		return location;
 	}
 	const requestOptions: ApiRequestOptions = {
