@@ -633,7 +633,8 @@ export function customerMapKeys(
 	value: unknown,
 	depth = 0,
 ): string[] {
-	if (depth > 10 || value === null || typeof value !== 'object') return [];
+	// As deep as the client's scrubber walks a sent body, so no sent key is missed.
+	if (depth > 64 || value === null || typeof value !== 'object') return [];
 	const options = alternatives(schema);
 	if (Array.isArray(value)) {
 		const items = options.find((option) => option.items !== undefined)?.items;

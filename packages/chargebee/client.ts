@@ -281,7 +281,10 @@ export function withoutRequestData(
 		...sentStrings(error.request),
 	].sort((a, b) => b.text.length - a.text.length);
 	const body = scrubSent(withoutEchoedValues(error.body), sent);
-	const message = chargebeeErrorMessage(error.status, error.statusText, body);
+	// The reason phrase comes from whoever answered (a proxy can write the
+	// request into it), so it is scrubbed like the body.
+	const statusText = String(scrubSent(error.statusText ?? '', sent));
+	const message = chargebeeErrorMessage(error.status, statusText, body);
 	return new ApiError(
 		{
 			...error.request,
@@ -295,7 +298,7 @@ export function withoutRequestData(
 			url: routeUrl(error.url, error.request.url, base),
 			ok: false,
 			status: error.status,
-			statusText: error.statusText,
+			statusText,
 			body,
 		},
 		message,

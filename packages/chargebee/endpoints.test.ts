@@ -483,14 +483,18 @@ describe('errors', () => {
 				url: `${CHARGEBEE_API_BASE}/customers`,
 				ok: false,
 				status: 400,
-				statusText: 'Bad Request',
+				// A proxy that writes the request into its reason phrase.
+				statusText: 'Rejected ada@example.test',
 				body: { message: 'Invalid email ada@example.test for Acme Labs' },
 			},
 			'x',
 		);
-		const text = JSON.stringify(withoutRequestData(error, KEY).body);
+		const clean = withoutRequestData(error, KEY);
+		const text = JSON.stringify(clean.body);
 		expect(text).not.toContain('ada@example.test');
 		expect(text).not.toContain('Acme Labs');
+		expect(clean.statusText).not.toContain('ada@example.test');
+		expect(clean.statusText).toContain('Rejected');
 	});
 
 	it('scrubs sent strings and the key from the error body', () => {
@@ -564,6 +568,16 @@ describe('errors', () => {
 				metadata: { 'carol@example.test': 'y' },
 			}),
 		).toEqual(['carol@example.test']);
+		// A key 12 levels down in free-form metadata is still found.
+		const free = {
+			type: 'object',
+			properties: { meta: { type: 'object', additionalProperties: {} } },
+		};
+		let deep: Record<string, unknown> = { 'dave@example.test': 1 };
+		for (let i = 0; i < 11; i++) deep = { [`k${i}`]: deep };
+		expect(customerMapKeys(free, { meta: deep })).toContain(
+			'dave@example.test',
+		);
 	});
 
 	it('sends a single-attempt request once, even on a 429', async () => {
