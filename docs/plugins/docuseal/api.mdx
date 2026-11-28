@@ -2940,7 +2940,7 @@ await corsair.docuseal.api.templates.updateDocuments({ id: 123456, documents: [{
 | `documents` | `object[]` | No | Add, replace or remove documents on the template; leave out to only merge the existing ones. |
 | `merge` | `boolean` | No | Merge all of the template's documents into one PDF. DocuSeal defaults to false. |
 
-Add, replace or remove documents on an existing template. `replace` and `remove` act on the document at `position` (without it, a document is added at the end). `merge: true` alone merges the existing documents. May require a paid (Pro) plan.
+Add, replace or remove documents on an existing template. `replace: true` replaces the document at `position`; `remove: true` removes the document at `position`, or the one with that `name`; an entry with neither adds a document (at `position`, or at the end). `merge: true` alone merges the existing documents. May require a paid (Pro) plan.
 
 <AccordionGroup>
 <Accordion title="documents full type">

@@ -88,7 +88,7 @@ apiNotes:
   templates.createFromPdf: 'Files travel base64-encoded. May require a paid (Pro) plan.'
   templates.createFromDocx: 'Files travel base64-encoded. DOCX templates may require a paid (Pro) plan.'
   templates.merge: 'The source templates are kept; the merge produces a new one. May require a paid (Pro) plan.'
-  templates.updateDocuments: 'Add, replace or remove documents on an existing template. `replace` and `remove` act on the document at `position` (without it, a document is added at the end). `merge: true` alone merges the existing documents. May require a paid (Pro) plan.'
+  templates.updateDocuments: 'Add, replace or remove documents on an existing template. `replace: true` replaces the document at `position`; `remove: true` removes the document at `position`, or the one with that `name`; an entry with neither adds a document (at `position`, or at the end). `merge: true` alone merges the existing documents. May require a paid (Pro) plan.'
   submissions.list: 'Pages by id cursor: pass `pagination.next` from one page as `after` on the next. Page size is capped at 100; DocuSeal defaults to 10.'
   submissions.create: 'Sends the signature-request emails immediately unless you pass `send_email: false`. Answers a bare array, one submitter per entry.'
   submissions.createFromPdf: 'One-off submissions from uploaded files. May require a paid (Pro) plan.'
