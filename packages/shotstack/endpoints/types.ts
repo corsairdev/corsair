@@ -66,9 +66,11 @@ const MergeFieldInputSchema = z
 				z.string(),
 				z.number(),
 				z.boolean(),
+				z.null(),
+				z.array(z.unknown()),
 				z.record(z.string(), z.unknown()),
 			])
-			.describe('The replacement value; any JSON type.'),
+			.describe('The replacement value; any JSON type, null included.'),
 	})
 	.superRefine((field, ctx) => {
 		if (!('replace' in field)) {
@@ -83,21 +85,27 @@ const MergeFieldInputSchema = z
 
 export type MergeFieldInput = z.input<typeof MergeFieldInputSchema>;
 
+// A merge placeholder (`{{RESOLUTION}}`) stands in for any edit value
+// until the render replaces it, so a template's output may hold one.
+const PLACEHOLDER = z
+	.string()
+	.regex(/^\{\{\s*[A-Za-z0-9_]+\s*\}\}$/, 'a merge placeholder like {{NAME}}');
+
+function orPlaceholder<T extends z.ZodType>(schema: T) {
+	return z.union([schema, PLACEHOLDER]);
+}
+
 const OutputInputSchema = z
 	.object({
-		format: z
-			.enum(OUTPUT_FORMATS)
-			.describe(
-				'The output format and media type: mp4, gif, mp3, jpg, png or bmp.',
-			),
-		resolution: z
-			.enum(RESOLUTIONS)
+		format: orPlaceholder(z.enum(OUTPUT_FORMATS)).describe(
+			'The output format and media type: mp4, gif, mp3, jpg, png or bmp.',
+		),
+		resolution: orPlaceholder(z.enum(RESOLUTIONS))
 			.optional()
 			.describe(
 				'Preset output resolution: preview, mobile, sd, hd, 1080 or 4k. 4k needs a plan that includes it.',
 			),
-		aspectRatio: z
-			.enum(ASPECT_RATIOS)
+		aspectRatio: orPlaceholder(z.enum(ASPECT_RATIOS))
 			.optional()
 			.describe('The shape of the output: 16:9, 9:16, 1:1, 4:5 or 4:3.'),
 		size: z
@@ -115,14 +123,14 @@ const OutputInputSchema = z
 			.describe(
 				'Frames per second: 12, 15, 23.976, 24, 25 (default), 29.97, 30, 48, 50, 59.94 or 60.',
 			),
-		scaleTo: z
-			.enum(RESOLUTIONS)
+		scaleTo: orPlaceholder(z.enum(RESOLUTIONS))
 			.optional()
 			.describe(
 				'Render at another size than the one the edit was laid out for: preview, mobile, sd, hd, 1080 or 4k.',
 			),
-		quality: z
-			.enum(['verylow', 'low', 'medium', 'high', 'veryhigh'])
+		quality: orPlaceholder(
+			z.enum(['verylow', 'low', 'medium', 'high', 'veryhigh']),
+		)
 			.optional()
 			.describe(
 				'Output quality; lower means smaller files and faster renders.',

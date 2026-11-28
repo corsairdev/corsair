@@ -259,6 +259,23 @@ describe('makeShotstackRequest', () => {
 	});
 });
 
+describe('error messages', () => {
+	it('never carries the serialized body of an unmapped status', async () => {
+		respond({ echo: 'timeline text from the request' }, 422);
+		const error = await failure(
+			makeShotstackRequest(API_KEY, {
+				method: 'POST',
+				service: 'edit',
+				path: '/render',
+				body: {},
+			}),
+		);
+		expect(error.status).toBe(422);
+		expect(error.message).not.toContain('timeline text');
+		expect(JSON.stringify(error.body)).not.toContain('timeline text');
+	});
+});
+
 describe('describeShotstackError', () => {
 	it('falls back when the body has no error text', () => {
 		expect(

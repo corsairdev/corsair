@@ -415,6 +415,37 @@ describe('rejections', () => {
 		).resolves.toBeDefined();
 	});
 
+	it('accepts null and array merge replacements', async () => {
+		respond(renderQueued, 201);
+		await expect(
+			invoke(Templates.render, {
+				id: 'x',
+				merge: [
+					{ find: 'SUBTITLE', replace: null },
+					{ find: 'TAGS', replace: ['a', 'b'] },
+				],
+			}),
+		).resolves.toBeDefined();
+	});
+
+	it('accepts a merge placeholder in the output and rejects other strings', async () => {
+		respond(renderQueued, 201);
+		await expect(
+			invoke(Renders.create, {
+				timeline: { tracks: [{ clips: [{ asset: {}, start: 0, length: 1 }] }] },
+				output: { format: 'mp4', resolution: '{{RESOLUTION}}' },
+				merge: [{ find: 'RESOLUTION', replace: 'hd' }],
+			}),
+		).resolves.toBeDefined();
+		const error = await captureError(
+			invoke(Renders.create, {
+				timeline: { tracks: [{ clips: [{ asset: {}, start: 0, length: 1 }] }] },
+				output: { format: 'mp4', resolution: 'huge' },
+			}),
+		);
+		expect(error).toHaveProperty('name', 'ZodError');
+	});
+
 	it('rejects merged without data on renders.get', async () => {
 		const error = await captureError(
 			invoke(Renders.get, { id: 'x', merged: true }),

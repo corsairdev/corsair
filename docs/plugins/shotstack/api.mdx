@@ -459,16 +459,16 @@ await corsair.shotstack.api.renders.create({ timeline: { tracks: [{ clips: [{ as
 
 ```ts
 {
-  format: mp4 | gif | mp3 | jpg | png | bmp,
-  resolution?: 1080 | preview | mobile | sd | hd | 4k,
-  aspectRatio?: 16:9 | 9:16 | 1:1 | 4:5 | 4:3,
+  format: mp4 | gif | mp3 | jpg | png | bmp | string,
+  resolution?: 1080 | preview | mobile | sd | hd | 4k | string,
+  aspectRatio?: 16:9 | 9:16 | 1:1 | 4:5 | 4:3 | string,
   size?: {
     width: number,
     height: number
   },
   fps?: number,
-  scaleTo?: 1080 | preview | mobile | sd | hd | 4k,
-  quality?: verylow | low | medium | high | veryhigh,
+  scaleTo?: 1080 | preview | mobile | sd | hd | 4k | string,
+  quality?: verylow | low | medium | high | veryhigh | string,
   repeat?: boolean,
   mute?: boolean,
   range?: {
@@ -494,7 +494,7 @@ await corsair.shotstack.api.renders.create({ timeline: { tracks: [{ clips: [{ as
 ```ts
 {
   find: string,
-  replace: string | number | boolean | Record<string, any>
+  replace: string | number | boolean | null | any[] | Record<string, any>
 }[]
 ```
 </Accordion>
@@ -778,16 +778,16 @@ await corsair.shotstack.api.templates.create({ name: 'My lower third', template:
     }[]
   },
   output: {
-    format: mp4 | gif | mp3 | jpg | png | bmp,
-    resolution?: 1080 | preview | mobile | sd | hd | 4k,
-    aspectRatio?: 16:9 | 9:16 | 1:1 | 4:5 | 4:3,
+    format: mp4 | gif | mp3 | jpg | png | bmp | string,
+    resolution?: 1080 | preview | mobile | sd | hd | 4k | string,
+    aspectRatio?: 16:9 | 9:16 | 1:1 | 4:5 | 4:3 | string,
     size?: {
       width: number,
       height: number
     },
     fps?: number,
-    scaleTo?: 1080 | preview | mobile | sd | hd | 4k,
-    quality?: verylow | low | medium | high | veryhigh,
+    scaleTo?: 1080 | preview | mobile | sd | hd | 4k | string,
+    quality?: verylow | low | medium | high | veryhigh | string,
     repeat?: boolean,
     mute?: boolean,
     range?: {
@@ -807,7 +807,7 @@ await corsair.shotstack.api.templates.create({ name: 'My lower third', template:
   },
   merge?: {
     find: string,
-    replace: string | number | boolean | Record<string, any>
+    replace: string | number | boolean | null | any[] | Record<string, any>
   }[],
   callback?: string,
   instance?: s1 | s2 | a1
@@ -989,7 +989,7 @@ await corsair.shotstack.api.templates.render({ id: 'f5493c17-d01f-445c-bb49-535f
 ```ts
 {
   find: string,
-  replace: string | number | boolean | Record<string, any>
+  replace: string | number | boolean | null | any[] | Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1052,16 +1052,16 @@ await corsair.shotstack.api.templates.update({ id: 'f5493c17-d01f-445c-bb49-535f
     }[]
   },
   output: {
-    format: mp4 | gif | mp3 | jpg | png | bmp,
-    resolution?: 1080 | preview | mobile | sd | hd | 4k,
-    aspectRatio?: 16:9 | 9:16 | 1:1 | 4:5 | 4:3,
+    format: mp4 | gif | mp3 | jpg | png | bmp | string,
+    resolution?: 1080 | preview | mobile | sd | hd | 4k | string,
+    aspectRatio?: 16:9 | 9:16 | 1:1 | 4:5 | 4:3 | string,
     size?: {
       width: number,
       height: number
     },
     fps?: number,
-    scaleTo?: 1080 | preview | mobile | sd | hd | 4k,
-    quality?: verylow | low | medium | high | veryhigh,
+    scaleTo?: 1080 | preview | mobile | sd | hd | 4k | string,
+    quality?: verylow | low | medium | high | veryhigh | string,
     repeat?: boolean,
     mute?: boolean,
     range?: {
@@ -1081,7 +1081,7 @@ await corsair.shotstack.api.templates.update({ id: 'f5493c17-d01f-445c-bb49-535f
   },
   merge?: {
     find: string,
-    replace: string | number | boolean | Record<string, any>
+    replace: string | number | boolean | null | any[] | Record<string, any>
   }[],
   callback?: string,
   instance?: s1 | s2 | a1

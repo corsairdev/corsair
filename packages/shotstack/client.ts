@@ -159,10 +159,12 @@ function sanitizedApiError(
 	req: ShotstackRequest,
 	environment: ShotstackEnvironment,
 ): ApiError {
+	// Core's message for an unmapped status is the whole serialized body, so
+	// the fallback is the status text, never error.message.
 	const { message, code } = describeShotstackError(
 		error.status,
 		error.body,
-		error.message,
+		error.statusText || 'request failed',
 	);
 	const path = `/${req.service}/${environment}${req.path}`;
 	return new ApiError(

@@ -27,6 +27,9 @@ function replaySafe(error: Error): boolean {
  * shotstack.io/docs/guide (limitations), the three OpenAPI specs, and the
  * probe evidence in the research notes.
  */
+/** Shotstack's rate-limit window per key. */
+export const RATE_LIMIT_WINDOW_MS = 60_000;
+
 export const errorHandlers = {
 	// A 429 that names the generation quota is the account running out of
 	// credits, which no retry can fix; it must be matched before the rate
@@ -40,15 +43,17 @@ export const errorHandlers = {
 	},
 	// 429 on a fixed 60-second window per key, and the body code
 	// `rate_limit_error` when a gateway answers 429 without Shotstack's body.
-	// No Retry-After is documented; a real header overrides the fallback.
+	// Retries a second apart all land in the same window, so the one retry
+	// waits for the window to reset: Retry-After when Shotstack sends it,
+	// otherwise the full 60 seconds.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) =>
 			statusOf(error) === 429 || codeOf(error) === 'rate_limit_error',
 		handler: async (error: Error) => ({
-			maxRetries: 3,
+			maxRetries: 1,
 			headersRetryAfterMs:
-				error instanceof ApiError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
+				(error instanceof ApiError ? error.retryAfter : undefined) ??
+				RATE_LIMIT_WINDOW_MS,
 		}),
 	},
 	// 402: the account has too few generation credits for this asset.

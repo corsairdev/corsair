@@ -82,13 +82,12 @@ async function apiError(
 }
 
 describe('Shotstack error handlers', () => {
-	it('retries a plain 429 with backoff', async () => {
+	it('retries a plain 429 once, after the 60-second window', async () => {
 		const error = await apiError(429);
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
 		expect(await strategy(error)).toEqual({
-			maxRetries: 3,
-			headersRetryAfterMs: undefined,
-			retryStrategy: 'exponential_backoff',
+			maxRetries: 1,
+			headersRetryAfterMs: 60_000,
 		});
 	});
 
@@ -100,9 +99,8 @@ describe('Shotstack error handlers', () => {
 	it('honours Retry-After when Shotstack sends one', async () => {
 		const error = await apiError(429, { retryAfter: 2000 });
 		expect(await strategy(error)).toEqual({
-			maxRetries: 3,
+			maxRetries: 1,
 			headersRetryAfterMs: 2000,
-			retryStrategy: 'exponential_backoff',
 		});
 	});
 

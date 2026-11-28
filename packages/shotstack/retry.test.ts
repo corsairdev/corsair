@@ -5,9 +5,8 @@ import { renderDone, renderFailed, templateList } from './test-fixtures';
 
 /**
  * The transport makes one attempt (rateLimitConfig maxRetries 0) and
- * error-handlers.ts decides the retries: 429 three times with exponential
- * backoff, reads on 5xx twice. Rate limits sit in a fixed 60-second window
- * per key, so a no-header retry waits one second, not the window.
+ * error-handlers.ts decides the retries: a 429 once, after the 60-second
+ * window (or Retry-After), reads on 5xx twice.
  */
 async function createClient() {
 	const testDb = createTestDatabase();
@@ -79,9 +78,10 @@ describe('retries through createCorsair', () => {
 	});
 
 	it('gives up after the retry budget on a persistently rate-limited read', async () => {
+		jest.useFakeTimers();
 		const { corsair, testDb } = await createClient();
 		try {
-			for (let i = 0; i < 4; i += 1) {
+			for (let i = 0; i < 2; i += 1) {
 				respond(
 					{
 						errors: [
@@ -96,14 +96,16 @@ describe('retries through createCorsair', () => {
 				);
 			}
 
-			await expect(
-				corsair.shotstack.api.renders.get({ id: RENDER.id }),
-			).rejects.toMatchObject({ status: 429 });
-			expect(fetchMock).toHaveBeenCalledTimes(4);
+			const promise = corsair.shotstack.api.renders.get({ id: RENDER.id });
+			const settled = expect(promise).rejects.toMatchObject({ status: 429 });
+			await jest.advanceTimersByTimeAsync(60_000);
+			await settled;
+			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
 			testDb.cleanup();
+			jest.useRealTimers();
 		}
-	}, 30_000);
+	});
 
 	it('replays a template list that got a 503, a read with no side effect', async () => {
 		const { corsair, testDb } = await createClient();
@@ -170,10 +172,10 @@ describe('retries through createCorsair', () => {
 		}
 	});
 
-	it('pins the no-header retry delay at one second, not the 60 second window', async () => {
+	it('waits out the 60-second window before the retry when no Retry-After is sent', async () => {
 		// Core sleeps between handler retries with a plain setTimeout, which
-		// fake timers can advance. No Retry-After is documented, so the first
-		// backoff step (exponential_backoff) is one second.
+		// fake timers can advance. No Retry-After is documented, so the retry
+		// waits for the fixed window to reset.
 		jest.useFakeTimers();
 		const { corsair, testDb } = await createClient();
 		try {
@@ -185,8 +187,8 @@ describe('retries through createCorsair', () => {
 			await jest.advanceTimersByTimeAsync(0);
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 
-			// A millisecond short of the first backoff step: no second attempt yet.
-			await jest.advanceTimersByTimeAsync(999);
+			// A millisecond short of the window: no second attempt yet.
+			await jest.advanceTimersByTimeAsync(59_999);
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 
 			await jest.advanceTimersByTimeAsync(1);
