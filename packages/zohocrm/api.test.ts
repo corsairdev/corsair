@@ -203,7 +203,8 @@ describeIfKey('zohocrm live', () => {
 	const groupOf = (id: string) => id.split('.').slice(0, -1).join('.');
 	const called = () => new Set(steps.map((s) => s.id));
 
-	beforeAll(async () => {
+	/** A client on a freshly minted token (an access token lasts one hour). */
+	async function connect(): Promise<void> {
 		const key = await mintAccessToken();
 		const testDb = createTestDatabase();
 		await createIntegrationAndAccount(testDb.db, 'zohocrm', 'default');
@@ -214,9 +215,13 @@ describeIfKey('zohocrm live', () => {
 		});
 		api = (corsair as unknown as { zohocrm: { api: Record<string, unknown> } })
 			.zohocrm.api;
-	});
+	}
+
+	beforeAll(connect);
 
 	afterAll(async () => {
+		// The run can outlast its token: teardown starts on a new one.
+		await connect().catch(() => undefined);
 		for (const cleanup of cleanups.reverse()) {
 			try {
 				await cleanup.run();
@@ -309,14 +314,22 @@ describeIfKey('zohocrm live', () => {
 		expect(pick(roles, 'roles')).toBeDefined();
 		await run('profiles.list', {});
 		await run('profiles.get', { id: ids.profileId });
-		// The test org's logo: set, read and removed again.
-		const png =
-			'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
-		await run('org.uploadPhoto', {
-			file: { base64: png, filename: 'logo.png', contentType: 'image/png' },
-		});
-		await run('org.getPhoto', {});
-		await run('org.deletePhoto', {});
+		// The org's logo: set, read and removed again, only when the org has none
+		// (getPhoto then answers without a file); an existing logo is only read.
+		const hasLogo = await op('org.getPhoto')({})
+			.then(() => true)
+			.catch(() => false);
+		if (!hasLogo) {
+			const png =
+				'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+			const uploaded = await run('org.uploadPhoto', {
+				file: { base64: png, filename: 'logo.png', contentType: 'image/png' },
+			});
+			await run('org.getPhoto', {});
+			if (uploaded) await run('org.deletePhoto', {});
+		} else {
+			await run('org.getPhoto', {});
+		}
 	});
 
 	it('creates, reads, searches and updates records', async () => {
@@ -2142,5 +2155,18 @@ describeIfKey('zohocrm live', () => {
 			});
 		}
 		expect(steps.length).toBeGreaterThan(50);
+	});
+
+	it('has no unexpected failures', () => {
+		// Open on the 11-28 run, listed in the PR: the right input is still unknown.
+		const knownOpen = new Set([
+			'bulkWrite.createJob',
+			'workflowRules.getUsage',
+			'workflowRules.reorder',
+		]);
+		const unexpected = steps.filter(
+			(s) => !s.ok && !s.expected && !knownOpen.has(s.id),
+		);
+		expect(unexpected.map((s) => `${s.id}: ${s.note}`)).toEqual([]);
 	});
 });

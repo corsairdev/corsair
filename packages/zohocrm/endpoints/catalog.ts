@@ -2179,9 +2179,10 @@ export const zohocrmEndpointMeta = {
 			'Create currencies. Creates one or more new currencies for the organization.',
 	},
 	'currencies.enableMultiCurrency': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
-			'Enable multi-currency. for the organization and set the base currency.',
+			'Enable multi-currency. for the organization and set the base currency. Turns multi-currency on for good and fixes the home currency; Zoho cannot turn it off again.',
 	},
 	'currencies.get': {
 		riskLevel: 'read',
@@ -2863,9 +2864,10 @@ export const zohocrmEndpointMeta = {
 			'Kiosk State. To update a particular state in a specific Kiosk in Zoho CRM using the Kiosk ID and state ID. Each state represents a screen, action, decision, or GetRecords. A Kiosk must be in the draft status to update a state.',
 	},
 	'kiosks.testRun': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
-			'Initiate a Test Run for a Kiosk. To initiate a test run for a kiosk before publishing it in your Zoho CRM organization. This operation executes all configured kiosk states and actions on live CRM data in real time.',
+			"Initiate a Test Run for a Kiosk. To initiate a test run for a kiosk before publishing it in your Zoho CRM organization. This operation executes all configured kiosk states and actions on live CRM data in real time. Runs the kiosk's actions on live records (emails, record changes); they are not undone.",
 	},
 	'kiosks.update': {
 		riskLevel: 'write',
@@ -3017,9 +3019,9 @@ export const zohocrmEndpointMeta = {
 			'Mass update records. To update a specific field value across multiple records of a module in your Zoho CRM organization in a single API call. The operation supports two modes.',
 	},
 	'meetings.cancel': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Cancel a Meeting. To cancel a meeting and send an email regarding the meeting cancellation to the participants. A meeting can only be cancelled if attendees have already been invited and the meeting has not passed its scheduled end time.',
+			'Cancel a Meeting. To cancel a meeting and send an email regarding the meeting cancellation to the participants. A meeting can only be cancelled if attendees have already been invited and the meeting has not passed its scheduled end time. With send_cancelling_mail, every participant gets a cancellation email.',
 	},
 	'modules.create': {
 		riskLevel: 'write',

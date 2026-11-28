@@ -145,7 +145,13 @@ describe('schemas', () => {
 			const parsed = getZohoCrmOutputSchema(operation.id).safeParse({
 				__added_later__: { nested: true },
 			});
-			if (!parsed.success) failed.push(operation.id);
+			// The unknown field must survive the parse, not only be accepted.
+			const kept = parsed.success
+				? (parsed.data as Record<string, unknown>).__added_later__
+				: undefined;
+			if (!parsed.success || JSON.stringify(kept) !== '{"nested":true}') {
+				failed.push(operation.id);
+			}
 		}
 		expect(failed).toEqual([]);
 	});
