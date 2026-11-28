@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 };
 
 const CONTACT_EMAIL = 'team@corsair.dev';
-const LAST_UPDATED = 'October 25, 2026';
+const LAST_UPDATED = 'November 9, 2026';
 const LOG_RETENTION_PERIOD = '90 days';
 
 export default function PrivacyPolicyPage() {
@@ -394,6 +394,70 @@ export default function PrivacyPolicyPage() {
 						settings, as applicable.
 					</p>
 				</LegalSubsection>
+
+				<LegalSubsection title="Product analytics">
+					<p>
+						corsair.dev, lug.dev and hub.corsair.dev use PostHog to show us how
+						people use these sites, so we can find where people get stuck, fix
+						problems and decide what to improve. PostHog processes this data on
+						our behalf and stores it in the United States.
+					</p>
+					<p>
+						PostHog receives the pages you view, what you click and the text of
+						that element, how long you stay on a page, your IP address and the
+						approximate location it gives, and your browser and device. On
+						corsair.dev and Hub it also receives session recordings, which
+						replay how a page looked and changed while you used it, along with
+						browser console messages and the address and timing of network
+						requests. Session recordings are kept for 30 days. lug.dev does not
+						record sessions.
+					</p>
+					<p>
+						PostHog uses a cookie and browser storage to recognize a returning
+						browser, including across corsair.dev and hub.corsair.dev. When you
+						go from lug.dev to Hub, the link carries an anonymous ID so both
+						count as one visit. Once you sign in to Hub, this activity is linked
+						to your account by an internal user ID, not your name or email.
+					</p>
+					<p>We limit what PostHog receives:</p>
+					<ul className="list-disc space-y-2 pl-6">
+						<li>
+							Text you type into form fields is masked in session recordings on
+							corsair.dev and Hub.
+						</li>
+						<li>
+							Session recordings do not include the contents or headers of
+							network requests.
+						</li>
+						<li>
+							On lug.dev and Hub, we remove tokens and most other parameters
+							from URLs before they reach PostHog.
+						</li>
+						<li>
+							On Hub, session recordings leave out your name and email in
+							account menus, setup snippets for AI clients, the End User ID on
+							connect pages, the arguments on approval pages, and error messages
+							from routine runs. A run's error can repeat what a connected app
+							returned.
+						</li>
+						<li>
+							On Hub, session recordings also leave out API keys, signing
+							secrets, webhook payloads and test-call results shown in the
+							console.
+						</li>
+					</ul>
+					<p>
+						Session recordings on Hub can include other text shown on the page,
+						such as issues, comments, routines and skills, and the names and
+						emails of people in a shared workspace. We watch them to check that
+						these features work.
+					</p>
+					<p>
+						On Hub, your Lug address and link name can appear in session
+						recordings and click data, because a Lug address becomes public once
+						claimed.
+					</p>
+				</LegalSubsection>
 			</LegalSection>
 
 			<LegalSection title="5. Google User Data">
@@ -681,6 +745,10 @@ export default function PrivacyPolicyPage() {
 						emails on our behalf;
 					</li>
 					<li>
+						Product analytics providers (currently PostHog), for the data
+						described under &ldquo;Product analytics&rdquo; in Section 4;
+					</li>
+					<li>
 						AI model providers (currently Microsoft Azure OpenAI Service), only
 						for the optional AI features described in Section 4, under terms
 						that prohibit them from training on the data;
@@ -760,6 +828,12 @@ export default function PrivacyPolicyPage() {
 					If you unsubscribe from product and marketing emails, we keep your
 					email address on a suppression list so that we do not send them to you
 					again.
+				</p>
+				<p>
+					<strong className="font-medium text-[#1c1c1c]">
+						Session recordings:
+					</strong>{' '}
+					The session recordings described in Section 4 are kept for 30 days.
 				</p>
 			</LegalSection>
 
