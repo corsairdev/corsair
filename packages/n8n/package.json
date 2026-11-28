@@ -1,0 +1,55 @@
+{
+  "name": "@corsair-dev/n8n",
+  "version": "0.1.0",
+  "description": "Manage a self-hosted or Cloud n8n instance: create, run, publish and archive workflows, read and retry executions, manage credentials, data tables and their rows, tags, variables, projects, folders, users, roles, AI agents, evaluations, source control, environment promotions and instance settings (202 operations).",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "dev-source": "./index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc --build --force && tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:live": "jest --testPathIgnorePatterns=/node_modules/ --testPathPattern=api\\.test\\.ts"
+  },
+  "peerDependencies": {
+    "corsair": ">=0.1.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "corsair": "workspace:*",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.4.9",
+    "tsup": "^8.0.1",
+    "typescript": "catalog:",
+    "zod": "^4.1.13"
+  },
+  "keywords": [
+    "corsair",
+    "n8n",
+    "plugin",
+    "n8n",
+    "workflow-automation",
+    "automation",
+    "self-hosted"
+  ],
+  "author": "Corsair (https://corsair.dev)",
+  "license": "Apache-2.0",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/n8n"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/n8n"
+}

@@ -1,0 +1,136 @@
+---
+title: "n8n plugin"
+sidebarTitle: "Overview"
+description: "Manage an n8n instance: workflows, executions, credentials, data tables, tags, variables, projects, users, AI agents and instance settings (202 operations)."
+---
+
+Use **n8n** through Corsair: one client, typed API calls.
+
+Create an API key on the instance under **Settings &gt; n8n API** and connect it with the instance URL (`https://n8n.example.com`; the plugin adds `/api/v1`). Things to know before you write:
+
+- **Where the API exists.** Every self-hosted n8n (Community edition included) has the public API. n8n Cloud has it on paid plans only, not during the free trial.
+- **Licensed features.** On a Community instance, projects, variables, source control, environment promotions, custom roles, role mapping, changing a user's global role, LDAP, SAML, OIDC, log streaming, security policy, node and credential type policies and evaluation runs answer 403 `Your license does not allow for feat:...`: they need a Business or Enterprise licence. Folders need the free registered Community licence. Each operation's description names the feature it needs.
+- **Versions.** The operations follow n8n 2.50. An instance on 2.49 or older answers 404 to the newer routes (AI agent versions and runs, AI preferences, `workflows.run`, promotion reviews and settings): each one says "Added in n8n 2.50".
+- **Key scopes.** A key created with limited scopes answers 403 on routes outside them.
+- **Paging.** List routes take `limit` (up to 250) and `cursor`, and return `{ data, nextCursor }`; pass `nextCursor` back as `cursor` until it is null.
+- **What runs.** `workflows.run`, `executions.retry`, `agents.run` and `evaluations.startRun` run automation that may call other services; `workflows.activate`/`publish` turn triggers on; `communityPackages.install` installs code on the server. They are `destructive`, like every delete.
+
+**What you get:**
+
+- 202 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/n8n better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/n8n better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/n8n better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/n8n better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { n8n } from '@corsair-dev/n8n';
+
+export const corsair = createCorsair({
+	plugins: [
+		n8n(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the n8n API key before the first call: `pnpm corsair setup --plugin=n8n --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+n8n()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'n8n',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List active workflows**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.n8n.api.workflows.list({ active: true, limit: 50 });
+```
+
+
+**Create a tag**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.n8n.api.tags.create({ name: 'reports' });
+```
+
+
+See the full list on the [API](/plugins/n8n/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/n8n/api">
+    Every `n8n.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

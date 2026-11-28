@@ -489,6 +489,7 @@ export const BaseProviders = [
 	'moz',
 	'motion',
 	'mrscraper',
+	'n8n',
 	'nango',
 	'nanonets',
 	'nasa',
@@ -1309,6 +1310,7 @@ export const ProviderDisplayNames = {
 	moz: 'Moz',
 	motion: 'Motion',
 	mrscraper: 'MrScraper',
+	n8n: 'n8n',
 	nango: 'Nango',
 	nanonets: 'Nanonets',
 	nasa: 'NASA',
@@ -2136,6 +2138,7 @@ export type AllProviders =
 	| 'moz'
 	| 'motion'
 	| 'mrscraper'
+	| 'n8n'
 	| 'nango'
 	| 'nanonets'
 	| 'nasa'

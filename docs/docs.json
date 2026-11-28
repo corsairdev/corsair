@@ -4073,6 +4073,14 @@
                 ]
               },
               {
+                "group": "n8n",
+                "pages": [
+                  "plugins/n8n/overview",
+                  "plugins/n8n/api",
+                  "plugins/n8n/database"
+                ]
+              },
+              {
                 "group": "Nango",
                 "pages": [
                   "plugins/nango/overview",
