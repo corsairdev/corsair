@@ -78,11 +78,13 @@ export class DubTransportError extends Error {
 				: 'Dub request failed before a response';
 		// A key Headers refuses (a newline in it) makes fetch throw a message
 		// that quotes it: scrub it, and keep a cause only when it is clean.
-		const leaks = Boolean(key) && raw.includes(String(key));
-		super(
-			leaks ? raw.split(String(key)).join('[REDACTED]') : raw,
-			leaks ? undefined : { cause },
-		);
+		// Headers trims surrounding whitespace before quoting a value, so the
+		// trimmed form is scrubbed too.
+		const forms = key ? [key, key.trim()].filter(Boolean) : [];
+		const leaks = forms.some((form) => raw.includes(form));
+		let message = raw;
+		for (const form of forms) message = message.split(form).join('[REDACTED]');
+		super(message, leaks ? undefined : { cause });
 		this.name = 'DubTransportError';
 		this.method = method;
 		this.path = redactPath(path);
