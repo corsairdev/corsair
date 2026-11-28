@@ -17,6 +17,7 @@ import {
 	chargebeeForm,
 	freeFormFields,
 	queryValue,
+	withStringOffsets,
 } from './endpoints/operations';
 import type { ChargebeeContext } from './index';
 
@@ -361,6 +362,29 @@ describe('responses', () => {
 				docs.apiExamples[operation.id]?.args ?? {},
 			),
 		).rejects.toThrow(/not JSON/);
+	});
+
+	it('turns an array or number next_offset into the string offset takes', async () => {
+		expect(
+			withStringOffsets({ list: [], next_offset: ['1795842313000', '74209'] }),
+		).toEqual({ list: [], next_offset: '["1795842313000","74209"]' });
+		expect(withStringOffsets({ list: [], next_offset: 3 })).toEqual({
+			list: [],
+			next_offset: '3',
+		});
+		const plain = { list: [], next_offset: 'abc' };
+		expect(withStringOffsets(plain)).toBe(plain);
+
+		reply(200, { list: [], next_offset: ['1795842313000', '74209'] });
+		const page = (await endpointFor('customers.list')(ctx(), {
+			limit: 1,
+		})) as { next_offset?: string };
+		expect(page.next_offset).toBe('["1795842313000","74209"]');
+		reply(200, { list: [], next_offset: 1 });
+		const items = (await endpointFor('items.list')(ctx(), {})) as {
+			next_offset?: string;
+		};
+		expect(items.next_offset).toBe('1');
 	});
 
 	it('refuses an object route that answers a list', async () => {

@@ -418,6 +418,29 @@ const MAX_CURSOR_LENGTH = 8192;
  * one too long to be a token, is an error rather than a last page, so a
  * broken header never reads as "no more events".
  */
+/**
+ * Chargebee documents a list's `next_offset` as a string, but sends a JSON
+ * array (`["1795842313000","74209"]`) on some lists and a bare number on
+ * others (seen live 11-28 on customers, subscriptions, events, coupons, items,
+ * item prices, features, entitlements). Each is turned into the string the
+ * `offset` input takes back: the array as compact JSON, the number as digits.
+ */
+export function withStringOffsets(value: unknown): unknown {
+	if (typeof value !== 'object' || value === null || Array.isArray(value))
+		return value;
+	const record = value as Record<string, unknown>;
+	let copy: Record<string, unknown> | undefined;
+	for (const [key, field] of Object.entries(record)) {
+		if (!key.endsWith('next_offset')) continue;
+		if (typeof field === 'number' || Array.isArray(field)) {
+			copy ??= { ...record };
+			copy[key] =
+				typeof field === 'number' ? String(field) : JSON.stringify(field);
+		}
+	}
+	return copy ?? value;
+}
+
 export function nextCursorFrom(
 	id: string,
 	header: string,
@@ -617,7 +640,8 @@ export function createChargebeeOperation<Id extends ChargebeeOperationId>(
 			if (operation.emptyOk) {
 				result = decodeMaybeEmpty(id, result);
 			}
-			response = result === EMPTY ? { success: true } : result;
+			response =
+				result === EMPTY ? { success: true } : withStringOffsets(result);
 		}
 
 		// The output schema is built from the documented response; a body that
