@@ -1,0 +1,126 @@
+import type { DubEndpoints } from '..';
+import { call } from './call';
+import {
+	DUB_EVENTS_LIMIT_DEFAULT,
+	DubEndpointInputSchemas as Inputs,
+	DubEndpointOutputSchemas as Outputs,
+} from './types';
+
+export const list: DubEndpoints['eventsList'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'events.list',
+			input: Inputs.eventsList,
+			output: Outputs.eventsList,
+		},
+		input,
+		({
+			event,
+			domain,
+			key,
+			linkId,
+			externalId,
+			tenantId,
+			tagId,
+			folderId,
+			partnerTagId,
+			groupId,
+			partnerId,
+			customerId,
+			interval,
+			start,
+			end,
+			timezone,
+			country,
+			city,
+			region,
+			continent,
+			device,
+			browser,
+			os,
+			trigger,
+			eventName,
+			referer,
+			refererUrl,
+			url,
+			utm_source,
+			utm_medium,
+			utm_campaign,
+			utm_term,
+			utm_content,
+			root,
+			saleType,
+			query,
+			page,
+			limit,
+			sortBy,
+			sortOrder,
+		}) => ({
+			method: 'GET',
+			path: '/events',
+			query: {
+				event,
+				domain,
+				key,
+				linkId,
+				externalId,
+				tenantId,
+				tagId,
+				folderId,
+				partnerTagId,
+				groupId,
+				partnerId,
+				customerId,
+				interval,
+				start,
+				end,
+				timezone,
+				country,
+				city,
+				region,
+				continent,
+				device,
+				browser,
+				os,
+				trigger,
+				eventName,
+				referer,
+				refererUrl,
+				url,
+				utm_source,
+				utm_medium,
+				utm_campaign,
+				utm_term,
+				utm_content,
+				root,
+				saleType,
+				query,
+				page,
+				limit,
+				sortBy,
+				sortOrder,
+			},
+		}),
+		{
+			// Dub answers a bare array with no pagination fields: a full page
+			// offers the next page number, a short one ends the list.
+			shape: (raw, { page, limit }) => {
+				// A non-array 2xx body is spec drift or an error envelope on 200;
+				// hand it to the output schema so it fails loudly instead of
+				// masquerading as an empty page.
+				if (!Array.isArray(raw)) return raw;
+				const effectiveLimit = limit ?? DUB_EVENTS_LIMIT_DEFAULT;
+				return {
+					items: raw,
+					page: page ?? 1,
+					limit: effectiveLimit,
+					nextPage: raw.length >= effectiveLimit ? (page ?? 1) + 1 : null,
+				};
+			},
+			log: (_, result) => ({
+				event: result.items[0]?.event,
+				count: result.items.length,
+			}),
+		},
+	);

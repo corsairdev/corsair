@@ -1,0 +1,162 @@
+---
+title: "Dub plugin"
+sidebarTitle: "Overview"
+description: "Dub (dub.co) short links and partner programs - create, update, upsert and delete links, read click and conversion analytics and raw events, generate SVG QR codes, manage tags, domains, folders and customers, run the Partners program (partners, applications, commissions, payouts, discount codes, bounties, messages), and receive signed webhooks."
+---
+
+Use **Dub** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Create a key at https://app.dub.co/settings/tokens (workspace Settings, API Keys, Create).
+The key is tied to one workspace, so no operation takes a workspaceId. Things to know:
+
+- **Deleting is permanent.** Deleted links, tags, domains, folders and customers cannot be
+  restored, and a recreated link starts with zero analytics.
+- **Tracking cannot be undone.** `track.lead` and `track.sale` append conversion data with no
+  delete; `invoiceId` on `track.sale` is the only duplicate guard (one sale per invoice ID).
+- **Retries.** Dub rate limits per key (60-3000 requests/minute by plan, separate per-second
+  caps on analytics). A 429 is retried up to three times, honouring `Retry-After`. Writes are
+  never replayed on a 5xx because Dub has no idempotency keys; `links.upsert` is the exception:
+  it matches the existing link by destination `url`, so replaying the same body gives the same
+  result. A different `key` on an existing url renames that link's slug.
+- **Paging.** `links.list` and `customers.list` page by cursor: pass `nextCursor` as
+  `startingAfter`. `events.list`, `tags.list`, `domains.list` and `folders.list` page by page
+  number, and a full last page leads to one empty page.
+- **Plans.** On Dub's free plan these answer 403 `forbidden` "Need higher plan" (checked 11-28): `folders.create/update/delete` (`folders.list` works), `track.lead` and `track.sale` (`track.open` works), every `customers.*` operation, `domains.checkStatus`, and most of the Partners program (partners, program applications, discount codes, bounties, messages, embed tokens, `commissions.create`). Without a partner program, `commissions.list/update/bulkUpdate` and `payouts.list` answer 404 "Program not found" instead. The analytics routes answer 429 with `X-RateLimit-Limit: 0`. Webhooks need the Business plan.
+- **Webhooks.** Dub sends link, click, lead, sale, partner, commission, discount code and message events. Add the endpoint in the workspace's webhook settings and store its secret as the webhook signature; each delivery's `Dub-Signature` (an HMAC-SHA256 of the body) is checked.
+- **Analytics shapes.** `analytics.retrieve` returns a count object for `groupBy: 'count'` and
+  an array of rows for every other groupBy.
+- **QR codes.** `qr.get` returns the SVG document as a string. PNG is not exposed.
+- **Partners program.** The partners, program applications, commissions, payouts, discount
+  codes, bounties, messages and embed token operations come straight from Dub's OpenAPI file.
+  The ones that pay, email or ban a partner are `destructive`. `domains.register` claims a
+  `.link` domain and is `destructive` too.
+
+**What you get:**
+
+- 63 typed API operations
+- 14 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/dub better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/dub better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/dub better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/dub better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { dub } from '@corsair-dev/dub';
+
+export const corsair = createCorsair({
+	plugins: [
+		dub(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Dub API key before the first call: `pnpm corsair setup --plugin=dub --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+dub()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'dub',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the workspace links**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.dub.api.links.list({});
+```
+
+
+**Create a short link**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.dub.api.links.create({ url: 'https://dub.co', domain: 'dub.sh', key: 'try' });
+```
+
+
+See the full list on the [API](/plugins/dub/api) page.
+
+## Webhooks
+
+This plugin registers **14** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/dub/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/dub/api">
+    Every `dub.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/dub/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

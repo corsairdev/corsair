@@ -2053,6 +2053,15 @@
                 ]
               },
               {
+                "group": "Dub",
+                "pages": [
+                  "plugins/dub/overview",
+                  "plugins/dub/api",
+                  "plugins/dub/database",
+                  "plugins/dub/webhooks"
+                ]
+              },
+              {
                 "group": "Dynapictures",
                 "pages": [
                   "plugins/dynapictures/overview",
