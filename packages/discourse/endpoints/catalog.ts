@@ -257,7 +257,7 @@ export const discourseEndpointMeta = {
 	'backups.download': {
 		riskLevel: 'read',
 		description:
-			'Download backup. The backup file needs the download token from the email backups.sendDownloadEmail sends. Needs an admin API key.',
+			'Download backup. Returns the archive as a file. Needs the download token from the email backups.sendDownloadEmail sends. A forum that keeps backups in S3 redirects to the storage URL. Needs an admin API key.',
 	},
 	'backups.list': {
 		riskLevel: 'read',
@@ -368,7 +368,8 @@ export const discourseEndpointMeta = {
 	},
 	'invites.create': {
 		riskLevel: 'destructive',
-		description: 'Create an invite. (POST /invites.json)',
+		description:
+			'Create an invite. A 429 here usually means the daily invite allowance (max_invites_per_day) is used up: it is not retried.',
 	},
 	'invites.createMultiple': {
 		riskLevel: 'destructive',
@@ -486,7 +487,7 @@ export const discourseEndpointMeta = {
 	'topics.getByExternalId': {
 		riskLevel: 'read',
 		description:
-			"Get topic by external_id. Discourse answers with a redirect to the topic on the forum's configured hostname, which the client follows.",
+			"Get topic by external_id. Discourse answers with a redirect to the topic's JSON on the forum's configured hostname; the client follows it and returns the topic.",
 	},
 	'topics.getPosts': {
 		riskLevel: 'read',

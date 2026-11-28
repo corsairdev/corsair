@@ -13,7 +13,7 @@ pnpm add @corsair-dev/discourse
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
 | `backups.create` | `discourse.api.backups.create` | `destructive` | Create backup. Needs an admin API key. (POST /admin/backups.json) |
-| `backups.download` | `discourse.api.backups.download` | `read` | Download backup. The backup file needs the download token from the email backups.sendDownloadEmail sends. Needs an admin API key. |
+| `backups.download` | `discourse.api.backups.download` | `read` | Download backup. Returns the archive as a file. Needs the download token from the email backups.sendDownloadEmail sends. A forum that keeps backups in S3 redirects to the storage URL. Needs an admin API key. |
 | `backups.list` | `discourse.api.backups.list` | `read` | List backups. Needs an admin API key. (GET /admin/backups.json) |
 | `backups.sendDownloadEmail` | `discourse.api.backups.sendDownloadEmail` | `destructive` | Send download backup email. Needs an admin API key. |
 | `badges.create` | `discourse.api.badges.create` | `write` | Create badge. Needs an admin API key. (POST /admin/badges.json) |
@@ -38,7 +38,7 @@ pnpm add @corsair-dev/discourse
 | `groups.listMembers` | `discourse.api.groups.listMembers` | `read` | List group members. (GET /groups/{name}/members.json) |
 | `groups.removeMembers` | `discourse.api.groups.removeMembers` | `destructive` | Remove group members. Cannot be undone. (DELETE /groups/{id}/members.json) |
 | `groups.update` | `discourse.api.groups.update` | `write` | Update a group. (PUT /groups/{id}.json) |
-| `invites.create` | `discourse.api.invites.create` | `destructive` | Create an invite. (POST /invites.json) |
+| `invites.create` | `discourse.api.invites.create` | `destructive` | Create an invite. A 429 here usually means the daily invite allowance (max_invites_per_day) is used up: it is not retried. |
 | `invites.createMultiple` | `discourse.api.invites.createMultiple` | `destructive` | Create multiple invites. (POST /invites/create-multiple.json) |
 | `notifications.list` | `discourse.api.notifications.list` | `read` | Get the notifications that belong to the current user. |
 | `notifications.markRead` | `discourse.api.notifications.markRead` | `write` | Mark notifications as read. (PUT /notifications/mark-read.json) |
@@ -65,7 +65,7 @@ pnpm add @corsair-dev/discourse
 | `topics.createTimer` | `discourse.api.topics.createTimer` | `write` | Create topic timer. (POST /t/{id}/timer.json) |
 | `topics.delete` | `discourse.api.topics.delete` | `destructive` | Remove a topic. Cannot be undone. (DELETE /t/{id}.json) |
 | `topics.get` | `discourse.api.topics.get` | `read` | Get a single topic. (GET /t/{id}.json) |
-| `topics.getByExternalId` | `discourse.api.topics.getByExternalId` | `read` | Get topic by external_id. Discourse answers with a redirect to the topic on the forum's configured hostname, which the client follows. |
+| `topics.getByExternalId` | `discourse.api.topics.getByExternalId` | `read` | Get topic by external_id. Discourse answers with a redirect to the topic's JSON on the forum's configured hostname; the client follows it and returns the topic. |
 | `topics.getPosts` | `discourse.api.topics.getPosts` | `read` | Get specific posts from a topic. (GET /t/{id}/posts.json) |
 | `topics.invite` | `discourse.api.topics.invite` | `destructive` | Invite to topic. (POST /t/{id}/invite.json) |
 | `topics.inviteGroup` | `discourse.api.topics.inviteGroup` | `destructive` | Invite group to topic. (POST /t/{id}/invite-group.json) |
@@ -114,7 +114,7 @@ Auth: API key. Corsair prompts your tenant for credentials on first use.
 
 ## Webhooks
 
-Handles 37 webhook events. See the reference for payloads and `webhookHooks`.
+Handles 38 webhook events. See the reference for payloads and `webhookHooks`.
 
 ## Reference
 

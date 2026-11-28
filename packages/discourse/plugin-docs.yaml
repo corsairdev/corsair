@@ -24,7 +24,7 @@ examples:
     args: {"title": "Release notes for 2.4", "raw": "What changed in this release, one line per change.", "category": 4}
 apiExamples:
   backups.create:
-    args: {"with_uploads": true}
+    args: {"with_uploads": "true"}
   backups.download:
     args: {"filename": "example", "token": "example"}
   backups.list:

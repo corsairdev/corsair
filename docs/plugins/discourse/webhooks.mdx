@@ -47,8 +47,10 @@ The Discourse plugin handles incoming webhooks. Point your provider’s subscrip
   - `edited` (`topics.edited`)
   - `recovered` (`topics.recovered`)
   - `revised` (`topics.revised`)
+  - `statusUpdated` (`topics.statusUpdated`)
 - `users`
   - `addedToGroup` (`users.addedToGroup`)
+  - `anonymized` (`users.anonymized`)
   - `approved` (`users.approved`)
   - `confirmedEmail` (`users.confirmedEmail`)
   - `created` (`users.created`)
@@ -56,7 +58,6 @@ The Discourse plugin handles incoming webhooks. Point your provider’s subscrip
   - `loggedIn` (`users.loggedIn`)
   - `loggedOut` (`users.loggedOut`)
   - `promoted` (`users.promoted`)
-  - `removedFromGroup` (`users.removedFromGroup`)
   - `suspended` (`users.suspended`)
   - `unsuspended` (`users.unsuspended`)
   - `updated` (`users.updated`)
@@ -1296,7 +1297,7 @@ discourse({
 
 `reviewables.updated`
 
-A reviewable was updated (reviewable_updated).
+A review queue item changed score or status (reviewable_score_updated, reviewable_transitioned_to).
 
 **Payload**
 
@@ -1980,6 +1981,82 @@ discourse({
 
 ---
 
+### Status Updated
+
+`topics.statusUpdated`
+
+A topic was closed, archived, pinned, unlisted or had another status change (topic_<status>_status_updated).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `topic` | `object` | Yes | The topic as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="topic full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  topic: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        topics: {
+            statusUpdated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
 ## Users
 
 ### Added To Group
@@ -1987,6 +2064,82 @@ discourse({
 `users.addedToGroup`
 
 A user was added to a group (user_added_to_group).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_user` | `object` | Yes | The group user as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="group_user full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  group_user: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        users: {
+            addedToGroup: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Anonymized
+
+`users.anonymized`
+
+A user was anonymized (user_anonymized).
 
 **Payload**
 
@@ -2044,7 +2197,7 @@ A user was added to a group (user_added_to_group).
 discourse({
     webhookHooks: {
         users: {
-            addedToGroup: {
+            anonymized: {
                 before(ctx, args) {
                     return { ctx, args };
                 },
@@ -2524,10 +2677,10 @@ A user moved up a trust level (user_promoted).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `user` | `object` | Yes | The user as Discourse serializes it. |
+| `user_promoted` | `object` | Yes | The user promoted as Discourse serializes it. |
 
 <AccordionGroup>
-<Accordion title="user full type">
+<Accordion title="user_promoted full type">
 
 ```ts
 {
@@ -2553,7 +2706,7 @@ A user moved up a trust level (user_promoted).
 
 ```ts
 {
-  user: {
+  user_promoted: {
     id?: number | null,
     username?: string | null,
     name?: string | null,
@@ -2577,82 +2730,6 @@ discourse({
     webhookHooks: {
         users: {
             promoted: {
-                before(ctx, args) {
-                    return { ctx, args };
-                },
-                after(ctx, response) {
-                },
-            },
-        },
-    },
-})
-```
-
----
-
-### Removed From Group
-
-`users.removedFromGroup`
-
-A user was removed from a group (user_removed_from_group).
-
-**Payload**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `user` | `object` | Yes | The user as Discourse serializes it. |
-
-<AccordionGroup>
-<Accordion title="user full type">
-
-```ts
-{
-  id?: number | null,
-  username?: string | null,
-  name?: string | null,
-  title?: string | null,
-  slug?: string | null,
-  topic_id?: number | null,
-  post_number?: number | null,
-  raw?: string | null,
-  created_at?: string | null,
-  updated_at?: string | null
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-<AccordionGroup>
-<Accordion title="Response data full type">
-
-```ts
-{
-  user: {
-    id?: number | null,
-    username?: string | null,
-    name?: string | null,
-    title?: string | null,
-    slug?: string | null,
-    topic_id?: number | null,
-    post_number?: number | null,
-    raw?: string | null,
-    created_at?: string | null,
-    updated_at?: string | null
-  }
-}
-```
-</Accordion>
-</AccordionGroup>
-
-**`webhookHooks` example**
-
-```ts
-discourse({
-    webhookHooks: {
-        users: {
-            removedFromGroup: {
                 before(ctx, args) {
                     return { ctx, args };
                 },

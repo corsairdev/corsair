@@ -116,7 +116,8 @@ export type DiscourseOperationId = (typeof DISCOURSE_OPERATION_IDS)[number];
 
 export type DiscourseOperationInputs = {
 	'backups.create': {
-		with_uploads: boolean;
+		/** "true" to include uploads. Discourse reads the text, not a JSON boolean. */
+		with_uploads: 'true' | 'false';
 	};
 	'backups.download': {
 		filename: string | number;
@@ -318,6 +319,16 @@ export type DiscourseOperationInputs = {
 	'groups.listMembers': {
 		/** Use group name instead of id */
 		name: string | number;
+		/** How many members to skip. */
+		offset?: number;
+		/** Members per page (50 by default). */
+		limit?: number;
+		/** Sort field, for example added_at or username. */
+		order?: string;
+		/** true: ascending. */
+		asc?: boolean;
+		/** Only members whose username or name contains this text. */
+		filter?: string;
 	};
 	'groups.removeMembers': {
 		id: number;
@@ -800,10 +811,7 @@ export type DiscourseOperationOutputs = {
 	'backups.create': {
 		success?: string | null;
 	};
-	'backups.download': {
-		/** Discourse accepted the call; it answered with no body. */
-		success: true;
-	};
+	'backups.download': FileOutput;
 	'backups.list': Array<{
 		filename?: string | null;
 		size?: number | null;
@@ -2925,7 +2933,7 @@ export type DiscourseOperationOutputs = {
 		chunk_size?: number | null;
 		bookmarked?: boolean | null;
 		bookmarks?: Array<DiscourseJsonValue> | null;
-		topic_timer?: string | null;
+		topic_timer?: Record<string, DiscourseJsonValue> | null;
 		message_bus_last_id?: number | null;
 		participant_count?: number | null;
 		show_read_indicator?: boolean | null;
@@ -2984,8 +2992,221 @@ export type DiscourseOperationOutputs = {
 		} | null;
 	};
 	'topics.getByExternalId': {
-		/** Discourse accepted the call; it answered with no body. */
-		success: true;
+		post_stream?: {
+			posts?: Array<{
+				id?: number | null;
+				name?: string | null;
+				username?: string | null;
+				avatar_template?: string | null;
+				created_at?: string | null;
+				cooked?: string | null;
+				post_number?: number | null;
+				post_type?: number | null;
+				updated_at?: string | null;
+				reply_count?: number | null;
+				reply_to_post_number?: string | null;
+				quote_count?: number | null;
+				incoming_link_count?: number | null;
+				reads?: number | null;
+				readers_count?: number | null;
+				score?: number | null;
+				yours?: boolean | null;
+				topic_id?: number | null;
+				topic_slug?: string | null;
+				display_username?: string | null;
+				primary_group_name?: string | null;
+				flair_name?: string | null;
+				flair_url?: string | null;
+				flair_bg_color?: string | null;
+				flair_color?: string | null;
+				version?: number | null;
+				can_edit?: boolean | null;
+				can_delete?: boolean | null;
+				can_recover?: boolean | null;
+				can_see_hidden_post?: boolean | null;
+				can_wiki?: boolean | null;
+				link_counts?: Array<{
+					url?: string | null;
+					internal?: boolean | null;
+					reflection?: boolean | null;
+					title?: string | null;
+					clicks?: number | null;
+				}> | null;
+				read?: boolean | null;
+				user_title?: string | null;
+				bookmarked?: boolean | null;
+				actions_summary?: Array<{
+					id?: number | null;
+					can_act?: boolean | null;
+				}> | null;
+				moderator?: boolean | null;
+				admin?: boolean | null;
+				staff?: boolean | null;
+				user_id?: number | null;
+				hidden?: boolean | null;
+				trust_level?: number | null;
+				deleted_at?: string | null;
+				user_deleted?: boolean | null;
+				edit_reason?: string | null;
+				can_view_edit_history?: boolean | null;
+				wiki?: boolean | null;
+				reviewable_id?: number | null;
+				reviewable_score_count?: number | null;
+				reviewable_score_pending_count?: number | null;
+			}> | null;
+			stream?: Array<DiscourseJsonValue> | null;
+		} | null;
+		timeline_lookup?: Array<DiscourseJsonValue> | null;
+		suggested_topics?: Array<{
+			id?: number | null;
+			title?: string | null;
+			fancy_title?: string | null;
+			slug?: string | null;
+			posts_count?: number | null;
+			reply_count?: number | null;
+			highest_post_number?: number | null;
+			image_url?: string | null;
+			created_at?: string | null;
+			last_posted_at?: string | null;
+			bumped?: boolean | null;
+			bumped_at?: string | null;
+			archetype?: string | null;
+			unseen?: boolean | null;
+			pinned?: boolean | null;
+			unpinned?: string | null;
+			excerpt?: string | null;
+			visible?: boolean | null;
+			closed?: boolean | null;
+			archived?: boolean | null;
+			bookmarked?: boolean | null;
+			liked?: boolean | null;
+			tags?: Array<{
+				id?: number | null;
+				name?: string | null;
+				slug?: string | null;
+			}> | null;
+			tags_descriptions?: Record<string, DiscourseJsonValue> | null;
+			like_count?: number | null;
+			views?: number | null;
+			category_id?: number | null;
+			featured_link?: string | null;
+			posters?: Array<{
+				extras?: string | null;
+				description?: string | null;
+				user?: {
+					id?: number | null;
+					username?: string | null;
+					name?: string | null;
+					avatar_template?: string | null;
+				} | null;
+			}> | null;
+		}> | null;
+		tags?: Array<{
+			id?: number | null;
+			name?: string | null;
+			slug?: string | null;
+		}> | null;
+		tags_descriptions?: Record<string, DiscourseJsonValue> | null;
+		id?: number | null;
+		title?: string | null;
+		fancy_title?: string | null;
+		posts_count?: number | null;
+		created_at?: string | null;
+		views?: number | null;
+		reply_count?: number | null;
+		like_count?: number | null;
+		last_posted_at?: string | null;
+		visible?: boolean | null;
+		closed?: boolean | null;
+		archived?: boolean | null;
+		has_summary?: boolean | null;
+		archetype?: string | null;
+		slug?: string | null;
+		category_id?: number | null;
+		word_count?: number | null;
+		deleted_at?: string | null;
+		user_id?: number | null;
+		featured_link?: string | null;
+		pinned_globally?: boolean | null;
+		pinned_at?: string | null;
+		pinned_until?: string | null;
+		image_url?: string | null;
+		slow_mode_seconds?: number | null;
+		draft?: string | null;
+		draft_key?: string | null;
+		draft_sequence?: number | null;
+		unpinned?: string | null;
+		pinned?: boolean | null;
+		current_post_number?: number | null;
+		highest_post_number?: number | null;
+		deleted_by?: string | null;
+		has_deleted?: boolean | null;
+		actions_summary?: Array<{
+			id?: number | null;
+			count?: number | null;
+			hidden?: boolean | null;
+			can_act?: boolean | null;
+		}> | null;
+		chunk_size?: number | null;
+		bookmarked?: boolean | null;
+		bookmarks?: Array<DiscourseJsonValue> | null;
+		topic_timer?: Record<string, DiscourseJsonValue> | null;
+		message_bus_last_id?: number | null;
+		participant_count?: number | null;
+		show_read_indicator?: boolean | null;
+		thumbnails?: string | null;
+		slow_mode_enabled_until?: string | null;
+		details?: {
+			can_edit?: boolean | null;
+			notification_level?: number | null;
+			can_move_posts?: boolean | null;
+			can_delete?: boolean | null;
+			can_remove_allowed_users?: boolean | null;
+			can_create_post?: boolean | null;
+			can_reply_as_new_topic?: boolean | null;
+			can_invite_to?: boolean | null;
+			can_invite_via_email?: boolean | null;
+			can_flag_topic?: boolean | null;
+			can_convert_topic?: boolean | null;
+			can_review_topic?: boolean | null;
+			can_close_topic?: boolean | null;
+			can_archive_topic?: boolean | null;
+			can_split_merge_topic?: boolean | null;
+			can_edit_staff_notes?: boolean | null;
+			can_toggle_topic_visibility?: boolean | null;
+			can_pin_unpin_topic?: boolean | null;
+			can_banner_topic?: boolean | null;
+			can_moderate_category?: boolean | null;
+			can_remove_self_id?: number | null;
+			participants?: Array<{
+				id?: number | null;
+				username?: string | null;
+				name?: string | null;
+				avatar_template?: string | null;
+				post_count?: number | null;
+				primary_group_name?: string | null;
+				flair_name?: string | null;
+				flair_url?: string | null;
+				flair_color?: string | null;
+				flair_bg_color?: string | null;
+				flair_group_id?: number | null;
+				admin?: boolean | null;
+				moderator?: boolean | null;
+				trust_level?: number | null;
+			}> | null;
+			created_by?: {
+				id?: number | null;
+				username?: string | null;
+				name?: string | null;
+				avatar_template?: string | null;
+			} | null;
+			last_poster?: {
+				id?: number | null;
+				username?: string | null;
+				name?: string | null;
+				avatar_template?: string | null;
+			} | null;
+		} | null;
 	};
 	'topics.getPosts': {
 		post_stream?: {
@@ -3185,7 +3406,7 @@ export type DiscourseOperationOutputs = {
 	};
 	'topics.updateStatus': {
 		success?: string | null;
-		topic_status_update?: string | null;
+		topic_status_update?: Record<string, DiscourseJsonValue> | null;
 	};
 	'topics.updateTimestamp': {
 		success?: string | null;

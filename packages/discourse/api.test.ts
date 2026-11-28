@@ -384,7 +384,11 @@ describeIfKey('discourse live', () => {
 			group: { name: `${NAME}g`, bio_raw: 'Made by the Corsair live run.' },
 		});
 		await step('groups.addMembers', { id: groupId, usernames: otherUser });
-		await step('groups.listMembers', { name: `${NAME}g` });
+		await step('groups.listMembers', {
+			name: `${NAME}g`,
+			offset: 0,
+			limit: 10,
+		});
 		await step('groups.removeMembers', { id: groupId, usernames: otherUser });
 		// Regular topics refuse invites (422): the private message takes one.
 		await step(
@@ -540,7 +544,7 @@ describeIfKey('discourse live', () => {
 		const before = (await step('backups.list')) as
 			| Array<{ filename?: string }>
 			| undefined;
-		await step('backups.create', { with_uploads: false });
+		await step('backups.create', { with_uploads: 'false' });
 		let filename = before?.[0]?.filename;
 		for (let i = 0; i < 30 && !filename; i++) {
 			await new Promise((done) => setTimeout(done, 3000));

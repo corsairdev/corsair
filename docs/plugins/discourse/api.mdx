@@ -19,14 +19,14 @@ Create backup. Needs an admin API key. (POST /admin/backups.json)
 **Risk:** `destructive`
 
 ```ts
-await corsair.discourse.api.backups.create({ with_uploads: true });
+await corsair.discourse.api.backups.create({ with_uploads: 'true' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `with_uploads` | `boolean` | Yes | — |
+| `with_uploads` | `true \| false` | Yes | "true" to include uploads. Discourse reads the text, not a JSON boolean. |
 
 
 
@@ -44,7 +44,7 @@ await corsair.discourse.api.backups.create({ with_uploads: true });
 
 `backups.download`
 
-Download backup. The backup file needs the download token from the email backups.sendDownloadEmail sends. Needs an admin API key.
+Download backup. Returns the archive as a file. Needs the download token from the email backups.sendDownloadEmail sends. A forum that keeps backups in S3 redirects to the storage URL. Needs an admin API key.
 
 **Risk:** `read`
 
@@ -65,7 +65,13 @@ await corsair.discourse.api.backups.download({ filename: 'example', token: 'exam
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `true` | Yes | Discourse accepted the call; it answered with no body. |
+| `contentBase64` | `string` | No | The file, base64-encoded. Missing when the file came back as text or contentOmitted is set. |
+| `text` | `string` | No | The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8. |
+| `contentType` | `string` | Yes | Media type of the file, for example application/pdf. |
+| `byteLength` | `number` | Yes | Size of the file in bytes. |
+| `filename` | `string` | No | The file name, when known. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
+| `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
 
 
 
@@ -1901,6 +1907,11 @@ await corsair.discourse.api.groups.listMembers({ name: 'staff' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string \| number` | Yes | Use group name instead of id |
+| `offset` | `number` | No | How many members to skip. |
+| `limit` | `number` | No | Members per page (50 by default). |
+| `order` | `string` | No | Sort field, for example added_at or username. |
+| `asc` | `boolean` | No | true: ascending. |
+| `filter` | `string` | No | Only members whose username or name contains this text. |
 
 
 
@@ -2065,7 +2076,7 @@ await corsair.discourse.api.groups.update({
 
 `invites.create`
 
-Create an invite. (POST /invites.json)
+Create an invite. A 429 here usually means the daily invite allowance (max_invites_per_day) is used up: it is not retried.
 
 **Risk:** `destructive`
 
@@ -4217,7 +4228,7 @@ await corsair.discourse.api.topics.get({ id: 42 });
 | `chunk_size` | `number \| null` | No | — |
 | `bookmarked` | `boolean \| null` | No | — |
 | `bookmarks` | `any[] \| null` | No | — |
-| `topic_timer` | `string \| null \| null` | No | — |
+| `topic_timer` | `object \| null` | No | — |
 | `message_bus_last_id` | `number \| null` | No | — |
 | `participant_count` | `number \| null` | No | — |
 | `show_read_indicator` | `boolean \| null` | No | — |
@@ -4378,6 +4389,14 @@ await corsair.discourse.api.topics.get({ id: 42 });
 ```
 </Accordion>
 
+<Accordion title="topic_timer full type">
+
+```ts
+{
+} | null | null
+```
+</Accordion>
+
 <Accordion title="details full type">
 
 ```ts
@@ -4444,7 +4463,7 @@ await corsair.discourse.api.topics.get({ id: 42 });
 
 `topics.getByExternalId`
 
-Get topic by external_id. Discourse answers with a redirect to the topic on the forum's configured hostname, which the client follows.
+Get topic by external_id. Discourse answers with a redirect to the topic's JSON on the forum's configured hostname; the client follows it and returns the topic.
 
 **Risk:** `read`
 
@@ -4464,7 +4483,275 @@ await corsair.discourse.api.topics.getByExternalId({ external_id: 'ext-42' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `true` | Yes | Discourse accepted the call; it answered with no body. |
+| `post_stream` | `object \| null` | No | — |
+| `timeline_lookup` | `any[] \| null` | No | — |
+| `suggested_topics` | `object[] \| null` | No | — |
+| `tags` | `object[] \| null` | No | — |
+| `tags_descriptions` | `object \| null` | No | — |
+| `id` | `number \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `fancy_title` | `string \| null` | No | — |
+| `posts_count` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `views` | `number \| null` | No | — |
+| `reply_count` | `number \| null` | No | — |
+| `like_count` | `number \| null` | No | — |
+| `last_posted_at` | `string \| null \| null` | No | — |
+| `visible` | `boolean \| null` | No | — |
+| `closed` | `boolean \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `has_summary` | `boolean \| null` | No | — |
+| `archetype` | `string \| null` | No | — |
+| `slug` | `string \| null` | No | — |
+| `category_id` | `number \| null` | No | — |
+| `word_count` | `number \| null \| null` | No | — |
+| `deleted_at` | `string \| null \| null` | No | — |
+| `user_id` | `number \| null` | No | — |
+| `featured_link` | `string \| null \| null` | No | — |
+| `pinned_globally` | `boolean \| null` | No | — |
+| `pinned_at` | `string \| null \| null` | No | — |
+| `pinned_until` | `string \| null \| null` | No | — |
+| `image_url` | `string \| null \| null` | No | — |
+| `slow_mode_seconds` | `number \| null` | No | — |
+| `draft` | `string \| null \| null` | No | — |
+| `draft_key` | `string \| null` | No | — |
+| `draft_sequence` | `number \| null` | No | — |
+| `unpinned` | `string \| null \| null` | No | — |
+| `pinned` | `boolean \| null` | No | — |
+| `current_post_number` | `number \| null` | No | — |
+| `highest_post_number` | `number \| null \| null` | No | — |
+| `deleted_by` | `string \| null \| null` | No | — |
+| `has_deleted` | `boolean \| null` | No | — |
+| `actions_summary` | `object[] \| null` | No | — |
+| `chunk_size` | `number \| null` | No | — |
+| `bookmarked` | `boolean \| null` | No | — |
+| `bookmarks` | `any[] \| null` | No | — |
+| `topic_timer` | `object \| null` | No | — |
+| `message_bus_last_id` | `number \| null` | No | — |
+| `participant_count` | `number \| null` | No | — |
+| `show_read_indicator` | `boolean \| null` | No | — |
+| `thumbnails` | `string \| null \| null` | No | — |
+| `slow_mode_enabled_until` | `string \| null \| null` | No | — |
+| `details` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="post_stream full type">
+
+```ts
+{
+  posts?: {
+    id?: number | null,
+    name?: string | null,
+    username?: string | null,
+    avatar_template?: string | null,
+    created_at?: string | null,
+    cooked?: string | null,
+    post_number?: number | null,
+    post_type?: number | null,
+    updated_at?: string | null,
+    reply_count?: number | null,
+    reply_to_post_number?: string | null | null,
+    quote_count?: number | null,
+    incoming_link_count?: number | null,
+    reads?: number | null,
+    readers_count?: number | null,
+    score?: number | null,
+    yours?: boolean | null,
+    topic_id?: number | null,
+    topic_slug?: string | null,
+    display_username?: string | null,
+    primary_group_name?: string | null | null,
+    flair_name?: string | null | null,
+    flair_url?: string | null | null,
+    flair_bg_color?: string | null | null,
+    flair_color?: string | null | null,
+    version?: number | null,
+    can_edit?: boolean | null,
+    can_delete?: boolean | null,
+    can_recover?: boolean | null,
+    can_see_hidden_post?: boolean | null,
+    can_wiki?: boolean | null,
+    link_counts?: {
+      url?: string | null,
+      internal?: boolean | null,
+      reflection?: boolean | null,
+      title?: string | null,
+      clicks?: number | null
+    }[] | null,
+    read?: boolean | null,
+    user_title?: string | null | null,
+    bookmarked?: boolean | null,
+    actions_summary?: {
+      id?: number | null,
+      can_act?: boolean | null
+    }[] | null,
+    moderator?: boolean | null,
+    admin?: boolean | null,
+    staff?: boolean | null,
+    user_id?: number | null,
+    hidden?: boolean | null,
+    trust_level?: number | null,
+    deleted_at?: string | null | null,
+    user_deleted?: boolean | null,
+    edit_reason?: string | null | null,
+    can_view_edit_history?: boolean | null,
+    wiki?: boolean | null,
+    reviewable_id?: number | null,
+    reviewable_score_count?: number | null,
+    reviewable_score_pending_count?: number | null
+  }[] | null,
+  stream?: any[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="suggested_topics full type">
+
+```ts
+{
+  id?: number | null,
+  title?: string | null,
+  fancy_title?: string | null,
+  slug?: string | null,
+  posts_count?: number | null,
+  reply_count?: number | null,
+  highest_post_number?: number | null,
+  image_url?: string | null | null,
+  created_at?: string | null,
+  last_posted_at?: string | null | null,
+  bumped?: boolean | null,
+  bumped_at?: string | null,
+  archetype?: string | null,
+  unseen?: boolean | null,
+  pinned?: boolean | null,
+  unpinned?: string | null | null,
+  excerpt?: string | null,
+  visible?: boolean | null,
+  closed?: boolean | null,
+  archived?: boolean | null,
+  bookmarked?: boolean | null | null,
+  liked?: boolean | null | null,
+  tags?: {
+    id?: number | null,
+    name?: string | null,
+    slug?: string | null
+  }[] | null,
+  tags_descriptions?: {
+  } | null,
+  like_count?: number | null,
+  views?: number | null,
+  category_id?: number | null,
+  featured_link?: string | null | null,
+  posters?: {
+    extras?: string | null,
+    description?: string | null,
+    user?: {
+      id?: number | null,
+      username?: string | null,
+      name?: string | null,
+      avatar_template?: string | null
+    } | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="tags full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  slug?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="tags_descriptions full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="actions_summary full type">
+
+```ts
+{
+  id?: number | null,
+  count?: number | null,
+  hidden?: boolean | null,
+  can_act?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="topic_timer full type">
+
+```ts
+{
+} | null | null
+```
+</Accordion>
+
+<Accordion title="details full type">
+
+```ts
+{
+  can_edit?: boolean | null,
+  notification_level?: number | null,
+  can_move_posts?: boolean | null,
+  can_delete?: boolean | null,
+  can_remove_allowed_users?: boolean | null,
+  can_create_post?: boolean | null,
+  can_reply_as_new_topic?: boolean | null,
+  can_invite_to?: boolean | null,
+  can_invite_via_email?: boolean | null,
+  can_flag_topic?: boolean | null,
+  can_convert_topic?: boolean | null,
+  can_review_topic?: boolean | null,
+  can_close_topic?: boolean | null,
+  can_archive_topic?: boolean | null,
+  can_split_merge_topic?: boolean | null,
+  can_edit_staff_notes?: boolean | null,
+  can_toggle_topic_visibility?: boolean | null,
+  can_pin_unpin_topic?: boolean | null,
+  can_banner_topic?: boolean | null,
+  can_moderate_category?: boolean | null,
+  can_remove_self_id?: number | null,
+  participants?: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    avatar_template?: string | null,
+    post_count?: number | null,
+    primary_group_name?: string | null | null,
+    flair_name?: string | null | null,
+    flair_url?: string | null | null,
+    flair_color?: string | null | null,
+    flair_bg_color?: string | null | null,
+    flair_group_id?: number | null | null,
+    admin?: boolean | null,
+    moderator?: boolean | null,
+    trust_level?: number | null
+  }[] | null,
+  created_by?: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    avatar_template?: string | null
+  } | null,
+  last_poster?: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    avatar_template?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -4976,7 +5263,17 @@ await corsair.discourse.api.topics.updateStatus({ id: 42, status: 'closed', enab
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `string \| null` | No | — |
-| `topic_status_update` | `string \| null \| null` | No | — |
+| `topic_status_update` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="topic_status_update full type">
+
+```ts
+{
+} | null | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 

@@ -11,6 +11,7 @@ import {
 import type { DiscourseContext } from './index';
 import { discourse } from './index';
 import {
+	canonicalEvent,
 	discourseWebhooksNested,
 	matchDiscourseWebhook,
 	verifyDiscourseSignature,
@@ -202,6 +203,81 @@ describe('requests', () => {
 		});
 	});
 
+	it('sends with_uploads as the text Discourse compares, and pages group members', async () => {
+		reply(200, { success: 'OK' });
+		await discourseEndpointsNested.backups.create(ctx(), {
+			with_uploads: 'true',
+		});
+		expect(JSON.parse(String(calls[0]?.body))).toEqual({
+			with_uploads: 'true',
+		});
+		calls = [];
+		reply(200, {
+			members: [],
+			owners: [],
+			meta: { total: 0, limit: 10, offset: 50 },
+		});
+		await discourseEndpointsNested.groups.listMembers(ctx(), {
+			name: 'staff',
+			offset: 50,
+			limit: 10,
+		});
+		const url = new URL(calls[0]?.url ?? '');
+		expect([
+			url.searchParams.get('offset'),
+			url.searchParams.get('limit'),
+		]).toEqual(['50', '10']);
+	});
+
+	it('returns a backup download as a file', async () => {
+		jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(new Uint8Array([31, 139, 8, 0]), {
+				status: 200,
+				headers: { 'content-type': 'application/gzip' },
+			}),
+		);
+		const file = await discourseEndpointsNested.backups.download(ctx(), {
+			filename: 'forum-2026.tar.gz',
+			token: 't',
+		});
+		expect(file).toMatchObject({
+			contentType: 'application/gzip',
+			byteLength: 4,
+		});
+	});
+
+	it('returns the topic an external id redirects to, with its timer object', async () => {
+		reply(200, {
+			id: 9,
+			title: 'Imported',
+			topic_timer: {
+				id: 3,
+				status_type: 'close',
+				execute_at: '2099-01-01T00:00:00Z',
+			},
+		});
+		await expect(
+			discourseEndpointsNested.topics.getByExternalId(ctx(), {
+				external_id: 'ext-9',
+			}),
+		).resolves.toMatchObject({
+			id: 9,
+			title: 'Imported',
+			topic_timer: { status_type: 'close' },
+		});
+	});
+
+	it('sends an invite once on a 429 (the daily allowance)', async () => {
+		reply(429, { errors: ['You have performed this action too many times.'] });
+		await expect(
+			discourseEndpointsNested.invites.create(ctx(), {
+				email: 'a@example.com',
+				skip_email: true,
+			}),
+		).rejects.toThrow(/Discourse 429/);
+		expect(calls).toHaveLength(1);
+	});
+
 	it('keeps the key out of an error', async () => {
 		reply(403, {
 			errors: [`invalid api key ${KEY}`],
@@ -249,6 +325,35 @@ describe('webhooks (real Discourse 2026.12 deliveries)', () => {
 				fixtures.secret,
 			),
 		).toBe(false);
+	});
+
+	it('maps the event names Discourse groups together', () => {
+		expect(canonicalEvent('topic_closed_status_updated')).toBe(
+			'topic_status_updated',
+		);
+		expect(canonicalEvent('topic_pinned_globally_status_updated')).toBe(
+			'topic_status_updated',
+		);
+		expect(canonicalEvent('reviewable_score_updated')).toBe(
+			'reviewable_updated',
+		);
+		expect(canonicalEvent('reviewable_transitioned_to')).toBe(
+			'reviewable_updated',
+		);
+		expect(canonicalEvent('topic_edited')).toBe('topic_edited');
+		const closed = {
+			...topicCreated,
+			headers: {
+				...topicCreated.headers,
+				'x-discourse-event': 'topic_closed_status_updated',
+			},
+		};
+		expect(
+			discourseWebhooksNested.topics.statusUpdated.match(request(closed)),
+		).toBe(true);
+		expect(discourseWebhooksNested.topics.edited.match(request(closed))).toBe(
+			false,
+		);
 	});
 
 	it('routes by X-Discourse-Event and parses the record', async () => {

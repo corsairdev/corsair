@@ -40,7 +40,9 @@ export const DiscourseWebhookEventSchema = z.enum([
 	'topic_edited',
 	'topic_recovered',
 	'topic_revised',
+	'topic_status_updated',
 	'user_added_to_group',
+	'user_anonymized',
 	'user_approved',
 	'user_badge_granted',
 	'user_badge_revoked',
@@ -50,7 +52,6 @@ export const DiscourseWebhookEventSchema = z.enum([
 	'user_logged_in',
 	'user_logged_out',
 	'user_promoted',
-	'user_removed_from_group',
 	'user_suspended',
 	'user_unsuspended',
 	'user_updated',
@@ -101,13 +102,31 @@ function header(
 	return Array.isArray(value) ? value[0] : value;
 }
 
+/**
+ * Discourse sends some events under names of their own that its webhook
+ * settings group together (app/models/web_hook.rb): `topic_<status>_status_updated`
+ * (closed, archived, visible, pinned...) and the reviewable score and
+ * transition events. They map to one handler each.
+ */
+export function canonicalEvent(name: string | undefined): string | undefined {
+	if (!name) return name;
+	if (/^topic_\w+_status_updated$/.test(name)) return 'topic_status_updated';
+	if (
+		name === 'reviewable_score_updated' ||
+		name === 'reviewable_transitioned_to'
+	) {
+		return 'reviewable_updated';
+	}
+	return name;
+}
+
 /** The event a Discourse-signed request carries, from X-Discourse-Event. */
 export function discourseEventName(
 	request: RawWebhookRequest,
 ): DiscourseWebhookEventName | undefined {
 	if (!header(request.headers, 'x-discourse-event-signature')) return undefined;
 	const parsed = DiscourseWebhookEventSchema.safeParse(
-		header(request.headers, 'x-discourse-event'),
+		canonicalEvent(header(request.headers, 'x-discourse-event')),
 	);
 	return parsed.success ? parsed.data : undefined;
 }
@@ -180,6 +199,7 @@ export const discourseWebhooksNested = {
 	topics: {
 		created: webhookFor('topic_created', 'topic'),
 		revised: webhookFor('topic_revised', 'topic'),
+		statusUpdated: webhookFor('topic_status_updated', 'topic'),
 		edited: webhookFor('topic_edited', 'topic'),
 		destroyed: webhookFor('topic_destroyed', 'topic'),
 		recovered: webhookFor('topic_recovered', 'topic'),
@@ -195,14 +215,14 @@ export const discourseWebhooksNested = {
 		loggedIn: webhookFor('user_logged_in', 'user'),
 		loggedOut: webhookFor('user_logged_out', 'user'),
 		confirmedEmail: webhookFor('user_confirmed_email', 'user'),
+		anonymized: webhookFor('user_anonymized', 'user'),
 		approved: webhookFor('user_approved', 'user'),
 		updated: webhookFor('user_updated', 'user'),
 		destroyed: webhookFor('user_destroyed', 'user'),
 		suspended: webhookFor('user_suspended', 'user'),
 		unsuspended: webhookFor('user_unsuspended', 'user'),
-		addedToGroup: webhookFor('user_added_to_group', 'user'),
-		removedFromGroup: webhookFor('user_removed_from_group', 'user'),
-		promoted: webhookFor('user_promoted', 'user'),
+		addedToGroup: webhookFor('user_added_to_group', 'group_user'),
+		promoted: webhookFor('user_promoted', 'user_promoted'),
 	},
 	groups: {
 		created: webhookFor('group_created', 'group'),
@@ -241,6 +261,12 @@ export const discourseWebhooksNested = {
 export const discourseWebhookSchemas = {
 	'topics.created': {
 		description: 'A topic was created (topic_created).',
+		payload: eventSchema('topic'),
+		response: eventSchema('topic'),
+	},
+	'topics.statusUpdated': {
+		description:
+			'A topic was closed, archived, pinned, unlisted or had another status change (topic_<status>_status_updated).',
 		payload: eventSchema('topic'),
 		response: eventSchema('topic'),
 	},
@@ -304,6 +330,11 @@ export const discourseWebhookSchemas = {
 		payload: eventSchema('user'),
 		response: eventSchema('user'),
 	},
+	'users.anonymized': {
+		description: 'A user was anonymized (user_anonymized).',
+		payload: eventSchema('user'),
+		response: eventSchema('user'),
+	},
 	'users.approved': {
 		description: 'A user was approved (user_approved).',
 		payload: eventSchema('user'),
@@ -331,18 +362,13 @@ export const discourseWebhookSchemas = {
 	},
 	'users.addedToGroup': {
 		description: 'A user was added to a group (user_added_to_group).',
-		payload: eventSchema('user'),
-		response: eventSchema('user'),
-	},
-	'users.removedFromGroup': {
-		description: 'A user was removed from a group (user_removed_from_group).',
-		payload: eventSchema('user'),
-		response: eventSchema('user'),
+		payload: eventSchema('group_user'),
+		response: eventSchema('group_user'),
 	},
 	'users.promoted': {
 		description: 'A user moved up a trust level (user_promoted).',
-		payload: eventSchema('user'),
-		response: eventSchema('user'),
+		payload: eventSchema('user_promoted'),
+		response: eventSchema('user_promoted'),
 	},
 	'groups.created': {
 		description: 'A group was created (group_created).',
@@ -395,7 +421,8 @@ export const discourseWebhookSchemas = {
 		response: eventSchema('reviewable'),
 	},
 	'reviewables.updated': {
-		description: 'A reviewable was updated (reviewable_updated).',
+		description:
+			'A review queue item changed score or status (reviewable_score_updated, reviewable_transitioned_to).',
 		payload: eventSchema('reviewable'),
 		response: eventSchema('reviewable'),
 	},
