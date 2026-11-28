@@ -1,0 +1,694 @@
+---
+title: "Segment webhooks"
+sidebarTitle: "Webhooks"
+description: "Segment incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The Segment plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/segment/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `events`
+  - `alias` (`events.alias`)
+  - `batch` (`events.batch`)
+  - `delete` (`events.delete`)
+  - `group` (`events.group`)
+  - `identify` (`events.identify`)
+  - `page` (`events.page`)
+  - `screen` (`events.screen`)
+  - `track` (`events.track`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
+}
+```
+
+## Events
+
+## Events
+
+### Alias
+
+`events.alias`
+
+A source received an alias call: two ids of one user were merged.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `identify \| track \| page \| screen \| group \| alias \| delete` | Yes | — |
+| `messageId` | `string \| null` | No | — |
+| `userId` | `string \| null` | No | — |
+| `anonymousId` | `string \| null` | No | — |
+| `timestamp` | `string \| null` | No | — |
+| `sentAt` | `string \| null` | No | — |
+| `receivedAt` | `string \| null` | No | — |
+| `originalTimestamp` | `string \| null` | No | — |
+| `channel` | `string \| null` | No | — |
+| `version` | `number \| string \| null` | No | — |
+| `context` | `Record<string, any> \| null` | No | — |
+| `integrations` | `Record<string, any> \| null` | No | — |
+| `event` | `string \| null` | No | The event name (track). |
+| `name` | `string \| null` | No | The page or screen name. |
+| `properties` | `Record<string, any> \| null` | No | — |
+| `traits` | `Record<string, any> \| null` | No | — |
+| `groupId` | `string \| null` | No | The group (group). |
+| `previousId` | `string \| null` | No | The earlier id (alias). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: identify | track | page | screen | group | alias | delete,
+  messageId?: string | null,
+  userId?: string | null,
+  anonymousId?: string | null,
+  timestamp?: string | null,
+  sentAt?: string | null,
+  receivedAt?: string | null,
+  originalTimestamp?: string | null,
+  channel?: string | null,
+  version?: number | string | null,
+  context?: Record<string, any> | null,
+  integrations?: Record<string, any> | null,
+  event?: string | null,
+  name?: string | null,
+  properties?: Record<string, any> | null,
+  traits?: Record<string, any> | null,
+  groupId?: string | null,
+  previousId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+segment({
+    webhookHooks: {
+        events: {
+            alias: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Batch
+
+`events.batch`
+
+A batched delivery from the Webhooks destination: several events in one request, taken only when the signature covers the whole body.
+
+**Payload:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Payload full type">
+
+```ts
+{
+  type: identify | track | page | screen | group | alias | delete,
+  messageId?: string | null,
+  userId?: string | null,
+  anonymousId?: string | null,
+  timestamp?: string | null,
+  sentAt?: string | null,
+  receivedAt?: string | null,
+  originalTimestamp?: string | null,
+  channel?: string | null,
+  version?: number | string | null,
+  context?: Record<string, any> | null,
+  integrations?: Record<string, any> | null,
+  event?: string | null,
+  name?: string | null,
+  properties?: Record<string, any> | null,
+  traits?: Record<string, any> | null,
+  groupId?: string | null,
+  previousId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: identify | track | page | screen | group | alias | delete,
+  messageId?: string | null,
+  userId?: string | null,
+  anonymousId?: string | null,
+  timestamp?: string | null,
+  sentAt?: string | null,
+  receivedAt?: string | null,
+  originalTimestamp?: string | null,
+  channel?: string | null,
+  version?: number | string | null,
+  context?: Record<string, any> | null,
+  integrations?: Record<string, any> | null,
+  event?: string | null,
+  name?: string | null,
+  properties?: Record<string, any> | null,
+  traits?: Record<string, any> | null,
+  groupId?: string | null,
+  previousId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+segment({
+    webhookHooks: {
+        events: {
+            batch: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Delete
+
+`events.delete`
+
+Segment forwarded a user deletion request (a regulation) to the destination.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `identify \| track \| page \| screen \| group \| alias \| delete` | Yes | — |
+| `messageId` | `string \| null` | No | — |
+| `userId` | `string \| null` | No | — |
+| `anonymousId` | `string \| null` | No | — |
+| `timestamp` | `string \| null` | No | — |
+| `sentAt` | `string \| null` | No | — |
+| `receivedAt` | `string \| null` | No | — |
+| `originalTimestamp` | `string \| null` | No | — |
+| `channel` | `string \| null` | No | — |
+| `version` | `number \| string \| null` | No | — |
+| `context` | `Record<string, any> \| null` | No | — |
+| `integrations` | `Record<string, any> \| null` | No | — |
+| `event` | `string \| null` | No | The event name (track). |
+| `name` | `string \| null` | No | The page or screen name. |
+| `properties` | `Record<string, any> \| null` | No | — |
+| `traits` | `Record<string, any> \| null` | No | — |
+| `groupId` | `string \| null` | No | The group (group). |
+| `previousId` | `string \| null` | No | The earlier id (alias). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: identify | track | page | screen | group | alias | delete,
+  messageId?: string | null,
+  userId?: string | null,
+  anonymousId?: string | null,
+  timestamp?: string | null,
+  sentAt?: string | null,
+  receivedAt?: string | null,
+  originalTimestamp?: string | null,
+  channel?: string | null,
+  version?: number | string | null,
+  context?: Record<string, any> | null,
+  integrations?: Record<string, any> | null,
+  event?: string | null,
+  name?: string | null,
+  properties?: Record<string, any> | null,
+  traits?: Record<string, any> | null,
+  groupId?: string | null,
+  previousId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+segment({
+    webhookHooks: {
+        events: {
+            delete: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Group
+
+`events.group`
+
+A source received a group call: a user was tied to a group (a company or account).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `identify \| track \| page \| screen \| group \| alias \| delete` | Yes | — |
+| `messageId` | `string \| null` | No | — |
+| `userId` | `string \| null` | No | — |
+| `anonymousId` | `string \| null` | No | — |
+| `timestamp` | `string \| null` | No | — |
+| `sentAt` | `string \| null` | No | — |
+| `receivedAt` | `string \| null` | No | — |
+| `originalTimestamp` | `string \| null` | No | — |
+| `channel` | `string \| null` | No | — |
+| `version` | `number \| string \| null` | No | — |
+| `context` | `Record<string, any> \| null` | No | — |
+| `integrations` | `Record<string, any> \| null` | No | — |
+| `event` | `string \| null` | No | The event name (track). |
+| `name` | `string \| null` | No | The page or screen name. |
+| `properties` | `Record<string, any> \| null` | No | — |
+| `traits` | `Record<string, any> \| null` | No | — |
+| `groupId` | `string \| null` | No | The group (group). |
+| `previousId` | `string \| null` | No | The earlier id (alias). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: identify | track | page | screen | group | alias | delete,
+  messageId?: string | null,
+  userId?: string | null,
+  anonymousId?: string | null,
+  timestamp?: string | null,
+  sentAt?: string | null,
+  receivedAt?: string | null,
+  originalTimestamp?: string | null,
+  channel?: string | null,
+  version?: number | string | null,
+  context?: Record<string, any> | null,
+  integrations?: Record<string, any> | null,
+  event?: string | null,
+  name?: string | null,
+  properties?: Record<string, any> | null,
+  traits?: Record<string, any> | null,
+  groupId?: string | null,
+  previousId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+segment({
+    webhookHooks: {
+        events: {
+            group: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Identify
+
+`events.identify`
+
+A source received an identify call: a user and the traits recorded about them.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `identify \| track \| page \| screen \| group \| alias \| delete` | Yes | — |
+| `messageId` | `string \| null` | No | — |
+| `userId` | `string \| null` | No | — |
+| `anonymousId` | `string \| null` | No | — |
+| `timestamp` | `string \| null` | No | — |
+| `sentAt` | `string \| null` | No | — |
+| `receivedAt` | `string \| null` | No | — |
+| `originalTimestamp` | `string \| null` | No | — |
+| `channel` | `string \| null` | No | — |
+| `version` | `number \| string \| null` | No | — |
+| `context` | `Record<string, any> \| null` | No | — |
+| `integrations` | `Record<string, any> \| null` | No | — |
+| `event` | `string \| null` | No | The event name (track). |
+| `name` | `string \| null` | No | The page or screen name. |
+| `properties` | `Record<string, any> \| null` | No | — |
+| `traits` | `Record<string, any> \| null` | No | — |
+| `groupId` | `string \| null` | No | The group (group). |
+| `previousId` | `string \| null` | No | The earlier id (alias). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: identify | track | page | screen | group | alias | delete,
+  messageId?: string | null,
+  userId?: string | null,
+  anonymousId?: string | null,
+  timestamp?: string | null,
+  sentAt?: string | null,
+  receivedAt?: string | null,
+  originalTimestamp?: string | null,
+  channel?: string | null,
+  version?: number | string | null,
+  context?: Record<string, any> | null,
+  integrations?: Record<string, any> | null,
+  event?: string | null,
+  name?: string | null,
+  properties?: Record<string, any> | null,
+  traits?: Record<string, any> | null,
+  groupId?: string | null,
+  previousId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+segment({
+    webhookHooks: {
+        events: {
+            identify: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Page
+
+`events.page`
+
+A source received a page call: a user viewed a web page.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `identify \| track \| page \| screen \| group \| alias \| delete` | Yes | — |
+| `messageId` | `string \| null` | No | — |
+| `userId` | `string \| null` | No | — |
+| `anonymousId` | `string \| null` | No | — |
+| `timestamp` | `string \| null` | No | — |
+| `sentAt` | `string \| null` | No | — |
+| `receivedAt` | `string \| null` | No | — |
+| `originalTimestamp` | `string \| null` | No | — |
+| `channel` | `string \| null` | No | — |
+| `version` | `number \| string \| null` | No | — |
+| `context` | `Record<string, any> \| null` | No | — |
+| `integrations` | `Record<string, any> \| null` | No | — |
+| `event` | `string \| null` | No | The event name (track). |
+| `name` | `string \| null` | No | The page or screen name. |
+| `properties` | `Record<string, any> \| null` | No | — |
+| `traits` | `Record<string, any> \| null` | No | — |
+| `groupId` | `string \| null` | No | The group (group). |
+| `previousId` | `string \| null` | No | The earlier id (alias). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: identify | track | page | screen | group | alias | delete,
+  messageId?: string | null,
+  userId?: string | null,
+  anonymousId?: string | null,
+  timestamp?: string | null,
+  sentAt?: string | null,
+  receivedAt?: string | null,
+  originalTimestamp?: string | null,
+  channel?: string | null,
+  version?: number | string | null,
+  context?: Record<string, any> | null,
+  integrations?: Record<string, any> | null,
+  event?: string | null,
+  name?: string | null,
+  properties?: Record<string, any> | null,
+  traits?: Record<string, any> | null,
+  groupId?: string | null,
+  previousId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+segment({
+    webhookHooks: {
+        events: {
+            page: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Screen
+
+`events.screen`
+
+A source received a screen call: a user viewed a screen of a mobile app.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `identify \| track \| page \| screen \| group \| alias \| delete` | Yes | — |
+| `messageId` | `string \| null` | No | — |
+| `userId` | `string \| null` | No | — |
+| `anonymousId` | `string \| null` | No | — |
+| `timestamp` | `string \| null` | No | — |
+| `sentAt` | `string \| null` | No | — |
+| `receivedAt` | `string \| null` | No | — |
+| `originalTimestamp` | `string \| null` | No | — |
+| `channel` | `string \| null` | No | — |
+| `version` | `number \| string \| null` | No | — |
+| `context` | `Record<string, any> \| null` | No | — |
+| `integrations` | `Record<string, any> \| null` | No | — |
+| `event` | `string \| null` | No | The event name (track). |
+| `name` | `string \| null` | No | The page or screen name. |
+| `properties` | `Record<string, any> \| null` | No | — |
+| `traits` | `Record<string, any> \| null` | No | — |
+| `groupId` | `string \| null` | No | The group (group). |
+| `previousId` | `string \| null` | No | The earlier id (alias). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: identify | track | page | screen | group | alias | delete,
+  messageId?: string | null,
+  userId?: string | null,
+  anonymousId?: string | null,
+  timestamp?: string | null,
+  sentAt?: string | null,
+  receivedAt?: string | null,
+  originalTimestamp?: string | null,
+  channel?: string | null,
+  version?: number | string | null,
+  context?: Record<string, any> | null,
+  integrations?: Record<string, any> | null,
+  event?: string | null,
+  name?: string | null,
+  properties?: Record<string, any> | null,
+  traits?: Record<string, any> | null,
+  groupId?: string | null,
+  previousId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+segment({
+    webhookHooks: {
+        events: {
+            screen: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Track
+
+`events.track`
+
+A source received a track call: an action a user performed, with its properties.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `identify \| track \| page \| screen \| group \| alias \| delete` | Yes | — |
+| `messageId` | `string \| null` | No | — |
+| `userId` | `string \| null` | No | — |
+| `anonymousId` | `string \| null` | No | — |
+| `timestamp` | `string \| null` | No | — |
+| `sentAt` | `string \| null` | No | — |
+| `receivedAt` | `string \| null` | No | — |
+| `originalTimestamp` | `string \| null` | No | — |
+| `channel` | `string \| null` | No | — |
+| `version` | `number \| string \| null` | No | — |
+| `context` | `Record<string, any> \| null` | No | — |
+| `integrations` | `Record<string, any> \| null` | No | — |
+| `event` | `string \| null` | No | The event name (track). |
+| `name` | `string \| null` | No | The page or screen name. |
+| `properties` | `Record<string, any> \| null` | No | — |
+| `traits` | `Record<string, any> \| null` | No | — |
+| `groupId` | `string \| null` | No | The group (group). |
+| `previousId` | `string \| null` | No | The earlier id (alias). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: identify | track | page | screen | group | alias | delete,
+  messageId?: string | null,
+  userId?: string | null,
+  anonymousId?: string | null,
+  timestamp?: string | null,
+  sentAt?: string | null,
+  receivedAt?: string | null,
+  originalTimestamp?: string | null,
+  channel?: string | null,
+  version?: number | string | null,
+  context?: Record<string, any> | null,
+  integrations?: Record<string, any> | null,
+  event?: string | null,
+  name?: string | null,
+  properties?: Record<string, any> | null,
+  traits?: Record<string, any> | null,
+  groupId?: string | null,
+  previousId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+segment({
+    webhookHooks: {
+        events: {
+            track: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

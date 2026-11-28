@@ -1,0 +1,446 @@
+# Display copy for the generated docs and the catalog, plus one call
+# example per operation. Generated with the plugin from Segment's OpenAPI spec;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: Segment
+domain: segment.com
+description: "Twilio Segment: send track, identify, page, screen, group and alias calls, and manage the workspace through the Public API: sources, destinations, warehouses, tracking plans, functions, deletion and suppression, users, audiences and Reverse ETL (207 operations)."
+recommendedAuth: api_key
+overviewNote: |
+  Segment has two APIs with two credentials, and this plugin covers both:
+
+  - **Public API** (workspace management, everything except `tracking.*`): a Public API token, created by a Workspace Owner under **Settings > Workspace settings > Access Management > Tokens** (choose the Public API type, not the legacy Config API). Segment offers the Public API on the **Team and Business plans** only; on the Free plan these calls answer 403.
+  - **Tracking API** (`tracking.identify`, `track`, `page`, `screen`, `group`, `alias`, `batch`): the write key of a source (the source's **Settings > API Keys**). Store it as the account's `write_key`, or pass the `writeKey` option. On the Free plan, connect the write key itself as the key: tracking works and the Public API calls do not.
+
+  Things to know before you call:
+
+  - **Region.** An EU workspace lives on `eu1.api.segmentapis.com` and takes events on `events.eu1.segmentapis.com`: set the account's `region` to `eu` (or pass the `region` option). The US hosts answer an EU token with 403.
+  - **Tracking answers 200 for almost everything.** Segment accepts any call it can parse, then may drop it (a wrong write key, a payload over 32 KB). A 200 means received, not delivered: check the source's debugger. Events go on to every destination connected to the source and cannot be taken back except through a regulation.
+  - **Regulations permanently delete data.** `regulations.create` starts a deletion or suppression run over the subject ids you pass; it cannot be cancelled. Poll `regulations.get` until `overallStatus` is `FINISHED`, `PARTIAL_SUCCESS` or `FAILED`.
+  - **Write keys are secrets.** Sources embed their `writeKeys`; `sources.createWriteKey` mints one and `sources.removeWriteKey` cuts off every sender using it.
+  - **Paging.** List routes take `pagination: { count, cursor }` (count up to 200 on most) and return `pagination.next`; pass it back as `cursor`. The plugin sends a page size when you pass none.
+  - **Versions.** Each operation is pinned to the newest stable version Segment documents for it (v1 on most; v2 for warehouses; alpha or beta where nothing else exists): alpha routes can change.
+  - **Webhooks.** To receive events, add a **Webhooks** destination to a source, point it at your Corsair webhook URL and set a **Shared Secret**. Segment signs each request with an HMAC-SHA1 `X-Signature`, and the plugin checks it against the same secret: store it as the account's webhook signing secret (`webhook_signature`), or pass the `webhookSecret` option. Requests without a valid signature are refused. Segment signs only the first event of a batched delivery, so keep batching off in the destination: a batch is accepted (as `events.batch`) only when the signature covers the whole body.
+examples:
+  read:
+    path: sources.list
+    title: List the workspace sources
+    args: {"pagination": {"count": 20}}
+  write:
+    path: tracking.track
+    title: Track an event
+    args: {"userId": "user-1234", "event": "Order Completed", "properties": {"revenue": 42, "currency": "USD"}}
+apiExamples:
+  activations.batchQuery:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW"}
+  activations.create:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "audienceId": "example", "connectionId": "example", "performResync": true, "activationType": "example", "activationName": "example"}
+  activations.delete:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "audienceId": "example", "id": "doc_8f2k1x9q"}
+  activations.get:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "audienceId": "example", "id": "doc_8f2k1x9q"}
+  activations.list:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "audienceId": "example"}
+  activations.update:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "audienceId": "example", "id": "doc_8f2k1x9q"}
+  audiences.create:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "name": "example", "definition": {"query": "example"}, "audienceType": "ACCOUNTS"}
+  audiences.createPreview:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "definition": {"query": "example"}, "audienceType": "ACCOUNTS"}
+  audiences.delete:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "id": "doc_8f2k1x9q"}
+  audiences.destinations.add:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "audienceId": "example", "destination": {"id": "doc_8f2k1x9q", "type": "example"}}
+  audiences.destinations.list:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "audienceId": "example"}
+  audiences.destinations.listSupported:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "audienceType": "example"}
+  audiences.destinations.remove:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "audienceId": "example", "destinationId": "fP7qoQw2HTWt9WdMr718gn"}
+  audiences.destinations.update:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "audienceId": "example", "destinationId": "fP7qoQw2HTWt9WdMr718gn"}
+  audiences.get:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "id": "doc_8f2k1x9q"}
+  audiences.getPreview:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "id": "doc_8f2k1x9q"}
+  audiences.list:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW"}
+  audiences.listConsumers:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "id": "doc_8f2k1x9q"}
+  audiences.run:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "audienceId": "example"}
+  audiences.schedules.create:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "id": "doc_8f2k1x9q", "strategy": "PERIODIC", "config": {"interval": "example"}}
+  audiences.schedules.delete:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "id": "doc_8f2k1x9q", "scheduleId": "example"}
+  audiences.schedules.get:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "id": "doc_8f2k1x9q", "scheduleId": "example"}
+  audiences.schedules.list:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "id": "doc_8f2k1x9q"}
+  audiences.schedules.update:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "id": "doc_8f2k1x9q", "scheduleId": "example", "strategy": "PERIODIC", "config": {"interval": "example"}}
+  audiences.update:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "id": "doc_8f2k1x9q"}
+  auditTrail.list:
+    args: {}
+  catalog.getDestination:
+    args: {"destinationMetadataId": "example"}
+  catalog.getSource:
+    args: {"sourceMetadataId": "example"}
+  catalog.getWarehouse:
+    args: {"warehouseMetadataId": "example"}
+  catalog.listDestinations:
+    args: {}
+  catalog.listSources:
+    args: {}
+  catalog.listWarehouses:
+    args: {}
+  computedTraits.create:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "name": "example", "definition": {"query": "example", "type": "ACCOUNTS"}}
+  computedTraits.delete:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "id": "doc_8f2k1x9q"}
+  computedTraits.get:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "id": "doc_8f2k1x9q"}
+  computedTraits.list:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW"}
+  computedTraits.update:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "id": "doc_8f2k1x9q"}
+  credentials.create:
+    args: {"name": "example", "settings": {}}
+  credentials.delete:
+    args: {"credentialId": "cred_8r5mNkPq2Wm4zR1t"}
+  credentials.get:
+    args: {"credentialId": "cred_8r5mNkPq2Wm4zR1t"}
+  credentials.list:
+    args: {}
+  credentials.listConsumers:
+    args: {"credentialId": "cred_8r5mNkPq2Wm4zR1t"}
+  credentials.update:
+    args: {"credentialId": "cred_8r5mNkPq2Wm4zR1t"}
+  customerInsights.createDownload:
+    args: {"collectionId": "example", "hour": "example"}
+  dbt.triggerModelSync:
+    args: {"sourceId": "qQEHquLrjRDN9j1ByrChyn"}
+  deliveryOverview.getFailedDelivery:
+    args: {"sourceId": "qQEHquLrjRDN9j1ByrChyn", "destinationConfigId": "example", "startTime": "example", "endTime": "example", "granularity": "DAY"}
+  deliveryOverview.getFailedOnIngest:
+    args: {"sourceId": "qQEHquLrjRDN9j1ByrChyn", "startTime": "example", "endTime": "example", "granularity": "DAY"}
+  deliveryOverview.getFilteredAtDestination:
+    args: {"sourceId": "qQEHquLrjRDN9j1ByrChyn", "destinationConfigId": "example", "startTime": "example", "endTime": "example", "granularity": "DAY"}
+  deliveryOverview.getFilteredAtSource:
+    args: {"sourceId": "qQEHquLrjRDN9j1ByrChyn", "startTime": "example", "endTime": "example", "granularity": "DAY"}
+  deliveryOverview.getSuccessfulDelivery:
+    args: {"sourceId": "qQEHquLrjRDN9j1ByrChyn", "destinationConfigId": "example", "startTime": "example", "endTime": "example", "granularity": "DAY"}
+  deliveryOverview.getSuccessfullyReceived:
+    args: {"sourceId": "qQEHquLrjRDN9j1ByrChyn", "startTime": "example", "endTime": "example", "granularity": "DAY"}
+  destinations.create:
+    args: {"sourceId": "qQEHquLrjRDN9j1ByrChyn", "metadataId": "example", "settings": {}}
+  destinations.delete:
+    args: {"destinationId": "fP7qoQw2HTWt9WdMr718gn"}
+  destinations.filters.create:
+    args: {"destinationId": "fP7qoQw2HTWt9WdMr718gn", "sourceId": "qQEHquLrjRDN9j1ByrChyn", "if": "example", "actions": [{"type": "ALLOW_PROPERTIES"}], "title": "example", "enabled": true}
+  destinations.filters.delete:
+    args: {"destinationId": "fP7qoQw2HTWt9WdMr718gn", "filterId": "example"}
+  destinations.filters.get:
+    args: {"destinationId": "fP7qoQw2HTWt9WdMr718gn", "filterId": "example"}
+  destinations.filters.list:
+    args: {"destinationId": "fP7qoQw2HTWt9WdMr718gn"}
+  destinations.filters.preview:
+    args: {"filter": {"actions": [{"type": "ALLOW_PROPERTIES"}], "if": "example"}, "payload": {}}
+  destinations.filters.update:
+    args: {"destinationId": "fP7qoQw2HTWt9WdMr718gn", "filterId": "example"}
+  destinations.get:
+    args: {"destinationId": "fP7qoQw2HTWt9WdMr718gn"}
+  destinations.getDeliveryMetrics:
+    args: {"destinationId": "fP7qoQw2HTWt9WdMr718gn", "sourceId": "qQEHquLrjRDN9j1ByrChyn"}
+  destinations.list:
+    args: {}
+  destinations.subscriptions.create:
+    args: {"destinationId": "fP7qoQw2HTWt9WdMr718gn", "name": "example", "actionId": "example", "trigger": "example", "enabled": true}
+  destinations.subscriptions.delete:
+    args: {"destinationId": "fP7qoQw2HTWt9WdMr718gn", "id": "doc_8f2k1x9q"}
+  destinations.subscriptions.get:
+    args: {"destinationId": "fP7qoQw2HTWt9WdMr718gn", "id": "doc_8f2k1x9q"}
+  destinations.subscriptions.list:
+    args: {"destinationId": "fP7qoQw2HTWt9WdMr718gn"}
+  destinations.subscriptions.update:
+    args: {"destinationId": "fP7qoQw2HTWt9WdMr718gn", "id": "doc_8f2k1x9q", "input": {}}
+  destinations.update:
+    args: {"destinationId": "fP7qoQw2HTWt9WdMr718gn"}
+  events.getVolume:
+    args: {"granularity": "DAY", "startTime": "example", "endTime": "example"}
+  filters.create:
+    args: {"integrationId": "example", "name": "example", "if": "example"}
+  filters.delete:
+    args: {"id": "doc_8f2k1x9q"}
+  filters.get:
+    args: {"id": "doc_8f2k1x9q"}
+  filters.list:
+    args: {"integrationId": "example"}
+  filters.update:
+    args: {"id": "doc_8f2k1x9q", "integrationId": "example"}
+  functions.create:
+    args: {"code": "example", "displayName": "example", "resourceType": "DESTINATION"}
+  functions.delete:
+    args: {"functionId": "dfn_6ffd4c5d4bc87dc4d8e5d8f2"}
+  functions.deploy:
+    args: {"functionId": "dfn_6ffd4c5d4bc87dc4d8e5d8f2"}
+  functions.get:
+    args: {"functionId": "dfn_6ffd4c5d4bc87dc4d8e5d8f2"}
+  functions.getVersion:
+    args: {"functionId": "dfn_6ffd4c5d4bc87dc4d8e5d8f2", "versionId": "example"}
+  functions.insertInstances.create:
+    args: {"functionId": "dfn_6ffd4c5d4bc87dc4d8e5d8f2", "integrationId": "example", "name": "example", "settings": {}}
+  functions.insertInstances.delete:
+    args: {"instanceId": "example"}
+  functions.insertInstances.get:
+    args: {"instanceId": "example"}
+  functions.insertInstances.list:
+    args: {"functionId": "dfn_6ffd4c5d4bc87dc4d8e5d8f2"}
+  functions.insertInstances.update:
+    args: {"instanceId": "example", "settings": {}}
+  functions.list:
+    args: {"resourceType": "DESTINATION"}
+  functions.listVersions:
+    args: {"functionId": "dfn_6ffd4c5d4bc87dc4d8e5d8f2"}
+  functions.restoreVersion:
+    args: {"functionId": "dfn_6ffd4c5d4bc87dc4d8e5d8f2", "versionId": "example"}
+  functions.update:
+    args: {"functionId": "dfn_6ffd4c5d4bc87dc4d8e5d8f2"}
+  invites.create:
+    args: {"invites": [{"email": "ada@example.com"}]}
+  invites.delete:
+    args: {"emails": ["ada@example.com"]}
+  invites.list:
+    args: {}
+  labels.create:
+    args: {"label": {"key": "example", "value": "example"}}
+  labels.delete:
+    args: {"key": "example", "value": "example"}
+  labels.list:
+    args: {}
+  livePlugins.create:
+    args: {"sourceId": "qQEHquLrjRDN9j1ByrChyn", "code": "example"}
+  livePlugins.deleteCode:
+    args: {"sourceId": "qQEHquLrjRDN9j1ByrChyn"}
+  livePlugins.getLatest:
+    args: {"sourceId": "qQEHquLrjRDN9j1ByrChyn"}
+  profilesSync.create:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "metadataId": "example", "settings": {}}
+  profilesSync.delete:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "warehouseId": "mKhHAyg5zHF7RstKfQ2Gnr"}
+  profilesSync.list:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW"}
+  profilesSync.listSelectiveSyncs:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "warehouseId": "mKhHAyg5zHF7RstKfQ2Gnr"}
+  profilesSync.update:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "warehouseId": "mKhHAyg5zHF7RstKfQ2Gnr", "settings": {}}
+  profilesSync.updateSelectiveSync:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "warehouseId": "mKhHAyg5zHF7RstKfQ2Gnr"}
+  regulations.create:
+    args: {"regulationType": "DELETE_INTERNAL", "subjectType": "OBJECT_ID", "subjectIds": ["example"]}
+  regulations.createForCloudSource:
+    args: {"sourceId": "qQEHquLrjRDN9j1ByrChyn", "regulationType": "DELETE_INTERNAL", "subjectType": "OBJECT_ID", "subjectIds": ["example"], "collection": "example"}
+  regulations.createForSource:
+    args: {"sourceId": "qQEHquLrjRDN9j1ByrChyn", "regulationType": "DELETE_ARCHIVE_ONLY", "subjectType": "ANONYMOUS_ID", "subjectIds": ["example"]}
+  regulations.get:
+    args: {"regulateId": "1nLCEJpL8XG9wMDBw4Ixl9w1Jlh"}
+  regulations.list:
+    args: {}
+  regulations.listForSource:
+    args: {"sourceId": "qQEHquLrjRDN9j1ByrChyn"}
+  regulations.listSuppressions:
+    args: {}
+  reverseEtl.models.create:
+    args: {"sourceId": "qQEHquLrjRDN9j1ByrChyn", "name": "example", "description": "example", "enabled": true, "query": "example", "queryIdentifierColumn": "example"}
+  reverseEtl.models.delete:
+    args: {"modelId": "example"}
+  reverseEtl.models.get:
+    args: {"modelId": "example"}
+  reverseEtl.models.list:
+    args: {}
+  reverseEtl.models.update:
+    args: {"modelId": "example"}
+  reverseEtl.syncs.cancel:
+    args: {"modelId": "example", "syncId": "example"}
+  reverseEtl.syncs.create:
+    args: {"sourceId": "qQEHquLrjRDN9j1ByrChyn", "modelId": "example", "subscriptionId": "example"}
+  reverseEtl.syncs.get:
+    args: {"modelId": "example", "syncId": "example"}
+  reverseEtl.syncs.list:
+    args: {"modelId": "example", "subscriptionId": "example"}
+  roles.list:
+    args: {}
+  sources.addLabels:
+    args: {"sourceId": "qQEHquLrjRDN9j1ByrChyn", "labels": [{"key": "example", "value": "example"}]}
+  sources.create:
+    args: {"slug": "example", "enabled": true, "metadataId": "example"}
+  sources.createWriteKey:
+    args: {"sourceId": "qQEHquLrjRDN9j1ByrChyn"}
+  sources.delete:
+    args: {"sourceId": "qQEHquLrjRDN9j1ByrChyn"}
+  sources.get:
+    args: {"sourceId": "qQEHquLrjRDN9j1ByrChyn"}
+  sources.getSchemaSettings:
+    args: {"sourceId": "qQEHquLrjRDN9j1ByrChyn"}
+  sources.list:
+    args: {"pagination": {"count": 20}}
+  sources.listConnectedDestinations:
+    args: {"sourceId": "qQEHquLrjRDN9j1ByrChyn"}
+  sources.listConnectedWarehouses:
+    args: {"sourceId": "qQEHquLrjRDN9j1ByrChyn"}
+  sources.removeWriteKey:
+    args: {"sourceId": "qQEHquLrjRDN9j1ByrChyn", "writeKey": "example"}
+  sources.replaceLabels:
+    args: {"sourceId": "qQEHquLrjRDN9j1ByrChyn", "labels": [{"key": "example", "value": "example"}]}
+  sources.update:
+    args: {"sourceId": "qQEHquLrjRDN9j1ByrChyn"}
+  sources.updateSchemaSettings:
+    args: {"sourceId": "qQEHquLrjRDN9j1ByrChyn"}
+  spaces.get:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW"}
+  spaces.list:
+    args: {}
+  spaces.schema.listEntityPaths:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW"}
+  spaces.schema.listEntityProperties:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "entitySlug": "example"}
+  spaces.schema.listEntityPropertySampleValues:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "entitySlug": "example", "propertyName": "example"}
+  spaces.schema.listEventProperties:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "eventName": "example"}
+  spaces.schema.listEventPropertySampleValues:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "eventName": "example", "propertyName": "example", "propertyType": "CONTEXT"}
+  spaces.schema.listEvents:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW"}
+  spaces.schema.listTraitSampleValues:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW", "traitKey": "example"}
+  spaces.schema.listTraits:
+    args: {"spaceId": "spa_9aQ1Lj62S4bomZKLF4DPqW"}
+  testing.echo:
+    args: {"message": "example"}
+  tracking.alias:
+    args: {"userId": "user-1234", "previousId": "anon-5678"}
+  tracking.batch:
+    args: {"batch": [{"type": "identify", "userId": "user-1234", "traits": {"plan": "pro"}}, {"type": "track", "userId": "user-1234", "event": "Order Completed", "properties": {"revenue": 42}}]}
+  tracking.group:
+    args: {"userId": "user-1234", "groupId": "acme-inc", "traits": {"name": "Acme Inc", "plan": "enterprise"}}
+  tracking.identify:
+    args: {"userId": "user-1234", "traits": {"plan": "pro", "name": "Ada Lovelace"}}
+  tracking.page:
+    args: {"userId": "user-1234", "name": "Pricing", "properties": {"path": "/pricing"}}
+  tracking.screen:
+    args: {"anonymousId": "anon-5678", "name": "Checkout"}
+  tracking.track:
+    args: {"userId": "user-1234", "event": "Order Completed", "properties": {"revenue": 42, "currency": "USD"}}
+  trackingPlans.addSource:
+    args: {"trackingPlanId": "tp_2DFSbBNVQGFobBr1vTwcWbYm0ft", "sourceId": "qQEHquLrjRDN9j1ByrChyn"}
+  trackingPlans.create:
+    args: {"name": "example", "type": "ENGAGE"}
+  trackingPlans.delete:
+    args: {"trackingPlanId": "tp_2DFSbBNVQGFobBr1vTwcWbYm0ft"}
+  trackingPlans.get:
+    args: {"trackingPlanId": "tp_2DFSbBNVQGFobBr1vTwcWbYm0ft"}
+  trackingPlans.list:
+    args: {}
+  trackingPlans.listRules:
+    args: {"trackingPlanId": "tp_2DFSbBNVQGFobBr1vTwcWbYm0ft"}
+  trackingPlans.listSources:
+    args: {"trackingPlanId": "tp_2DFSbBNVQGFobBr1vTwcWbYm0ft"}
+  trackingPlans.removeRules:
+    args: {"trackingPlanId": "tp_2DFSbBNVQGFobBr1vTwcWbYm0ft", "rules": [{"type": "COMMON", "version": 1}]}
+  trackingPlans.removeSource:
+    args: {"trackingPlanId": "tp_2DFSbBNVQGFobBr1vTwcWbYm0ft", "sourceId": "qQEHquLrjRDN9j1ByrChyn"}
+  trackingPlans.replaceRules:
+    args: {"trackingPlanId": "tp_2DFSbBNVQGFobBr1vTwcWbYm0ft", "rules": [{"jsonSchema": "example", "type": "COMMON", "version": 1}]}
+  trackingPlans.update:
+    args: {"trackingPlanId": "tp_2DFSbBNVQGFobBr1vTwcWbYm0ft"}
+  trackingPlans.updateRules:
+    args: {"trackingPlanId": "tp_2DFSbBNVQGFobBr1vTwcWbYm0ft", "rules": [{"jsonSchema": "example", "type": "COMMON", "version": 1}]}
+  transformations.create:
+    args: {"name": "example", "sourceId": "qQEHquLrjRDN9j1ByrChyn", "enabled": true, "if": "example"}
+  transformations.delete:
+    args: {"transformationId": "example"}
+  transformations.get:
+    args: {"transformationId": "example"}
+  transformations.list:
+    args: {}
+  transformations.update:
+    args: {"transformationId": "example"}
+  usage.getDailyApiCalls:
+    args: {"period": "example"}
+  usage.getDailyApiCallsBySource:
+    args: {"period": "example"}
+  usage.getDailyMtu:
+    args: {"period": "example"}
+  usage.getDailyMtuBySource:
+    args: {"period": "example"}
+  userGroups.addPermissions:
+    args: {"userGroupId": "aaXkLkABEhqeGPzMfR8KUt", "permissions": [{"resources": [{"id": "doc_8f2k1x9q", "type": "FUNCTION"}], "roleId": "example"}]}
+  userGroups.addUsers:
+    args: {"userGroupId": "aaXkLkABEhqeGPzMfR8KUt", "emails": ["ada@example.com"]}
+  userGroups.create:
+    args: {"name": "example"}
+  userGroups.delete:
+    args: {"userGroupId": "aaXkLkABEhqeGPzMfR8KUt"}
+  userGroups.get:
+    args: {"userGroupId": "aaXkLkABEhqeGPzMfR8KUt"}
+  userGroups.list:
+    args: {}
+  userGroups.listInvites:
+    args: {"userGroupId": "aaXkLkABEhqeGPzMfR8KUt"}
+  userGroups.listUsers:
+    args: {"userGroupId": "aaXkLkABEhqeGPzMfR8KUt"}
+  userGroups.removeUsers:
+    args: {"userGroupId": "aaXkLkABEhqeGPzMfR8KUt", "emails": ["ada@example.com"]}
+  userGroups.replacePermissions:
+    args: {"userGroupId": "aaXkLkABEhqeGPzMfR8KUt", "permissions": [{"resources": [{"id": "doc_8f2k1x9q", "type": "FUNCTION"}], "roleId": "example"}]}
+  userGroups.replaceUsers:
+    args: {"userGroupId": "aaXkLkABEhqeGPzMfR8KUt", "emails": ["ada@example.com"]}
+  userGroups.update:
+    args: {"userGroupId": "aaXkLkABEhqeGPzMfR8KUt", "name": "example"}
+  users.addPermissions:
+    args: {"userId": "user-1234", "permissions": [{"resources": [{"id": "doc_8f2k1x9q", "type": "FUNCTION"}], "roleId": "example"}]}
+  users.delete:
+    args: {"userIds": ["user-1234"]}
+  users.get:
+    args: {"userId": "user-1234"}
+  users.list:
+    args: {}
+  users.listGroups:
+    args: {"userId": "user-1234"}
+  users.replacePermissions:
+    args: {"userId": "user-1234", "permissions": [{"resources": [{"id": "doc_8f2k1x9q", "type": "FUNCTION"}], "roleId": "example"}]}
+  warehouses.addSourceConnection:
+    args: {"warehouseId": "mKhHAyg5zHF7RstKfQ2Gnr", "sourceId": "qQEHquLrjRDN9j1ByrChyn"}
+  warehouses.create:
+    args: {"credentialId": "cred_8r5mNkPq2Wm4zR1t"}
+  warehouses.delete:
+    args: {"warehouseId": "mKhHAyg5zHF7RstKfQ2Gnr"}
+  warehouses.get:
+    args: {"warehouseId": "mKhHAyg5zHF7RstKfQ2Gnr"}
+  warehouses.getAdvancedSyncSchedule:
+    args: {"warehouseId": "mKhHAyg5zHF7RstKfQ2Gnr"}
+  warehouses.getConnectionState:
+    args: {"warehouseId": "mKhHAyg5zHF7RstKfQ2Gnr"}
+  warehouses.list:
+    args: {}
+  warehouses.listConnectedSources:
+    args: {"warehouseId": "mKhHAyg5zHF7RstKfQ2Gnr"}
+  warehouses.listSelectiveSyncs:
+    args: {"warehouseId": "mKhHAyg5zHF7RstKfQ2Gnr", "sourceId": "qQEHquLrjRDN9j1ByrChyn"}
+  warehouses.listSourceSyncs:
+    args: {"warehouseId": "mKhHAyg5zHF7RstKfQ2Gnr", "sourceId": "qQEHquLrjRDN9j1ByrChyn"}
+  warehouses.listSyncs:
+    args: {"warehouseId": "mKhHAyg5zHF7RstKfQ2Gnr"}
+  warehouses.removeSourceConnection:
+    args: {"warehouseId": "mKhHAyg5zHF7RstKfQ2Gnr", "sourceId": "qQEHquLrjRDN9j1ByrChyn"}
+  warehouses.replaceAdvancedSyncSchedule:
+    args: {"warehouseId": "mKhHAyg5zHF7RstKfQ2Gnr", "enabled": true}
+  warehouses.update:
+    args: {"warehouseId": "mKhHAyg5zHF7RstKfQ2Gnr"}
+  warehouses.updateSelectiveSync:
+    args: {"warehouseId": "mKhHAyg5zHF7RstKfQ2Gnr", "syncOverrides": [{"enabled": true, "sourceId": "qQEHquLrjRDN9j1ByrChyn"}]}
+  warehouses.validate:
+    args: {"credentialId": "cred_8r5mNkPq2Wm4zR1t"}
+  workspaces.get:
+    args: {}

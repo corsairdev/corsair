@@ -1,0 +1,158 @@
+---
+title: "Segment plugin"
+sidebarTitle: "Overview"
+description: "Twilio Segment: send track, identify, page, screen, group and alias calls, and manage the workspace through the Public API: sources, destinations, warehouses, tracking plans, functions, deletion and suppression, users, audiences and Reverse ETL (207 operations)."
+---
+
+Use **Segment** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Segment has two APIs with two credentials, and this plugin covers both:
+
+- **Public API** (workspace management, everything except `tracking.*`): a Public API token, created by a Workspace Owner under **Settings &gt; Workspace settings &gt; Access Management &gt; Tokens** (choose the Public API type, not the legacy Config API). Segment offers the Public API on the **Team and Business plans** only; on the Free plan these calls answer 403.
+- **Tracking API** (`tracking.identify`, `track`, `page`, `screen`, `group`, `alias`, `batch`): the write key of a source (the source's **Settings &gt; API Keys**). Store it as the account's `write_key`, or pass the `writeKey` option. On the Free plan, connect the write key itself as the key: tracking works and the Public API calls do not.
+
+Things to know before you call:
+
+- **Region.** An EU workspace lives on `eu1.api.segmentapis.com` and takes events on `events.eu1.segmentapis.com`: set the account's `region` to `eu` (or pass the `region` option). The US hosts answer an EU token with 403.
+- **Tracking answers 200 for almost everything.** Segment accepts any call it can parse, then may drop it (a wrong write key, a payload over 32 KB). A 200 means received, not delivered: check the source's debugger. Events go on to every destination connected to the source and cannot be taken back except through a regulation.
+- **Regulations permanently delete data.** `regulations.create` starts a deletion or suppression run over the subject ids you pass; it cannot be cancelled. Poll `regulations.get` until `overallStatus` is `FINISHED`, `PARTIAL_SUCCESS` or `FAILED`.
+- **Write keys are secrets.** Sources embed their `writeKeys`; `sources.createWriteKey` mints one and `sources.removeWriteKey` cuts off every sender using it.
+- **Paging.** List routes take `pagination: { count, cursor }` (count up to 200 on most) and return `pagination.next`; pass it back as `cursor`. The plugin sends a page size when you pass none.
+- **Versions.** Each operation is pinned to the newest stable version Segment documents for it (v1 on most; v2 for warehouses; alpha or beta where nothing else exists): alpha routes can change.
+- **Webhooks.** To receive events, add a **Webhooks** destination to a source, point it at your Corsair webhook URL and set a **Shared Secret**. Segment signs each request with an HMAC-SHA1 `X-Signature`, and the plugin checks it against the same secret: store it as the account's webhook signing secret (`webhook_signature`), or pass the `webhookSecret` option. Requests without a valid signature are refused. Segment signs only the first event of a batched delivery, so keep batching off in the destination: a batch is accepted (as `events.batch`) only when the signature covers the whole body.
+
+**What you get:**
+
+- 207 typed API operations
+- 8 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/segment better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/segment better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/segment better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/segment better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { segment } from '@corsair-dev/segment';
+
+export const corsair = createCorsair({
+	plugins: [
+		segment(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Segment API key before the first call: `pnpm corsair setup --plugin=segment --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+segment()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'segment',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the workspace sources**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.segment.api.sources.list({
+	pagination: { count: 20 },
+});
+```
+
+
+**Track an event**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.segment.api.tracking.track({
+	userId: 'user-1234',
+	event: 'Order Completed',
+	properties: { revenue: 42, currency: 'USD' },
+});
+```
+
+
+See the full list on the [API](/plugins/segment/api) page.
+
+## Webhooks
+
+This plugin registers **8** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/segment/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/segment/api">
+    Every `segment.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/segment/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
