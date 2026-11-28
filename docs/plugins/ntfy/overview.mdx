@@ -1,0 +1,142 @@
+---
+title: "ntfy plugin"
+sidebarTitle: "Overview"
+description: "Push notifications with ntfy on ntfy.sh or a self-hosted server - publish messages and file attachments to topics, poll cached messages, update, clear and delete message sequences, manage the account (tokens, synced subscriptions, topic reservations, phone numbers, emails, settings, billing, web push), and administer users, topic access and tiers."
+---
+
+Use **ntfy** through Corsair: one client, typed API calls.
+
+Create an access token at https://ntfy.sh/account (or `<your server>/account`) under Manage access tokens. The token starts with `tk_` and is shown once. The key can also be `username:password`, which is sent as HTTP Basic. A self-hosted server is set with the account's `base_url` (or the `serverUrl` plugin option); leave it empty for ntfy.sh. A bad Authorization header is a 401 even on public topics, so check the key before anything else. With the `anonymous: true` option and no key, calls go out without credentials (open topics, signup). Credentials are only sent over https (or to localhost). Things to know before you send:
+
+- **Real pushes.** `messages.send`, `messages.sendFile` and `messages.update` deliver real push notifications to every subscriber of the topic and are marked destructive. `email` and `call` on a send also email or phone someone. On ntfy.sh a visitor can send 250 messages per rolling 24 hours. Failed sends are never replayed after a 5xx or a dropped connection, because a retry can duplicate a notification. A burst-limit 429 (42901, 42906, 42911) is retried twice; a spent daily quota (messages, emails, calls, bandwidth) never is.
+- **Sequences.** Publishing with `sequenceId` (`[-_A-Za-z0-9]{1,64}`) gives the message a stable id: publishing again with the same id updates it (the server keeps both versions), `messages.clear` marks it read and dismissed, and `messages.delete` tells subscribers to remove it. A scheduled message that has not gone out yet is cancelled and removed from the server; a delivered one stays in the cache with a delete event after it, and clients that support it remove the notification.
+- **Polling, not webhooks.** ntfy sends no webhooks: `messages.poll` reads the topic cache as NDJSON and returns the messages with `event: "message"`. An unknown topic polls to an empty list, not an error. Use `since` (a duration like `10min`, unix seconds, a message id, `all` or `latest`) as the cursor, and `scheduled: true` to list undelivered scheduled messages.
+- **Priorities and actions.** `priority` takes 1-5 or min|low|default|high|urgent; names are sent as their number, since the JSON publish takes an int only. `actions` takes up to 3 buttons of type view, http, broadcast or copy.
+- **Attachments.** `messages.sendFile` uploads a file (base64 in, PUT body out) and the message carries `attachment.url`; `files.download` fetches it by the id at the end of that URL. `attach` on `messages.send` links an external URL instead.
+- **Account and admin routes.** `account.*`, `tokens.*`, `subscriptions.*`, `reservations.*`, `phoneNumbers.*`, `emails.*`, `billing.*` and `webPush.*` act on the signed-in user. `users.*` and `tiers.*` need an admin. Routes for a feature the server has turned off (email, calls, payments, web push, signup) answer 400 or 404.
+
+**What you get:**
+
+- 59 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/ntfy better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/ntfy better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/ntfy better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/ntfy better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { ntfy } from '@corsair-dev/ntfy';
+
+export const corsair = createCorsair({
+	plugins: [
+		ntfy(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the ntfy API key before the first call: `pnpm corsair setup --plugin=ntfy --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+ntfy()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'ntfy',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Poll a topic**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.ntfy.api.messages.poll({ topic: 'mytopic', since: '10min' });
+```
+
+
+**Send a notification**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.ntfy.api.messages.send({
+	topic: 'mytopic',
+	message: 'Disk space is low at 5.1 GB',
+	title: 'Low disk space alert',
+	priority: 4,
+	tags: ['warning', 'cd'],
+});
+```
+
+
+See the full list on the [API](/plugins/ntfy/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/ntfy/api">
+    Every `ntfy.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
