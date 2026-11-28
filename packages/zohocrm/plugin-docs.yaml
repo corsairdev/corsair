@@ -1,0 +1,1172 @@
+# Display copy for the generated docs and the catalog, plus one call
+# example per operation. Generated with the plugin from ZohoCrm's OpenAPI spec;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: Zoho CRM
+domain: zoho.com
+description: "Zoho CRM with the full v8 REST API: records in every module, search and COQL, notes, attachments, tags, emails, bulk read and write, users, roles, territories, layouts, fields, pipelines, blueprints, workflow rules, webforms and org settings, in every Zoho data center (573 operations)."
+recommendedAuth: oauth_2
+overviewNote: |
+  Connect a Zoho account with OAuth. Things to know before you write:
+
+  - **Data center.** A Zoho org lives in one data center. Set `region` to it: `us` (default, zoho.com), `eu`, `in`, `au` (com.au), `jp`, `ca`, `cn` (com.cn) or `sa`. API calls go to `https://www.zohoapis.<tld>` and sign-in to the matching accounts host (`accounts.zohocloud.ca` for Canada). A token from one data center gets 401 in another.
+  - **Records** live in modules addressed by API name (`Leads`, `Contacts`, `Accounts`, `Deals`, custom modules like `Projects__c`). `records.list` needs `fields` (up to 50 API names). Lists answer 204 when empty, which reads as `{ success: true }`. Writes take `data: [...]` (up to 100 records) and answer per record, often with status 207 when some fail.
+  - **Search** with `records.search` (criteria, email, phone or word) or with COQL (`coql.query`), Zoho's SQL-like query language.
+  - **Credits.** Every call spends API credits from the org's daily pool (the Free edition gets 5,000 a day). When they run out Zoho answers 429.
+  - **Editions.** Many settings routes (blueprints, workflow rules, webhooks, territories, portals, kiosks, Zia, sandboxes of automation) need a paid edition; the Free edition answers 403 or 400 `FEATURE_NOT_SUPPORTED`.
+  - **Risky operations.** Deletes, merges, lead conversion, mass actions, transfers and the recycle bin's `empty` are `destructive`, and so are calls that send email (send mail, mail merge, portal invites, cadence enrolment).
+examples:
+  read:
+    path: records.list
+    title: List leads
+    args: {"module": "Leads", "fields": "Last_Name,Email,Company", "per_page": 10}
+  write:
+    path: records.create
+    title: Create a lead
+    args: {"module": "Leads", "data": [{"Last_Name": "Rivera", "Company": "Northpeak"}]}
+apiExamples:
+  abTesting.checkLaunchSuggestions:
+    args: {"id": "487687600000033300"}
+  abTesting.create:
+    args: {"module": "Leads", "AB_testing": [{"base_form": {}, "condition": {"type": "duration"}, "module": {}, "name": "example", "status": "drafted", "variant_form": [{}]}]}
+  abTesting.delete:
+    args: {"id": "4876876000000333001", "module": "Leads"}
+  abTesting.get:
+    args: {"id": "4876876000000333001"}
+  abTesting.getPreview:
+    args: {"id": "4876876000000333001", "module": "Leads"}
+  abTesting.getSuggestions:
+    args: {"id": "487687600000033300"}
+  abTesting.getVisitors:
+    args: {"id": "4876876000000333001"}
+  abTesting.list:
+    args: {}
+  abTesting.listVisitors:
+    args: {}
+  abTesting.update:
+    args: {"id": "4876876000000333001", "module": "Leads", "AB_testing": [{"base_form": {"id": "4876876000000333001", "traffic": 1}, "condition": {"type": "duration"}, "module": {}, "name": "example", "status": "drafted", "variant_form": [{"button_attributes": [{"name": "example"}], "form_fields": [{"type": "general"}], "traffic": 1}]}]}
+  apis.list:
+    args: {}
+  appointmentPreferences.get:
+    args: {}
+  appointmentPreferences.update:
+    args: {}
+  appointments.create:
+    args: {"data": [{"Appointment_For": {}, "Appointment_Start_Time": "example", "Owner": {}, "Service_Name": {}}]}
+  appointments.delete:
+    args: {"appointmentId": "example"}
+  appointments.deleteMany:
+    args: {}
+  appointments.get:
+    args: {"appointmentId": "example"}
+  appointments.list:
+    args: {"fields": "Last_Name,Email"}
+  appointments.update:
+    args: {"appointmentId": "example", "data": [{"Appointment_For": {}, "Appointment_Start_Time": "example", "Owner": {}, "Service_Name": {}}]}
+  appointments.updateMany:
+    args: {"data": [{"Appointment_For": {}, "Appointment_Start_Time": "example", "Owner": {}, "Service_Name": {}}]}
+  approvalProcesses.clone:
+    args: {"approvalProcessId": "4876876000000333001"}
+  approvalProcesses.create:
+    args: {"approval_process": [{"active": true, "execute_on": "create", "module": {}, "name": "example"}]}
+  approvalProcesses.delete:
+    args: {"approvalProcessId": "4876876000000333001"}
+  approvalProcesses.get:
+    args: {"approvalProcessId": "4876876000000333001"}
+  approvalProcesses.getCount:
+    args: {"module": "Leads"}
+  approvalProcesses.getProcessConfigurations:
+    args: {}
+  approvalProcesses.getRule:
+    args: {"approvalProcessId": "4876876000000333001", "ruleId": "4876876000000333001"}
+  approvalProcesses.list:
+    args: {}
+  approvalProcesses.listRules:
+    args: {"approvalProcessId": "4876876000000333001"}
+  approvalProcesses.reorder:
+    args: {"module": "Leads", "reorder": {"approval_process": [{"id": "4876876000000333001", "sequence_number": 1}]}}
+  approvalProcesses.reorderRules:
+    args: {"approvalProcessId": "4876876000000333001", "reorder": {"rules": [{"id": "4876876000000333001", "sequence_number": 1}]}}
+  approvalProcesses.update:
+    args: {"approvalProcessId": "4876876000000333001", "approval_process": [{"active": true, "execute_on": "example", "module": {}, "name": "example"}]}
+  approvalProcesses.updateMany:
+    args: {"approval_process": [{}]}
+  assignmentRules.clone:
+    args: {"id": "4876876000000333001", "module": "Leads", "assignment_rules": [{"name": "example"}]}
+  assignmentRules.cloneEntries:
+    args: {"id": "4876876000000333001", "module": "Leads", "assignment_rules": [{"rule_entries": [{"id": "4876876000000333001"}]}]}
+  assignmentRules.create:
+    args: {"module": "Leads", "assignment_rules": [{"name": "example", "rule_entries": [{"assign_to": {"type": "example"}}]}]}
+  assignmentRules.delete:
+    args: {"id": "4876876000000333001", "module": "Leads"}
+  assignmentRules.get:
+    args: {"id": "4876876000000333001", "module": "Leads"}
+  assignmentRules.getAssociations:
+    args: {"id": "4876876000000333001", "module": "Leads"}
+  assignmentRules.getCount:
+    args: {"module": "Leads"}
+  assignmentRules.list:
+    args: {}
+  assignmentRules.reorderEntries:
+    args: {"id": "4876876000000333001", "module": "Leads", "assignment_rules": [{"rule_entries": [{"id": "4876876000000333001", "sequence_number": 1}]}]}
+  assignmentRules.update:
+    args: {"id": "4876876000000333001", "module": "Leads", "assignment_rules": [{}]}
+  attachments.delete:
+    args: {"recordId": "4876876000000333001", "moduleApiName": "Leads", "id": "4876876000000333001"}
+  attachments.get:
+    args: {"recordId": "4876876000000333001", "moduleApiName": "Leads", "id": "4876876000000333001"}
+  attachments.list:
+    args: {"recordId": "4876876000000333001", "moduleApiName": "Leads"}
+  attachments.upload:
+    args: {"recordId": "4876876000000333001", "moduleApiName": "Leads"}
+  auditLogExports.create:
+    args: {"audit_log_export": [{"criteria": {"field": {"api_name": "example"}, "comparator": "example", "value": "added"}}]}
+  auditLogExports.get:
+    args: {"id": "4876876000000333001"}
+  auditLogExports.list:
+    args: {}
+  automationFunctions.create:
+    args: {"functions": [{"function": {"id": "487687600000033300"}, "language": "deluge", "module": {}, "name": "example"}]}
+  automationFunctions.delete:
+    args: {"functionId": "example"}
+  automationFunctions.deleteMany:
+    args: {"ids": "example"}
+  automationFunctions.get:
+    args: {"functionId": "example"}
+  automationFunctions.getAssociatedModules:
+    args: {}
+  automationFunctions.list:
+    args: {}
+  automationFunctions.update:
+    args: {"functionId": "example", "functions": [{"id": "487687600000033300"}]}
+  automationFunctions.updateMany:
+    args: {"functions": [{"id": "487687600000033300"}]}
+  blueprints.activate:
+    args: {"blueprintId": "4876876000000333001", "blueprints": [{"move_records": true}]}
+  blueprints.clone:
+    args: {"blueprintId": "4876876000000333001", "blueprints": [{"field": {}, "layout": {}, "module": "Leads", "name": "example", "type": "example"}]}
+  blueprints.create:
+    args: {"blueprints": [{"field": {"id": "4876876000000333001"}, "layout": {"id": "4876876000000333001"}, "module": {"id": "4876876000000333001"}, "name": "example", "continuous": true}]}
+  blueprints.deactivate:
+    args: {"blueprintId": "4876876000000333001", "blueprints": [{}]}
+  blueprints.delete:
+    args: {"blueprintId": "4876876000000333001"}
+  blueprints.deleteMany:
+    args: {"ids": ["4876876000000333001"]}
+  blueprints.get:
+    args: {"blueprintId": "4876876000000333001"}
+  blueprints.getForRecord:
+    args: {"moduleApiName": "Leads", "recordId": "4876876000000333001"}
+  blueprints.getProcessConfigurations:
+    args: {}
+  blueprints.getRecordsCount:
+    args: {"blueprintId": "4876876000000333001"}
+  blueprints.getUsageConfigurations:
+    args: {"module": "Leads"}
+  blueprints.list:
+    args: {}
+  blueprints.reorder:
+    args: {"module": "Leads", "blueprints": [{"id": "4876876000000333001", "sequence_number": 1}]}
+  blueprints.states.create:
+    args: {"blueprintId": "4876876000000333001", "states": [{"module": {"id": "4876876000000333001"}, "pick_list_value": {"id": "4876876000000333001"}}]}
+  blueprints.states.delete:
+    args: {"blueprintId": "4876876000000333001", "stateId": "4876876000000333001"}
+  blueprints.states.deleteMany:
+    args: {"blueprintId": "4876876000000333001", "ids": ["4876876000000333001"]}
+  blueprints.states.get:
+    args: {"blueprintId": "4876876000000333001", "stateId": "4876876000000333001"}
+  blueprints.states.list:
+    args: {"blueprintId": "4876876000000333001", "ids": ["4876876000000333001"]}
+  blueprints.states.update:
+    args: {"blueprintId": "4876876000000333001", "stateId": "4876876000000333001", "states": [{}]}
+  blueprints.states.updateMany:
+    args: {"blueprintId": "4876876000000333001", "states": [{}]}
+  blueprints.transitionRecord:
+    args: {"moduleApiName": "Leads", "recordId": "4876876000000333001", "blueprint": [{"state": "draft", "transition_id": "example"}]}
+  blueprints.transitions.create:
+    args: {"transitions": [{"module": {"api_name": "example", "id": "4876876000000333001"}, "name": "example", "owners": [{"type": "example"}], "transition_type": "standalone_transition", "trigger_type": "automatic"}]}
+  blueprints.transitions.delete:
+    args: {"transitionId": "4876876000000333001"}
+  blueprints.transitions.deleteMany:
+    args: {"ids": ["4876876000000333001"]}
+  blueprints.transitions.get:
+    args: {"transitionId": "4876876000000333001"}
+  blueprints.transitions.list:
+    args: {"ids": ["4876876000000333001"]}
+  blueprints.transitions.update:
+    args: {"transitionId": "4876876000000333001", "transitions": [{"layout": {"id": "4876876000000333001", "api_name": "example"}}]}
+  blueprints.transitions.updateMany:
+    args: {"transitions": [{"id": "4876876000000333001"}]}
+  blueprints.update:
+    args: {"blueprintId": "4876876000000333001", "blueprints": [{"name": "example"}]}
+  blueprints.updateMany:
+    args: {"blueprints": [{"name": "example"}]}
+  bulkRead.createJob:
+    args: {"query": {"module": {"api_name": "example"}}}
+  bulkRead.downloadResult:
+    args: {"jobId": "example"}
+  bulkRead.getJob:
+    args: {"jobId": "example"}
+  bulkWrite.createJob:
+    args: {"operation": "insert", "resource": [{"type": "example", "file_names": ["example"], "module": {"api_name": "example"}, "file_id": "example", "find_by": "example"}]}
+  bulkWrite.getJob:
+    args: {"jobId": "example"}
+  bulkWrite.uploadFile:
+    args: {"file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  businessHours.create:
+    args: {"business_hours": {"week_starts_on": "Monday", "type": "24_by_7"}}
+  businessHours.get:
+    args: {}
+  businessHours.update:
+    args: {"business_hours": {}}
+  cadences.activate:
+    args: {"id": "4876876000000333001"}
+  cadences.clone:
+    args: {"id": "4876876000000333001", "cadences": [{"module": {}, "name": "example", "type": "custom_view"}]}
+  cadences.create:
+    args: {"cadences": [{"module": {}, "name": "example", "type": "custom_view"}]}
+  cadences.deactivate:
+    args: {"id": "4876876000000333001"}
+  cadences.delete:
+    args: {"id": "4876876000000333001"}
+  cadences.enrollRecords:
+    args: {"module": "Leads", "cadences_ids": ["example"], "ids": ["4876876000000333001"]}
+  cadences.get:
+    args: {"id": "4876876000000333001"}
+  cadences.getAnalytics:
+    args: {"id": "4876876000000333001"}
+  cadences.getModuleActionsCount:
+    args: {"module": "Leads"}
+  cadences.getRecordsCount:
+    args: {}
+  cadences.list:
+    args: {}
+  cadences.publish:
+    args: {"id": "4876876000000333001", "cadences": [{}]}
+  cadences.unenrollRecords:
+    args: {"module": "Leads", "cadences_ids": ["example"], "ids": ["4876876000000333001"]}
+  cadences.update:
+    args: {"id": "4876876000000333001", "cadences": [{}]}
+  cadences.updateMany:
+    args: {"cadences": [{}]}
+  callPreferences.get:
+    args: {}
+  callPreferences.update:
+    args: {}
+  compositeRequests.execute:
+    args: {"__composite_requests": [{"method": "GET", "uri": "/crm/v8/Leads"}]}
+  contactRoles.create:
+    args: {"contact_roles": [{"name": "example", "sequence_number": 1}]}
+  contactRoles.delete:
+    args: {"role": "example"}
+  contactRoles.deleteMany:
+    args: {"ids": "example"}
+  contactRoles.get:
+    args: {"role": "example"}
+  contactRoles.list:
+    args: {}
+  contactRoles.update:
+    args: {"role": "example", "contact_roles": [{"name": "example"}]}
+  contactRoles.updateMany:
+    args: {"contact_roles": [{"name": "example", "id": "4876876000000333001"}]}
+  coql.query:
+    args: {"select_query": "select Last_Name, Email from Leads where Last_Name is not null limit 10"}
+  currencies.create:
+    args: {"currencies": [{"exchange_rate": "1.5", "iso_code": "exa"}]}
+  currencies.enableMultiCurrency:
+    args: {"base_currency": {"iso_code": "exa", "exchange_rate": "1.5"}}
+  currencies.get:
+    args: {"currency": "example"}
+  currencies.list:
+    args: {}
+  currencies.update:
+    args: {"currency": "example", "currencies": [{}]}
+  currencies.updateBase:
+    args: {"base_currency": {"id": "4876876000000333001"}}
+  currencies.updateMany:
+    args: {"currencies": [{"id": "4876876000000333001"}]}
+  customViews.changeSort:
+    args: {"module": "Leads", "id": "4876876000000333001", "custom_views": [{"sort_by": {}, "sort_order": "asc"}]}
+  customViews.changeSortMany:
+    args: {"module": "Leads", "custom_views": [{"id": "4876876000000333001", "sort_by": {}, "sort_order": "asc"}]}
+  customViews.create:
+    args: {"module": "Leads", "custom_views": [{"name": "example", "access_type": "shared", "fields": [{}]}]}
+  customViews.deleteMany:
+    args: {"ids": ["4876876000000333001"], "module": "Leads"}
+  customViews.get:
+    args: {"id": "4876876000000333001", "module": "Leads"}
+  customViews.list:
+    args: {"module": "Leads"}
+  customViews.update:
+    args: {"module": "Leads", "id": "4876876000000333001", "custom_views": [{}]}
+  customViews.updateMany:
+    args: {"module": "Leads"}
+  dataSharing.get:
+    args: {}
+  dataSharing.update:
+    args: {"data_sharing": [{"share_type": "private", "module": {"id": "4876876000000333001"}}]}
+  dealContactRoles.delete:
+    args: {"module": "Leads", "dealId": "example", "contactId": "example"}
+  dealContactRoles.deleteMany:
+    args: {"module": "Leads", "dealId": "example"}
+  dealContactRoles.get:
+    args: {"module": "Leads", "dealId": "example", "contactId": "example", "fields": "Last_Name,Email"}
+  dealContactRoles.list:
+    args: {"module": "Leads", "dealId": "example", "fields": "Last_Name,Email"}
+  dealContactRoles.upsert:
+    args: {"module": "Leads", "dealId": "example", "contactId": "example", "data": [{"Contact_Role": {}}]}
+  dealContactRoles.upsertMany:
+    args: {"module": "Leads", "dealId": "example", "data": [{"Contact_Role": {"id": "4876876000000333001"}, "id": "4876876000000333001"}]}
+  duplicateCheckPreferences.create:
+    args: {"module": "Leads", "duplicate_check_preference": {"type": "converted_records"}}
+  duplicateCheckPreferences.delete:
+    args: {"module": "Leads"}
+  duplicateCheckPreferences.get:
+    args: {"module": "Leads"}
+  duplicateCheckPreferences.update:
+    args: {"module": "Leads", "duplicate_check_preference": {"type": "mapped_module_records", "type_configurations": [{"field_mappings": [{"current_field": {"id": "4876876000000333001"}, "mapped_field": {"id": "4876876000000333001"}}], "mapped_module": {"id": "4876876000000333001"}}]}}
+  emailDrafts.create:
+    args: {"module": "Leads", "record": "4876876000000333001", "__email_drafts": [{"from": "ada@example.com", "rich_text": true}]}
+  emailDrafts.delete:
+    args: {"module": "Leads", "record": "4876876000000333001", "draft": "example"}
+  emailDrafts.get:
+    args: {"module": "Leads", "record": "4876876000000333001", "draft": "example"}
+  emailDrafts.list:
+    args: {"module": "Leads", "record": "4876876000000333001"}
+  emailDrafts.update:
+    args: {"module": "Leads", "record": "4876876000000333001", "draft": "example", "__email_drafts": [{"from": "ada@example.com", "rich_text": true}]}
+  emailDrafts.updateMany:
+    args: {"module": "Leads", "record": "4876876000000333001", "__email_drafts": [{"id": "4876876000000333001", "from": "ada@example.com", "rich_text": true}]}
+  emailNotifications.create:
+    args: {"email_notifications": [{"module": {"api_name": "example", "id": "4876876000000333001"}, "name": "example", "recipients": {"to": [{"type": "example", "details": {"api_name": "example"}}]}, "template": {"name": "example", "id": "4876876000000333001"}}]}
+  emailNotifications.delete:
+    args: {"id": "4876876000000333001"}
+  emailNotifications.deleteMany:
+    args: {"ids": "example"}
+  emailNotifications.get:
+    args: {"id": "4876876000000333001"}
+  emailNotifications.getUsageReports:
+    args: {"group_by": "date"}
+  emailNotifications.list:
+    args: {}
+  emailNotifications.update:
+    args: {"id": "4876876000000333001", "email_notifications": [{"name": "example", "template": {"name": "example", "id": "4876876000000333001"}, "recipients": {"to": [{"type": "example", "details": {"api_name": "example"}}]}}]}
+  emailTemplates.list:
+    args: {}
+  emails.associate:
+    args: {"module": "Leads", "recordId": "4876876000000333001", "data": [{"from": {"email": "ada@example.com"}, "to": [{"email": "ada@example.com"}], "subject": "example", "content": "example", "original_message_id": "example", "sent": true, "date_time": "example"}]}
+  emails.downloadAttachments:
+    args: {"module": "Leads", "recordId": "4876876000000333001", "user_id": 1, "message_id": "example", "id": "4876876000000333001", "name": "example"}
+  emails.downloadInlineImages:
+    args: {"module": "Leads", "recordId": "4876876000000333001", "user_id": 1, "message_id": "example", "id": "4876876000000333001"}
+  emails.getSharingDetails:
+    args: {"moduleApiName": "Leads", "id": "4876876000000333001"}
+  emails.link:
+    args: {"contactId": "4876876000000333001", "messageId": "example"}
+  emails.linkMany:
+    args: {"contactId": "4876876000000333001"}
+  emails.send:
+    args: {"moduleName": "Leads", "id": "4876876000000333001", "data": [{"from": {"email": "ada@example.com"}, "to": [{"email": "ada@example.com"}]}]}
+  emails.share:
+    args: {"moduleApiName": "Leads", "id": "4876876000000333001"}
+  emails.shareMany:
+    args: {"moduleApiName": "Leads", "ids": ["4876876000000333001"]}
+  emails.unblock:
+    args: {"module": "Leads", "id": "4876876000000333001", "unblock_fields": ["example"]}
+  emails.unblockMany:
+    args: {"module": "Leads", "ids": ["4876876000000333001"], "unblock_fields": ["example"]}
+  emails.unlink:
+    args: {"contactId": "4876876000000333001", "messageId": "example", "owner_id": "4876876000000333001"}
+  emails.unlinkMany:
+    args: {"contactId": "4876876000000333001", "message_ids": "example", "owner_id": "4876876000000333001"}
+  emails.unshare:
+    args: {"moduleApiName": "Leads", "id": "4876876000000333001"}
+  emails.unshareMany:
+    args: {"moduleApiName": "Leads", "ids": ["4876876000000333001"]}
+  features.get:
+    args: {"feature": "example"}
+  features.getUserLicenses:
+    args: {}
+  features.list:
+    args: {}
+  fieldUpdates.create:
+    args: {"field_updates": [{"name": "example", "module": {"api_name": "example"}, "field": {"id": "4876876000000333001", "api_name": "example"}, "value": "example", "type": "example"}]}
+  fieldUpdates.delete:
+    args: {"id": "4876876000000333001"}
+  fieldUpdates.deleteMany:
+    args: {"ids": "example"}
+  fieldUpdates.get:
+    args: {"id": "4876876000000333001"}
+  fieldUpdates.list:
+    args: {}
+  fieldUpdates.update:
+    args: {"id": "4876876000000333001", "field_updates": [{"name": "example", "module": {"api_name": "example"}, "field": {"id": "4876876000000333001", "api_name": "example"}, "value": "example", "type": "example"}]}
+  fields.create:
+    args: {"module": "Leads"}
+  fields.delete:
+    args: {"fieldId": "example", "module": "Leads"}
+  fields.get:
+    args: {"module": "Leads", "fieldId": "example"}
+  fields.getScheduledJobs:
+    args: {"module": "Leads", "fieldId": "example"}
+  fields.list:
+    args: {"module": "Leads"}
+  fields.update:
+    args: {"module": "Leads", "fieldId": "example"}
+  fields.updateMany:
+    args: {"module": "Leads"}
+  files.download:
+    args: {}
+  files.upload:
+    args: {"file": [{"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}]}
+  fiscalYear.get:
+    args: {}
+  fiscalYear.update:
+    args: {"fiscal_year": {"display_based_on": "start_month"}}
+  fromAddresses.list:
+    args: {}
+  functions.create:
+    args: {}
+  functions.delete:
+    args: {"fxIdentifier": "4876876000000333001"}
+  functions.get:
+    args: {"fxIdentifier": "4876876000000333001"}
+  functions.getCategories:
+    args: {}
+  functions.getCode:
+    args: {"fxIdentifier": "4876876000000333001"}
+  functions.getRuntimes:
+    args: {}
+  functions.list:
+    args: {}
+  functions.publish:
+    args: {"fxIdentifier": "4876876000000333001"}
+  functions.update:
+    args: {"fxIdentifier": "4876876000000333001"}
+  globalPicklists.create:
+    args: {"global_picklists": [{"display_label": "example", "pick_list_values": [{"display_value": "example", "type": "unused"}]}]}
+  globalPicklists.delete:
+    args: {"id": "4876876000000333001"}
+  globalPicklists.deleteMany:
+    args: {"ids": "example"}
+  globalPicklists.get:
+    args: {"id": "4876876000000333001"}
+  globalPicklists.getFieldAssociations:
+    args: {"id": "4876876000000333001"}
+  globalPicklists.getReplacedValues:
+    args: {"id": "4876876000000333001"}
+  globalPicklists.getValueAssociations:
+    args: {"id": "4876876000000333001", "picklist_value_id": "example"}
+  globalPicklists.list:
+    args: {}
+  globalPicklists.replaceValues:
+    args: {"id": "4876876000000333001", "replace_picklist_values": [{"old_value": {}, "new_value": {}}]}
+  globalPicklists.update:
+    args: {"id": "4876876000000333001", "global_picklists": [{}]}
+  globalPicklists.updateMany:
+    args: {"global_picklists": [{"id": "4876876000000333001"}]}
+  holidays.create:
+    args: {"holidays": [{"name": "example", "date": "example", "type": "business_holiday"}]}
+  holidays.delete:
+    args: {"holidayId": "4876876000000333001"}
+  holidays.get:
+    args: {"holidayId": "4876876000000333001"}
+  holidays.list:
+    args: {}
+  holidays.update:
+    args: {"holidayId": "4876876000000333001"}
+  holidays.updateMany:
+    args: {"holidays": [{"id": "4876876000000333001"}]}
+  inventory.convert:
+    args: {"moduleApiName": "Quotes", "id": "4876876000000333001"}
+  inventoryTemplates.get:
+    args: {"templateId": "example"}
+  inventoryTemplates.list:
+    args: {}
+  kiosks.activate:
+    args: {"kioskId": "example"}
+  kiosks.clone:
+    args: {"kioskId": "example", "kiosks": [{"type": "dependent"}]}
+  kiosks.create:
+    args: {"kiosks": [{"name": "example", "status": "examp"}]}
+  kiosks.deactivate:
+    args: {"kioskId": "example"}
+  kiosks.delete:
+    args: {"kioskId": "example"}
+  kiosks.deleteMany:
+    args: {"ids": "example"}
+  kiosks.execute:
+    args: {"kioskId": "example", "kiosk_execute": [{}]}
+  kiosks.executeState:
+    args: {"kioskId": "example", "executionId": "example", "kiosk_executions": [{"transition": {"id": "4876876000000333001"}}]}
+  kiosks.get:
+    args: {"kioskId": "example"}
+  kiosks.getAssociations:
+    args: {"kioskId": "example"}
+  kiosks.getCurrentRecordAssociations:
+    args: {"kioskId": "example"}
+  kiosks.getExecution:
+    args: {"kioskId": "example", "executionId": "example"}
+  kiosks.getRecordSteps.create:
+    args: {"kioskId": "example", "get_records": [{"criteria": {"field": {"api_name": "example"}, "comparator": "example", "value": "example"}, "module": {"id": "4876876000000333001"}, "name": "example", "sort_order": {}}]}
+  kiosks.getRecordSteps.delete:
+    args: {"kioskId": "example", "getRecordId": "example"}
+  kiosks.getRecordSteps.get:
+    args: {"kioskId": "example", "getRecordId": "example"}
+  kiosks.getRecordSteps.getAssociations:
+    args: {"kioskId": "example", "getRecordId": "example"}
+  kiosks.getRecordSteps.list:
+    args: {"kioskId": "example"}
+  kiosks.getRecordSteps.update:
+    args: {"kioskId": "example", "getRecordId": "example", "get_records": [{}]}
+  kiosks.list:
+    args: {}
+  kiosks.listAssociations:
+    args: {}
+  kiosks.listExecutions:
+    args: {"kioskId": "example"}
+  kiosks.preview:
+    args: {"kioskId": "example"}
+  kiosks.states.create:
+    args: {"kioskId": "example", "states": [{}]}
+  kiosks.states.delete:
+    args: {"kioskId": "example", "stateId": "example"}
+  kiosks.states.get:
+    args: {"kioskId": "example", "stateId": "example"}
+  kiosks.states.list:
+    args: {"kioskId": "example"}
+  kiosks.states.update:
+    args: {"kioskId": "example", "stateId": "example", "states": [{}]}
+  kiosks.testRun:
+    args: {"kioskId": "example", "kiosk_test_run": [{}]}
+  kiosks.update:
+    args: {"kioskId": "example", "kiosks": [{}]}
+  kiosks.updateAssociations:
+    args: {"kioskId": "example", "kiosks": [{"_associations": [{"detail_view_page": [{"layout": {"id": "4876876000000333001"}, "module": {}, "name": "example"}], "type": "example"}], "id": "4876876000000333001"}]}
+  layouts.activate:
+    args: {"id": "4876876000000333001", "module": "Leads", "layouts": [{"id": "4876876000000333001"}]}
+  layouts.deactivate:
+    args: {"id": "4876876000000333001", "module": "Leads", "transfer_to": "example"}
+  layouts.delete:
+    args: {"id": "4876876000000333001", "module": "Leads"}
+  layouts.get:
+    args: {"id": "4876876000000333001", "module": "Leads"}
+  layouts.list:
+    args: {"module": "Leads"}
+  layouts.update:
+    args: {"id": "4876876000000333001", "module": "Leads", "layouts": [{}]}
+  leads.convert:
+    args: {"leadId": "example", "data": [{}]}
+  leads.getConversionOptions:
+    args: {"leadId": "example"}
+  mailMerge.download:
+    args: {"moduleApiName": "Leads", "recordId": 1, "download_mail_merge": [{"mail_merge_template": {"name": "example"}}]}
+  mailMerge.send:
+    args: {"moduleApiName": "Leads", "recordId": 1, "send_mail_merge": [{"mail_merge_template": {"name": "example"}}]}
+  mailMerge.sign:
+    args: {"moduleApiName": "Leads", "recordId": 1, "sign_mail_merge": [{"file_name": "example", "mail_merge_template": {"name": "example"}}]}
+  mapDependencies.create:
+    args: {"module": "Leads", "layoutId": "4876876000000333001", "map_dependency": [{"parent": {"id": "4876876000000333001"}, "child": {"id": "4876876000000333001"}, "pick_list_values": [{"id": "4876876000000333001", "maps": [{"id": "4876876000000333001"}]}]}]}
+  mapDependencies.delete:
+    args: {"module": "Leads", "layoutId": "4876876000000333001", "dependencyId": "example"}
+  mapDependencies.get:
+    args: {"module": "Leads", "layoutId": "4876876000000333001", "dependencyId": "example"}
+  mapDependencies.list:
+    args: {"layoutId": "4876876000000333001", "module": "Leads"}
+  mapDependencies.update:
+    args: {"module": "Leads", "layoutId": "4876876000000333001", "dependencyId": "example", "map_dependency": [{"parent": {"id": "4876876000000333001"}, "child": {"id": "4876876000000333001"}, "pick_list_values": [{"id": "4876876000000333001", "maps": [{"id": "4876876000000333001"}]}]}]}
+  massActions.changeOwner:
+    args: {"module": "Leads", "cvid": "example", "owner": {"id": "4876876000000333001"}}
+  massActions.convertLeads:
+    args: {"ids": ["4876876000000333001"]}
+  massActions.deleteRecords:
+    args: {"module": "Leads"}
+  massActions.deleteTags:
+    args: {"mass_delete": [{"module": {"api_name": "example", "id": "4876876000000333001"}, "tags": [{"id": "4876876000000333001"}]}]}
+  massActions.getChangeOwnerStatus:
+    args: {"module": "Leads", "job_id": "example"}
+  massActions.getConvertLeadsStatus:
+    args: {"job_id": "example"}
+  massActions.getDeleteRecordsStatus:
+    args: {"module": "Leads", "job_id": "4876876000000333001"}
+  massActions.getDeleteTagsStatus:
+    args: {"job_id": "example"}
+  massActions.getUpdateRecordsStatus:
+    args: {"module": "Leads", "job_id": "4876876000000333001"}
+  massActions.updateRecords:
+    args: {"module": "Leads", "data": [{}]}
+  meetings.cancel:
+    args: {"event": "example", "data": [{"send_cancelling_mail": true}]}
+  modules.create:
+    args: {"modules": [{}]}
+  modules.generateLink:
+    args: {"moduleid": "example"}
+  modules.get:
+    args: {"moduleIdentifier": "example"}
+  modules.list:
+    args: {}
+  modules.update:
+    args: {"moduleIdentifier": "example", "modules": [{"singular_label": "example", "plural_label": "example", "id": "4876876000000333001", "profiles": [{"id": "4876876000000333001"}]}]}
+  modules.updateMany:
+    args: {"modules": [{"id": "4876876000000333001"}]}
+  notes.create:
+    args: {"data": [{}]}
+  notes.createForRecord:
+    args: {"parentRecordModule": "Leads", "parentRecordId": "4876876000000333001", "data": [{}]}
+  notes.delete:
+    args: {"id": "4876876000000333001"}
+  notes.deleteForRecord:
+    args: {"parentRecordModule": "Leads", "parentRecordId": "4876876000000333001", "noteId": "4876876000000333001"}
+  notes.deleteMany:
+    args: {}
+  notes.deleteManyForRecord:
+    args: {"parentRecordModule": "Leads", "parentRecordId": "4876876000000333001", "ids": "4876876000000333001"}
+  notes.get:
+    args: {"id": "4876876000000333001"}
+  notes.getForRecord:
+    args: {"parentRecordModule": "Leads", "parentRecordId": "4876876000000333001", "noteId": "4876876000000333001"}
+  notes.list:
+    args: {}
+  notes.listForRecord:
+    args: {"parentRecordModule": "Leads", "parentRecordId": "4876876000000333001"}
+  notes.update:
+    args: {"id": "4876876000000333001", "data": [{}]}
+  notes.updateForRecord:
+    args: {"parentRecordModule": "Leads", "parentRecordId": "4876876000000333001", "noteId": "4876876000000333001", "data": [{}]}
+  notes.updateMany:
+    args: {"data": [{"id": "4876876000000333001"}]}
+  notes.updateManyForRecord:
+    args: {"parentRecordModule": "Leads", "parentRecordId": "4876876000000333001", "data": [{"id": "4876876000000333001"}]}
+  notifications.disable:
+    args: {}
+  notifications.enable:
+    args: {"watch": [{"notify_url": "https://example.com/callback", "events": ["example"]}]}
+  notifications.list:
+    args: {}
+  notifications.update:
+    args: {}
+  notifications.updateInfo:
+    args: {}
+  org.deletePhoto:
+    args: {}
+  org.get:
+    args: {}
+  org.getPhoto:
+    args: {}
+  org.uploadPhoto:
+    args: {"file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  picklistValues.delete:
+    args: {"module": "Leads", "fieldId": "example", "pickListValueId": "example"}
+  picklistValues.get:
+    args: {"module": "Leads", "fieldId": "example", "pickListValueId": "example"}
+  picklistValues.list:
+    args: {"fieldId": "example", "module": "Leads"}
+  picklistValues.replace:
+    args: {"module": "Leads", "fieldId": "4876876000000002595", "replace_pick_list_values": [{"old_value": {"display_value": "Cold"}, "new_value": {"display_value": "Warm"}}]}
+  pipelines.create:
+    args: {"layout_id": "4876876000000333001", "pipeline": [{"display_value": "example", "maps": [{"id": "4876876000000333001"}]}]}
+  pipelines.get:
+    args: {"layout_id": "4876876000000333001", "pipelineIdentifier": "example"}
+  pipelines.list:
+    args: {"layout_id": "4876876000000333001"}
+  pipelines.replace:
+    args: {"pipelineIdentifier": "example", "layout_id": "4876876000000333001", "pipeline": [{}]}
+  pipelines.replaceMany:
+    args: {"layout_id": "4876876000000333001", "pipeline": [{"id": "4876876000000333001"}]}
+  pipelines.transferAndDelete:
+    args: {"layout_id": "4876876000000333001", "transfer_pipeline": [{"pipeline": {"from": "example", "to": "example"}, "stages": [{"from": "example", "to": "example"}]}]}
+  pipelines.update:
+    args: {"pipelineIdentifier": "example", "layout_id": "4876876000000333001", "pipeline": [{}]}
+  pipelines.updateMany:
+    args: {"layout_id": "4876876000000333001", "pipeline": [{"id": "4876876000000333001"}]}
+  portals.create:
+    args: {"portals": [{"name": "example"}]}
+  portals.get:
+    args: {"portal": "example"}
+  portals.list:
+    args: {}
+  portals.update:
+    args: {"portal": "example", "portals": [{}]}
+  portals.userTypes.create:
+    args: {"portal": "example", "user_type": [{"invitation_field": {}, "modules": [{"id": "4876876000000333001", "permissions": {"view": true}, "shared_type": "private"}], "name": "example", "personality_module": {}}]}
+  portals.userTypes.delete:
+    args: {"portal": "example", "userTypeId": "example"}
+  portals.userTypes.get:
+    args: {"portal": "example", "userTypeId": "example"}
+  portals.userTypes.list:
+    args: {"portal": "example"}
+  portals.userTypes.update:
+    args: {"portal": "example", "userTypeId": "example", "user_type": [{}]}
+  portals.users.changeStatus:
+    args: {"portal": "example", "userType": 1, "recordId": 1, "active": true}
+  portals.users.changeStatusMany:
+    args: {"portal": "example", "userType": 1, "change_status": [{"users": [{"personality_id": "example", "active": true}]}]}
+  portals.users.deleteMany:
+    args: {"portal": "example", "userType": 1}
+  portals.users.getScheduledInviteInfo:
+    args: {"module": "Leads"}
+  portals.users.invite:
+    args: {"module": "Leads", "recordId": 1, "user_type_id": "example", "type": "reinvite"}
+  portals.users.inviteMany:
+    args: {"module": "Leads", "portal_invite": [{"data": [{"id": "4876876000000333001", "user_type_id": "example", "type": "reinvite"}]}]}
+  portals.users.list:
+    args: {"portal": "example", "userType": 1}
+  portals.users.transfer:
+    args: {"portal": "example", "userType": 1, "transfer_To": "example", "personality_ids": "example"}
+  profiles.clone:
+    args: {"id": "4876876000000333001", "profiles": [{"name": "example"}]}
+  profiles.delete:
+    args: {"id": "4876876000000333001", "transfer_to": "4876876000000333001"}
+  profiles.get:
+    args: {"id": "4876876000000333001"}
+  profiles.list:
+    args: {}
+  profiles.patch:
+    args: {"id": "4876876000000333001", "profiles": [{}]}
+  profiles.update:
+    args: {"id": "4876876000000333001", "profiles": [{}]}
+  recordLocking.configurations.create:
+    args: {"module": "Leads", "record_locking_configurations": [{"lock_type": "automatic"}]}
+  recordLocking.configurations.delete:
+    args: {"id": "4876876000000333001", "module": "Leads"}
+  recordLocking.configurations.deleteMany:
+    args: {"module": "Leads", "ids": "example"}
+  recordLocking.configurations.get:
+    args: {"module": "Leads", "id": "4876876000000333001"}
+  recordLocking.configurations.list:
+    args: {"module": "Leads"}
+  recordLocking.configurations.update:
+    args: {"id": "4876876000000333001", "module": "Leads", "record_locking_configurations": [{"id": "4876876000000333001"}]}
+  recordLocking.configurations.updateMany:
+    args: {"module": "Leads", "record_locking_configurations": [{"id": "4876876000000333001"}]}
+  recordLocking.getLock:
+    args: {"moduleName": "Leads", "recordId": "4876876000000333001", "lockId": "example"}
+  recordLocking.listLocks:
+    args: {"moduleName": "Leads", "recordId": "4876876000000333001"}
+  recordLocking.lock:
+    args: {"recordId": "4876876000000333001", "moduleName": "Leads", "data": [{"Locked_Reason__s": "example"}]}
+  recordLocking.unlock:
+    args: {"moduleName": "Leads", "recordId": "4876876000000333001", "lockId": "example"}
+  recordLocking.updateLock:
+    args: {"moduleName": "Leads", "recordId": "4876876000000333001", "lockId": "example", "data": [{"Locked_Reason__s": "example"}]}
+  recordSharing.list:
+    args: {"moduleApiName": "Leads", "recordId": "4876876000000333001"}
+  recordSharing.revokeAll:
+    args: {"moduleApiName": "Leads", "recordId": "4876876000000333001"}
+  recordSharing.share:
+    args: {"moduleApiName": "Leads", "recordId": "4876876000000333001", "share": [{"type": "private", "permission": "read_only", "shared_with": {"type": "example", "id": "4876876000000333001"}}]}
+  recordSharing.update:
+    args: {"moduleApiName": "Leads", "recordId": "4876876000000333001", "share": [{"type": "private", "permission": "read_only", "shared_with": {"type": "example", "id": "4876876000000333001"}}]}
+  records.changeOwner:
+    args: {"module": "Leads", "record": "4876876000000333001", "owner": {"id": "4876876000000333001"}}
+  records.changeOwnerMany:
+    args: {"module": "Leads", "ids": ["4876876000000333001"], "owner": {"id": "4876876000000333001"}}
+  records.clone:
+    args: {"module": "Leads", "recordId": "4876876000000333001", "data": [{}]}
+  records.count:
+    args: {"moduleApiName": "Leads"}
+  records.create:
+    args: {"module": "Leads", "data": [{"Last_Name": "Rivera", "Company": "Northpeak"}]}
+  records.delete:
+    args: {"module": "Leads", "recordId": "4876876000000333001"}
+  records.deleteMany:
+    args: {"module": "Leads"}
+  records.deletePhoto:
+    args: {"module": "Leads", "record": "4876876000000333001"}
+  records.get:
+    args: {"recordId": "4876876000000333001", "module": "Leads"}
+  records.getFullData:
+    args: {"moduleApiName": "Leads", "id": "4876876000000333001"}
+  records.getFullDataMany:
+    args: {"moduleApiName": "Leads", "ids": "example"}
+  records.getMergeStatus:
+    args: {"masterRecordId": "4876876000000333001", "module": "Leads"}
+  records.getPhoto:
+    args: {"module": "Leads", "record": "4876876000000333001"}
+  records.list:
+    args: {"module": "Leads", "fields": "Last_Name,Email,Company", "per_page": 10}
+  records.listDeleted:
+    args: {"module": "Leads"}
+  records.merge:
+    args: {"masterRecordId": "4876876000000333001", "module": "Leads", "merge": [{"data": [{"id": "4876876000000333001"}]}]}
+  records.search:
+    args: {"module": "Leads"}
+  records.searchMany:
+    args: {"module": "Leads"}
+  records.update:
+    args: {"module": "Leads", "recordId": "4876876000000333001", "data": [{}]}
+  records.updateMany:
+    args: {"module": "Leads", "data": [{"id": "4876876000000333001"}]}
+  records.uploadPhoto:
+    args: {"module": "Leads", "record": "4876876000000333001", "file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  records.upsert:
+    args: {"module": "Leads", "data": [{}]}
+  recycleBin.count:
+    args: {}
+  recycleBin.delete:
+    args: {"recordId": "4876876000000333001"}
+  recycleBin.deleteMany:
+    args: {"filters": "example"}
+  recycleBin.empty:
+    args: {}
+  recycleBin.get:
+    args: {"recordId": "4876876000000333001"}
+  recycleBin.list:
+    args: {}
+  recycleBin.restore:
+    args: {"recordId": "4876876000000333001"}
+  recycleBin.restoreMany:
+    args: {}
+  relatedLists.list:
+    args: {"module": "Leads"}
+  relatedRecords.count:
+    args: {"moduleApiName": "Leads", "recordId": "4876876000000333001", "get_related_records_count": [{"related_list": {"api_name": "example", "id": "4876876000000333001"}}]}
+  relatedRecords.delink:
+    args: {"parentRecordModule": "Leads", "parentRecord": "4876876000000333001", "relatedList": "example", "record": "4876876000000333001"}
+  relatedRecords.delinkMany:
+    args: {"parentRecordModule": "Leads", "parentRecord": "4876876000000333001", "relatedList": "example", "ids": "4876876000000333001"}
+  relatedRecords.get:
+    args: {"parentRecordModule": "Leads", "parentRecord": "4876876000000333001", "relatedList": "example", "record": "4876876000000333001", "fields": "Last_Name,Email"}
+  relatedRecords.list:
+    args: {"parentRecordModule": "Leads", "parentRecord": "4876876000000333001", "relatedList": "example", "fields": "Last_Name,Email"}
+  relatedRecords.listDeleted:
+    args: {"parentRecordModule": "Leads", "parentRecord": "4876876000000333001", "relatedList": "example", "fields": "Last_Name,Email"}
+  relatedRecords.update:
+    args: {"parentRecordModule": "Leads", "parentRecord": "4876876000000333001", "relatedList": "example", "record": "4876876000000333001", "data": [{"id": "4876876000000333001"}]}
+  relatedRecords.updateMany:
+    args: {"parentRecordModule": "Leads", "parentRecord": "4876876000000333001", "relatedList": "example", "data": [{"id": "4876876000000333001"}]}
+  roles.create:
+    args: {"roles": [{"name": "example", "reporting_to": {}}]}
+  roles.delete:
+    args: {"role": 1, "transfer_to_id": 1}
+  roles.get:
+    args: {"role": "example"}
+  roles.list:
+    args: {}
+  roles.update:
+    args: {"role": 1, "roles": [{"name": "example"}]}
+  roles.updateMany:
+    args: {"roles": [{"id": "4876876000000333001"}]}
+  scoringRules.activate:
+    args: {"ruleId": "example"}
+  scoringRules.clone:
+    args: {"ruleId": "example"}
+  scoringRules.create:
+    args: {"scoring_rules": [{"module": {}, "name": "example"}]}
+  scoringRules.deactivate:
+    args: {"ruleId": "example"}
+  scoringRules.delete:
+    args: {"ruleId": "example"}
+  scoringRules.deleteMany:
+    args: {"ids": "example"}
+  scoringRules.get:
+    args: {"ruleId": "example"}
+  scoringRules.list:
+    args: {}
+  scoringRules.update:
+    args: {"ruleId": "example", "scoring_rules": [{}]}
+  scoringRules.updateMany:
+    args: {"scoring_rules": [{}]}
+  servicePreferences.get:
+    args: {}
+  servicePreferences.update:
+    args: {"service_preferences": {"job_sheet_enabled": true}}
+  services.create:
+    args: {"data": [{"Availability_Type": "Specific Day(s)", "Duration": 1, "Location": "Business Address", "Members": [{}], "Price": 1, "Service_Name": "example"}]}
+  services.delete:
+    args: {"id": "4876876000000333001"}
+  services.deleteMany:
+    args: {}
+  services.get:
+    args: {"id": "4876876000000333001"}
+  services.list:
+    args: {"fields": "Last_Name,Email"}
+  services.update:
+    args: {"id": "4876876000000333001", "data": [{}]}
+  services.updateMany:
+    args: {"data": [{}]}
+  shiftHours.create:
+    args: {}
+  shiftHours.delete:
+    args: {"shift": "example"}
+  shiftHours.get:
+    args: {"shift": "example"}
+  shiftHours.list:
+    args: {}
+  shiftHours.update:
+    args: {"shift": "example"}
+  shiftHours.updateMany:
+    args: {}
+  tags.addToRecord:
+    args: {"module": "Leads", "id": "4876876000000333001", "tags": [{}]}
+  tags.addToRecords:
+    args: {"module": "Leads", "tags": [{}]}
+  tags.create:
+    args: {"module": "Leads", "tags": [{"name": "example"}]}
+  tags.delete:
+    args: {"id": "4876876000000333001"}
+  tags.getRecordsCount:
+    args: {"module": "Leads", "id": "4876876000000333001"}
+  tags.list:
+    args: {"module": "Leads"}
+  tags.merge:
+    args: {"id": "4876876000000333001", "tags": [{}]}
+  tags.removeFromRecord:
+    args: {"module": "Leads", "id": "4876876000000333001", "tags": [{}]}
+  tags.removeFromRecords:
+    args: {"module": "Leads", "tags": [{}]}
+  tags.update:
+    args: {"module": "Leads", "id": "4876876000000333001", "tags": [{"name": "example"}]}
+  tags.updateMany:
+    args: {"module": "Leads", "tags": [{"name": "example"}]}
+  territories.assignToRecord:
+    args: {"record": "4876876000000333001", "module": "Leads", "data": [{"Territories": [{"id": "4876876000000333001"}]}]}
+  territories.assignToRecords:
+    args: {"module": "Leads", "data": [{"id": "4876876000000333001", "Territories": [{"id": "4876876000000333001"}]}]}
+  territories.create:
+    args: {"territories": [{"reporting_to": {"id": "4876876000000333001"}, "permission_type": "read_write_delete", "name": "example"}]}
+  territories.delete:
+    args: {"id": "4876876000000333001"}
+  territories.deleteMany:
+    args: {"ids": ["4876876000000333001"]}
+  territories.get:
+    args: {"id": "4876876000000333001"}
+  territories.getAssociatedUsersCount:
+    args: {}
+  territories.getScheduledRunRuleJobs:
+    args: {"job_id": "example"}
+  territories.list:
+    args: {}
+  territories.listChildren:
+    args: {"id": "4876876000000333001"}
+  territories.removeFromRecord:
+    args: {"record": "4876876000000333001", "module": "Leads", "data": [{"Territories": [{"id": "4876876000000333001"}]}]}
+  territories.removeFromRecords:
+    args: {"module": "Leads", "data": [{"id": "4876876000000333001", "Territories": [{"id": "4876876000000333001"}]}]}
+  territories.runRules:
+    args: {"run_rules": {"module": "Leads", "based_on": "example", "criteria": {"field": {"api_name": "example"}, "comparator": "example", "value": "example"}}}
+  territories.transferAndDelete:
+    args: {"id": "4876876000000333001", "territories": [{"transfer_to_id": "example"}]}
+  territories.transferAndDeleteMany:
+    args: {"territories": [{"id": "4876876000000333001"}]}
+  territories.update:
+    args: {"id": "4876876000000333001", "territories": [{}]}
+  territories.updateMany:
+    args: {"territories": [{"id": "4876876000000333001"}]}
+  territories.users.associate:
+    args: {"territory": "example", "user": "example"}
+  territories.users.associateMany:
+    args: {"territory": "example", "users": [{"id": "4876876000000333001"}]}
+  territories.users.deassociate:
+    args: {"territory": "example", "user": "example"}
+  territories.users.deassociateMany:
+    args: {"territory": "example", "ids": "example"}
+  territories.users.get:
+    args: {"territory": "example", "user": "example"}
+  territories.users.list:
+    args: {"territory": "example"}
+  timelines.list:
+    args: {"module": "Leads", "recordId": "4876876000000333001"}
+  unsubscribeLinks.create:
+    args: {"unsubscribe_links": [{"name": "example", "page_type": "example", "submission_action_type": "example"}]}
+  unsubscribeLinks.delete:
+    args: {"id": "4876876000000333001"}
+  unsubscribeLinks.get:
+    args: {"id": "4876876000000333001"}
+  unsubscribeLinks.getAssociations:
+    args: {}
+  unsubscribeLinks.list:
+    args: {}
+  unsubscribeLinks.update:
+    args: {"id": "4876876000000333001", "unsubscribe_links": [{"id": "4876876000000333001"}]}
+  unsubscribeLinks.updateMany:
+    args: {"unsubscribe_links": [{"id": "4876876000000333001"}]}
+  userGroups.create:
+    args: {"user_groups": [{"name": "example", "sources": [{"type": "territories", "source": {"id": "4876876000000333001"}}]}]}
+  userGroups.delete:
+    args: {"group": "example"}
+  userGroups.get:
+    args: {"group": "example"}
+  userGroups.getAssociatedUsersCount:
+    args: {}
+  userGroups.getAssociations:
+    args: {"group": "example"}
+  userGroups.getSources:
+    args: {"group": "example"}
+  userGroups.getSourcesCount:
+    args: {"group": "example"}
+  userGroups.list:
+    args: {}
+  userGroups.listForUser:
+    args: {"user": "example"}
+  userGroups.update:
+    args: {"group": "example", "user_groups": [{"name": "example", "sources": [{"type": "territories", "source": {"id": "4876876000000333001"}}]}]}
+  users.create:
+    args: {"users": [{}]}
+  users.delete:
+    args: {"user": "example"}
+  users.get:
+    args: {"user": "example"}
+  users.getTransferAndDeleteStatus:
+    args: {"job_id": "example"}
+  users.getTransferStatus:
+    args: {"job_id": "example"}
+  users.list:
+    args: {}
+  users.territories.associateMany:
+    args: {"user": "example", "territories": [{"id": "4876876000000333001"}]}
+  users.territories.get:
+    args: {"user": "example", "territory": "example"}
+  users.territories.list:
+    args: {"user": "example"}
+  users.territories.remove:
+    args: {"user": "example", "territory": "example"}
+  users.territories.removeMany:
+    args: {"user": "example", "ids": "4876876000000333001"}
+  users.transfer:
+    args: {"userId": "4876876000000333001", "transfer": [{"move_subordinate": {"id": "4876876000000333001"}, "transfer": {"id": "4876876000000333001"}}]}
+  users.transferAndDelete:
+    args: {"userId": "4876876000000333001", "transfer_and_delete": [{"move_subordinate": {"id": "4876876000000333001"}, "transfer": {"id": "4876876000000333001"}}]}
+  users.transferAndDeleteMany:
+    args: {"transfer_and_delete": [{"id": "4876876000000333001", "move_subordinate": {"id": "4876876000000333001"}, "transfer": {"id": "4876876000000333001"}}]}
+  users.update:
+    args: {"user": "example", "users": [{}]}
+  users.updateMany:
+    args: {"users": [{}]}
+  users.validateBeforeTransfer:
+    args: {"userId": "4876876000000333001"}
+  variableGroups.generateApiName:
+    args: {"variable_groups": [{"name": "example"}]}
+  variableGroups.get:
+    args: {"id": "4876876000000333001"}
+  variableGroups.list:
+    args: {}
+  variableGroups.update:
+    args: {"id": "4876876000000333001", "variable_groups": [{}]}
+  variableGroups.updateMany:
+    args: {"variable_groups": [{"id": "487687600000033300"}]}
+  variables.create:
+    args: {"variables": [{"api_name": "example", "name": "example", "type": "text", "variable_group": {"id": "4876876000000333001"}}]}
+  variables.delete:
+    args: {"id": "4876876000000333001"}
+  variables.deleteMany:
+    args: {}
+  variables.generateApiName:
+    args: {"variables": [{"name": "example", "variable_group": {}}]}
+  variables.get:
+    args: {"id": "4876876000000333001"}
+  variables.getAssociations:
+    args: {"id": "4876876000000333001"}
+  variables.list:
+    args: {}
+  variables.update:
+    args: {"id": "4876876000000333001", "variables": [{"id": "4876876000000333001", "value": "example"}]}
+  variables.updateMany:
+    args: {"variables": [{"id": "4876876000000333001", "value": "example"}]}
+  webforms.create:
+    args: {"module": "Leads", "webforms": [{"action_on_submit": "splash_message", "form_fields": [{"type": "general"}], "layout": {}, "location_url": ["https://example.com/callback"], "module": {"api_name": "example", "id": "4876876000000333001"}, "name": "example", "type": "webform"}]}
+  webforms.delete:
+    args: {"id": "4876876000000333001", "module": "Leads"}
+  webforms.deleteMany:
+    args: {"ids": 1}
+  webforms.get:
+    args: {"id": "4876876000000333001"}
+  webforms.getAssociated:
+    args: {"id": "4876876000000333001"}
+  webforms.getDiff:
+    args: {"base_form": 1, "variant_form": 1}
+  webforms.getPreview:
+    args: {"id": "4876876000000333001", "module": "Leads"}
+  webforms.getSuggestions:
+    args: {"id": "487687600000033300"}
+  webforms.list:
+    args: {}
+  webforms.update:
+    args: {"id": "4876876000000333001", "module": "Leads", "webforms": [{"action_on_submit": "splash_message", "form_fields": [{"type": "general"}], "layout": {}, "location_url": ["https://example.com/callback"], "module": {"api_name": "example", "id": "4876876000000333001"}, "name": "example", "type": "webform"}]}
+  webforms.updateMany:
+    args: {"module": "Leads", "webforms": [{"action_on_submit": "splash_message", "form_fields": [{"type": "general"}], "layout": {}, "location_url": ["https://example.com/callback"], "module": {"api_name": "example", "id": "4876876000000333001"}, "name": "example", "type": "webform"}]}
+  webhooks.create:
+    args: {"webhooks": [{"name": "example", "module": {"api_name": "example", "id": "4876876000000333001"}, "url": "https://example.com/article", "http_method": "POST", "authentication": {"type": "general"}, "feature_type": "workflow"}]}
+  webhooks.delete:
+    args: {"webhookId": "example"}
+  webhooks.deleteMany:
+    args: {"ids": "example"}
+  webhooks.get:
+    args: {"webhookId": "example"}
+  webhooks.getAssociatedModules:
+    args: {}
+  webhooks.getFailures:
+    args: {}
+  webhooks.getUsageReports:
+    args: {"group_by": "date"}
+  webhooks.list:
+    args: {}
+  webhooks.update:
+    args: {"webhookId": "example", "webhooks": [{"name": "example", "module": {"api_name": "example", "id": "4876876000000333001"}, "url": "https://example.com/article", "http_method": "POST", "authentication": {"type": "general"}, "feature_type": "workflow"}]}
+  webhooks.updateMany:
+    args: {"webhooks": [{"name": "example", "module": {"api_name": "example", "id": "4876876000000333001"}, "url": "https://example.com/article", "http_method": "POST", "authentication": {"type": "general"}, "feature_type": "workflow"}]}
+  wizards.create:
+    args: {"wizards": [{"profiles": "example"}]}
+  wizards.delete:
+    args: {"id": "4876876000000333001"}
+  wizards.get:
+    args: {"id": "4876876000000333001", "layout_id": "4876876000000333001"}
+  wizards.list:
+    args: {}
+  wizards.update:
+    args: {"id": "4876876000000333001", "wizards": [{}]}
+  workflowRules.create:
+    args: {"workflow_rules": [{"conditions": [{"sequence_number": 1}], "execute_when": {"type": "create"}, "module": {"api_name": "example", "id": "4876876000000333001"}, "name": "example"}]}
+  workflowRules.delete:
+    args: {"id": "4876876000000333001"}
+  workflowRules.deleteMany:
+    args: {"ids": "example"}
+  workflowRules.get:
+    args: {"id": "4876876000000333001"}
+  workflowRules.getActionsCount:
+    args: {"ids": "example"}
+  workflowRules.getConfigurations:
+    args: {"module": "Leads"}
+  workflowRules.getCount:
+    args: {}
+  workflowRules.getModuleActionsCount:
+    args: {}
+  workflowRules.getUsage:
+    args: {"executed_from": "example", "executed_till": "example", "workflowRuleId": "example"}
+  workflowRules.list:
+    args: {}
+  workflowRules.reorder:
+    args: {"reorder": {}}
+  workflowRules.update:
+    args: {"id": "4876876000000333001", "workflow_rules": [{}]}
+  workflowRules.updateMany:
+    args: {"workflow_rules": [{}]}
+  workflowTasks.create:
+    args: {"tasks": [{"name": "example", "module": {"api_name": "example"}, "field_mappings": [{"field": {"api_name": "example", "id": "4876876000000333001"}, "type": "static", "value": "example"}]}]}
+  workflowTasks.delete:
+    args: {"id": "4876876000000333001"}
+  workflowTasks.deleteMany:
+    args: {"ids": "4876876000000333001"}
+  workflowTasks.get:
+    args: {"id": "4876876000000333001"}
+  workflowTasks.list:
+    args: {}
+  workflowTasks.update:
+    args: {"id": "4876876000000333001", "tasks": [{"name": "example", "module": {"api_name": "example"}, "field_mappings": [{"field": {"api_name": "example", "id": "4876876000000333001"}, "type": "static", "value": "example"}]}]}
+  workflowTasks.updateMany:
+    args: {"tasks": [{"name": "example", "module": {"api_name": "example"}, "field_mappings": [{"field": {"api_name": "example", "id": "4876876000000333001"}, "type": "static", "value": "example"}]}]}
+  zia.enrichment.create:
+    args: {"data_enrichment": [{"type": "example", "module": {"id": "4876876000000333001", "api_name": "example"}, "input_data_field_mapping": [{"enrich_field": {"name": "example"}, "crm_field": {"id": "4876876000000333001", "api_name": "example"}}], "output_data_field_mapping": [{"enrich_field": {"name": "example"}, "crm_field": {"id": "4876876000000333001", "api_name": "example"}}]}]}
+  zia.enrichment.delete:
+    args: {"id": "4876876000000333001"}
+  zia.enrichment.get:
+    args: {"id": "4876876000000333001"}
+  zia.enrichment.list:
+    args: {}
+  zia.enrichment.update:
+    args: {"id": "4876876000000333001", "data_enrichment": [{"output_data_field_mapping": [{"enrich_field": {"name": "example"}, "crm_field": {"id": "4876876000000333001", "api_name": "example"}}], "input_data_field_mapping": [{"enrich_field": {"name": "example"}, "crm_field": {"id": "4876876000000333001", "api_name": "example"}}]}]}
+  zia.orgEnrichment.create:
+    args: {"module": "Leads", "__zia_org_enrichment": [{"enrich_based_on": {"name": "example"}}]}
+  zia.orgEnrichment.get:
+    args: {"id": "4876876000000333001"}
+  zia.orgEnrichment.list:
+    args: {}

@@ -6818,6 +6818,14 @@
                 ]
               },
               {
+                "group": "Zoho CRM",
+                "pages": [
+                  "plugins/zohocrm/overview",
+                  "plugins/zohocrm/api",
+                  "plugins/zohocrm/database"
+                ]
+              },
+              {
                 "group": "Zoho Desk",
                 "pages": [
                   "plugins/zohodesk/overview",
