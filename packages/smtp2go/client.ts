@@ -71,11 +71,22 @@ export function readEnvelopeError(
 	};
 }
 
-const EMAIL_PATTERN = /[^\s@"'<>(),;:]+@[^\s@"'<>(),;:]+\.[^\s@"'<>(),;:]+/g;
+function looksLikeEmail(word: string): boolean {
+	const at = word.indexOf('@');
+	if (at < 1) return false;
+	const dot = word.indexOf('.', at + 2);
+	return dot > at + 1 && dot < word.length - 1;
+}
 
-/** Replaces email addresses SMTP2GO echoes in an error message. */
+/**
+ * Replaces words that look like an email address. A split instead of a
+ * regex keeps this linear on any input.
+ */
 export function redactEmails(text: string): string {
-	return text.replace(EMAIL_PATTERN, '[email]');
+	return text
+		.split(' ')
+		.map((word) => (looksLikeEmail(word) ? '[email]' : word))
+		.join(' ');
 }
 
 /** SMTP2GO's error code (`E_ApiResponseCodes.…`) on an ApiError or envelope error. */
