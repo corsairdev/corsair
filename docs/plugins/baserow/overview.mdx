@@ -1,0 +1,140 @@
+---
+title: "Baserow plugin"
+sidebarTitle: "Overview"
+description: "Baserow, the open-source no-code database, on its cloud or a self-hosted server: rows, fields, tables, views, filters, imports, exports, webhooks, workspaces, members, applications, the builder, dashboards, automations and admin settings (489 operations)."
+---
+
+Use **Baserow** through Corsair: one client, typed API calls.
+
+Connect with any of these, by what you need:
+
+- **A database token** (Settings &gt; Database tokens) reads and writes the rows of the tables it was granted, and lists their fields. Nothing else takes it.
+- **Email and password** of a Baserow user cover everything else: workspaces, applications, tables, views, fields, webhooks, imports, exports, the builder, dashboards, automations and (on self-hosted servers) admin. The plugin signs in with them and reuses the access token until it expires (about 10 minutes). Each route's description says which it takes; with both stored, row routes use the token.
+- **Self-hosted:** store the server's address as `url` (or pass `baseUrl`). Baserow's cloud is the default.
+
+Things to know before you write:
+
+- **Field names.** Row routes address fields as `field_1234` unless you pass `user_field_names: true`; then use the names you see in the table.
+- **Rows in bulk.** `rows.batchCreate`, `rows.batchUpdate` and `rows.batchDelete` take up to 200 rows per call. Bulk deletes go to the trash and can be restored with `trash.restore` until the trash is emptied.
+- **Long jobs** (duplicating, importing, exporting, snapshots) answer with a job; read it with `jobs.get` until it is finished.
+- **Limits.** Baserow's cloud runs 10 concurrent requests per user and answers 429 above that. The Free plan caps rows and storage per workspace; premium routes (admin, audit log, row comments, kanban, calendar, timeline, team roles) answer 402 or 403 without a paid licence.
+
+**What you get:**
+
+- 489 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/baserow better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/baserow better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/baserow better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/baserow better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { baserow } from '@corsair-dev/baserow';
+
+export const corsair = createCorsair({
+	plugins: [
+		baserow(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Baserow API key before the first call: `pnpm corsair setup --plugin=baserow --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+baserow()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'baserow',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List rows with field names**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.baserow.api.rows.list({ table_id: 1001, user_field_names: true, size: 20 });
+```
+
+
+**Create a row**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.baserow.api.rows.create({ table_id: 1001, user_field_names: true });
+```
+
+
+See the full list on the [API](/plugins/baserow/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/baserow/api">
+    Every `baserow.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

@@ -77,6 +77,7 @@ export const BaseProviders = [
 	'bart',
 	'basecamp',
 	'baselinker',
+	'baserow',
 	'basin',
 	'beaconstac',
 	'beamer',
@@ -897,6 +898,7 @@ export const ProviderDisplayNames = {
 	bart: 'BART',
 	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
+	baserow: 'Baserow',
 	basin: 'Basin',
 	beaconstac: 'Beaconstac',
 	beamer: 'Beamer',
@@ -1724,6 +1726,7 @@ export type AllProviders =
 	| 'bart'
 	| 'basecamp'
 	| 'baselinker'
+	| 'baserow'
 	| 'basin'
 	| 'beaconstac'
 	| 'beamer'

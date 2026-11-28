@@ -1,0 +1,1008 @@
+# Display copy for the generated docs and the catalog, plus one call
+# example per operation. Generated with the plugin from Baserow's OpenAPI spec;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: Baserow
+domain: baserow.io
+description: "Baserow, the open-source no-code database, on its cloud or a self-hosted server: rows, fields, tables, views, filters, imports, exports, webhooks, workspaces, members, applications, the builder, dashboards, automations and admin settings (489 operations)."
+recommendedAuth: api_key
+overviewNote: |
+  Connect with any of these, by what you need:
+
+  - **A database token** (Settings > Database tokens) reads and writes the rows of the tables it was granted, and lists their fields. Nothing else takes it.
+  - **Email and password** of a Baserow user cover everything else: workspaces, applications, tables, views, fields, webhooks, imports, exports, the builder, dashboards, automations and (on self-hosted servers) admin. The plugin signs in with them and reuses the access token until it expires (about 10 minutes). Each route's description says which it takes; with both stored, row routes use the token.
+  - **Self-hosted:** store the server's address as `url` (or pass `baseUrl`). Baserow's cloud is the default.
+
+  Things to know before you write:
+
+  - **Field names.** Row routes address fields as `field_1234` unless you pass `user_field_names: true`; then use the names you see in the table.
+  - **Rows in bulk.** `rows.batchCreate`, `rows.batchUpdate` and `rows.batchDelete` take up to 200 rows per call. Bulk deletes go to the trash and can be restored with `trash.restore` until the trash is emptied.
+  - **Long jobs** (duplicating, importing, exporting, snapshots) answer with a job; read it with `jobs.get` until it is finished.
+  - **Limits.** Baserow's cloud runs 10 concurrent requests per user and answers 429 above that. The Free plan caps rows and storage per workspace; premium routes (admin, audit log, row comments, kanban, calendar, timeline, team roles) answer 402 or 403 without a paid licence.
+examples:
+  read:
+    path: rows.list
+    title: List rows with field names
+    args: {"table_id": 1001, "user_field_names": true, "size": 20}
+  write:
+    path: rows.create
+    title: Create a row
+    args: {"table_id": 1001, "user_field_names": true}
+apiExamples:
+  abuseReports.create:
+    args: {"description": "examplexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", "email": "ada@example.com", "identifier": "example", "name": "example", "resource_type": "database_view"}
+  admin.addUserToLicense:
+    args: {"id": 1, "user_id": 1}
+  admin.approveUserTemplate:
+    args: {"template_id": 1, "listed": true, "reviewed_on": "example", "revision_id": 1, "state": "private"}
+  admin.blockUserTemplate:
+    args: {"template_id": 1, "reason": "example", "revision_id": 1}
+  admin.checkLicense:
+    args: {"id": 1}
+  admin.countUserTemplates:
+    args: {}
+  admin.createUser:
+    args: {"name": "example", "password": "example-password", "username": "example"}
+  admin.dataScanner.createScan:
+    args: {"name": "example", "scan_type": "pattern"}
+  admin.dataScanner.deleteResult:
+    args: {"result_id": 1}
+  admin.dataScanner.deleteScan:
+    args: {"scan_id": 1}
+  admin.dataScanner.exportResults:
+    args: {}
+  admin.dataScanner.getScan:
+    args: {"scan_id": 1}
+  admin.dataScanner.getWorkspaceStructure:
+    args: {"workspace_id": 101}
+  admin.dataScanner.listResults:
+    args: {}
+  admin.dataScanner.listScans:
+    args: {}
+  admin.dataScanner.triggerScan:
+    args: {"scan_id": 1}
+  admin.dataScanner.updateScan:
+    args: {"scan_id": 1}
+  admin.deleteAllUsersFromLicense:
+    args: {"id": 1}
+  admin.deleteLicense:
+    args: {"id": 1}
+  admin.deleteUser:
+    args: {"user_id": 1}
+  admin.deleteUserFromLicense:
+    args: {"id": 1, "user_id": 1}
+  admin.deleteWorkspace:
+    args: {"workspace_id": 101}
+  admin.disableUserTwoFactorAuth:
+    args: {"user_id": 1}
+  admin.fillLicenseSeats:
+    args: {"id": 1}
+  admin.getDashboard:
+    args: {}
+  admin.getLicense:
+    args: {"id": 1}
+  admin.impersonateUser:
+    args: {"user": 1}
+  admin.listLicenses:
+    args: {}
+  admin.listUserTemplates:
+    args: {"state": "blocked"}
+  admin.listUsers:
+    args: {}
+  admin.listViews:
+    args: {}
+  admin.listWorkspaces:
+    args: {}
+  admin.listWorkspacesAsOptions:
+    args: {}
+  admin.lookupLicenseUsers:
+    args: {"id": 1}
+  admin.registerLicense:
+    args: {"license": "example"}
+  admin.rejectUserTemplate:
+    args: {"template_id": 1, "listed": true, "reason": "example", "reviewed_on": "example", "revision_id": 1, "state": "private"}
+  admin.rotateViewSlug:
+    args: {"view_id": 2001}
+  admin.unblockUserTemplate:
+    args: {"template_id": 1, "revision_id": 1}
+  admin.updateUser:
+    args: {"user_id": 1}
+  admin.updateView:
+    args: {"view_id": 2001}
+  agents.createAction:
+    args: {"agent_id": 1, "type": "example"}
+  agents.createConversation:
+    args: {"agent_id": 1, "content": "example", "message_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "uuid": "example"}
+  agents.createMessage:
+    args: {"agent_id": 1, "conversation_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "content": "example", "uuid": "example"}
+  agents.createTrigger:
+    args: {"agent_id": 1, "type": "example"}
+  agents.decideToolApprovals:
+    args: {"agent_id": 1, "conversation_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "decisions": [{"approved": true, "id": 1}]}
+  agents.deleteAction:
+    args: {"action_id": 1, "agent_id": 1}
+  agents.deleteConversation:
+    args: {"agent_id": 1, "conversation_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.deleteTrigger:
+    args: {"agent_id": 1, "trigger_id": 1}
+  agents.get:
+    args: {"agent_id": 1}
+  agents.getAction:
+    args: {"action_id": 1, "agent_id": 1}
+  agents.getConfiguration:
+    args: {"agent_id": 1}
+  agents.listActions:
+    args: {"agent_id": 1}
+  agents.listConversations:
+    args: {"agent_id": 1}
+  agents.listMessages:
+    args: {"agent_id": 1, "conversation_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.listRunAsIdentities:
+    args: {"agent_id": 1}
+  agents.listTriggerTypes:
+    args: {"agent_id": 1}
+  agents.listTriggers:
+    args: {"agent_id": 1}
+  agents.load:
+    args: {"agent_id": 1}
+  agents.updateAction:
+    args: {"action_id": 1, "agent_id": 1}
+  agents.updateConfiguration:
+    args: {"agent_id": 1}
+  agents.updateConversation:
+    args: {"agent_id": 1, "conversation_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.updateTrigger:
+    args: {"agent_id": 1, "trigger_id": 1}
+  aiProviders.create:
+    args: {"provider_type": "example"}
+  aiProviders.createModel:
+    args: {"provider_id": 1, "model_identifier": "example"}
+  aiProviders.delete:
+    args: {"provider_id": 1}
+  aiProviders.deleteModel:
+    args: {"model_id": 1}
+  aiProviders.discoverModels:
+    args: {"provider_type": "example"}
+  aiProviders.getModelUsage:
+    args: {"model_id": 1}
+  aiProviders.list:
+    args: {}
+  aiProviders.listFeatureSettings:
+    args: {}
+  aiProviders.listTypes:
+    args: {}
+  aiProviders.testModels:
+    args: {"model_ids": [1]}
+  aiProviders.update:
+    args: {"provider_id": 1}
+  aiProviders.updateFeatureSetting:
+    args: {"feature_type": "example", "mode": "inherit"}
+  aiProviders.updateModel:
+    args: {"model_id": 1}
+  applications.create:
+    args: {"workspace_id": 101, "name": "example", "type": "database"}
+  applications.delete:
+    args: {"application_id": 1}
+  applications.duplicateAsync:
+    args: {"application_id": 1}
+  applications.get:
+    args: {"application_id": 1}
+  applications.list:
+    args: {"workspace_id": 101}
+  applications.listAll:
+    args: {}
+  applications.order:
+    args: {"workspace_id": 101, "application_ids": [1]}
+  applications.update:
+    args: {"application_id": 1, "name": "example"}
+  assistant.cancelMessage:
+    args: {"chat_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  assistant.getOnboardingPromptSuggestions:
+    args: {}
+  assistant.listChatMessages:
+    args: {"chat_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  assistant.listChats:
+    args: {"workspace_id": 101}
+  assistant.sendMessage:
+    args: {"chat_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "content": "example", "ui_context": {"workspace": {"id": 1, "name": "example"}}}
+  assistant.submitMessageFeedback:
+    args: {"message_id": 1}
+  auditLog.adminExport:
+    args: {}
+  auditLog.adminList:
+    args: {}
+  auditLog.adminListActionTypes:
+    args: {}
+  auditLog.adminListActors:
+    args: {}
+  auditLog.export:
+    args: {}
+  auditLog.list:
+    args: {}
+  auditLog.listActionTypes:
+    args: {}
+  auditLog.listActors:
+    args: {}
+  auth.configureTwoFactor:
+    args: {"backup_codes": ["example"], "provisioning_qr_code": "example", "provisioning_url": "https://example.com/callback", "type": "totp"}
+  auth.createProvider:
+    args: {}
+  auth.deleteProvider:
+    args: {"auth_provider_id": 1}
+  auth.disableTwoFactor:
+    args: {"password": "example-password"}
+  auth.getProvider:
+    args: {"auth_provider_id": 1}
+  auth.listProviders:
+    args: {}
+  auth.listProvidersLoginOptions:
+    args: {}
+  auth.providerLoginUrl:
+    args: {}
+  auth.twoFactorConfiguration:
+    args: {}
+  auth.updateProvider:
+    args: {"auth_provider_id": 1}
+  auth.verifyTotp:
+    args: {}
+  automations.history.cancelWorkflow:
+    args: {"workflow_history_id": 1}
+  automations.history.getNodeResult:
+    args: {"node_history_id": 1}
+  automations.history.listNodeHistories:
+    args: {"workflow_history_id": 1}
+  automations.nodes.create:
+    args: {"workflow_id": 1, "type": "local_baserow_create_row"}
+  automations.nodes.delete:
+    args: {"node_id": 1}
+  automations.nodes.duplicate:
+    args: {"node_id": 1}
+  automations.nodes.list:
+    args: {"workflow_id": 1}
+  automations.nodes.move:
+    args: {"node_id": 1}
+  automations.nodes.replace:
+    args: {"node_id": 1, "new_type": "local_baserow_create_row"}
+  automations.nodes.simulateDispatch:
+    args: {"node_id": 1}
+  automations.nodes.update:
+    args: {"node_id": 1}
+  automations.workflows.create:
+    args: {"automation_id": 1, "name": "example"}
+  automations.workflows.delete:
+    args: {"workflow_id": 1}
+  automations.workflows.duplicateAsync:
+    args: {"workflow_id": 1}
+  automations.workflows.get:
+    args: {"workflow_id": 1}
+  automations.workflows.getHistory:
+    args: {"workflow_id": 1}
+  automations.workflows.order:
+    args: {"automation_id": 1, "workflow_ids": [1]}
+  automations.workflows.publish:
+    args: {"workflow_id": 1}
+  automations.workflows.test:
+    args: {"workflow_id": 1}
+  automations.workflows.update:
+    args: {"workflow_id": 1}
+  builder.dataSources.create:
+    args: {"page_id": 1}
+  builder.dataSources.delete:
+    args: {"data_source_id": 1}
+  builder.dataSources.dispatch:
+    args: {"data_source_id": 1}
+  builder.dataSources.dispatchAll:
+    args: {"page_id": 1}
+  builder.dataSources.dispatchAllPublic:
+    args: {"page_id": 1}
+  builder.dataSources.dispatchPublic:
+    args: {"data_source_id": 1}
+  builder.dataSources.getRecordNames:
+    args: {"data_source_id": 1}
+  builder.dataSources.list:
+    args: {"page_id": 1}
+  builder.dataSources.listPublic:
+    args: {"page_id": 1}
+  builder.dataSources.move:
+    args: {"data_source_id": 1}
+  builder.dataSources.simulateDispatch:
+    args: {"data_source_id": 1}
+  builder.dataSources.update:
+    args: {"data_source_id": 1}
+  builder.domains.askPublicExists:
+    args: {}
+  builder.domains.create:
+    args: {"builder_id": 1, "domain_name": "example", "type": "custom"}
+  builder.domains.delete:
+    args: {"domain_id": 1}
+  builder.domains.list:
+    args: {"builder_id": 1}
+  builder.domains.order:
+    args: {"builder_id": 1, "domain_ids": [1]}
+  builder.domains.publish:
+    args: {"domain_id": 1}
+  builder.domains.update:
+    args: {"domain_id": 1}
+  builder.elements.create:
+    args: {"page_id": 1, "type": "heading"}
+  builder.elements.delete:
+    args: {"element_id": 1}
+  builder.elements.duplicate:
+    args: {"element_id": 1}
+  builder.elements.list:
+    args: {"page_id": 1}
+  builder.elements.listPublic:
+    args: {"page_id": 1}
+  builder.elements.move:
+    args: {"element_id": 1}
+  builder.elements.update:
+    args: {"element_id": 1}
+  builder.pages.create:
+    args: {"builder_id": 1, "name": "example", "path": "example"}
+  builder.pages.delete:
+    args: {"page_id": 1}
+  builder.pages.duplicateAsync:
+    args: {"page_id": 1}
+  builder.pages.order:
+    args: {"builder_id": 1, "page_ids": [1]}
+  builder.pages.update:
+    args: {"page_id": 1}
+  builder.preview.createGrant:
+    args: {"builder_id": 1}
+  builder.preview.exchangeGrant:
+    args: {"token": "example"}
+  builder.preview.exchangeHandoff:
+    args: {"builder_id": 1, "preview_handoff": "example"}
+  builder.public.getByDomainName:
+    args: {"domain_name": "example"}
+  builder.public.getById:
+    args: {"builder_id": 1}
+  builder.public.getCustomCss:
+    args: {"builder_id": 1, "type": "css"}
+  builder.public.getCustomHtml:
+    args: {"builder_id": 1, "type": "css"}
+  builder.public.getCustomJs:
+    args: {"builder_id": 1, "type": "css"}
+  builder.public.getPreviewCustomCss:
+    args: {"builder_id": 1, "type": "css"}
+  builder.public.getPreviewCustomHtml:
+    args: {"builder_id": 1, "type": "css"}
+  builder.public.getPreviewCustomJs:
+    args: {"builder_id": 1, "type": "css"}
+  builder.theme.update:
+    args: {"builder_id": 1}
+  builder.workflowActions.create:
+    args: {"page_id": 1, "event": "example", "type": "notification"}
+  builder.workflowActions.delete:
+    args: {"workflow_action_id": 1}
+  builder.workflowActions.dispatch:
+    args: {"workflow_action_id": 1}
+  builder.workflowActions.list:
+    args: {"page_id": 1}
+  builder.workflowActions.listPublic:
+    args: {"page_id": 1}
+  builder.workflowActions.order:
+    args: {"page_id": 1, "workflow_action_ids": [1]}
+  builder.workflowActions.update:
+    args: {"workflow_action_id": 1}
+  chatRuns.cancel:
+    args: {"run_id": 1}
+  chatRuns.get:
+    args: {"run_id": 1}
+  chatRuns.stream:
+    args: {"run_id": 1}
+  dashboards.dataSources.dispatch:
+    args: {"data_source_id": 1}
+  dashboards.dataSources.list:
+    args: {"dashboard_id": 1}
+  dashboards.dataSources.update:
+    args: {"data_source_id": 1}
+  dashboards.public.dispatchDataSource:
+    args: {"data_source_id": 1, "slug": "example"}
+  dashboards.public.getAuthInfo:
+    args: {"slug": "example"}
+  dashboards.public.getInfo:
+    args: {"slug": "example"}
+  dashboards.public.tokenAuth:
+    args: {"slug": "example", "password": "example-password"}
+  dashboards.rotateSlug:
+    args: {"dashboard_id": 1}
+  dashboards.updatePremiumAttributes:
+    args: {"dashboard_id": 1}
+  dashboards.updateSharing:
+    args: {"dashboard_id": 1}
+  dashboards.widgets.create:
+    args: {"dashboard_id": 1, "title": "example", "type": "summary"}
+  dashboards.widgets.delete:
+    args: {"widget_id": 1}
+  dashboards.widgets.list:
+    args: {"dashboard_id": 1}
+  dashboards.widgets.update:
+    args: {"widget_id": 1}
+  dashboards.widgets.updateLayout:
+    args: {"dashboard_id": 1}
+  databaseTokens.check:
+    args: {}
+  databaseTokens.create:
+    args: {"name": "example", "workspace": 1}
+  databaseTokens.delete:
+    args: {"token_id": 1}
+  databaseTokens.get:
+    args: {"token_id": 1}
+  databaseTokens.list:
+    args: {}
+  databaseTokens.update:
+    args: {"token_id": 1}
+  fields.changePrimary:
+    args: {"table_id": 1001, "new_primary_field_id": 1}
+  fields.create:
+    args: {"table_id": 1001, "name": "example", "type": "text"}
+  fields.createWorkflowAction:
+    args: {"field_id": 3001, "type": "local_baserow_create_row"}
+  fields.delete:
+    args: {"field_id": 3001}
+  fields.deleteWorkflowAction:
+    args: {"workflow_action_id": 1}
+  fields.dispatchWorkflowActions:
+    args: {"field_id": 3001, "row_id": 1}
+  fields.duplicate:
+    args: {"field_id": 3001}
+  fields.generateAiValue:
+    args: {"field_id": 3001, "row_ids": [1]}
+  fields.generateFormulaWithAi:
+    args: {"table_id": 1001, "ai_model": "example", "ai_prompt": "example", "ai_type": "example"}
+  fields.get:
+    args: {"field_id": 3001}
+  fields.getUniqueRowValues:
+    args: {"field_id": 3001}
+  fields.list:
+    args: {"table_id": 1001}
+  fields.listWorkflowActions:
+    args: {"field_id": 3001}
+  fields.orderWorkflowActions:
+    args: {"field_id": 3001, "workflow_action_ids": [1]}
+  fields.passwordAuthentication:
+    args: {"field_id": 3001, "password": "example-password", "row_id": 1}
+  fields.permissions.get:
+    args: {"field_id": 3001}
+  fields.permissions.listSubjectOptions:
+    args: {"field_id": 3001}
+  fields.permissions.update:
+    args: {"field_id": 3001}
+  fields.rules.create:
+    args: {"table_id": 1001, "is_active": true, "type": "date_dependency"}
+  fields.rules.delete:
+    args: {"rule_id": 1, "table_id": 1001}
+  fields.rules.get:
+    args: {"table_id": 1001}
+  fields.rules.getInvalidRows:
+    args: {"table_id": 1001}
+  fields.rules.update:
+    args: {"rule_id": 1, "table_id": 1001, "is_active": true, "type": "date_dependency"}
+  fields.typeFormula:
+    args: {"table_id": 1001, "formula": "example", "name": "example"}
+  fields.update:
+    args: {"field_id": 3001}
+  fields.updateWorkflowAction:
+    args: {"workflow_action_id": 1}
+  health.check:
+    args: {}
+  health.checkCeleryQueueSize:
+    args: {}
+  health.testEmail:
+    args: {"target_email": "ada@example.com"}
+  identities.create:
+    args: {"workspace_id": 101, "name": "example"}
+  identities.delete:
+    args: {"identity_id": 1}
+  identities.list:
+    args: {"workspace_id": 101}
+  identities.update:
+    args: {"identity_id": 1}
+  incomingWebhooks.callDelete:
+    args: {"webhook_uid": "example"}
+  incomingWebhooks.callGet:
+    args: {"webhook_uid": "example"}
+  incomingWebhooks.callPatch:
+    args: {"webhook_uid": "example"}
+  incomingWebhooks.callPost:
+    args: {"webhook_uid": "example"}
+  incomingWebhooks.callPut:
+    args: {"webhook_uid": "example"}
+  integrations.completeMcpServerOauth:
+    args: {"state": "example"}
+  integrations.create:
+    args: {"application_id": 1, "name": "example", "type": "local_baserow"}
+  integrations.delete:
+    args: {"integration_id": 1}
+  integrations.disconnectMcpServerOauth:
+    args: {"integration_id": 1}
+  integrations.list:
+    args: {"application_id": 1}
+  integrations.move:
+    args: {"integration_id": 1}
+  integrations.refreshMcpServerTools:
+    args: {"integration_id": 1}
+  integrations.startMcpServerOauth:
+    args: {"integration_id": 1}
+  integrations.update:
+    args: {"integration_id": 1}
+  integrations.updateMcpServerTools:
+    args: {"integration_id": 1}
+  jobs.cancel:
+    args: {"job_id": 1}
+  jobs.create:
+    args: {"type": "duplicate_application"}
+  jobs.get:
+    args: {"job_id": 1}
+  jobs.list:
+    args: {}
+  lastViewed.listItems:
+    args: {}
+  mcpEndpoints.create:
+    args: {"name": "example", "workspace_id": 101}
+  mcpEndpoints.delete:
+    args: {"endpoint_id": 1}
+  mcpEndpoints.get:
+    args: {"endpoint_id": 1}
+  mcpEndpoints.list:
+    args: {}
+  mcpEndpoints.update:
+    args: {"endpoint_id": 1}
+  mcpOauthConnections.delete:
+    args: {"connection_id": 1}
+  mcpOauthConnections.get:
+    args: {}
+  mcpOauthConnections.update:
+    args: {"connection_id": 1}
+  notifications.clear:
+    args: {"workspace_id": 101}
+  notifications.list:
+    args: {"workspace_id": 101}
+  notifications.markAllAsRead:
+    args: {"workspace_id": 101}
+  notifications.markAsRead:
+    args: {"notification_id": 1, "workspace_id": 101}
+  roleAssignments.assign:
+    args: {"workspace_id": 101, "role": "example", "scope_id": 1, "scope_type": "core", "subject_id": 1, "subject_type": "auth.User"}
+  roleAssignments.batchAssign:
+    args: {"workspace_id": 101, "items": [{"role": "example", "scope_id": 1, "scope_type": "core", "subject_id": 1, "subject_type": "auth.User"}]}
+  roleAssignments.createScopedInvitation:
+    args: {"workspace_id": 101, "email": "ada@example.com", "role": "example", "scope_id": 1, "scope_type": "core"}
+  roleAssignments.createScopedInvitationLink:
+    args: {"workspace_id": 101, "permissions": "example", "scope_id": 1, "scope_type": "core"}
+  roleAssignments.deleteScopedInvitation:
+    args: {"scoped_invitation_id": 1}
+  roleAssignments.deleteScopedInvitationLink:
+    args: {"invitation_link_id": 1}
+  roleAssignments.list:
+    args: {"workspace_id": 101}
+  roleAssignments.listEffectiveAccess:
+    args: {"workspace_id": 101}
+  roleAssignments.listScopedInvitationLinks:
+    args: {"workspace_id": 101}
+  roleAssignments.listScopedInvitations:
+    args: {"workspace_id": 101}
+  roleAssignments.listSubject:
+    args: {"workspace_id": 101}
+  roleAssignments.updateScopedInvitation:
+    args: {"scoped_invitation_id": 1}
+  roleAssignments.updateScopedInvitationLink:
+    args: {"invitation_link_id": 1}
+  rows.batchCreate:
+    args: {"table_id": 1001, "items": [{}]}
+  rows.batchDelete:
+    args: {"table_id": 1001, "items": [1]}
+  rows.batchUpdate:
+    args: {"table_id": 1001}
+  rows.create:
+    args: {"table_id": 1001, "user_field_names": true}
+  rows.createComment:
+    args: {"row_id": 1, "table_id": 1001, "message": "example"}
+  rows.delete:
+    args: {"row_id": 1, "table_id": 1001}
+  rows.deleteComment:
+    args: {"comment_id": 1, "table_id": 1001}
+  rows.get:
+    args: {"row_id": 1, "table_id": 1001}
+  rows.getAdjacent:
+    args: {"row_id": 1, "table_id": 1001}
+  rows.getComments:
+    args: {"row_id": 1, "table_id": 1001}
+  rows.getHistory:
+    args: {"row_id": 1, "table_id": 1001}
+  rows.list:
+    args: {"table_id": 1001, "user_field_names": true, "size": 20}
+  rows.listNames:
+    args: {}
+  rows.move:
+    args: {"row_id": 1, "table_id": 1001}
+  rows.update:
+    args: {"row_id": 1, "table_id": 1001}
+  rows.updateComment:
+    args: {"comment_id": 1, "table_id": 1001}
+  rows.updateCommentNotificationMode:
+    args: {"row_id": 1, "table_id": 1001, "mode": "all"}
+  search.workspace:
+    args: {"workspace_id": 101, "query": "example"}
+  secureFiles.download:
+    args: {"signed_data": "example"}
+  settings.get:
+    args: {}
+  settings.getInstanceId:
+    args: {}
+  settings.update:
+    args: {}
+  snapshots.create:
+    args: {"application_id": 1, "name": "example"}
+  snapshots.delete:
+    args: {"snapshot_id": 1}
+  snapshots.list:
+    args: {"application_id": 1}
+  snapshots.restore:
+    args: {"snapshot_id": 1}
+  tables.create:
+    args: {"database_id": 1, "name": "example"}
+  tables.createAsync:
+    args: {"database_id": 1, "name": "example"}
+  tables.dataSync.create:
+    args: {"database_id": 1, "synced_properties": ["example"], "table_name": "example", "type": "ical_calendar"}
+  tables.dataSync.get:
+    args: {"data_sync_id": 1}
+  tables.dataSync.getPeriodicInterval:
+    args: {"data_sync_id": 1}
+  tables.dataSync.getProperties:
+    args: {"data_sync_id": 1}
+  tables.dataSync.getTypeProperties:
+    args: {"database_id": 1, "type": "ical_calendar"}
+  tables.dataSync.syncAsync:
+    args: {"data_sync_id": 1}
+  tables.dataSync.update:
+    args: {"data_sync_id": 1}
+  tables.dataSync.updatePeriodicInterval:
+    args: {"data_sync_id": 1}
+  tables.delete:
+    args: {"table_id": 1001}
+  tables.duplicateAsync:
+    args: {"table_id": 1001}
+  tables.export.getJob:
+    args: {"job_id": 1}
+  tables.export.start:
+    args: {"table_id": 1001, "exporter_type": "csv"}
+  tables.get:
+    args: {"table_id": 1001}
+  tables.importDataAsync:
+    args: {"table_id": 1001, "data": [["example"]]}
+  tables.list:
+    args: {"database_id": 1}
+  tables.listForToken:
+    args: {}
+  tables.order:
+    args: {"database_id": 1, "table_ids": [1001]}
+  tables.update:
+    args: {"table_id": 1001}
+  teams.create:
+    args: {"workspace_id": 101, "name": "example"}
+  teams.createInvitation:
+    args: {"team_id": 1, "email": "ada@example.com"}
+  teams.createInvitationLink:
+    args: {"team_id": 1}
+  teams.createSubject:
+    args: {"team_id": 1, "subject_type": "auth.User"}
+  teams.delete:
+    args: {"team_id": 1}
+  teams.deleteInvitation:
+    args: {"team_id": 1, "team_invitation_id": 1}
+  teams.deleteInvitationLink:
+    args: {"invitation_link_id": 1, "team_id": 1}
+  teams.deleteSubject:
+    args: {"subject_id": 1, "team_id": 1}
+  teams.get:
+    args: {"team_id": 1}
+  teams.getSubject:
+    args: {"subject_id": 1, "team_id": 1}
+  teams.list:
+    args: {"workspace_id": 101}
+  teams.listInvitationLinks:
+    args: {"team_id": 1}
+  teams.listInvitations:
+    args: {"team_id": 1}
+  teams.listSubjects:
+    args: {"team_id": 1}
+  teams.update:
+    args: {"team_id": 1, "name": "example"}
+  teams.updateInvitationLink:
+    args: {"invitation_link_id": 1, "team_id": 1}
+  templates.delete:
+    args: {"slug": "example"}
+  templates.download:
+    args: {"slug": "example", "revision_id": 1}
+  templates.install:
+    args: {"template_id": 1, "workspace_id": 101}
+  templates.installAsync:
+    args: {"template_id": 1, "workspace_id": 101}
+  templates.list:
+    args: {}
+  templates.rotatePrivateLinkToken:
+    args: {"slug": "example"}
+  templates.update:
+    args: {"slug": "example"}
+  trash.emptyContents:
+    args: {"workspace_id": 101}
+  trash.getContents:
+    args: {"workspace_id": 101}
+  trash.getStructure:
+    args: {}
+  trash.restore:
+    args: {}
+  user.changeEmail:
+    args: {"token": "example"}
+  user.changePassword:
+    args: {"new_password": "example", "old_password": "example"}
+  user.getDashboard:
+    args: {}
+  user.redo:
+    args: {}
+  user.resetPassword:
+    args: {"password": "example-password", "token": "example"}
+  user.scheduleAccountDeletion:
+    args: {}
+  user.sendChangeEmailConfirmation:
+    args: {"new_email": "ada@example.com", "password": "example-password"}
+  user.sendPasswordResetEmail:
+    args: {"email": "ada@example.com"}
+  user.sendVerifyEmail:
+    args: {}
+  user.signUp:
+    args: {"email": "ada@example.com", "name": "example", "password": "example-password"}
+  user.tokenAuth:
+    args: {"password": "example-password"}
+  user.tokenBlacklist:
+    args: {"refresh": "example"}
+  user.tokenRefresh:
+    args: {}
+  user.tokenVerify:
+    args: {"refresh_token": "example"}
+  user.undo:
+    args: {}
+  user.updateAccount:
+    args: {}
+  user.updatePreferences:
+    args: {}
+  user.verifyEmail:
+    args: {"token": "example"}
+  userFiles.upload:
+    args: {"file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  userFiles.uploadViaUrl:
+    args: {"url": "https://example.com/article"}
+  userSources.create:
+    args: {"application_id": 1, "integration_id": 1, "name": "example", "type": "local_baserow"}
+  userSources.delete:
+    args: {"user_source_id": 1}
+  userSources.forceTokenAuth:
+    args: {"user_source_id": 1}
+  userSources.list:
+    args: {"application_id": 1}
+  userSources.listUsers:
+    args: {"application_id": 1}
+  userSources.move:
+    args: {"user_source_id": 1}
+  userSources.roles.list:
+    args: {"application_id": 1}
+  userSources.tokenAuth:
+    args: {"user_source_id": 1, "password": "example-password", "username": "example"}
+  userSources.tokenBlacklist:
+    args: {"refresh": "example"}
+  userSources.tokenRefresh:
+    args: {}
+  userSources.update:
+    args: {"user_source_id": 1}
+  views.calendar.getIcalFeed:
+    args: {"ical_slug": "example"}
+  views.calendar.listRows:
+    args: {"from_timestamp": "example", "to_timestamp": "example", "view_id": 2001}
+  views.calendar.publicListRows:
+    args: {"from_timestamp": "example", "slug": "example", "to_timestamp": "example"}
+  views.calendar.rotateIcalFeedSlug:
+    args: {"view_id": 2001}
+  views.copyConfiguration:
+    args: {"view_id": 2001, "categories": ["field_visibility"], "source_view_id": 1}
+  views.create:
+    args: {"table_id": 1001, "name": "example", "type": "grid"}
+  views.decorations.create:
+    args: {"view_id": 2001, "type": "left_border_color"}
+  views.decorations.delete:
+    args: {"view_decoration_id": 1}
+  views.decorations.get:
+    args: {"view_decoration_id": 1}
+  views.decorations.list:
+    args: {"view_id": 2001}
+  views.decorations.update:
+    args: {"view_decoration_id": 1}
+  views.delete:
+    args: {"view_id": 2001}
+  views.duplicate:
+    args: {"view_id": 2001}
+  views.export.getPublicJob:
+    args: {"job_id": 1}
+  views.export.startPublic:
+    args: {"slug": "example", "exporter_type": "csv"}
+  views.filters.create:
+    args: {"view_id": 2001, "field": 1, "type": "equal"}
+  views.filters.createGroup:
+    args: {"view_id": 2001}
+  views.filters.delete:
+    args: {"view_filter_id": 1}
+  views.filters.deleteGroup:
+    args: {"view_filter_group_id": 1}
+  views.filters.get:
+    args: {"view_filter_id": 1}
+  views.filters.getGroup:
+    args: {"view_filter_group_id": 1}
+  views.filters.list:
+    args: {"view_id": 2001}
+  views.filters.update:
+    args: {"view_filter_id": 1}
+  views.filters.updateGroup:
+    args: {"view_filter_group_id": 1}
+  views.form.getEditRow:
+    args: {"row_token": "example", "slug": "example"}
+  views.form.getMeta:
+    args: {"slug": "example"}
+  views.form.submit:
+    args: {"slug": "example"}
+  views.form.updateEditRow:
+    args: {"row_token": "example", "slug": "example"}
+  views.form.uploadFile:
+    args: {"slug": "example", "file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  views.gallery.listRows:
+    args: {"view_id": 2001}
+  views.gallery.publicListRows:
+    args: {"slug": "example"}
+  views.get:
+    args: {"view_id": 2001}
+  views.getFieldOptions:
+    args: {"view_id": 2001}
+  views.getPublicInfo:
+    args: {"slug": "example"}
+  views.getPublicRow:
+    args: {"row_id": 1, "slug": "example"}
+  views.grid.filterRows:
+    args: {"view_id": 2001, "row_ids": [1]}
+  views.grid.getFieldAggregation:
+    args: {"field_id": 3001, "view_id": 2001}
+  views.grid.getFieldAggregations:
+    args: {"view_id": 2001}
+  views.grid.getGroupData:
+    args: {"view_id": 2001}
+  views.grid.getPublicFieldAggregations:
+    args: {"slug": "example"}
+  views.grid.getPublicGroupData:
+    args: {"slug": "example"}
+  views.grid.listRows:
+    args: {"view_id": 2001}
+  views.grid.publicListRows:
+    args: {"slug": "example"}
+  views.groupBys.create:
+    args: {"view_id": 2001, "field": 1}
+  views.groupBys.delete:
+    args: {"view_group_by_id": 1}
+  views.groupBys.get:
+    args: {"view_group_by_id": 1}
+  views.groupBys.list:
+    args: {"view_id": 2001}
+  views.groupBys.prioritize:
+    args: {"view_id": 2001, "view_group_by_ids": [1]}
+  views.groupBys.update:
+    args: {"view_group_by_id": 1}
+  views.kanban.listRows:
+    args: {"view_id": 2001}
+  views.kanban.publicListRows:
+    args: {"slug": "example"}
+  views.list:
+    args: {"table_id": 1001}
+  views.order:
+    args: {"table_id": 1001, "view_ids": [2001]}
+  views.publicLinkRowFieldLookup:
+    args: {"field_id": 3001, "slug": "example"}
+  views.publicTokenAuth:
+    args: {"slug": "example", "password": "example-password"}
+  views.rotateSlug:
+    args: {"view_id": 2001}
+  views.sortings.create:
+    args: {"view_id": 2001, "field": 1}
+  views.sortings.delete:
+    args: {"view_sort_id": 1}
+  views.sortings.get:
+    args: {"view_sort_id": 1}
+  views.sortings.list:
+    args: {"view_id": 2001}
+  views.sortings.prioritize:
+    args: {"view_id": 2001, "view_sort_ids": [1]}
+  views.sortings.update:
+    args: {"view_sort_id": 1}
+  views.timeline.listRows:
+    args: {"view_id": 2001}
+  views.timeline.publicListRows:
+    args: {"slug": "example"}
+  views.update:
+    args: {"view_id": 2001}
+  views.updateDefaultValues:
+    args: {"view_id": 2001, "defaults": [{"field": 1, "field_type": "example", "id": 1}]}
+  views.updateFieldOptions:
+    args: {"view_id": 2001, "field_options": {}}
+  views.updatePremiumAttributes:
+    args: {"view_id": 2001}
+  webhooks.create:
+    args: {"table_id": 1001, "name": "example", "url": "https://example.com/article"}
+  webhooks.delete:
+    args: {"webhook_id": 1}
+  webhooks.get:
+    args: {"webhook_id": 1}
+  webhooks.list:
+    args: {"table_id": 1001}
+  webhooks.testCall:
+    args: {"table_id": 1001, "event_type": "rows.created", "url": "https://example.com/article"}
+  webhooks.update:
+    args: {"webhook_id": 1}
+  workspaces.create:
+    args: {"name": "example"}
+  workspaces.createInitial:
+    args: {}
+  workspaces.delete:
+    args: {"workspace_id": 101}
+  workspaces.deleteUser:
+    args: {"workspace_user_id": 1}
+  workspaces.exportApplicationsAsync:
+    args: {"workspace_id": 101}
+  workspaces.getPermissions:
+    args: {"workspace_id": 101}
+  workspaces.importApplicationsAsync:
+    args: {"workspace_id": 101}
+  workspaces.importExportResource:
+    args: {"resource_id": 1, "workspace_id": 101}
+  workspaces.importResourceUploadFile:
+    args: {"workspace_id": 101, "file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  workspaces.invitationLinks.create:
+    args: {"workspace_id": 101, "permissions": "example"}
+  workspaces.invitationLinks.delete:
+    args: {"invitation_link_id": 1}
+  workspaces.invitationLinks.getPublic:
+    args: {"slug": "example"}
+  workspaces.invitationLinks.join:
+    args: {"slug": "example"}
+  workspaces.invitationLinks.list:
+    args: {"workspace_id": 101}
+  workspaces.invitationLinks.tokenAuth:
+    args: {"slug": "example", "password": "example-password"}
+  workspaces.invitationLinks.update:
+    args: {"invitation_link_id": 1}
+  workspaces.invitations.accept:
+    args: {"workspace_invitation_id": 1}
+  workspaces.invitations.create:
+    args: {"workspace_id": 101, "email": "ada@example.com"}
+  workspaces.invitations.delete:
+    args: {"workspace_invitation_id": 1}
+  workspaces.invitations.get:
+    args: {"workspace_invitation_id": 1}
+  workspaces.invitations.getToken:
+    args: {"token": "example"}
+  workspaces.invitations.list:
+    args: {"workspace_id": 101}
+  workspaces.invitations.reject:
+    args: {"workspace_invitation_id": 1}
+  workspaces.invitations.update:
+    args: {"workspace_invitation_id": 1}
+  workspaces.leave:
+    args: {"workspace_id": 101}
+  workspaces.list:
+    args: {}
+  workspaces.listExports:
+    args: {"workspace_id": 101}
+  workspaces.listUsers:
+    args: {"workspace_id": 101}
+  workspaces.order:
+    args: {"workspaces": [1]}
+  workspaces.update:
+    args: {"workspace_id": 101}
+  workspaces.updateUser:
+    args: {"workspace_user_id": 1}
