@@ -1,0 +1,27 @@
+{
+  "secret": "corsair-live-discourse-hook-a10a1d7d4347",
+  "deliveries": [
+    {
+      "headers": {
+        "content-type": "application/json",
+        "x-discourse-instance": "http://localhost",
+        "x-discourse-event-id": "1",
+        "x-discourse-event-type": "topic",
+        "x-discourse-event": "topic_created",
+        "x-discourse-event-signature": "sha256=aade81a90f773964b705e95542984cd297ec17c2abaafc326426664ede5d6088"
+      },
+      "rawBody": "{\"topic\":{\"tags\":[],\"tags_descriptions\":{},\"fancy_title\":\"Signed webhook check number 1795836315\",\"id\":39,\"title\":\"Signed webhook check number 1795836315\",\"posts_count\":1,\"created_at\":\"2026-11-28T03:25:15.802Z\",\"views\":0,\"reply_count\":0,\"like_count\":0,\"last_posted_at\":\"2026-11-28T03:25:15.819Z\",\"visible\":true,\"closed\":false,\"archived\":false,\"archetype\":\"regular\",\"slug\":\"signed-webhook-check-number-1795836315\",\"category_id\":7,\"word_count\":13,\"deleted_at\":null,\"user_id\":1,\"featured_link\":null,\"pinned_globally\":false,\"pinned_at\":null,\"pinned_until\":null,\"unpinned\":null,\"pinned\":false,\"highest_post_number\":1,\"deleted_by\":null,\"has_deleted\":false,\"bookmarked\":false,\"participant_count\":1,\"queued_posts_count\":0,\"thumbnails\":null,\"created_by\":{\"id\":1,\"username\":\"corsairadmin\",\"name\":\"Corsair Admin\",\"avatar_template\":\"/letter_avatar_proxy/v4/letter/c/7bcc69/{size}.png\"},\"last_poster\":{\"id\":1,\"username\":\"corsairadmin\",\"name\":\"Corsair Admin\",\"avatar_template\":\"/letter_avatar_proxy/v4/letter/c/7bcc69/{size}.png\"},\"board_memberships\":[],\"valid_reactions\":[\"heart\",\"+1\",\"laughing\",\"open_mouth\",\"clap\",\"confetti_ball\",\"hugs\"],\"can_create_shared_issue\":false,\"shared_issue_visible\":false,\"can_vote\":false,\"vote_count\":0,\"user_voted\":false,\"pending_posts\":[]}}"
+    },
+    {
+      "headers": {
+        "content-type": "application/json",
+        "x-discourse-instance": "http://localhost",
+        "x-discourse-event-id": "2",
+        "x-discourse-event-type": "post",
+        "x-discourse-event": "post_created",
+        "x-discourse-event-signature": "sha256=220bb6e12a68da979065f284b8935a47c3afb479997890daf2e2e6add786cc74"
+      },
+      "rawBody": "{\"post\":{\"id\":72,\"name\":\"Corsair Admin\",\"username\":\"corsairadmin\",\"avatar_template\":\"/letter_avatar_proxy/v4/letter/c/7bcc69/{size}.png\",\"created_at\":\"2026-11-28T03:25:15.819Z\",\"cooked\":\"<p>Checking signed webhook deliveries from this forum for the Corsair plugin tests, 1795836315.</p>\",\"post_number\":1,\"post_type\":1,\"posts_count\":1,\"updated_at\":\"2026-11-28T03:25:15.819Z\",\"reply_count\":0,\"reply_to_post_number\":null,\"quote_count\":0,\"incoming_link_count\":0,\"reads\":0,\"score\":0,\"topic_id\":39,\"topic_slug\":\"signed-webhook-check-number-1795836315\",\"topic_title\":\"Signed webhook check number 1795836315\",\"category_id\":7,\"display_username\":\"Corsair Admin\",\"primary_group_name\":null,\"flair_name\":null,\"flair_group_id\":null,\"version\":1,\"user_title\":null,\"bookmarked\":false,\"raw\":\"Checking signed webhook deliveries from this forum for the Corsair plugin tests, 1795836315.\",\"moderator\":true,\"admin\":true,\"staff\":true,\"user_id\":1,\"hidden\":false,\"trust_level\":4,\"deleted_at\":null,\"user_deleted\":false,\"edit_reason\":null,\"wiki\":false,\"reviewable_id\":null,\"reviewable_score_count\":0,\"reviewable_score_pending_count\":0,\"post_url\":\"/t/signed-webhook-check-number-1795836315/39/1\",\"topic_posts_count\":1,\"topic_filtered_posts_count\":1,\"topic_archetype\":\"regular\",\"category_slug\":\"ctmwzu3ndv-cat\",\"reactions\":[],\"current_user_reaction\":null,\"reaction_users_count\":0,\"current_user_used_main_reaction\":false,\"can_accept_answer\":false,\"can_unaccept_answer\":false,\"accepted_answer\":false,\"topic_accepted_answer\":null,\"can_vote\":false}}"
+    }
+  ]
+}

@@ -1898,6 +1898,15 @@
                 ]
               },
               {
+                "group": "Discourse",
+                "pages": [
+                  "plugins/discourse/overview",
+                  "plugins/discourse/api",
+                  "plugins/discourse/database",
+                  "plugins/discourse/webhooks"
+                ]
+              },
+              {
                 "group": "DNSFilter",
                 "pages": [
                   "plugins/dnsfilter/overview",

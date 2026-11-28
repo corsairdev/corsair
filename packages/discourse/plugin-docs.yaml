@@ -1,0 +1,215 @@
+# Display copy for the generated docs and the catalog, plus one call
+# example per operation. Generated with the plugin from Discourse's OpenAPI spec;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: Discourse
+domain: discourse.org
+description: "Run a Discourse forum: topics, posts, private messages, categories, tags, groups, users, badges, invites, notifications, search, uploads and backups (95 operations), plus signed webhooks."
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key on the forum (Admin > Advanced > API keys) and connect it with the forum URL and the username to act as. Things to know before you write:
+
+  - **Which user acts.** An "All users" key acts as whatever user `Api-Username` names (use an admin, or `system`); a "Single user" key always acts as its own user. Admin routes (`/admin/...`) need an admin.
+  - **Hosted plans.** Discourse's hosted Free plan has no API keys; self-hosted forums and the paid hosted plans do.
+  - **Posting.** `posts.create` makes a topic (title + raw), a reply (topic_id + raw) or a private message (archetype `private_message` + `target_recipients`). New topics notify watchers.
+  - **Rate limits.** Admin keys get 60 requests a minute by default; a 429 carries Retry-After, and core retries it.
+  - **Webhooks.** Discourse signs each delivery with HMAC-SHA256 of the raw body in `X-Discourse-Event-Signature` (`sha256=<hex>`) using the webhook's secret. The plugin checks it before handling `topic`, `post`, `user`, `group`, `category`, `tag` and other events.
+examples:
+  read:
+    path: topics.listLatest
+    title: List the latest topics
+    args: {}
+  write:
+    path: posts.create
+    title: Create a topic
+    args: {"title": "Release notes for 2.4", "raw": "What changed in this release, one line per change.", "category": 4}
+apiExamples:
+  backups.create:
+    args: {"with_uploads": true}
+  backups.download:
+    args: {"filename": "example", "token": "example"}
+  backups.list:
+    args: {}
+  backups.sendDownloadEmail:
+    args: {"filename": "example"}
+  badges.create:
+    args: {"name": "staff", "badge_type_id": 1}
+  badges.delete:
+    args: {"id": 42}
+  badges.grant:
+    args: {"username": "ada"}
+  badges.list:
+    args: {}
+  badges.listForUser:
+    args: {"username": "ada"}
+  badges.update:
+    args: {"id": 42, "name": "staff", "badge_type_id": 1}
+  categories.create:
+    args: {"name": "staff"}
+  categories.get:
+    args: {"id": 42}
+  categories.list:
+    args: {}
+  categories.listTopics:
+    args: {"slug": "general", "id": 42}
+  categories.update:
+    args: {"id": 42, "name": "staff"}
+  events.exportIcs:
+    args: {}
+  events.list:
+    args: {}
+  groups.addMembers:
+    args: {"id": 42}
+  groups.create:
+    args: {"group": {"name": "staff"}}
+  groups.delete:
+    args: {"id": 42}
+  groups.get:
+    args: {"name": "staff"}
+  groups.getById:
+    args: {"id": 42}
+  groups.list:
+    args: {}
+  groups.listMembers:
+    args: {"name": "staff"}
+  groups.removeMembers:
+    args: {"id": 42}
+  groups.update:
+    args: {"id": 42, "group": {"name": "staff"}}
+  invites.create:
+    args: {}
+  invites.createMultiple:
+    args: {}
+  notifications.list:
+    args: {}
+  notifications.markRead:
+    args: {}
+  posts.create:
+    args: {"title": "Release notes for 2.4", "raw": "What changed in this release, one line per change.", "category": 4}
+  posts.delete:
+    args: {"id": 42}
+  posts.get:
+    args: {"id": 42}
+  posts.list:
+    args: {}
+  posts.listReplies:
+    args: {"id": 42}
+  posts.lock:
+    args: {"id": 42, "locked": "example"}
+  posts.performAction:
+    args: {"id": 42, "post_action_type_id": 1}
+  posts.update:
+    args: {"id": 42}
+  privateMessages.list:
+    args: {"username": "ada"}
+  privateMessages.listSent:
+    args: {"username": "ada"}
+  search.query:
+    args: {"q": "release notes"}
+  site.get:
+    args: {}
+  site.getBasicInfo:
+    args: {}
+  tags.createGroup:
+    args: {"name": "staff"}
+  tags.get:
+    args: {"name": "staff"}
+  tags.getGroup:
+    args: {"id": 42}
+  tags.list:
+    args: {}
+  tags.listGroups:
+    args: {}
+  tags.updateGroup:
+    args: {"id": 42}
+  topics.bookmark:
+    args: {"id": 42}
+  topics.createTimer:
+    args: {"id": 42}
+  topics.delete:
+    args: {"id": 42}
+  topics.get:
+    args: {"id": 42}
+  topics.getByExternalId:
+    args: {"external_id": "ext-42"}
+  topics.getPosts:
+    args: {"id": 42, "post_ids[]": [1]}
+  topics.invite:
+    args: {"id": 42}
+  topics.inviteGroup:
+    args: {"id": 42}
+  topics.listLatest:
+    args: {}
+  topics.listTop:
+    args: {}
+  topics.setNotificationLevel:
+    args: {"id": 42, "notification_level": "0"}
+  topics.update:
+    args: {"id": 42}
+  topics.updateStatus:
+    args: {"id": 42, "status": "closed", "enabled": "true"}
+  topics.updateTimestamp:
+    args: {"id": 42, "timestamp": "example"}
+  uploads.abortMultipart:
+    args: {"external_upload_identifier": "example"}
+  uploads.batchPresignMultipartParts:
+    args: {"part_numbers": ["example"], "unique_identifier": "example"}
+  uploads.completeExternal:
+    args: {"unique_identifier": "example"}
+  uploads.completeMultipart:
+    args: {"unique_identifier": "example", "parts": ["example"]}
+  uploads.create:
+    args: {"upload_type": "avatar"}
+  uploads.createMultipart:
+    args: {"upload_type": "avatar", "file_name": "example", "file_size": 1}
+  uploads.generatePresignedPut:
+    args: {"type": "avatar", "file_name": "example", "file_size": 1}
+  users.activate:
+    args: {"id": 42}
+  users.adminGet:
+    args: {"id": 42}
+  users.adminList:
+    args: {}
+  users.adminListByFlag:
+    args: {"flag": "active"}
+  users.anonymize:
+    args: {"id": 42}
+  users.changePassword:
+    args: {"token": "example", "username": "ada", "password": "example"}
+  users.create:
+    args: {"name": "staff", "email": "ada@example.com", "password": "example", "username": "ada"}
+  users.deactivate:
+    args: {"id": 42}
+  users.delete:
+    args: {"id": 42}
+  users.get:
+    args: {"username": "ada"}
+  users.getByExternalId:
+    args: {"external_id": "ext-42"}
+  users.getByProviderExternalId:
+    args: {"provider": "example", "external_id": "ext-42"}
+  users.getEmails:
+    args: {"username": "ada"}
+  users.listActions:
+    args: {"offset": 1, "username": "ada", "filter": "example"}
+  users.listDirectory:
+    args: {"period": "daily", "order": "likes_received"}
+  users.logOut:
+    args: {"id": 42}
+  users.merge:
+    args: {"id": 42, "target_username": "example"}
+  users.refreshGravatar:
+    args: {"username": "ada"}
+  users.sendPasswordResetEmail:
+    args: {"login": "example"}
+  users.silence:
+    args: {"id": 42, "silenced_till": "example", "reason": "example"}
+  users.suspend:
+    args: {"id": 42, "suspend_until": "example", "reason": "example"}
+  users.update:
+    args: {"username": "ada"}
+  users.updateAvatar:
+    args: {"username": "ada", "type": "example"}
+  users.updateEmail:
+    args: {"username": "ada", "email": "ada@example.com"}
+  users.updateUsername:
+    args: {"username": "ada", "new_username": "example"}

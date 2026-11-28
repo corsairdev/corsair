@@ -1,0 +1,7391 @@
+---
+title: "Discourse API reference"
+sidebarTitle: "API"
+description: "API reference for the Discourse plugin in Corsair: every `discourse.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Backups
+
+### create
+
+`backups.create`
+
+Create backup. Needs an admin API key. (POST /admin/backups.json)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.discourse.api.backups.create({ with_uploads: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `with_uploads` | `boolean` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `string \| null` | No | — |
+
+
+
+---
+
+### download
+
+`backups.download`
+
+Download backup. The backup file needs the download token from the email backups.sendDownloadEmail sends. Needs an admin API key.
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.backups.download({ filename: 'example', token: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filename` | `string \| number` | Yes | — |
+| `token` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Discourse accepted the call; it answered with no body. |
+
+
+
+---
+
+### list
+
+`backups.list`
+
+List backups. Needs an admin API key. (GET /admin/backups.json)
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.backups.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  filename?: string | null,
+  size?: number | null,
+  last_modified?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### sendDownloadEmail
+
+`backups.sendDownloadEmail`
+
+Send download backup email. Needs an admin API key.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.discourse.api.backups.sendDownloadEmail({ filename: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filename` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Discourse accepted the call; it answered with no body. |
+
+
+
+---
+
+## Badges
+
+### create
+
+`badges.create`
+
+Create badge. Needs an admin API key. (POST /admin/badges.json)
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.badges.create({ name: 'staff', badge_type_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The name for the new badge. |
+| `badge_type_id` | `number` | Yes | The ID for the badge type. 1 for Gold, 2 for Silver, 3 for Bronze. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `badge_types` | `object[] \| null` | No | — |
+| `badge` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="badge_types full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  sort_order?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="badge full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  grant_count?: number | null,
+  allow_title?: boolean | null,
+  multiple_grant?: boolean | null,
+  icon?: string | null,
+  image_url?: string | null | null,
+  image_upload_id?: number | null | null,
+  listable?: boolean | null,
+  enabled?: boolean | null,
+  badge_grouping_id?: number | null,
+  system?: boolean | null,
+  long_description?: string | null,
+  slug?: string | null,
+  manually_grantable?: boolean | null,
+  query?: string | null | null,
+  trigger?: string | null | null,
+  target_posts?: boolean | null,
+  auto_revoke?: boolean | null,
+  show_posts?: boolean | null,
+  badge_type_id?: number | null,
+  show_in_post_header?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`badges.delete`
+
+Delete badge. Needs an admin API key. Cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.discourse.api.badges.delete({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Discourse accepted the call; it answered with no body. |
+
+
+
+---
+
+### grant
+
+`badges.grant`
+
+Grant a badge to a user. (POST /user_badges.json)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.discourse.api.badges.grant({ username: 'ada' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | The username of the user to grant the badge to. |
+| `badge_id` | `number` | No | The ID of the badge to grant. Either badge_id or badge_name is required. |
+| `badge_name` | `string` | No | The name of the badge to grant. Either badge_id or badge_name is required. |
+| `reason` | `string` | No | Optional URL of a post or topic associated with the grant. Cannot be used together with post_id. |
+| `post_id` | `number` | No | Optional ID of a visible, non-deleted post associated with the grant. Cannot be used together with reason. |
+| `suppress_notification` | `boolean` | No | Suppress the notification for this grant only. Omit or set to false to preserve normal notification behavior, including existing suppression rules. The badge is still granted and grant events still occur. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Discourse accepted the call; it answered with no body. |
+
+
+
+---
+
+### list
+
+`badges.list`
+
+List badges. Needs an admin API key. (GET /admin/badges.json)
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.badges.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `badges` | `object[] \| null` | No | — |
+| `badge_types` | `object[] \| null` | No | — |
+| `badge_groupings` | `object[] \| null` | No | — |
+| `admin_badges` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="badges full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  grant_count?: number | null,
+  allow_title?: boolean | null,
+  multiple_grant?: boolean | null,
+  icon?: string | null,
+  image_url?: string | null | null,
+  listable?: boolean | null,
+  enabled?: boolean | null,
+  badge_grouping_id?: number | null,
+  system?: boolean | null,
+  long_description?: string | null,
+  slug?: string | null,
+  manually_grantable?: boolean | null,
+  query?: string | null | null,
+  trigger?: number | null | null,
+  target_posts?: boolean | null,
+  auto_revoke?: boolean | null,
+  show_posts?: boolean | null,
+  i18n_name?: string | null | null,
+  image_upload_id?: number | null | null,
+  badge_type_id?: number | null,
+  show_in_post_header?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="badge_types full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  sort_order?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="badge_groupings full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null | null,
+  position?: number | null,
+  system?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="admin_badges full type">
+
+```ts
+{
+  protected_system_fields?: any[] | null,
+  triggers?: {
+    user_change?: number | null,
+    none?: number | null,
+    post_revision?: number | null,
+    trust_level_change?: number | null,
+    post_action?: number | null
+  } | null,
+  badge_ids?: any[] | null,
+  badge_grouping_ids?: any[] | null,
+  badge_type_ids?: any[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForUser
+
+`badges.listForUser`
+
+List badges for a user. (GET /user-badges/&#123;username&#125;.json)
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.badges.listForUser({ username: 'ada' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `badges` | `object[] \| null` | No | — |
+| `badge_types` | `object[] \| null` | No | — |
+| `granted_bies` | `object[] \| null` | No | — |
+| `user_badges` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="badges full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  grant_count?: number | null,
+  allow_title?: boolean | null,
+  multiple_grant?: boolean | null,
+  icon?: string | null,
+  image_url?: string | null | null,
+  listable?: boolean | null,
+  enabled?: boolean | null,
+  badge_grouping_id?: number | null,
+  system?: boolean | null,
+  slug?: string | null,
+  manually_grantable?: boolean | null,
+  badge_type_id?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="badge_types full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  sort_order?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="granted_bies full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  avatar_template?: string | null,
+  flair_name?: string | null | null,
+  admin?: boolean | null,
+  moderator?: boolean | null,
+  trust_level?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="user_badges full type">
+
+```ts
+{
+  id?: number | null,
+  granted_at?: string | null,
+  grouping_position?: number | null,
+  is_favorite?: string | null | null,
+  can_favorite?: boolean | null,
+  badge_id?: number | null,
+  granted_by_id?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`badges.update`
+
+Update badge. Needs an admin API key. (PUT /admin/badges/&#123;id&#125;.json)
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.badges.update({ id: 42, name: 'staff', badge_type_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | The name for the new badge. |
+| `badge_type_id` | `number` | Yes | The ID for the badge type. 1 for Gold, 2 for Silver, 3 for Bronze. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `badge_types` | `object[] \| null` | No | — |
+| `badge` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="badge_types full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  sort_order?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="badge full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  grant_count?: number | null,
+  allow_title?: boolean | null,
+  multiple_grant?: boolean | null,
+  icon?: string | null,
+  image_url?: string | null | null,
+  image_upload_id?: number | null | null,
+  listable?: boolean | null,
+  enabled?: boolean | null,
+  badge_grouping_id?: number | null,
+  system?: boolean | null,
+  long_description?: string | null,
+  slug?: string | null,
+  manually_grantable?: boolean | null,
+  query?: string | null | null,
+  trigger?: string | null | null,
+  target_posts?: boolean | null,
+  auto_revoke?: boolean | null,
+  show_posts?: boolean | null,
+  badge_type_id?: number | null,
+  show_in_post_header?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Categories
+
+### create
+
+`categories.create`
+
+Creates a category. (POST /categories.json)
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.categories.create({ name: 'staff' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `color` | `string` | No | — |
+| `text_color` | `string` | No | — |
+| `style_type` | `string` | No | — |
+| `emoji` | `string` | No | — |
+| `icon` | `string` | No | — |
+| `parent_category_id` | `number` | No | — |
+| `allow_badges` | `boolean` | No | — |
+| `slug` | `string` | No | — |
+| `topic_featured_links_allowed` | `boolean` | No | — |
+| `permissions` | `object` | No | — |
+| `search_priority` | `number` | No | — |
+| `form_template_ids` | `any[]` | No | — |
+| `category_localizations` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="permissions full type">
+
+```ts
+{
+  everyone?: number,
+  staff?: number
+}
+```
+</Accordion>
+
+<Accordion title="category_localizations full type">
+
+```ts
+{
+  id?: number,
+  locale: string,
+  name: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="category full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  color?: string | null,
+  text_color?: string | null,
+  style_type?: string | null,
+  emoji?: string | null | null,
+  icon?: string | null | null,
+  slug?: string | null,
+  locale?: string | null | null,
+  topic_count?: number | null,
+  post_count?: number | null,
+  position?: number | null,
+  description?: string | null | null,
+  description_text?: string | null | null,
+  description_excerpt?: string | null | null,
+  topic_url?: string | null | null,
+  read_restricted?: boolean | null,
+  permission?: number | null | null,
+  notification_level?: number | null,
+  can_edit?: boolean | null,
+  topic_template?: string | null | null,
+  topic_title_placeholder?: string | null | null,
+  form_template_ids?: any[] | null,
+  has_children?: boolean | null | null,
+  subcategory_count?: number | null | null,
+  sort_order?: string | null | null,
+  sort_ascending?: string | null | null,
+  show_subcategory_list?: boolean | null,
+  num_featured_topics?: number | null,
+  default_view?: string | null | null,
+  subcategory_list_style?: string | null,
+  default_top_period?: string | null,
+  default_list_filter?: string | null,
+  minimum_required_tags?: number | null,
+  navigate_to_first_post_after_read?: boolean | null,
+  custom_fields?: {
+  } | null,
+  allowed_tags?: any[] | null,
+  allowed_tag_groups?: any[] | null,
+  allow_global_tags?: boolean | null,
+  required_tag_groups?: {
+    name?: string | null,
+    min_count?: number | null
+  }[] | null,
+  category_setting?: {
+    auto_bump_cooldown_days?: number | null,
+    num_auto_bump_daily?: number | null | null,
+    require_reply_approval?: boolean | null | null,
+    require_topic_approval?: boolean | null | null,
+    nested_replies_default?: boolean | null | null,
+    topic_posting_review_mode?: string | null,
+    reply_posting_review_mode?: string | null
+  } | null,
+  category_localizations?: any[] | null,
+  read_only_banner?: string | null | null,
+  permission_groups?: {
+    id?: number | null,
+    name?: string | null
+  }[] | null,
+  available_groups?: any[] | null,
+  auto_close_hours?: string | null | null,
+  auto_close_based_on_last_post?: boolean | null,
+  allow_unlimited_owner_edits_on_first_post?: boolean | null,
+  default_slow_mode_seconds?: string | null | null,
+  group_permissions?: {
+    permission_type?: number | null,
+    group_name?: string | null,
+    group_id?: number | null
+  }[] | null,
+  email_in?: string | null | null,
+  email_in_allow_strangers?: boolean | null,
+  mailinglist_mirror?: boolean | null,
+  all_topics_wiki?: boolean | null,
+  can_delete?: boolean | null,
+  allow_badges?: boolean | null,
+  topic_featured_link_allowed?: boolean | null,
+  search_priority?: number | null,
+  topic_posting_review_group_ids?: number[] | null,
+  reply_posting_review_group_ids?: number[] | null,
+  uploaded_logo?: string | null | null,
+  uploaded_logo_dark?: string | null | null,
+  uploaded_background?: string | null | null,
+  uploaded_background_dark?: string | null | null,
+  category_types?: {
+  } | null,
+  category_type_settings?: {
+  } | null,
+  available_category_types?: {
+    id?: string | null,
+    name?: string | null,
+    title?: string | null,
+    description?: string | null,
+    icon?: string | null,
+    svg_icon?: string | null | null,
+    available?: boolean | null,
+    visible?: boolean | null,
+    configuration_schema?: {
+    } | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`categories.get`
+
+Show category. (GET /c/&#123;id&#125;/show.json)
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.categories.get({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="category full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  color?: string | null,
+  text_color?: string | null,
+  style_type?: string | null,
+  emoji?: string | null | null,
+  icon?: string | null | null,
+  slug?: string | null,
+  locale?: string | null | null,
+  topic_count?: number | null,
+  post_count?: number | null,
+  position?: number | null,
+  description?: string | null | null,
+  description_text?: string | null | null,
+  description_excerpt?: string | null | null,
+  topic_url?: string | null | null,
+  read_restricted?: boolean | null,
+  permission?: number | null | null,
+  notification_level?: number | null,
+  can_edit?: boolean | null,
+  topic_template?: string | null | null,
+  topic_title_placeholder?: string | null | null,
+  form_template_ids?: any[] | null,
+  has_children?: boolean | null | null,
+  subcategory_count?: number | null | null,
+  sort_order?: string | null | null,
+  sort_ascending?: string | null | null,
+  show_subcategory_list?: boolean | null,
+  num_featured_topics?: number | null,
+  default_view?: string | null | null,
+  subcategory_list_style?: string | null,
+  default_top_period?: string | null,
+  default_list_filter?: string | null,
+  minimum_required_tags?: number | null,
+  navigate_to_first_post_after_read?: boolean | null,
+  custom_fields?: {
+  } | null,
+  allowed_tags?: any[] | null,
+  allowed_tag_groups?: any[] | null,
+  allow_global_tags?: boolean | null,
+  required_tag_groups?: {
+    name?: string | null,
+    min_count?: number | null
+  }[] | null,
+  category_setting?: {
+    auto_bump_cooldown_days?: number | null,
+    num_auto_bump_daily?: number | null | null,
+    require_reply_approval?: boolean | null | null,
+    require_topic_approval?: boolean | null | null,
+    nested_replies_default?: boolean | null | null,
+    topic_posting_review_mode?: string | null,
+    reply_posting_review_mode?: string | null
+  } | null,
+  category_localizations?: any[] | null,
+  read_only_banner?: string | null | null,
+  permission_groups?: {
+    id?: number | null,
+    name?: string | null
+  }[] | null,
+  available_groups?: any[] | null,
+  auto_close_hours?: string | null | null,
+  auto_close_based_on_last_post?: boolean | null,
+  allow_unlimited_owner_edits_on_first_post?: boolean | null,
+  default_slow_mode_seconds?: string | null | null,
+  group_permissions?: {
+    permission_type?: number | null,
+    group_name?: string | null,
+    group_id?: number | null
+  }[] | null,
+  email_in?: string | null | null,
+  email_in_allow_strangers?: boolean | null,
+  mailinglist_mirror?: boolean | null,
+  all_topics_wiki?: boolean | null,
+  can_delete?: boolean | null,
+  allow_badges?: boolean | null,
+  topic_featured_link_allowed?: boolean | null,
+  search_priority?: number | null,
+  topic_posting_review_group_ids?: number[] | null,
+  reply_posting_review_group_ids?: number[] | null,
+  uploaded_logo?: string | null | null,
+  uploaded_logo_dark?: string | null | null,
+  uploaded_background?: string | null | null,
+  uploaded_background_dark?: string | null | null,
+  category_types?: {
+  } | null,
+  category_type_settings?: {
+  } | null,
+  available_category_types?: {
+    id?: string | null,
+    name?: string | null,
+    title?: string | null,
+    description?: string | null,
+    icon?: string | null,
+    svg_icon?: string | null | null,
+    available?: boolean | null,
+    visible?: boolean | null,
+    configuration_schema?: {
+    } | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`categories.list`
+
+Retrieves a list of categories. (GET /categories.json)
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.categories.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include_subcategories` | `true` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category_list` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="category_list full type">
+
+```ts
+{
+  can_create_category?: boolean | null,
+  can_create_topic?: boolean | null,
+  categories?: {
+    id?: number | null,
+    name?: string | null,
+    color?: string | null,
+    text_color?: string | null,
+    style_type?: string | null,
+    emoji?: string | null | null,
+    icon?: string | null | null,
+    slug?: string | null,
+    topic_count?: number | null,
+    post_count?: number | null,
+    position?: number | null,
+    description?: string | null | null,
+    description_text?: string | null | null,
+    description_excerpt?: string | null | null,
+    topic_url?: string | null | null,
+    read_restricted?: boolean | null,
+    permission?: number | null,
+    notification_level?: number | null,
+    can_edit?: boolean | null,
+    topic_template?: string | null | null,
+    topic_title_placeholder?: string | null | null,
+    has_children?: boolean | null,
+    subcategory_count?: number | null | null,
+    sort_order?: string | null | null,
+    sort_ascending?: string | null | null,
+    show_subcategory_list?: boolean | null,
+    num_featured_topics?: number | null,
+    default_view?: string | null | null,
+    subcategory_list_style?: string | null,
+    default_top_period?: string | null,
+    default_list_filter?: string | null,
+    minimum_required_tags?: number | null,
+    navigate_to_first_post_after_read?: boolean | null,
+    topics_day?: number | null,
+    topics_week?: number | null,
+    topics_month?: number | null,
+    topics_year?: number | null,
+    topics_all_time?: number | null,
+    is_uncategorized?: boolean | null,
+    subcategory_ids?: any[] | null,
+    subcategory_list?: any[] | null | null,
+    uploaded_logo?: string | null | null,
+    uploaded_logo_dark?: string | null | null,
+    uploaded_background?: string | null | null,
+    uploaded_background_dark?: string | null | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTopics
+
+`categories.listTopics`
+
+List topics. (GET /c/&#123;slug&#125;/&#123;id&#125;.json)
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.categories.listTopics({ slug: 'general', id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string \| number` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[] \| null` | No | — |
+| `primary_groups` | `any[] \| null` | No | — |
+| `topic_list` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  avatar_template?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="topic_list full type">
+
+```ts
+{
+  filter?: string | null,
+  can_create_topic?: boolean | null,
+  per_page?: number | null,
+  top_tags?: {
+    id?: number | null,
+    name?: string | null,
+    slug?: string | null
+  }[] | null,
+  topics?: {
+    id?: number | null,
+    title?: string | null,
+    fancy_title?: string | null,
+    slug?: string | null,
+    posts_count?: number | null,
+    reply_count?: number | null,
+    highest_post_number?: number | null,
+    image_url?: string | null | null,
+    created_at?: string | null,
+    last_posted_at?: string | null,
+    bumped?: boolean | null,
+    bumped_at?: string | null,
+    archetype?: string | null,
+    unseen?: boolean | null,
+    pinned?: boolean | null,
+    unpinned?: string | null | null,
+    excerpt?: string | null,
+    visible?: boolean | null,
+    closed?: boolean | null,
+    archived?: boolean | null,
+    bookmarked?: boolean | null | null,
+    liked?: boolean | null | null,
+    views?: number | null,
+    like_count?: number | null,
+    has_summary?: boolean | null,
+    last_poster_username?: string | null,
+    category_id?: number | null,
+    pinned_globally?: boolean | null,
+    featured_link?: string | null | null,
+    posters?: {
+      extras?: string | null,
+      description?: string | null,
+      user_id?: number | null,
+      primary_group_id?: number | null | null
+    }[] | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`categories.update`
+
+Updates a category. (PUT /categories/&#123;id&#125;.json)
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.categories.update({ id: 42, name: 'staff' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `color` | `string` | No | — |
+| `text_color` | `string` | No | — |
+| `style_type` | `string` | No | — |
+| `emoji` | `string` | No | — |
+| `icon` | `string` | No | — |
+| `parent_category_id` | `number` | No | — |
+| `allow_badges` | `boolean` | No | — |
+| `slug` | `string` | No | — |
+| `topic_featured_links_allowed` | `boolean` | No | — |
+| `permissions` | `object` | No | — |
+| `search_priority` | `number` | No | — |
+| `form_template_ids` | `any[]` | No | — |
+| `category_localizations` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="permissions full type">
+
+```ts
+{
+  everyone?: number,
+  staff?: number
+}
+```
+</Accordion>
+
+<Accordion title="category_localizations full type">
+
+```ts
+{
+  id?: number,
+  locale: string,
+  name: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `string \| null` | No | — |
+| `category` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="category full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  color?: string | null,
+  text_color?: string | null,
+  style_type?: string | null,
+  emoji?: string | null | null,
+  icon?: string | null | null,
+  slug?: string | null,
+  locale?: string | null | null,
+  topic_count?: number | null,
+  post_count?: number | null,
+  position?: number | null,
+  description?: string | null | null,
+  description_text?: string | null | null,
+  description_excerpt?: string | null | null,
+  topic_url?: string | null | null,
+  read_restricted?: boolean | null,
+  permission?: number | null | null,
+  notification_level?: number | null,
+  can_edit?: boolean | null,
+  topic_template?: string | null | null,
+  topic_title_placeholder?: string | null | null,
+  form_template_ids?: any[] | null,
+  has_children?: boolean | null | null,
+  subcategory_count?: number | null | null,
+  sort_order?: string | null | null,
+  sort_ascending?: string | null | null,
+  show_subcategory_list?: boolean | null,
+  num_featured_topics?: number | null,
+  default_view?: string | null | null,
+  subcategory_list_style?: string | null,
+  default_top_period?: string | null,
+  default_list_filter?: string | null,
+  minimum_required_tags?: number | null,
+  navigate_to_first_post_after_read?: boolean | null,
+  custom_fields?: {
+  } | null,
+  allowed_tags?: any[] | null,
+  allowed_tag_groups?: any[] | null,
+  allow_global_tags?: boolean | null,
+  required_tag_groups?: {
+    name?: string | null,
+    min_count?: number | null
+  }[] | null,
+  category_setting?: {
+    auto_bump_cooldown_days?: number | null,
+    num_auto_bump_daily?: number | null | null,
+    require_reply_approval?: boolean | null | null,
+    require_topic_approval?: boolean | null | null,
+    nested_replies_default?: boolean | null | null,
+    topic_posting_review_mode?: string | null,
+    reply_posting_review_mode?: string | null
+  } | null,
+  category_localizations?: any[] | null,
+  read_only_banner?: string | null | null,
+  permission_groups?: {
+    id?: number | null,
+    name?: string | null
+  }[] | null,
+  available_groups?: any[] | null,
+  auto_close_hours?: string | null | null,
+  auto_close_based_on_last_post?: boolean | null,
+  allow_unlimited_owner_edits_on_first_post?: boolean | null,
+  default_slow_mode_seconds?: string | null | null,
+  group_permissions?: {
+    permission_type?: number | null,
+    group_name?: string | null,
+    group_id?: number | null
+  }[] | null,
+  email_in?: string | null | null,
+  email_in_allow_strangers?: boolean | null,
+  mailinglist_mirror?: boolean | null,
+  all_topics_wiki?: boolean | null,
+  can_delete?: boolean | null,
+  allow_badges?: boolean | null,
+  topic_featured_link_allowed?: boolean | null,
+  search_priority?: number | null,
+  topic_posting_review_group_ids?: number[] | null,
+  reply_posting_review_group_ids?: number[] | null,
+  uploaded_logo?: string | null | null,
+  uploaded_logo_dark?: string | null | null,
+  uploaded_background?: string | null | null,
+  uploaded_background_dark?: string | null | null,
+  category_types?: {
+  } | null,
+  category_type_settings?: {
+  } | null,
+  available_category_types?: {
+    id?: string | null,
+    name?: string | null,
+    title?: string | null,
+    description?: string | null,
+    icon?: string | null,
+    svg_icon?: string | null | null,
+    available?: boolean | null,
+    visible?: boolean | null,
+    configuration_schema?: {
+    } | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Events
+
+### exportIcs
+
+`events.exportIcs`
+
+Export calendar events in iCalendar format. Needs the Discourse Calendar (post event) plugin: without it the route answers 404.
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.events.exportIcs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category_id` | `number` | No | Filter events by category ID |
+| `include_subcategories` | `boolean` | No | Include events from subcategories when filtering by category |
+| `attending_user` | `string` | No | Filter to events where the specified user (username) has RSVP'd as going |
+| `before` | `string` | No | Return events starting before this date/time (ISO 8601 format) |
+| `after` | `string` | No | Return events starting after this date/time (ISO 8601 format) |
+| `order` | `asc \| desc` | No | Sort order for events by start date (default: asc) |
+| `limit` | `number` | No | Maximum number of events to return (default: 200) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The file, base64-encoded. Missing when the file came back as text or contentOmitted is set. |
+| `text` | `string` | No | The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8. |
+| `contentType` | `string` | Yes | Media type of the file, for example application/pdf. |
+| `byteLength` | `number` | Yes | Size of the file in bytes. |
+| `filename` | `string` | No | The file name, when known. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
+| `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
+
+
+
+---
+
+### list
+
+`events.list`
+
+List calendar events. Needs the Discourse Calendar (post event) plugin: without it the route answers 404.
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.events.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include_details` | `boolean` | No | Include detailed event information (creator, invitees, stats, etc.) |
+| `include_card` | `boolean` | No | Include card fields without detailed event HTML or statistics |
+| `category_id` | `number` | No | Filter events by category ID |
+| `include_subcategories` | `boolean` | No | Include events from subcategories when filtering by category |
+| `post_id` | `number` | No | Filter to events associated with a specific post ID |
+| `attending_user` | `string` | No | Filter to events where the specified user (username) has RSVP'd as going |
+| `before` | `string` | No | Return events starting before this date/time (ISO 8601 format) |
+| `after` | `string` | No | Return events starting after this date/time (ISO 8601 format) |
+| `order` | `asc \| desc` | No | Sort order for events by start date (default: asc) |
+| `limit` | `number` | No | Maximum number of events to return (default: 200) |
+| `tags` | `string[]` | No | Filter to events whose topic has every specified tag |
+| `search` | `string` | No | Search event names, descriptions, and locations |
+| `status` | `public \| private \| standalone` | No | Filter by event attendance status |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  id?: number | null,
+  category_id?: number | null | null,
+  name?: string | null | null,
+  recurrence?: string | null | null,
+  recurrence_until?: string | null | null,
+  starts_at?: string | null | null,
+  ends_at?: string | null | null,
+  rrule?: string | null,
+  show_local_time?: boolean | null,
+  timezone?: string | null | null,
+  duration?: string | null,
+  all_day?: boolean | null,
+  custom_fields?: {
+  } | null | null,
+  post?: {
+    id?: number | null,
+    post_number?: number | null,
+    url?: string | null,
+    category_slug?: string | null,
+    topic?: {
+      id?: number | null,
+      title?: string | null,
+      tags?: string[] | null,
+      tags_descriptions?: {
+      } | null,
+      slug?: string | null
+    } | null
+  } | null,
+  occurrences?: {
+    starts_at?: string | null | null,
+    ends_at?: string | null | null
+  }[] | null,
+  can_act_on_discourse_post_event?: boolean | null | null,
+  can_update_attendance?: boolean | null | null,
+  creator?: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null | null,
+    avatar_template?: string | null
+  } | null,
+  hosts?: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null | null,
+    avatar_template?: string | null,
+    title?: string | null | null
+  }[] | null,
+  is_closed?: boolean | null,
+  is_expired?: boolean | null,
+  is_ongoing?: boolean | null,
+  is_private?: boolean | null,
+  is_public?: boolean | null,
+  is_standalone?: boolean | null,
+  minimal?: boolean | null | null,
+  raw_invitees?: string[] | null | null,
+  reminders?: {
+    value?: number | null,
+    unit?: string | null,
+    period?: string | null,
+    type?: string | null
+  }[] | null,
+  sample_invitees?: {
+  }[] | null,
+  should_display_invitees?: boolean | null,
+  stats?: {
+  } | null,
+  status?: string | null,
+  url?: string | null,
+  description?: string | null | null,
+  description_html?: string | null | null,
+  location?: string | null | null,
+  url_restates_location?: boolean | null,
+  watching_invitee?: {
+  } | null | null,
+  chat_enabled?: boolean | null | null,
+  channel?: {
+  } | null,
+  livestream?: boolean | null,
+  allow_anonymous_livestream?: boolean | null,
+  livestream_onebox?: string | null | null,
+  is_zoom_livestream?: boolean | null,
+  recording_url?: string | null,
+  recording_onebox?: string | null | null,
+  max_attendees?: number | null | null,
+  at_capacity?: boolean | null,
+  image_upload?: {
+  } | null | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Groups
+
+### addMembers
+
+`groups.addMembers`
+
+Add group members. (PUT /groups/&#123;id&#125;/members.json)
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.groups.addMembers({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `usernames` | `string` | No | comma separated list |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `string \| null` | No | — |
+| `usernames` | `any[] \| null` | No | — |
+| `emails` | `any[] \| null` | No | — |
+
+
+
+---
+
+### create
+
+`groups.create`
+
+Create a group. Needs an admin API key. (POST /admin/groups.json)
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.groups.create({
+	group: { name: 'staff' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="group full type">
+
+```ts
+{
+  name: string,
+  full_name?: string,
+  bio_raw?: string,
+  usernames?: string,
+  owner_usernames?: string,
+  automatic_membership_email_domains?: string,
+  visibility_level?: number,
+  primary_group?: boolean,
+  flair_icon?: string,
+  flair_upload_id?: number,
+  flair_bg_color?: string,
+  public_admission?: boolean,
+  public_exit?: boolean,
+  default_notification_level?: number,
+  muted_category_ids?: number[],
+  regular_category_ids?: number[],
+  watching_category_ids?: number[],
+  tracking_category_ids?: number[],
+  watching_first_post_category_ids?: number[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `basic_group` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="basic_group full type">
+
+```ts
+{
+  id?: number | null,
+  automatic?: boolean | null,
+  name?: string | null,
+  user_count?: number | null,
+  mentionable_level?: number | null,
+  messageable_level?: number | null,
+  visibility_level?: number | null,
+  primary_group?: boolean | null,
+  title?: string | null | null,
+  grant_trust_level?: string | null | null,
+  incoming_email?: string | null | null,
+  has_messages?: boolean | null,
+  flair_url?: string | null | null,
+  flair_bg_color?: string | null | null,
+  flair_color?: string | null | null,
+  bio_raw?: string | null | null,
+  bio_cooked?: string | null | null,
+  bio_excerpt?: string | null | null,
+  public_admission?: boolean | null,
+  public_exit?: boolean | null,
+  allow_membership_requests?: boolean | null,
+  full_name?: string | null | null,
+  default_notification_level?: number | null,
+  membership_request_template?: string | null | null,
+  members_visibility_level?: number | null,
+  can_see_members?: boolean | null,
+  can_admin_group?: boolean | null,
+  can_edit_group?: boolean | null,
+  publish_read_state?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`groups.delete`
+
+Delete a group. Needs an admin API key. Cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.discourse.api.groups.delete({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`groups.get`
+
+Get a group. (GET /groups/&#123;name&#125;.json)
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.groups.get({ name: 'staff' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string \| number` | Yes | Use group name instead of id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group` | `object \| null` | No | — |
+| `extras` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="group full type">
+
+```ts
+{
+  id?: number | null,
+  automatic?: boolean | null,
+  name?: string | null,
+  user_count?: number | null,
+  mentionable_level?: number | null,
+  messageable_level?: number | null,
+  visibility_level?: number | null,
+  primary_group?: boolean | null,
+  title?: string | null | null,
+  grant_trust_level?: string | null | null,
+  incoming_email?: string | null | null,
+  has_messages?: boolean | null,
+  flair_url?: string | null | null,
+  flair_bg_color?: string | null | null,
+  flair_color?: string | null | null,
+  bio_raw?: string | null | null,
+  bio_cooked?: string | null | null,
+  bio_excerpt?: string | null | null,
+  public_admission?: boolean | null,
+  public_exit?: boolean | null,
+  allow_membership_requests?: boolean | null,
+  full_name?: string | null | null,
+  default_notification_level?: number | null,
+  membership_request_template?: string | null | null,
+  is_group_user?: boolean | null,
+  members_visibility_level?: number | null,
+  can_see_members?: boolean | null,
+  can_admin_group?: boolean | null,
+  can_edit_group?: boolean | null,
+  publish_read_state?: boolean | null,
+  is_group_owner_display?: boolean | null,
+  mentionable?: boolean | null,
+  messageable?: boolean | null,
+  automatic_membership_email_domains?: string | null | null,
+  smtp_updated_at?: string | null | null,
+  smtp_updated_by?: {
+  } | null | null,
+  smtp_enabled?: boolean | null,
+  smtp_server?: string | null | null,
+  smtp_port?: string | null | null,
+  smtp_ssl_mode?: number | null | null,
+  email_username?: string | null | null,
+  email_from_alias?: string | null | null,
+  email_password?: string | null | null,
+  message_count?: number | null,
+  allow_unknown_sender_topic_replies?: boolean | null,
+  associated_group_ids?: any[] | null,
+  watching_category_ids?: any[] | null,
+  tracking_category_ids?: any[] | null,
+  watching_first_post_category_ids?: any[] | null,
+  regular_category_ids?: any[] | null,
+  muted_category_ids?: any[] | null,
+  watching_tags?: any[] | null,
+  watching_first_post_tags?: any[] | null,
+  tracking_tags?: any[] | null,
+  regular_tags?: any[] | null,
+  muted_tags?: any[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="extras full type">
+
+```ts
+{
+  visible_group_names?: any[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getById
+
+`groups.getById`
+
+Get a group by id. (GET /groups/by-id/&#123;id&#125;.json)
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.groups.getById({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | Use group name instead of id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group` | `object \| null` | No | — |
+| `extras` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="group full type">
+
+```ts
+{
+  id?: number | null,
+  automatic?: boolean | null,
+  name?: string | null,
+  user_count?: number | null,
+  mentionable_level?: number | null,
+  messageable_level?: number | null,
+  visibility_level?: number | null,
+  primary_group?: boolean | null,
+  title?: string | null | null,
+  grant_trust_level?: string | null | null,
+  incoming_email?: string | null | null,
+  has_messages?: boolean | null,
+  flair_url?: string | null | null,
+  flair_bg_color?: string | null | null,
+  flair_color?: string | null | null,
+  bio_raw?: string | null | null,
+  bio_cooked?: string | null | null,
+  bio_excerpt?: string | null | null,
+  public_admission?: boolean | null,
+  public_exit?: boolean | null,
+  allow_membership_requests?: boolean | null,
+  full_name?: string | null | null,
+  default_notification_level?: number | null,
+  membership_request_template?: string | null | null,
+  is_group_user?: boolean | null,
+  members_visibility_level?: number | null,
+  can_see_members?: boolean | null,
+  can_admin_group?: boolean | null,
+  can_edit_group?: boolean | null,
+  publish_read_state?: boolean | null,
+  is_group_owner_display?: boolean | null,
+  mentionable?: boolean | null,
+  messageable?: boolean | null,
+  automatic_membership_email_domains?: string | null | null,
+  smtp_updated_at?: string | null | null,
+  smtp_updated_by?: {
+  } | null | null,
+  smtp_enabled?: boolean | null,
+  smtp_server?: string | null | null,
+  smtp_port?: string | null | null,
+  smtp_ssl_mode?: number | null | null,
+  email_username?: string | null | null,
+  email_from_alias?: string | null | null,
+  email_password?: string | null | null,
+  message_count?: number | null,
+  allow_unknown_sender_topic_replies?: boolean | null,
+  associated_group_ids?: any[] | null,
+  watching_category_ids?: any[] | null,
+  tracking_category_ids?: any[] | null,
+  watching_first_post_category_ids?: any[] | null,
+  regular_category_ids?: any[] | null,
+  muted_category_ids?: any[] | null,
+  watching_tags?: any[] | null,
+  watching_first_post_tags?: any[] | null,
+  tracking_tags?: any[] | null,
+  regular_tags?: any[] | null,
+  muted_tags?: any[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="extras full type">
+
+```ts
+{
+  visible_group_names?: any[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`groups.list`
+
+List groups. (GET /groups.json)
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.groups.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groups` | `object[] \| null` | No | — |
+| `extras` | `object \| null` | No | — |
+| `total_rows_groups` | `number \| null` | No | — |
+| `load_more_groups` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+{
+  id?: number | null,
+  automatic?: boolean | null,
+  name?: string | null,
+  display_name?: string | null,
+  user_count?: number | null,
+  mentionable_level?: number | null,
+  messageable_level?: number | null,
+  visibility_level?: number | null,
+  primary_group?: boolean | null,
+  title?: string | null | null,
+  grant_trust_level?: string | null | null,
+  incoming_email?: string | null | null,
+  has_messages?: boolean | null,
+  flair_url?: string | null | null,
+  flair_bg_color?: string | null | null,
+  flair_color?: string | null | null,
+  bio_raw?: string | null | null,
+  bio_cooked?: string | null | null,
+  bio_excerpt?: string | null | null,
+  public_admission?: boolean | null,
+  public_exit?: boolean | null,
+  allow_membership_requests?: boolean | null,
+  full_name?: string | null | null,
+  default_notification_level?: number | null,
+  membership_request_template?: string | null | null,
+  is_group_user?: boolean | null,
+  is_group_owner?: boolean | null,
+  members_visibility_level?: number | null,
+  can_see_members?: boolean | null,
+  can_admin_group?: boolean | null,
+  can_edit_group?: boolean | null,
+  publish_read_state?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="extras full type">
+
+```ts
+{
+  type_filters?: any[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMembers
+
+`groups.listMembers`
+
+List group members. (GET /groups/&#123;name&#125;/members.json)
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.groups.listMembers({ name: 'staff' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string \| number` | Yes | Use group name instead of id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `members` | `object[] \| null` | No | — |
+| `owners` | `object[] \| null` | No | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null | null,
+  avatar_template?: string | null,
+  title?: string | null | null,
+  last_posted_at?: string | null,
+  last_seen_at?: string | null,
+  added_at?: string | null,
+  timezone?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="owners full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null | null,
+  avatar_template?: string | null,
+  title?: string | null | null,
+  last_posted_at?: string | null,
+  last_seen_at?: string | null,
+  added_at?: string | null,
+  timezone?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number | null,
+  limit?: number | null,
+  offset?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeMembers
+
+`groups.removeMembers`
+
+Remove group members. Cannot be undone. (DELETE /groups/&#123;id&#125;/members.json)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.discourse.api.groups.removeMembers({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `usernames` | `string` | No | comma separated list |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `string \| null` | No | — |
+| `usernames` | `any[] \| null` | No | — |
+| `skipped_usernames` | `any[] \| null` | No | — |
+
+
+
+---
+
+### update
+
+`groups.update`
+
+Update a group. (PUT /groups/&#123;id&#125;.json)
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.groups.update({
+	id: 42,
+	group: { name: 'staff' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `group` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="group full type">
+
+```ts
+{
+  name: string,
+  full_name?: string,
+  bio_raw?: string,
+  usernames?: string,
+  owner_usernames?: string,
+  automatic_membership_email_domains?: string,
+  visibility_level?: number,
+  primary_group?: boolean,
+  flair_icon?: string,
+  flair_upload_id?: number,
+  flair_bg_color?: string,
+  public_admission?: boolean,
+  public_exit?: boolean,
+  default_notification_level?: number,
+  muted_category_ids?: number[],
+  regular_category_ids?: number[],
+  watching_category_ids?: number[],
+  tracking_category_ids?: number[],
+  watching_first_post_category_ids?: number[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `string \| null` | No | — |
+
+
+
+---
+
+## Invites
+
+### create
+
+`invites.create`
+
+Create an invite. (POST /invites.json)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.discourse.api.invites.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | required for email invites only |
+| `skip_email` | `boolean` | No | — |
+| `custom_message` | `string` | No | optional, for email invites |
+| `max_redemptions_allowed` | `number` | No | optional, for link invites |
+| `topic_id` | `number` | No | — |
+| `group_ids` | `string` | No | Optional, either this or `group_names`. Comma separated list for multiple ids. |
+| `group_names` | `string` | No | Optional, either this or `group_ids`. Comma separated list for multiple names. |
+| `expires_at` | `string` | No | optional, if not supplied, the invite_expiry_days site setting is used |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `invite_key` | `string \| null` | No | — |
+| `link` | `string \| null` | No | — |
+| `description` | `string \| null \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `domain` | `string \| null \| null` | No | — |
+| `emailed` | `boolean \| null` | No | — |
+| `can_delete_invite` | `boolean \| null` | No | — |
+| `custom_message` | `string \| null \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `expires_at` | `string \| null` | No | — |
+| `expired` | `boolean \| null` | No | — |
+| `grants_admin` | `boolean \| null` | No | — |
+| `grants_moderator` | `boolean \| null` | No | — |
+| `topics` | `object[] \| null` | No | — |
+| `groups` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="topics full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="groups full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createMultiple
+
+`invites.createMultiple`
+
+Create multiple invites. (POST /invites/create-multiple.json)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.discourse.api.invites.createMultiple({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string[]` | No | pass 1 email per invite to be generated. other properties will be shared by each invite. |
+| `skip_email` | `boolean` | No | — |
+| `custom_message` | `string` | No | optional, for email invites |
+| `max_redemptions_allowed` | `number` | No | optional, for link invites |
+| `topic_id` | `number` | No | — |
+| `group_ids` | `string` | No | Optional, either this or `group_names`. Comma separated list for multiple ids. |
+| `group_names` | `string` | No | Optional, either this or `group_ids`. Comma separated list for multiple names. |
+| `expires_at` | `string` | No | optional, if not supplied, the invite_expiry_days site setting is used |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `num_successfully_created_invitations` | `number \| null` | No | — |
+| `num_failed_invitations` | `number \| null` | No | — |
+| `failed_invitations` | `any[] \| null` | No | — |
+| `successful_invitations` | `any[] \| null` | No | — |
+
+
+
+---
+
+## Notifications
+
+### list
+
+`notifications.list`
+
+Get the notifications that belong to the current user.
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.notifications.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notifications` | `object[] \| null` | No | — |
+| `total_rows_notifications` | `number \| null` | No | — |
+| `seen_notification_id` | `number \| null` | No | — |
+| `load_more_notifications` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="notifications full type">
+
+```ts
+{
+  id?: number | null,
+  user_id?: number | null,
+  notification_type?: number | null,
+  read?: boolean | null,
+  created_at?: string | null,
+  post_number?: number | null | null,
+  topic_id?: number | null | null,
+  slug?: string | null | null,
+  data?: {
+    badge_id?: number | null,
+    badge_name?: string | null,
+    badge_slug?: string | null,
+    badge_title?: boolean | null,
+    username?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### markRead
+
+`notifications.markRead`
+
+Mark notifications as read. (PUT /notifications/mark-read.json)
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.notifications.markRead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | (optional) Leave off to mark all notifications as read |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `string \| null` | No | — |
+
+
+
+---
+
+## Posts
+
+### create
+
+`posts.create`
+
+Creates a new topic, a new post, or a private message. Creates a topic (title + raw), a reply (topic_id + raw) or a private message (archetype private_message + target_recipients); it is public on the forum and notifies watchers.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.discourse.api.posts.create({ title: 'Release notes for 2.4', raw: 'What changed in this release, one line per change.', category: 4 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | Required if creating a new topic or new private message. |
+| `raw` | `string` | Yes | — |
+| `topic_id` | `number` | No | Required if creating a new post. |
+| `category` | `number` | No | Optional if creating a new topic, and ignored if creating a new post. |
+| `target_recipients` | `string` | No | Required for private message, comma separated. |
+| `target_usernames` | `string` | No | Deprecated. Use target_recipients instead. |
+| `archetype` | `string` | No | Required for new private message. |
+| `created_at` | `string` | No | — |
+| `reply_to_post_number` | `number` | No | Optional, the post number to reply to inside a topic. |
+| `embed_url` | `string` | No | Provide a URL from a remote system to associate a forum topic with that URL, typically for using Discourse as a comments system for an external blog. |
+| `external_id` | `string` | No | Provide an external_id from a remote system to associate a forum topic with that id. |
+| `auto_track` | `boolean` | No | If false, the user will not track the topic. By default, the user will track the topic. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `name` | `string \| null \| null` | No | — |
+| `username` | `string \| null` | No | — |
+| `avatar_template` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `raw` | `string \| null` | No | — |
+| `cooked` | `string \| null` | No | — |
+| `post_number` | `number \| null` | No | — |
+| `post_type` | `number \| null` | No | — |
+| `posts_count` | `number \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `reply_count` | `number \| null` | No | — |
+| `reply_to_post_number` | `string \| null \| null` | No | — |
+| `quote_count` | `number \| null` | No | — |
+| `incoming_link_count` | `number \| null` | No | — |
+| `reads` | `number \| null` | No | — |
+| `readers_count` | `number \| null` | No | — |
+| `score` | `number \| null` | No | — |
+| `yours` | `boolean \| null` | No | — |
+| `topic_id` | `number \| null` | No | — |
+| `topic_slug` | `string \| null` | No | — |
+| `display_username` | `string \| null \| null` | No | — |
+| `primary_group_name` | `string \| null \| null` | No | — |
+| `flair_name` | `string \| null \| null` | No | — |
+| `flair_url` | `string \| null \| null` | No | — |
+| `flair_bg_color` | `string \| null \| null` | No | — |
+| `flair_color` | `string \| null \| null` | No | — |
+| `flair_group_id` | `number \| null \| null` | No | — |
+| `badges_granted` | `any[] \| null` | No | — |
+| `version` | `number \| null` | No | — |
+| `can_edit` | `boolean \| null` | No | — |
+| `can_delete` | `boolean \| null` | No | — |
+| `can_recover` | `boolean \| null` | No | — |
+| `can_see_hidden_post` | `boolean \| null` | No | — |
+| `can_wiki` | `boolean \| null` | No | — |
+| `user_title` | `string \| null \| null` | No | — |
+| `bookmarked` | `boolean \| null` | No | — |
+| `actions_summary` | `object[] \| null` | No | — |
+| `moderator` | `boolean \| null` | No | — |
+| `admin` | `boolean \| null` | No | — |
+| `staff` | `boolean \| null` | No | — |
+| `user_id` | `number \| null` | No | — |
+| `draft_sequence` | `number \| null` | No | — |
+| `hidden` | `boolean \| null` | No | — |
+| `trust_level` | `number \| null` | No | — |
+| `deleted_at` | `string \| null \| null` | No | — |
+| `user_deleted` | `boolean \| null` | No | — |
+| `edit_reason` | `string \| null \| null` | No | — |
+| `can_view_edit_history` | `boolean \| null` | No | — |
+| `wiki` | `boolean \| null` | No | — |
+| `reviewable_id` | `number \| null \| null` | No | — |
+| `reviewable_score_count` | `number \| null` | No | — |
+| `reviewable_score_pending_count` | `number \| null` | No | — |
+| `post_url` | `string \| null` | No | — |
+| `post_localizations` | `any[] \| null` | No | — |
+| `mentioned_users` | `any[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="actions_summary full type">
+
+```ts
+{
+  id?: number | null,
+  can_act?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`posts.delete`
+
+delete a single post. Cannot be undone. (DELETE /posts/&#123;id&#125;.json)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.discourse.api.posts.delete({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `force_destroy` | `boolean` | No | The `SiteSetting.can_permanently_delete` needs to be enabled first before this param can be used. Also this endpoint needs to be called first without `force_destroy` and then followed up with a second call 5 minutes later with `force_destroy` to permanently delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Discourse accepted the call; it answered with no body. |
+
+
+
+---
+
+### get
+
+`posts.get`
+
+Retrieve a single post. This endpoint can be used to get the number of likes on a post using the actions_summary property in the response. actions_summary responses with the id of 2 signify a like. If there are no actions_summary items with the id of 2, that means there are 0 likes.
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.posts.get({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `username` | `string \| null` | No | — |
+| `avatar_template` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `cooked` | `string \| null` | No | — |
+| `post_number` | `number \| null` | No | — |
+| `post_type` | `number \| null` | No | — |
+| `posts_count` | `number \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `reply_count` | `number \| null` | No | — |
+| `reply_to_post_number` | `string \| null \| null` | No | — |
+| `quote_count` | `number \| null` | No | — |
+| `incoming_link_count` | `number \| null` | No | — |
+| `reads` | `number \| null` | No | — |
+| `readers_count` | `number \| null` | No | — |
+| `score` | `number \| null` | No | — |
+| `yours` | `boolean \| null` | No | — |
+| `topic_id` | `number \| null` | No | — |
+| `topic_slug` | `string \| null` | No | — |
+| `primary_group_name` | `string \| null \| null` | No | — |
+| `flair_name` | `string \| null \| null` | No | — |
+| `flair_url` | `string \| null \| null` | No | — |
+| `flair_bg_color` | `string \| null \| null` | No | — |
+| `flair_color` | `string \| null \| null` | No | — |
+| `flair_group_id` | `number \| null \| null` | No | — |
+| `version` | `number \| null` | No | — |
+| `can_edit` | `boolean \| null` | No | — |
+| `can_delete` | `boolean \| null` | No | — |
+| `can_recover` | `boolean \| null` | No | — |
+| `can_see_hidden_post` | `boolean \| null` | No | — |
+| `can_wiki` | `boolean \| null` | No | — |
+| `user_title` | `string \| null \| null` | No | — |
+| `bookmarked` | `boolean \| null` | No | — |
+| `raw` | `string \| null` | No | — |
+| `actions_summary` | `object[] \| null` | No | — |
+| `moderator` | `boolean \| null` | No | — |
+| `admin` | `boolean \| null` | No | — |
+| `staff` | `boolean \| null` | No | — |
+| `user_id` | `number \| null` | No | — |
+| `hidden` | `boolean \| null` | No | — |
+| `trust_level` | `number \| null` | No | — |
+| `deleted_at` | `string \| null \| null` | No | — |
+| `user_deleted` | `boolean \| null` | No | — |
+| `edit_reason` | `string \| null \| null` | No | — |
+| `can_view_edit_history` | `boolean \| null` | No | — |
+| `wiki` | `boolean \| null` | No | — |
+| `reviewable_id` | `number \| null \| null` | No | — |
+| `reviewable_score_count` | `number \| null` | No | — |
+| `reviewable_score_pending_count` | `number \| null` | No | — |
+| `post_url` | `string \| null` | No | — |
+| `mentioned_users` | `any[] \| null` | No | — |
+| `name` | `string \| null \| null` | No | — |
+| `display_username` | `string \| null \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="actions_summary full type">
+
+```ts
+{
+  id?: number | null,
+  count?: number | null,
+  acted?: boolean | null,
+  can_undo?: boolean | null,
+  can_act?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`posts.list`
+
+List latest posts across topics. (GET /posts.json)
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.posts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `before` | `number` | No | Load posts with an id lower than this value. Useful for pagination. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `latest_posts` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="latest_posts full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null | null,
+  username?: string | null,
+  avatar_template?: string | null,
+  created_at?: string | null,
+  cooked?: string | null,
+  post_number?: number | null,
+  post_type?: number | null,
+  posts_count?: number | null,
+  updated_at?: string | null,
+  reply_count?: number | null,
+  reply_to_post_number?: string | null | null,
+  quote_count?: number | null,
+  incoming_link_count?: number | null,
+  reads?: number | null,
+  readers_count?: number | null,
+  score?: number | null,
+  yours?: boolean | null,
+  topic_id?: number | null,
+  topic_slug?: string | null,
+  topic_title?: string | null,
+  topic_html_title?: string | null,
+  category_id?: number | null,
+  display_username?: string | null | null,
+  primary_group_name?: string | null | null,
+  flair_name?: string | null | null,
+  flair_url?: string | null | null,
+  flair_bg_color?: string | null | null,
+  flair_color?: string | null | null,
+  flair_group_id?: string | null | null,
+  badges_granted?: any[] | null,
+  version?: number | null,
+  can_edit?: boolean | null,
+  can_delete?: boolean | null,
+  can_recover?: boolean | null,
+  can_see_hidden_post?: boolean | null,
+  can_wiki?: boolean | null,
+  user_title?: string | null | null,
+  bookmarked?: boolean | null,
+  raw?: string | null,
+  actions_summary?: {
+    id?: number | null,
+    can_act?: boolean | null
+  }[] | null,
+  moderator?: boolean | null,
+  admin?: boolean | null,
+  staff?: boolean | null,
+  user_id?: number | null,
+  hidden?: boolean | null,
+  trust_level?: number | null,
+  deleted_at?: string | null | null,
+  user_deleted?: boolean | null,
+  edit_reason?: string | null | null,
+  can_view_edit_history?: boolean | null,
+  wiki?: boolean | null,
+  excerpt?: string | null,
+  truncated?: boolean | null,
+  reviewable_id?: string | null | null,
+  reviewable_score_count?: number | null,
+  reviewable_score_pending_count?: number | null,
+  post_url?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listReplies
+
+`posts.listReplies`
+
+List replies to a post. (GET /posts/&#123;id&#125;/replies.json)
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.posts.listReplies({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null | null,
+  username?: string | null,
+  avatar_template?: string | null,
+  created_at?: string | null,
+  cooked?: string | null,
+  post_number?: number | null,
+  post_type?: number | null,
+  posts_count?: number | null,
+  updated_at?: string | null,
+  reply_count?: number | null,
+  reply_to_post_number?: number | null,
+  quote_count?: number | null,
+  incoming_link_count?: number | null,
+  reads?: number | null,
+  readers_count?: number | null,
+  score?: number | null,
+  yours?: boolean | null,
+  topic_id?: number | null,
+  topic_slug?: string | null,
+  display_username?: string | null | null,
+  primary_group_name?: string | null | null,
+  flair_name?: string | null | null,
+  flair_url?: string | null | null,
+  flair_bg_color?: string | null | null,
+  flair_color?: string | null | null,
+  flair_group_id?: number | null | null,
+  version?: number | null,
+  can_edit?: boolean | null,
+  can_delete?: boolean | null,
+  can_recover?: boolean | null,
+  can_see_hidden_post?: boolean | null,
+  can_wiki?: boolean | null,
+  user_title?: string | null | null,
+  reply_to_user?: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    avatar_template?: string | null
+  } | null,
+  bookmarked?: boolean | null,
+  actions_summary?: {
+    id?: number | null,
+    can_act?: boolean | null
+  }[] | null,
+  moderator?: boolean | null,
+  admin?: boolean | null,
+  staff?: boolean | null,
+  user_id?: number | null,
+  hidden?: boolean | null,
+  trust_level?: number | null,
+  deleted_at?: string | null | null,
+  user_deleted?: boolean | null,
+  edit_reason?: string | null | null,
+  can_view_edit_history?: boolean | null,
+  wiki?: boolean | null,
+  reviewable_id?: number | null | null,
+  reviewable_score_count?: number | null,
+  reviewable_score_pending_count?: number | null,
+  post_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### lock
+
+`posts.lock`
+
+Lock a post from being edited. (PUT /posts/&#123;id&#125;/locked.json)
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.posts.lock({ id: 42, locked: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `locked` | `string` | Yes | Whether to lock the post (true/false) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locked` | `boolean \| null` | No | Whether the post is locked |
+
+
+
+---
+
+### performAction
+
+`posts.performAction`
+
+Like a post and other actions. (POST /post_actions.json)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.discourse.api.posts.performAction({ id: 42, post_action_type_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The ID of the post to perform the action on |
+| `post_action_type_id` | `number` | Yes | The ID of the post action type (e.g., 2 for like) |
+| `flag_topic` | `boolean` | No | Whether to flag the entire topic |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | The ID of the post |
+| `name` | `string \| null` | No | The name of the post author |
+| `username` | `string \| null` | No | The username of the post author |
+| `avatar_template` | `string \| null` | No | Template for the author's avatar URL |
+| `created_at` | `string \| null` | No | When the post was created |
+| `cooked` | `string \| null` | No | The HTML content of the post |
+| `post_number` | `number \| null` | No | The post number within the topic |
+| `post_type` | `number \| null` | No | The type of post |
+| `posts_count` | `number \| null` | No | Total posts count for the user |
+| `updated_at` | `string \| null` | No | When the post was last updated |
+| `reply_count` | `number \| null` | No | Number of replies to this post |
+| `reply_to_post_number` | `string \| null \| null` | No | Post number this post is replying to |
+| `quote_count` | `number \| null` | No | Number of times this post has been quoted |
+| `incoming_link_count` | `number \| null` | No | Number of incoming links to this post |
+| `reads` | `number \| null` | No | Number of reads |
+| `readers_count` | `number \| null` | No | Number of readers |
+| `score` | `number \| null` | No | Post score |
+| `yours` | `boolean \| null` | No | Whether this post belongs to the current user |
+| `topic_id` | `number \| null` | No | ID of the topic this post belongs to |
+| `topic_slug` | `string \| null` | No | Slug of the topic this post belongs to |
+| `display_username` | `string \| null` | No | Display username of the post author |
+| `primary_group_name` | `string \| null \| null` | No | Primary group name of the author |
+| `flair_name` | `string \| null \| null` | No | Flair name of the author |
+| `flair_url` | `string \| null \| null` | No | Flair URL of the author |
+| `flair_bg_color` | `string \| null \| null` | No | Flair background color of the author |
+| `flair_color` | `string \| null \| null` | No | Flair color of the author |
+| `flair_group_id` | `number \| null \| null` | No | Flair group ID of the author |
+| `badges_granted` | `any[] \| null` | No | Badges granted to the user |
+| `version` | `number \| null` | No | Version number of the post |
+| `can_edit` | `boolean \| null` | No | Whether the current user can edit this post |
+| `can_delete` | `boolean \| null` | No | Whether the current user can delete this post |
+| `can_recover` | `boolean \| null` | No | Whether the current user can recover this post |
+| `can_see_hidden_post` | `boolean \| null` | No | Whether the current user can see hidden posts |
+| `can_wiki` | `boolean \| null` | No | Whether the current user can wiki this post |
+| `user_title` | `string \| null \| null` | No | Title of the post author |
+| `bookmarked` | `boolean \| null` | No | Whether the post is bookmarked by the current user |
+| `actions_summary` | `object[] \| null` | No | Summary of actions performed on this post |
+| `moderator` | `boolean \| null` | No | Whether the post author is a moderator |
+| `admin` | `boolean \| null` | No | Whether the post author is an admin |
+| `staff` | `boolean \| null` | No | Whether the post author is staff |
+| `user_id` | `number \| null` | No | ID of the post author |
+| `hidden` | `boolean \| null` | No | Whether the post is hidden |
+| `trust_level` | `number \| null` | No | Trust level of the post author |
+| `deleted_at` | `string \| null \| null` | No | When the post was deleted |
+| `user_deleted` | `boolean \| null` | No | Whether the post was deleted by the user |
+| `edit_reason` | `string \| null \| null` | No | Reason for the last edit |
+| `can_view_edit_history` | `boolean \| null` | No | Whether the current user can view edit history |
+| `wiki` | `boolean \| null` | No | Whether this is a wiki post |
+| `reviewable_id` | `number \| null \| null` | No | ID of the reviewable if this post is under review |
+| `reviewable_score_count` | `number \| null` | No | Number of reviewable scores |
+| `reviewable_score_pending_count` | `number \| null` | No | Number of pending reviewable scores |
+| `post_url` | `string \| null` | No | URL of the post |
+
+<AccordionGroup>
+<Accordion title="actions_summary full type">
+
+```ts
+{
+  id?: number | null,
+  count?: number | null,
+  acted?: boolean | null,
+  can_undo?: boolean | null,
+  can_act?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`posts.update`
+
+Update a single post. (PUT /posts/&#123;id&#125;.json)
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.posts.update({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `post` | `object` | No | — |
+| `bypass_bump` | `boolean` | No | Skip bumping the topic when updating the post. Requires staff or TL4 permissions. |
+
+<AccordionGroup>
+<Accordion title="post full type">
+
+```ts
+{
+  raw: string,
+  edit_reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `post` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="post full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  avatar_template?: string | null,
+  created_at?: string | null,
+  cooked?: string | null,
+  post_number?: number | null,
+  post_type?: number | null,
+  posts_count?: number | null,
+  updated_at?: string | null,
+  reply_count?: number | null,
+  reply_to_post_number?: string | null | null,
+  quote_count?: number | null,
+  incoming_link_count?: number | null,
+  reads?: number | null,
+  readers_count?: number | null,
+  score?: number | null,
+  yours?: boolean | null,
+  topic_id?: number | null,
+  topic_slug?: string | null,
+  primary_group_name?: string | null | null,
+  flair_name?: string | null | null,
+  flair_url?: string | null | null,
+  flair_bg_color?: string | null | null,
+  flair_color?: string | null | null,
+  flair_group_id?: number | null | null,
+  badges_granted?: any[] | null,
+  version?: number | null,
+  can_edit?: boolean | null,
+  can_delete?: boolean | null,
+  can_recover?: boolean | null,
+  can_see_hidden_post?: boolean | null,
+  can_wiki?: boolean | null,
+  user_title?: string | null | null,
+  bookmarked?: boolean | null,
+  raw?: string | null,
+  actions_summary?: {
+    id?: number | null,
+    can_act?: boolean | null
+  }[] | null,
+  moderator?: boolean | null,
+  admin?: boolean | null,
+  staff?: boolean | null,
+  user_id?: number | null,
+  draft_sequence?: number | null,
+  hidden?: boolean | null,
+  trust_level?: number | null,
+  deleted_at?: string | null | null,
+  user_deleted?: boolean | null,
+  edit_reason?: string | null | null,
+  can_view_edit_history?: boolean | null,
+  wiki?: boolean | null,
+  reviewable_id?: number | null | null,
+  reviewable_score_count?: number | null,
+  reviewable_score_pending_count?: number | null,
+  post_url?: string | null,
+  post_localizations?: any[] | null,
+  mentioned_users?: any[] | null,
+  name?: string | null | null,
+  display_username?: string | null | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Private Messages
+
+### list
+
+`privateMessages.list`
+
+Get a list of private messages for a user.
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.privateMessages.list({ username: 'ada' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[] \| null` | No | — |
+| `primary_groups` | `any[] \| null` | No | — |
+| `topic_list` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  avatar_template?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="topic_list full type">
+
+```ts
+{
+  can_create_topic?: boolean | null,
+  draft?: string | null | null,
+  draft_key?: string | null,
+  draft_sequence?: number | null,
+  per_page?: number | null,
+  topics?: {
+    id?: number | null,
+    title?: string | null,
+    fancy_title?: string | null,
+    slug?: string | null,
+    posts_count?: number | null,
+    reply_count?: number | null,
+    highest_post_number?: number | null,
+    image_url?: string | null | null,
+    created_at?: string | null,
+    last_posted_at?: string | null,
+    bumped?: boolean | null,
+    bumped_at?: string | null,
+    archetype?: string | null,
+    unseen?: boolean | null,
+    last_read_post_number?: number | null,
+    unread_posts?: number | null,
+    pinned?: boolean | null,
+    unpinned?: string | null | null,
+    visible?: boolean | null,
+    closed?: boolean | null,
+    archived?: boolean | null,
+    notification_level?: number | null,
+    bookmarked?: boolean | null,
+    liked?: boolean | null,
+    views?: number | null,
+    like_count?: number | null,
+    has_summary?: boolean | null,
+    last_poster_username?: string | null,
+    category_id?: string | null | null,
+    pinned_globally?: boolean | null,
+    featured_link?: string | null | null,
+    allowed_user_count?: number | null,
+    posters?: {
+      extras?: string | null,
+      description?: string | null,
+      user_id?: number | null,
+      primary_group_id?: number | null | null
+    }[] | null,
+    participants?: {
+      extras?: string | null,
+      description?: string | null | null,
+      user_id?: number | null,
+      primary_group_id?: number | null | null
+    }[] | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSent
+
+`privateMessages.listSent`
+
+Get a list of private messages sent for a user.
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.privateMessages.listSent({ username: 'ada' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[] \| null` | No | — |
+| `primary_groups` | `any[] \| null` | No | — |
+| `topic_list` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null | null,
+  avatar_template?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="topic_list full type">
+
+```ts
+{
+  can_create_topic?: boolean | null,
+  draft?: string | null | null,
+  draft_key?: string | null,
+  draft_sequence?: number | null,
+  per_page?: number | null,
+  topics?: {
+    id?: number | null,
+    title?: string | null,
+    fancy_title?: string | null,
+    slug?: string | null,
+    posts_count?: number | null,
+    reply_count?: number | null,
+    highest_post_number?: number | null,
+    image_url?: string | null | null,
+    created_at?: string | null,
+    last_posted_at?: string | null,
+    bumped?: boolean | null,
+    bumped_at?: string | null,
+    archetype?: string | null,
+    unseen?: boolean | null,
+    last_read_post_number?: number | null,
+    unread_posts?: number | null,
+    pinned?: boolean | null,
+    unpinned?: string | null | null,
+    visible?: boolean | null,
+    closed?: boolean | null,
+    archived?: boolean | null,
+    notification_level?: number | null,
+    bookmarked?: boolean | null,
+    liked?: boolean | null,
+    views?: number | null,
+    like_count?: number | null,
+    has_summary?: boolean | null,
+    last_poster_username?: string | null,
+    category_id?: string | null | null,
+    pinned_globally?: boolean | null,
+    featured_link?: string | null | null,
+    allowed_user_count?: number | null,
+    posters?: {
+      extras?: string | null,
+      description?: string | null,
+      user_id?: number | null,
+      primary_group_id?: number | null | null
+    }[] | null,
+    participants?: any[] | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Search
+
+### query
+
+`search.query`
+
+Search for a term. (GET /search.json)
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.search.query({ q: 'release notes' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | The query string needs to be url encoded and is made up of the following options: - Search term. This is just a string. Usually it would be the first item in the query. - `@<username>`: Use the `@` followed by the username to specify posts by this user. - `#<category>`: Use the `#` followed by the category slug to search within this category. - `tags:`: `api,solved` or for posts that have all the specified tags `api+solved`. - `before:`: `yyyy-mm-dd` - `after:`: `yyyy-mm-dd` - `order:`: `latest`, `likes`, `views`, `latest_topic` - `assigned:`: username (without `@`) - `in:`: `title`, `likes`, `personal`, `messages`, `seen`, `unseen`, `posted`, `created`, `watching`, `tracking`, `bookmarks`, `assigned`, `unassigned`, `first`, `pinned`, `wiki` - `with:`: `images` - `status:`: `open`, `closed`, `public`, `archived`, `noreplies`, `single_user`, `solved`, `unsolved` - `group:`: group_name or group_id - `group_messages:`: group_name or group_id - `min_posts:`: 1 - `max_posts:`: 10 - `min_views:`: 1 - `max_views:`: 10 If you are using cURL you can use the `-G` and the `--data-urlencode` flags to encode the query: ``` curl -i -sS -X GET -G "http://localhost:3000/search.json" \\ --data-urlencode 'q=wordpress @scossar #fun after:2020-01-01' ``` |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `posts` | `any[] \| null` | No | — |
+| `users` | `any[] \| null` | No | — |
+| `categories` | `any[] \| null` | No | — |
+| `tags` | `object[] \| null` | No | — |
+| `groups` | `any[] \| null` | No | — |
+| `grouped_search_result` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  slug?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="grouped_search_result full type">
+
+```ts
+{
+  more_posts?: string | null | null,
+  more_users?: string | null | null,
+  more_categories?: string | null | null,
+  term?: string | null,
+  search_log_id?: number | null,
+  more_full_page_results?: string | null | null,
+  can_create_topic?: boolean | null,
+  error?: string | null | null,
+  extra?: {
+    categories?: any[] | null | null
+  } | null,
+  post_ids?: any[] | null,
+  user_ids?: any[] | null,
+  category_ids?: any[] | null,
+  tag_ids?: any[] | null,
+  group_ids?: any[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Site
+
+### get
+
+`site.get`
+
+Get site info. Can be used to fetch all categories and subcategories.
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.site.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `default_archetype` | `string \| null` | No | — |
+| `notification_types` | `object \| null` | No | — |
+| `post_types` | `object \| null` | No | — |
+| `trust_levels` | `object \| null` | No | — |
+| `user_tips` | `object \| null` | No | — |
+| `groups` | `object[] \| null` | No | — |
+| `filters` | `any[] \| null` | No | — |
+| `anonymous_list_filters` | `any[] \| null` | No | — |
+| `homepage_choices` | `any[] \| null` | No | — |
+| `homepage_options` | `object[] \| null` | No | — |
+| `periods` | `any[] \| null` | No | — |
+| `top_menu_items` | `any[] \| null` | No | — |
+| `anonymous_top_menu_items` | `any[] \| null` | No | — |
+| `uncategorized_category_id` | `number \| null` | No | — |
+| `user_field_max_length` | `number \| null` | No | — |
+| `post_action_types` | `object[] \| null` | No | — |
+| `topic_flag_types` | `object[] \| null` | No | — |
+| `can_create_tag` | `boolean \| null` | No | — |
+| `can_search` | `boolean \| null` | No | — |
+| `can_tag_topics` | `boolean \| null` | No | — |
+| `can_tag_pms` | `boolean \| null` | No | — |
+| `tags_filter_regexp` | `string \| null` | No | — |
+| `top_tags` | `object[] \| null` | No | — |
+| `wizard_required` | `boolean \| null` | No | — |
+| `can_associate_groups` | `boolean \| null` | No | — |
+| `email_configured` | `boolean \| null` | No | — |
+| `upcoming_changes_with_css` | `string[] \| null` | No | — |
+| `topic_featured_link_allowed_category_ids` | `any[] \| null` | No | — |
+| `user_themes` | `object[] \| null` | No | — |
+| `user_color_schemes` | `object[] \| null` | No | — |
+| `default_light_color_scheme` | `object \| null` | No | — |
+| `default_dark_color_scheme` | `object \| null` | No | — |
+| `censored_regexp` | `object[] \| null` | No | — |
+| `custom_emoji_translation` | `object \| null` | No | — |
+| `watched_words_replace` | `string \| null \| null` | No | — |
+| `watched_words_link` | `string \| null \| null` | No | — |
+| `markdown_additional_options` | `object \| null` | No | — |
+| `hashtag_configurations` | `object \| null` | No | — |
+| `hashtag_icons` | `object \| null` | No | — |
+| `displayed_about_plugin_stat_groups` | `any[] \| null` | No | — |
+| `categories` | `object[] \| null` | No | — |
+| `archetypes` | `object[] \| null` | No | — |
+| `user_fields` | `any[] \| null` | No | — |
+| `auth_providers` | `any[] \| null` | No | — |
+| `whispers_allowed_groups_names` | `any[] \| null` | No | — |
+| `denied_emojis` | `any[] \| null` | No | — |
+| `valid_flag_applies_to_types` | `any[] \| null` | No | — |
+| `navigation_menu_site_top_tags` | `any[] \| null` | No | — |
+| `full_name_required_for_signup` | `boolean \| null` | No | — |
+| `full_name_visible_in_signup` | `boolean \| null` | No | — |
+| `admin_config_login_routes` | `any[] \| null` | No | — |
+| `access_control` | `object \| null` | No | — |
+| `permanent_upcoming_change_names` | `string[] \| null` | No | — |
+| `category_types` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="notification_types full type">
+
+```ts
+{
+  mentioned?: number | null,
+  replied?: number | null,
+  quoted?: number | null,
+  edited?: number | null,
+  liked?: number | null,
+  private_message?: number | null,
+  invited_to_private_message?: number | null,
+  invitee_accepted?: number | null,
+  posted?: number | null,
+  watching_category_or_tag?: number | null,
+  new_features?: number | null,
+  admin_problems?: number | null,
+  moved_post?: number | null,
+  linked?: number | null,
+  granted_badge?: number | null,
+  invited_to_topic?: number | null,
+  custom?: number | null,
+  group_mentioned?: number | null,
+  group_message_summary?: number | null,
+  watching_first_post?: number | null,
+  topic_reminder?: number | null,
+  liked_consolidated?: number | null,
+  linked_consolidated?: number | null,
+  post_approved?: number | null,
+  code_review_commit_approved?: number | null,
+  membership_request_accepted?: number | null,
+  membership_request_consolidated?: number | null,
+  bookmark_reminder?: number | null,
+  reaction?: number | null,
+  votes_released?: number | null,
+  event_reminder?: number | null,
+  event_invitation?: number | null,
+  chat_mention?: number | null,
+  chat_message?: number | null,
+  chat_invitation?: number | null,
+  chat_group_mention?: number | null,
+  chat_quoted?: number | null,
+  chat_watched_thread?: number | null,
+  upcoming_change_available?: number | null,
+  upcoming_change_automatically_promoted?: number | null,
+  assigned?: number | null,
+  question_answer_user_commented?: number | null,
+  following?: number | null,
+  following_created_topic?: number | null,
+  following_replied?: number | null,
+  circles_activity?: number | null,
+  boost?: number | null,
+  suggested_edit_created?: number | null,
+  suggested_edit_accepted?: number | null,
+  live_invitation?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="post_types full type">
+
+```ts
+{
+  regular?: number | null,
+  moderator_action?: number | null,
+  small_action?: number | null,
+  whisper?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="trust_levels full type">
+
+```ts
+{
+  newuser?: number | null,
+  basic?: number | null,
+  member?: number | null,
+  regular?: number | null,
+  leader?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="user_tips full type">
+
+```ts
+{
+  first_notification?: number | null,
+  topic_timeline?: number | null,
+  post_menu?: number | null,
+  topic_notification_levels?: number | null,
+  suggested_topics?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="groups full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  full_name?: string | null,
+  display_name?: string | null,
+  flair_url?: string | null | null,
+  flair_bg_color?: string | null | null,
+  flair_color?: string | null | null,
+  automatic?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="homepage_options full type">
+
+```ts
+{
+  id?: string | null,
+  path?: string | null,
+  server_side?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="post_action_types full type">
+
+```ts
+{
+  id?: number | null | null,
+  name_key?: string | null | null,
+  name?: string | null,
+  description?: string | null,
+  short_description?: string | null,
+  is_flag?: boolean | null,
+  require_message?: boolean | null,
+  enabled?: boolean | null,
+  applies_to?: any[] | null,
+  is_used?: boolean | null,
+  position?: number | null,
+  auto_action_type?: boolean | null,
+  system?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="topic_flag_types full type">
+
+```ts
+{
+  id?: number | null | null,
+  name_key?: string | null | null,
+  name?: string | null,
+  description?: string | null,
+  short_description?: string | null,
+  is_flag?: boolean | null,
+  require_message?: boolean | null,
+  enabled?: boolean | null,
+  applies_to?: any[] | null,
+  is_used?: boolean | null,
+  position?: number | null,
+  auto_action_type?: boolean | null,
+  system?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="top_tags full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  slug?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="user_themes full type">
+
+```ts
+{
+  theme_id?: number | null,
+  name?: string | null,
+  default?: boolean | null,
+  color_scheme_id?: number | null | null,
+  dark_color_scheme_id?: number | null | null,
+  only_theme_color_schemes?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="user_color_schemes full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  is_dark?: boolean | null,
+  theme_id?: number | null | null,
+  colors?: any[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="default_light_color_scheme full type">
+
+```ts
+{
+} | null | null
+```
+</Accordion>
+
+<Accordion title="default_dark_color_scheme full type">
+
+```ts
+{
+} | null | null
+```
+</Accordion>
+
+<Accordion title="censored_regexp full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="custom_emoji_translation full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="markdown_additional_options full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="hashtag_configurations full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="hashtag_icons full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="categories full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  color?: string | null,
+  text_color?: string | null,
+  style_type?: string | null,
+  emoji?: string | null | null,
+  icon?: string | null | null,
+  slug?: string | null,
+  topic_count?: number | null,
+  post_count?: number | null,
+  position?: number | null,
+  description?: string | null | null,
+  description_text?: string | null | null,
+  description_excerpt?: string | null | null,
+  topic_url?: string | null,
+  read_restricted?: boolean | null,
+  permission?: number | null,
+  notification_level?: number | null,
+  topic_template?: string | null | null,
+  topic_title_placeholder?: string | null | null,
+  has_children?: boolean | null,
+  subcategory_count?: number | null | null,
+  sort_order?: string | null | null,
+  sort_ascending?: string | null | null,
+  show_subcategory_list?: boolean | null,
+  num_featured_topics?: number | null,
+  default_view?: string | null | null,
+  subcategory_list_style?: string | null,
+  default_top_period?: string | null,
+  default_list_filter?: string | null,
+  minimum_required_tags?: number | null,
+  navigate_to_first_post_after_read?: boolean | null,
+  allow_global_tags?: boolean | null,
+  required_tag_groups?: {
+    min_count?: number | null
+  }[] | null,
+  read_only_banner?: string | null | null,
+  uploaded_logo?: string | null | null,
+  uploaded_logo_dark?: string | null | null,
+  uploaded_background?: string | null | null,
+  uploaded_background_dark?: string | null | null,
+  can_edit?: boolean | null,
+  custom_fields?: {
+  } | null | null,
+  parent_category_id?: number | null,
+  form_template_ids?: any[] | null,
+  category_types?: {
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="archetypes full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  options?: any[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="access_control full type">
+
+```ts
+{
+  mandatory_acl?: {
+  } | null,
+  banned_acl?: {
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="category_types full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  title?: string | null,
+  description?: string | null,
+  icon?: string | null,
+  svg_icon?: string | null | null,
+  available?: boolean | null,
+  visible?: boolean | null,
+  configuration_schema?: {
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBasicInfo
+
+`site.getBasicInfo`
+
+Get site basic info. Can be used to fetch basic info about a site.
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.site.getBasicInfo({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `logo_url` | `string \| null` | No | — |
+| `logo_small_url` | `string \| null` | No | — |
+| `apple_touch_icon_url` | `string \| null` | No | — |
+| `favicon_url` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `header_primary_color` | `string \| null` | No | — |
+| `header_background_color` | `string \| null` | No | — |
+| `login_required` | `boolean \| null` | No | — |
+| `locale` | `string \| null` | No | — |
+| `include_in_discourse_discover` | `boolean \| null` | No | — |
+| `mobile_logo_url` | `string \| null` | No | — |
+
+
+
+---
+
+## Tags
+
+### createGroup
+
+`tags.createGroup`
+
+Creates a tag group. (POST /tag_groups.json)
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.tags.createGroup({ name: 'staff' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag_group` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tag_group full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  tags?: {
+    id?: number | null,
+    name?: string | null,
+    slug?: string | null
+  }[] | null,
+  parent_tag?: {
+    id?: number | null,
+    name?: string | null,
+    slug?: string | null
+  }[] | null,
+  one_per_topic?: boolean | null,
+  permissions?: {
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`tags.get`
+
+Get a specific tag. (GET /tag/&#123;name&#125;.json)
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.tags.get({ name: 'staff' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[] \| null` | No | — |
+| `primary_groups` | `any[] \| null` | No | — |
+| `topic_list` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null | null,
+  avatar_template?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="topic_list full type">
+
+```ts
+{
+  can_create_topic?: boolean | null,
+  draft?: string | null | null,
+  draft_key?: string | null,
+  draft_sequence?: number | null,
+  per_page?: number | null,
+  tags?: {
+    id?: number | null,
+    name?: string | null,
+    topic_count?: number | null,
+    staff?: boolean | null
+  }[] | null,
+  topics?: {
+    id?: number | null,
+    title?: string | null,
+    fancy_title?: string | null,
+    slug?: string | null,
+    posts_count?: number | null,
+    reply_count?: number | null,
+    highest_post_number?: number | null,
+    image_url?: string | null | null,
+    created_at?: string | null,
+    last_posted_at?: string | null,
+    bumped?: boolean | null,
+    bumped_at?: string | null,
+    archetype?: string | null,
+    unseen?: boolean | null,
+    last_read_post_number?: number | null,
+    unread_posts?: number | null,
+    pinned?: boolean | null,
+    unpinned?: string | null | null,
+    visible?: boolean | null,
+    closed?: boolean | null,
+    archived?: boolean | null,
+    notification_level?: number | null,
+    bookmarked?: boolean | null,
+    liked?: boolean | null,
+    tags?: any[] | null,
+    views?: number | null,
+    like_count?: number | null,
+    has_summary?: boolean | null,
+    last_poster_username?: string | null,
+    category_id?: number | null,
+    pinned_globally?: boolean | null,
+    featured_link?: string | null | null,
+    posters?: {
+      extras?: string | null,
+      description?: string | null,
+      user_id?: number | null,
+      primary_group_id?: number | null | null
+    }[] | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getGroup
+
+`tags.getGroup`
+
+Get a single tag group. (GET /tag_groups/&#123;id&#125;.json)
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.tags.getGroup({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag_group` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tag_group full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  tag_names?: any[] | null,
+  parent_tag_name?: any[] | null,
+  one_per_topic?: boolean | null,
+  permissions?: {
+    everyone?: number | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tags.list`
+
+Get a list of tags. (GET /tags.json)
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.tags.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `object[] \| null` | No | — |
+| `extras` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  id?: number | null,
+  text?: string | null,
+  name?: string | null,
+  count?: number | null,
+  pm_count?: number | null,
+  target_tag?: string | null | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="extras full type">
+
+```ts
+{
+  categories?: any[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listGroups
+
+`tags.listGroups`
+
+Get a list of tag groups. (GET /tag_groups.json)
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.tags.listGroups({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag_groups` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tag_groups full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  tags?: {
+    id?: number | null,
+    name?: string | null,
+    slug?: string | null
+  }[] | null,
+  parent_tag?: {
+    id?: number | null,
+    name?: string | null,
+    slug?: string | null
+  }[] | null,
+  one_per_topic?: boolean | null,
+  permissions?: Record<string, number> | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateGroup
+
+`tags.updateGroup`
+
+Update tag group. (PUT /tag_groups/&#123;id&#125;.json)
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.tags.updateGroup({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `string \| null` | No | — |
+| `tag_group` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tag_group full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  tag_names?: any[] | null,
+  parent_tag_name?: any[] | null,
+  one_per_topic?: boolean | null,
+  permissions?: {
+    everyone?: number | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Topics
+
+### bookmark
+
+`topics.bookmark`
+
+Bookmark topic. (PUT /t/&#123;id&#125;/bookmark.json)
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.topics.bookmark({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Discourse accepted the call; it answered with no body. |
+
+
+
+---
+
+### createTimer
+
+`topics.createTimer`
+
+Create topic timer. (POST /t/&#123;id&#125;/timer.json)
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.topics.createTimer({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `time` | `string` | No | — |
+| `status_type` | `string` | No | — |
+| `based_on_last_post` | `boolean` | No | — |
+| `category_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `string \| null` | No | — |
+| `execute_at` | `string \| null` | No | — |
+| `duration` | `string \| null \| null` | No | — |
+| `based_on_last_post` | `boolean \| null` | No | — |
+| `closed` | `boolean \| null` | No | — |
+| `category_id` | `number \| null \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`topics.delete`
+
+Remove a topic. Cannot be undone. (DELETE /t/&#123;id&#125;.json)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.discourse.api.topics.delete({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Discourse accepted the call; it answered with no body. |
+
+
+
+---
+
+### get
+
+`topics.get`
+
+Get a single topic. (GET /t/&#123;id&#125;.json)
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.topics.get({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `post_stream` | `object \| null` | No | — |
+| `timeline_lookup` | `any[] \| null` | No | — |
+| `suggested_topics` | `object[] \| null` | No | — |
+| `tags` | `object[] \| null` | No | — |
+| `tags_descriptions` | `object \| null` | No | — |
+| `id` | `number \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `fancy_title` | `string \| null` | No | — |
+| `posts_count` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `views` | `number \| null` | No | — |
+| `reply_count` | `number \| null` | No | — |
+| `like_count` | `number \| null` | No | — |
+| `last_posted_at` | `string \| null \| null` | No | — |
+| `visible` | `boolean \| null` | No | — |
+| `closed` | `boolean \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `has_summary` | `boolean \| null` | No | — |
+| `archetype` | `string \| null` | No | — |
+| `slug` | `string \| null` | No | — |
+| `category_id` | `number \| null` | No | — |
+| `word_count` | `number \| null \| null` | No | — |
+| `deleted_at` | `string \| null \| null` | No | — |
+| `user_id` | `number \| null` | No | — |
+| `featured_link` | `string \| null \| null` | No | — |
+| `pinned_globally` | `boolean \| null` | No | — |
+| `pinned_at` | `string \| null \| null` | No | — |
+| `pinned_until` | `string \| null \| null` | No | — |
+| `image_url` | `string \| null \| null` | No | — |
+| `slow_mode_seconds` | `number \| null` | No | — |
+| `draft` | `string \| null \| null` | No | — |
+| `draft_key` | `string \| null` | No | — |
+| `draft_sequence` | `number \| null` | No | — |
+| `unpinned` | `string \| null \| null` | No | — |
+| `pinned` | `boolean \| null` | No | — |
+| `current_post_number` | `number \| null` | No | — |
+| `highest_post_number` | `number \| null \| null` | No | — |
+| `deleted_by` | `string \| null \| null` | No | — |
+| `has_deleted` | `boolean \| null` | No | — |
+| `actions_summary` | `object[] \| null` | No | — |
+| `chunk_size` | `number \| null` | No | — |
+| `bookmarked` | `boolean \| null` | No | — |
+| `bookmarks` | `any[] \| null` | No | — |
+| `topic_timer` | `string \| null \| null` | No | — |
+| `message_bus_last_id` | `number \| null` | No | — |
+| `participant_count` | `number \| null` | No | — |
+| `show_read_indicator` | `boolean \| null` | No | — |
+| `thumbnails` | `string \| null \| null` | No | — |
+| `slow_mode_enabled_until` | `string \| null \| null` | No | — |
+| `details` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="post_stream full type">
+
+```ts
+{
+  posts?: {
+    id?: number | null,
+    name?: string | null,
+    username?: string | null,
+    avatar_template?: string | null,
+    created_at?: string | null,
+    cooked?: string | null,
+    post_number?: number | null,
+    post_type?: number | null,
+    updated_at?: string | null,
+    reply_count?: number | null,
+    reply_to_post_number?: string | null | null,
+    quote_count?: number | null,
+    incoming_link_count?: number | null,
+    reads?: number | null,
+    readers_count?: number | null,
+    score?: number | null,
+    yours?: boolean | null,
+    topic_id?: number | null,
+    topic_slug?: string | null,
+    display_username?: string | null,
+    primary_group_name?: string | null | null,
+    flair_name?: string | null | null,
+    flair_url?: string | null | null,
+    flair_bg_color?: string | null | null,
+    flair_color?: string | null | null,
+    version?: number | null,
+    can_edit?: boolean | null,
+    can_delete?: boolean | null,
+    can_recover?: boolean | null,
+    can_see_hidden_post?: boolean | null,
+    can_wiki?: boolean | null,
+    link_counts?: {
+      url?: string | null,
+      internal?: boolean | null,
+      reflection?: boolean | null,
+      title?: string | null,
+      clicks?: number | null
+    }[] | null,
+    read?: boolean | null,
+    user_title?: string | null | null,
+    bookmarked?: boolean | null,
+    actions_summary?: {
+      id?: number | null,
+      can_act?: boolean | null
+    }[] | null,
+    moderator?: boolean | null,
+    admin?: boolean | null,
+    staff?: boolean | null,
+    user_id?: number | null,
+    hidden?: boolean | null,
+    trust_level?: number | null,
+    deleted_at?: string | null | null,
+    user_deleted?: boolean | null,
+    edit_reason?: string | null | null,
+    can_view_edit_history?: boolean | null,
+    wiki?: boolean | null,
+    reviewable_id?: number | null,
+    reviewable_score_count?: number | null,
+    reviewable_score_pending_count?: number | null
+  }[] | null,
+  stream?: any[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="suggested_topics full type">
+
+```ts
+{
+  id?: number | null,
+  title?: string | null,
+  fancy_title?: string | null,
+  slug?: string | null,
+  posts_count?: number | null,
+  reply_count?: number | null,
+  highest_post_number?: number | null,
+  image_url?: string | null | null,
+  created_at?: string | null,
+  last_posted_at?: string | null | null,
+  bumped?: boolean | null,
+  bumped_at?: string | null,
+  archetype?: string | null,
+  unseen?: boolean | null,
+  pinned?: boolean | null,
+  unpinned?: string | null | null,
+  excerpt?: string | null,
+  visible?: boolean | null,
+  closed?: boolean | null,
+  archived?: boolean | null,
+  bookmarked?: boolean | null | null,
+  liked?: boolean | null | null,
+  tags?: {
+    id?: number | null,
+    name?: string | null,
+    slug?: string | null
+  }[] | null,
+  tags_descriptions?: {
+  } | null,
+  like_count?: number | null,
+  views?: number | null,
+  category_id?: number | null,
+  featured_link?: string | null | null,
+  posters?: {
+    extras?: string | null,
+    description?: string | null,
+    user?: {
+      id?: number | null,
+      username?: string | null,
+      name?: string | null,
+      avatar_template?: string | null
+    } | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="tags full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  slug?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="tags_descriptions full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="actions_summary full type">
+
+```ts
+{
+  id?: number | null,
+  count?: number | null,
+  hidden?: boolean | null,
+  can_act?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="details full type">
+
+```ts
+{
+  can_edit?: boolean | null,
+  notification_level?: number | null,
+  can_move_posts?: boolean | null,
+  can_delete?: boolean | null,
+  can_remove_allowed_users?: boolean | null,
+  can_create_post?: boolean | null,
+  can_reply_as_new_topic?: boolean | null,
+  can_invite_to?: boolean | null,
+  can_invite_via_email?: boolean | null,
+  can_flag_topic?: boolean | null,
+  can_convert_topic?: boolean | null,
+  can_review_topic?: boolean | null,
+  can_close_topic?: boolean | null,
+  can_archive_topic?: boolean | null,
+  can_split_merge_topic?: boolean | null,
+  can_edit_staff_notes?: boolean | null,
+  can_toggle_topic_visibility?: boolean | null,
+  can_pin_unpin_topic?: boolean | null,
+  can_banner_topic?: boolean | null,
+  can_moderate_category?: boolean | null,
+  can_remove_self_id?: number | null,
+  participants?: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    avatar_template?: string | null,
+    post_count?: number | null,
+    primary_group_name?: string | null | null,
+    flair_name?: string | null | null,
+    flair_url?: string | null | null,
+    flair_color?: string | null | null,
+    flair_bg_color?: string | null | null,
+    flair_group_id?: number | null | null,
+    admin?: boolean | null,
+    moderator?: boolean | null,
+    trust_level?: number | null
+  }[] | null,
+  created_by?: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    avatar_template?: string | null
+  } | null,
+  last_poster?: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    avatar_template?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getByExternalId
+
+`topics.getByExternalId`
+
+Get topic by external_id. Discourse answers with a redirect to the topic on the forum's configured hostname, which the client follows.
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.topics.getByExternalId({ external_id: 'ext-42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `external_id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Discourse accepted the call; it answered with no body. |
+
+
+
+---
+
+### getPosts
+
+`topics.getPosts`
+
+Get specific posts from a topic. (GET /t/&#123;id&#125;/posts.json)
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.topics.getPosts({
+	id: 42,
+	post_ids[]: [1],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `post_ids[]` | `number[]` | Yes | The ids of the posts to read (repeat for several). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `post_stream` | `object \| null` | No | — |
+| `id` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="post_stream full type">
+
+```ts
+{
+  posts?: {
+    id?: number | null,
+    name?: string | null | null,
+    username?: string | null,
+    avatar_template?: string | null,
+    created_at?: string | null,
+    cooked?: string | null,
+    post_number?: number | null,
+    post_type?: number | null,
+    updated_at?: string | null,
+    reply_count?: number | null,
+    reply_to_post_number?: string | null | null,
+    quote_count?: number | null,
+    incoming_link_count?: number | null,
+    reads?: number | null,
+    readers_count?: number | null,
+    score?: number | null,
+    yours?: boolean | null,
+    topic_id?: number | null,
+    topic_slug?: string | null,
+    display_username?: string | null | null,
+    primary_group_name?: string | null | null,
+    flair_name?: string | null | null,
+    flair_url?: string | null | null,
+    flair_bg_color?: string | null | null,
+    flair_color?: string | null | null,
+    version?: number | null,
+    can_edit?: boolean | null,
+    can_delete?: boolean | null,
+    can_recover?: boolean | null,
+    can_wiki?: boolean | null,
+    read?: boolean | null,
+    user_title?: string | null | null,
+    actions_summary?: {
+      id?: number | null,
+      can_act?: boolean | null
+    }[] | null,
+    moderator?: boolean | null,
+    admin?: boolean | null,
+    staff?: boolean | null,
+    user_id?: number | null,
+    hidden?: boolean | null,
+    trust_level?: number | null,
+    deleted_at?: string | null | null,
+    user_deleted?: boolean | null,
+    edit_reason?: string | null | null,
+    can_view_edit_history?: boolean | null,
+    wiki?: boolean | null,
+    reviewable_id?: number | null,
+    reviewable_score_count?: number | null,
+    reviewable_score_pending_count?: number | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### invite
+
+`topics.invite`
+
+Invite to topic. (POST /t/&#123;id&#125;/invite.json)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.discourse.api.topics.invite({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `user` | `string` | No | — |
+| `email` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  avatar_template?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### inviteGroup
+
+`topics.inviteGroup`
+
+Invite group to topic. (POST /t/&#123;id&#125;/invite-group.json)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.discourse.api.topics.inviteGroup({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `group` | `string` | No | The name of the group to invite |
+| `should_notify` | `boolean` | No | Whether to notify the group, it defaults to true |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="group full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listLatest
+
+`topics.listLatest`
+
+Get the latest topics. (GET /latest.json)
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.topics.listLatest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order` | `string` | No | Enum: `default`, `created`, `activity`, `views`, `posts`, `category`, `likes`, `op_likes`, `posters` |
+| `ascending` | `string` | No | Defaults to `desc`, add `ascending=true` to sort asc |
+| `per_page` | `number` | No | Maximum number of topics returned, between 1-100 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[] \| null` | No | — |
+| `primary_groups` | `any[] \| null` | No | — |
+| `topic_list` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null | null,
+  avatar_template?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="topic_list full type">
+
+```ts
+{
+  can_create_topic?: boolean | null,
+  draft?: string | null | null,
+  draft_key?: string | null,
+  draft_sequence?: number | null,
+  per_page?: number | null,
+  topics?: {
+    id?: number | null,
+    title?: string | null,
+    fancy_title?: string | null,
+    slug?: string | null,
+    posts_count?: number | null,
+    reply_count?: number | null,
+    highest_post_number?: number | null,
+    image_url?: string | null,
+    created_at?: string | null,
+    last_posted_at?: string | null,
+    bumped?: boolean | null,
+    bumped_at?: string | null,
+    archetype?: string | null,
+    unseen?: boolean | null,
+    last_read_post_number?: number | null,
+    unread_posts?: number | null,
+    pinned?: boolean | null,
+    unpinned?: string | null | null,
+    visible?: boolean | null,
+    closed?: boolean | null,
+    archived?: boolean | null,
+    notification_level?: number | null,
+    bookmarked?: boolean | null,
+    liked?: boolean | null,
+    views?: number | null,
+    like_count?: number | null,
+    has_summary?: boolean | null,
+    last_poster_username?: string | null,
+    category_id?: number | null,
+    op_like_count?: number | null,
+    pinned_globally?: boolean | null,
+    featured_link?: string | null | null,
+    posters?: {
+      extras?: string | null,
+      description?: string | null,
+      user_id?: number | null,
+      primary_group_id?: number | null | null
+    }[] | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTop
+
+`topics.listTop`
+
+Get the top topics filtered by period. (GET /top.json)
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.topics.listTop({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `period` | `string` | No | Enum: `all`, `yearly`, `quarterly`, `monthly`, `weekly`, `daily` |
+| `per_page` | `number` | No | Maximum number of topics returned, between 1-100 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[] \| null` | No | — |
+| `primary_groups` | `any[] \| null` | No | — |
+| `topic_list` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  avatar_template?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="topic_list full type">
+
+```ts
+{
+  can_create_topic?: boolean | null,
+  draft?: string | null | null,
+  draft_key?: string | null,
+  draft_sequence?: number | null,
+  for_period?: string | null,
+  per_page?: number | null,
+  topics?: {
+    id?: number | null,
+    title?: string | null,
+    fancy_title?: string | null,
+    slug?: string | null,
+    posts_count?: number | null,
+    reply_count?: number | null,
+    highest_post_number?: number | null,
+    image_url?: string | null | null,
+    created_at?: string | null,
+    last_posted_at?: string | null,
+    bumped?: boolean | null,
+    bumped_at?: string | null,
+    archetype?: string | null,
+    unseen?: boolean | null,
+    last_read_post_number?: number | null,
+    unread_posts?: number | null,
+    pinned?: boolean | null,
+    unpinned?: boolean | null,
+    visible?: boolean | null,
+    closed?: boolean | null,
+    archived?: boolean | null,
+    notification_level?: number | null,
+    bookmarked?: boolean | null,
+    liked?: boolean | null,
+    views?: number | null,
+    like_count?: number | null,
+    has_summary?: boolean | null,
+    last_poster_username?: string | null,
+    category_id?: number | null,
+    op_like_count?: number | null,
+    pinned_globally?: boolean | null,
+    featured_link?: string | null | null,
+    posters?: {
+      extras?: string | null | null,
+      description?: string | null,
+      user_id?: number | null,
+      primary_group_id?: number | null | null
+    }[] | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setNotificationLevel
+
+`topics.setNotificationLevel`
+
+Set notification level. (POST /t/&#123;id&#125;/notifications.json)
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.topics.setNotificationLevel({ id: 42, notification_level: '0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `notification_level` | `0 \| 1 \| 2 \| 3` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `string \| null` | No | — |
+
+
+
+---
+
+### update
+
+`topics.update`
+
+Update a topic. (PUT /t/-/&#123;id&#125;.json)
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.topics.update({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `topic` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="topic full type">
+
+```ts
+{
+  title?: string,
+  category_id?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `basic_topic` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="basic_topic full type">
+
+```ts
+{
+  id?: number | null,
+  title?: string | null,
+  fancy_title?: string | null,
+  slug?: string | null,
+  posts_count?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateStatus
+
+`topics.updateStatus`
+
+Update the status of a topic. (PUT /t/&#123;id&#125;/status.json)
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.topics.updateStatus({ id: 42, status: 'closed', enabled: 'true' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `status` | `closed \| pinned \| pinned_globally \| archived \| visible` | Yes | — |
+| `enabled` | `true \| false` | Yes | — |
+| `until` | `string` | No | Only required for `pinned` and `pinned_globally` |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `string \| null` | No | — |
+| `topic_status_update` | `string \| null \| null` | No | — |
+
+
+
+---
+
+### updateTimestamp
+
+`topics.updateTimestamp`
+
+Update topic timestamp. (PUT /t/&#123;id&#125;/change-timestamp.json)
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.topics.updateTimestamp({ id: 42, timestamp: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `string \| null` | No | — |
+
+
+
+---
+
+## Uploads
+
+### abortMultipart
+
+`uploads.abortMultipart`
+
+Abort multipart upload. This endpoint aborts the multipart upload initiated with /create-multipart. This should be used when cancelling the upload. It does not matter if parts were already uploaded into the external storage provider. Needs uploads stored on S3 (enable_direct_s3_uploads).
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.uploads.abortMultipart({ external_upload_identifier: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `external_upload_identifier` | `string` | Yes | The identifier of the multipart upload in the external storage provider. This is the multipart upload_id in AWS S3. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `string \| null` | No | — |
+
+
+
+---
+
+### batchPresignMultipartParts
+
+`uploads.batchPresignMultipartParts`
+
+Generates batches of presigned URLs for multipart parts. Multipart uploads are uploaded in chunks or parts to individual presigned URLs, similar to the one generated by /generate-presigned-put. The part numbers provided must be between 1 and 10000, and a request can have at most 100 part numbers. Needs uploads stored on S3 (enable_direct_s3_uploads).
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.uploads.batchPresignMultipartParts({
+	part_numbers: ['example'],
+	unique_identifier: 'example',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `part_numbers` | `any[]` | Yes | The part numbers to generate the presigned URLs for. Each part number must be between 1 and 10000. A request can have at most 100 part numbers. |
+| `unique_identifier` | `string` | Yes | The unique identifier returned in the original /create-multipart request. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presigned_urls` | `object \| null` | No | The presigned URLs for each part number, which has the part numbers as keys. |
+
+<AccordionGroup>
+<Accordion title="presigned_urls full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### completeExternal
+
+`uploads.completeExternal`
+
+Completes a direct external upload. Completes an external upload initialized with /get-presigned-put. The file will be moved from its temporary location in external storage to a final destination in the S3 bucket. An Upload record will also be created in the database in most cases. Needs uploads stored on S3 (enable_direct_s3_uploads).
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.uploads.completeExternal({ unique_identifier: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `unique_identifier` | `string` | Yes | The unique identifier returned in the original /generate-presigned-put request. |
+| `for_private_message` | `string` | No | Optionally set this to true if the upload is for a private message. |
+| `for_site_setting` | `string` | No | Optionally set this to true if the upload is for a site setting. |
+| `pasted` | `string` | No | Optionally set this to true if the upload was pasted into the upload area. This will convert PNG files to JPEG. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `original_filename` | `string \| null` | No | — |
+| `filesize` | `number \| null` | No | — |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `thumbnail_width` | `number \| null` | No | — |
+| `thumbnail_height` | `number \| null` | No | — |
+| `extension` | `string \| null` | No | — |
+| `short_url` | `string \| null` | No | — |
+| `short_path` | `string \| null` | No | — |
+| `retain_hours` | `string \| null \| null` | No | — |
+| `human_filesize` | `string \| null` | No | — |
+| `dominant_color` | `string \| null \| null` | No | — |
+| `thumbnail` | `object \| null` | No | — |
+| `optimized_video` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="thumbnail full type">
+
+```ts
+{
+  id?: number | null,
+  upload_id?: number | null,
+  url?: string | null,
+  extension?: string | null,
+  width?: number | null,
+  height?: number | null,
+  filesize?: number | null
+} | null | null
+```
+</Accordion>
+
+<Accordion title="optimized_video full type">
+
+```ts
+{
+  id?: number | null,
+  upload_id?: number | null,
+  url?: string | null,
+  extension?: string | null,
+  filesize?: number | null,
+  sha1?: string | null,
+  original_filename?: string | null
+} | null | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### completeMultipart
+
+`uploads.completeMultipart`
+
+Complete multipart upload. Completes the multipart upload in the external store, and copies the file from its temporary location to its final location in the store. All of the parts must have been uploaded to the external storage provider. Needs uploads stored on S3 (enable_direct_s3_uploads).
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.uploads.completeMultipart({
+	unique_identifier: 'example',
+	parts: ['example'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `unique_identifier` | `string` | Yes | The unique identifier returned in the original /create-multipart request. |
+| `parts` | `any[]` | Yes | All of the part numbers and their corresponding ETags that have been uploaded must be provided. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `original_filename` | `string \| null` | No | — |
+| `filesize` | `number \| null` | No | — |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `thumbnail_width` | `number \| null` | No | — |
+| `thumbnail_height` | `number \| null` | No | — |
+| `extension` | `string \| null` | No | — |
+| `short_url` | `string \| null` | No | — |
+| `short_path` | `string \| null` | No | — |
+| `retain_hours` | `string \| null \| null` | No | — |
+| `human_filesize` | `string \| null` | No | — |
+| `dominant_color` | `string \| null \| null` | No | — |
+| `thumbnail` | `object \| null` | No | — |
+| `optimized_video` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="thumbnail full type">
+
+```ts
+{
+  id?: number | null,
+  upload_id?: number | null,
+  url?: string | null,
+  extension?: string | null,
+  width?: number | null,
+  height?: number | null,
+  filesize?: number | null
+} | null | null
+```
+</Accordion>
+
+<Accordion title="optimized_video full type">
+
+```ts
+{
+  id?: number | null,
+  upload_id?: number | null,
+  url?: string | null,
+  extension?: string | null,
+  filesize?: number | null,
+  sha1?: string | null,
+  original_filename?: string | null
+} | null | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`uploads.create`
+
+Creates an upload. (POST /uploads.json)
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.uploads.create({ upload_type: 'avatar' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `upload_type` | `avatar \| profile_background \| card_background \| custom_emoji \| composer` | Yes | — |
+| `user_id` | `number` | No | required if uploading an avatar |
+| `synchronous` | `boolean` | No | Use this flag to return an id and url |
+| `file` | `string \| object \| custom` | No | A file: a public URL to it, or &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125; for a small one. |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `original_filename` | `string \| null` | No | — |
+| `filesize` | `number \| null` | No | — |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `thumbnail_width` | `number \| null` | No | — |
+| `thumbnail_height` | `number \| null` | No | — |
+| `extension` | `string \| null` | No | — |
+| `short_url` | `string \| null` | No | — |
+| `short_path` | `string \| null` | No | — |
+| `retain_hours` | `string \| null \| null` | No | — |
+| `human_filesize` | `string \| null` | No | — |
+| `dominant_color` | `string \| null \| null` | No | — |
+| `thumbnail` | `object \| null` | No | — |
+| `optimized_video` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="thumbnail full type">
+
+```ts
+{
+  id?: number | null,
+  upload_id?: number | null,
+  url?: string | null,
+  extension?: string | null,
+  width?: number | null,
+  height?: number | null,
+  filesize?: number | null
+} | null | null
+```
+</Accordion>
+
+<Accordion title="optimized_video full type">
+
+```ts
+{
+  id?: number | null,
+  upload_id?: number | null,
+  url?: string | null,
+  extension?: string | null,
+  filesize?: number | null,
+  sha1?: string | null,
+  original_filename?: string | null
+} | null | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createMultipart
+
+`uploads.createMultipart`
+
+Creates a multipart external upload. Creates a multipart upload in the external storage provider, storing a temporary reference to the external upload similar to /get-presigned-put. You must have the correct permissions and CORS settings configured in your external provider. We support AWS S3 as the default. Needs uploads stored on S3 (enable_direct_s3_uploads).
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.uploads.createMultipart({ upload_type: 'avatar', file_name: 'example', file_size: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `upload_type` | `avatar \| profile_background \| card_background \| custom_emoji \| composer` | Yes | — |
+| `file_name` | `string` | Yes | — |
+| `file_size` | `number` | Yes | File size should be represented in bytes. |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+  sha1-checksum?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string \| null` | No | The path of the temporary file on the external storage service. |
+| `external_upload_identifier` | `string \| null` | No | The identifier of the multipart upload in the external storage provider. This is the multipart upload_id in AWS S3. |
+| `unique_identifier` | `string \| null` | No | A unique string that identifies the external upload. This must be stored and then sent in the /complete-multipart and /batch-presign-multipart-parts endpoints. |
+
+
+
+---
+
+### generatePresignedPut
+
+`uploads.generatePresignedPut`
+
+Initiates a direct external upload. Direct external uploads bypass the usual method of creating uploads via the POST /uploads route, and upload directly to an external provider, which by default is S3. Needs uploads stored on S3 (enable_direct_s3_uploads): a local-storage forum answers 400 or 404.
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.uploads.generatePresignedPut({ type: 'avatar', file_name: 'example', file_size: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `avatar \| profile_background \| card_background \| custom_emoji \| composer` | Yes | — |
+| `file_name` | `string` | Yes | — |
+| `file_size` | `number` | Yes | File size should be represented in bytes. |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+  sha1-checksum?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string \| null` | No | The path of the temporary file on the external storage service. |
+| `url` | `string \| null` | No | A presigned PUT URL which must be used to upload the file binary blob to. |
+| `signed_headers` | `object \| null` | No | A map of headers that must be sent with the PUT request. |
+| `unique_identifier` | `string \| null` | No | A unique string that identifies the external upload. This must be stored and then sent in the /complete-external-upload endpoint to complete the direct upload. |
+
+<AccordionGroup>
+<Accordion title="signed_headers full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### activate
+
+`users.activate`
+
+Activate a user. Needs an admin API key.
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.users.activate({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `string \| null` | No | — |
+
+
+
+---
+
+### adminGet
+
+`users.adminGet`
+
+Get a user by id. Needs an admin API key.
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.users.adminGet({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `username` | `string \| null` | No | — |
+| `name` | `string \| null \| null` | No | — |
+| `avatar_template` | `string \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `admin` | `boolean \| null` | No | — |
+| `interactive_bot` | `boolean \| null` | No | Whether the bot is interactive. Only present for bot users. |
+| `moderator` | `boolean \| null` | No | — |
+| `last_seen_at` | `string \| null \| null` | No | — |
+| `last_emailed_at` | `string \| null \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `last_seen_age` | `number \| null \| null` | No | — |
+| `last_emailed_age` | `number \| null \| null` | No | — |
+| `created_at_age` | `number \| null \| null` | No | — |
+| `trust_level` | `number \| null` | No | — |
+| `manual_locked_trust_level` | `string \| null \| null` | No | — |
+| `title` | `string \| null \| null` | No | — |
+| `time_read` | `number \| null` | No | — |
+| `staged` | `boolean \| null` | No | — |
+| `days_visited` | `number \| null` | No | — |
+| `posts_read_count` | `number \| null` | No | — |
+| `topics_entered` | `number \| null` | No | — |
+| `post_count` | `number \| null` | No | — |
+| `associated_accounts` | `any[] \| null` | No | — |
+| `can_send_activation_email` | `boolean \| null` | No | — |
+| `can_activate` | `boolean \| null` | No | — |
+| `can_deactivate` | `boolean \| null` | No | — |
+| `can_change_trust_level` | `boolean \| null` | No | — |
+| `ip_address` | `string \| null` | No | — |
+| `registration_ip_address` | `string \| null \| null` | No | — |
+| `can_grant_admin` | `boolean \| null` | No | — |
+| `can_revoke_admin` | `boolean \| null` | No | — |
+| `can_grant_moderation` | `boolean \| null` | No | — |
+| `can_revoke_moderation` | `boolean \| null` | No | — |
+| `can_impersonate` | `boolean \| null` | No | — |
+| `like_count` | `number \| null` | No | — |
+| `like_given_count` | `number \| null` | No | — |
+| `topic_count` | `number \| null` | No | — |
+| `flags_given_count` | `number \| null` | No | — |
+| `flags_received_count` | `number \| null` | No | — |
+| `private_topics_count` | `number \| null` | No | — |
+| `can_delete_all_posts` | `boolean \| null` | No | — |
+| `can_be_deleted` | `boolean \| null` | No | — |
+| `can_be_anonymized` | `boolean \| null` | No | — |
+| `can_be_merged` | `boolean \| null` | No | — |
+| `full_suspend_reason` | `string \| null \| null` | No | — |
+| `latest_export` | `object \| null` | No | — |
+| `full_silence_reason` | `string \| null \| null` | No | — |
+| `silence_reason` | `string \| null \| null` | No | — |
+| `post_edits_count` | `number \| null \| null` | No | — |
+| `primary_group_id` | `number \| null \| null` | No | — |
+| `badge_count` | `number \| null` | No | — |
+| `warnings_received_count` | `number \| null` | No | — |
+| `bounce_score` | `number \| null \| null` | No | — |
+| `reset_bounce_score_after` | `string \| null \| null` | No | — |
+| `can_view_action_logs` | `boolean \| null` | No | — |
+| `can_disable_second_factor` | `boolean \| null` | No | — |
+| `can_delete_sso_record` | `boolean \| null` | No | — |
+| `api_key_count` | `number \| null` | No | — |
+| `similar_users_count` | `number \| null` | No | — |
+| `single_sign_on_record` | `string \| null \| null` | No | — |
+| `approved_by` | `object \| null` | No | — |
+| `suspended_by` | `object \| null` | No | — |
+| `silenced_by` | `object \| null` | No | — |
+| `penalty_counts` | `object \| null` | No | — |
+| `next_penalty` | `string \| null` | No | — |
+| `tl3_requirements` | `object \| null` | No | — |
+| `groups` | `object[] \| null` | No | — |
+| `external_ids` | `object \| null` | No | — |
+| `include_ip` | `boolean \| null` | No | — |
+| `upcoming_changes_stats` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="latest_export full type">
+
+```ts
+{
+} | null | null
+```
+</Accordion>
+
+<Accordion title="approved_by full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  avatar_template?: string | null
+} | null | null
+```
+</Accordion>
+
+<Accordion title="suspended_by full type">
+
+```ts
+{
+} | null | null
+```
+</Accordion>
+
+<Accordion title="silenced_by full type">
+
+```ts
+{
+} | null | null
+```
+</Accordion>
+
+<Accordion title="penalty_counts full type">
+
+```ts
+{
+  silenced?: number | null,
+  suspended?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="tl3_requirements full type">
+
+```ts
+{
+  time_period?: number | null,
+  requirements_met?: boolean | null,
+  requirements_lost?: boolean | null,
+  trust_level_locked?: boolean | null,
+  on_grace_period?: boolean | null,
+  days_visited?: number | null,
+  min_days_visited?: number | null,
+  num_topics_replied_to?: number | null,
+  min_topics_replied_to?: number | null,
+  topics_viewed?: number | null,
+  min_topics_viewed?: number | null,
+  posts_read?: number | null,
+  min_posts_read?: number | null,
+  topics_viewed_all_time?: number | null,
+  min_topics_viewed_all_time?: number | null,
+  posts_read_all_time?: number | null,
+  min_posts_read_all_time?: number | null,
+  num_flagged_posts?: number | null,
+  max_flagged_posts?: number | null,
+  num_flagged_by_users?: number | null,
+  max_flagged_by_users?: number | null,
+  num_likes_given?: number | null,
+  min_likes_given?: number | null,
+  num_likes_received?: number | null,
+  min_likes_received?: number | null,
+  num_likes_received_days?: number | null,
+  min_likes_received_days?: number | null,
+  num_likes_received_users?: number | null,
+  min_likes_received_users?: number | null,
+  penalty_counts?: {
+    silenced?: number | null,
+    suspended?: number | null,
+    total?: number | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="groups full type">
+
+```ts
+{
+  id?: number | null,
+  automatic?: boolean | null,
+  name?: string | null,
+  display_name?: string | null,
+  user_count?: number | null,
+  mentionable_level?: number | null,
+  messageable_level?: number | null,
+  visibility_level?: number | null,
+  primary_group?: boolean | null,
+  title?: string | null | null,
+  grant_trust_level?: string | null | null,
+  incoming_email?: string | null | null,
+  has_messages?: boolean | null,
+  flair_url?: string | null | null,
+  flair_bg_color?: string | null | null,
+  flair_color?: string | null | null,
+  flair_group_id?: number | null | null,
+  bio_raw?: string | null | null,
+  bio_cooked?: string | null | null,
+  bio_excerpt?: string | null | null,
+  public_admission?: boolean | null,
+  public_exit?: boolean | null,
+  allow_membership_requests?: boolean | null,
+  full_name?: string | null | null,
+  default_notification_level?: number | null,
+  membership_request_template?: string | null | null,
+  members_visibility_level?: number | null,
+  can_see_members?: boolean | null,
+  can_admin_group?: boolean | null,
+  publish_read_state?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="external_ids full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="upcoming_changes_stats full type">
+
+```ts
+{
+  name?: string | null,
+  humanized_name?: string | null,
+  description?: string | null,
+  enabled?: boolean | null,
+  specific_groups?: string[] | null,
+  reason?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### adminList
+
+`users.adminList`
+
+List users. Needs an admin API key. (GET /admin/users.json)
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.users.adminList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order` | `created \| last_emailed \| seen \| username \| email \| trust_level \| days_visited \| posts_read \| topics_viewed \| posts \| read_time` | No | — |
+| `asc` | `true` | No | — |
+| `page` | `number` | No | — |
+| `show_emails` | `boolean` | No | Include user email addresses in response. These requests will be logged in the staff action logs. |
+| `stats` | `boolean` | No | Include user stats information |
+| `email` | `string` | No | Filter to the user with this email address |
+| `ip` | `string` | No | Filter to users with this IP address |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null | null,
+  avatar_template?: string | null,
+  email?: string | null,
+  secondary_emails?: any[] | null,
+  active?: boolean | null,
+  admin?: boolean | null,
+  moderator?: boolean | null,
+  last_seen_at?: string | null | null,
+  last_emailed_at?: string | null | null,
+  created_at?: string | null,
+  last_seen_age?: number | null | null,
+  last_emailed_age?: number | null | null,
+  created_at_age?: number | null | null,
+  trust_level?: number | null,
+  manual_locked_trust_level?: string | null | null,
+  title?: string | null | null,
+  time_read?: number | null,
+  staged?: boolean | null,
+  days_visited?: number | null,
+  posts_read_count?: number | null,
+  topics_entered?: number | null,
+  post_count?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### adminListByFlag
+
+`users.adminListByFlag`
+
+List users by flag. Needs an admin API key.
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.users.adminListByFlag({ flag: 'active' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `flag` | `active \| new \| staff \| suspended \| blocked \| suspect` | Yes | — |
+| `order` | `created \| last_emailed \| seen \| username \| email \| trust_level \| days_visited \| posts_read \| topics_viewed \| posts \| read_time` | No | — |
+| `asc` | `true` | No | — |
+| `page` | `number` | No | — |
+| `show_emails` | `boolean` | No | Include user email addresses in response. These requests will be logged in the staff action logs. |
+| `stats` | `boolean` | No | Include user stats information |
+| `email` | `string` | No | Filter to the user with this email address |
+| `ip` | `string` | No | Filter to users with this IP address |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null | null,
+  avatar_template?: string | null,
+  email?: string | null,
+  secondary_emails?: any[] | null,
+  active?: boolean | null,
+  admin?: boolean | null,
+  moderator?: boolean | null,
+  last_seen_at?: string | null | null,
+  last_emailed_at?: string | null | null,
+  created_at?: string | null,
+  last_seen_age?: number | null | null,
+  last_emailed_age?: number | null | null,
+  created_at_age?: number | null | null,
+  trust_level?: number | null,
+  manual_locked_trust_level?: string | null | null,
+  title?: string | null | null,
+  time_read?: number | null,
+  staged?: boolean | null,
+  days_visited?: number | null,
+  posts_read_count?: number | null,
+  topics_entered?: number | null,
+  post_count?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### anonymize
+
+`users.anonymize`
+
+Anonymize a user. Replaces the user's name, email and profile for good. Needs an admin API key.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.discourse.api.users.anonymize({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `string \| null` | No | — |
+| `username` | `string \| null` | No | — |
+
+
+
+---
+
+### changePassword
+
+`users.changePassword`
+
+Change password. (PUT /users/password-reset/&#123;token&#125;.json)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.discourse.api.users.changePassword({ token: 'example', username: 'ada', password: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string \| number` | Yes | — |
+| `username` | `string` | Yes | — |
+| `password` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Discourse accepted the call; it answered with no body. |
+
+
+
+---
+
+### create
+
+`users.create`
+
+Creates a user. A forum with hide_email_address_taken on answers success without a user_id (and creates nothing) when the email is taken; with normalize_emails, plus addresses of one inbox count as the same email.
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.users.create({
+	name: 'staff',
+	email: 'ada@example.com',
+	password: 'example',
+	username: 'ada',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `password` | `string` | Yes | — |
+| `username` | `string` | Yes | — |
+| `active` | `boolean` | No | This param requires an admin api key in the request header or it will be ignored |
+| `approved` | `boolean` | No | — |
+| `user_fields` | `object` | No | — |
+| `external_ids` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user_fields full type">
+
+```ts
+{
+  1?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="external_ids full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `user_id` | `number \| null` | No | — |
+
+
+
+---
+
+### deactivate
+
+`users.deactivate`
+
+Deactivate a user. Needs an admin API key.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.discourse.api.users.deactivate({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`users.delete`
+
+Delete a user. Needs an admin API key. Cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.discourse.api.users.delete({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `delete_posts` | `boolean` | No | — |
+| `block_email` | `boolean` | No | — |
+| `block_urls` | `boolean` | No | — |
+| `block_ip` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean \| null` | No | — |
+
+
+
+---
+
+### get
+
+`users.get`
+
+Get a single user by username. (GET /u/&#123;username&#125;.json)
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.users.get({ username: 'ada' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_badges` | `any[] \| null` | No | — |
+| `user` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  avatar_template?: string | null,
+  last_posted_at?: string | null | null,
+  last_seen_at?: string | null | null,
+  created_at?: string | null,
+  ignored?: boolean | null,
+  muted?: boolean | null,
+  can_ignore_user?: boolean | null,
+  can_ignore_users?: boolean | null,
+  can_mute_user?: boolean | null,
+  can_mute_users?: boolean | null,
+  can_send_private_messages?: boolean | null,
+  can_send_private_message_to_user?: boolean | null,
+  trust_level?: number | null,
+  moderator?: boolean | null,
+  admin?: boolean | null,
+  title?: string | null | null,
+  badge_count?: number | null,
+  second_factor_backup_enabled?: boolean | null,
+  user_fields?: {
+    1?: string | null | null,
+    2?: string | null | null
+  } | null,
+  custom_fields?: {
+    first_name?: string | null | null
+  } | null,
+  time_read?: number | null,
+  recent_time_read?: number | null,
+  primary_group_id?: number | null | null,
+  primary_group_name?: string | null | null,
+  flair_group_id?: number | null | null,
+  flair_name?: string | null | null,
+  flair_url?: string | null | null,
+  flair_bg_color?: string | null | null,
+  flair_color?: string | null | null,
+  featured_topic?: {
+    id?: number | null,
+    title?: string | null,
+    fancy_title?: string | null,
+    slug?: string | null,
+    posts_count?: number | null
+  } | null,
+  staged?: boolean | null,
+  can_edit?: boolean | null,
+  can_edit_avatar?: boolean | null,
+  can_upload_avatar?: boolean | null,
+  can_edit_username?: boolean | null,
+  can_edit_email?: boolean | null,
+  can_edit_name?: boolean | null,
+  uploaded_avatar_id?: number | null | null,
+  has_title_badges?: boolean | null,
+  pending_count?: number | null,
+  pending_posts_count?: number | null,
+  profile_view_count?: number | null,
+  second_factor_enabled?: boolean | null,
+  can_upload_profile_header?: boolean | null,
+  can_upload_user_card_background?: boolean | null,
+  post_count?: number | null,
+  topic_count?: number | null,
+  can_be_deleted?: boolean | null,
+  can_delete_all_posts?: boolean | null,
+  staff_only_settings?: string[] | null,
+  locale?: string | null | null,
+  muted_category_ids?: any[] | null,
+  regular_category_ids?: any[] | null,
+  watched_tags?: any[] | null,
+  watching_first_post_tags?: any[] | null,
+  tracked_tags?: any[] | null,
+  muted_tags?: any[] | null,
+  tracked_category_ids?: any[] | null,
+  watched_category_ids?: any[] | null,
+  watched_first_post_category_ids?: any[] | null,
+  system_avatar_upload_id?: string | null | null,
+  system_avatar_template?: string | null,
+  associated_account_avatars?: {
+    id?: number | null,
+    name?: string | null,
+    upload_id?: number | null,
+    avatar_template?: string | null
+  }[] | null,
+  selected_user_associated_account_id?: number | null | null,
+  muted_usernames?: any[] | null,
+  ignored_usernames?: any[] | null,
+  allowed_pm_usernames?: any[] | null,
+  mailing_list_posts_per_day?: number | null,
+  can_change_bio?: boolean | null,
+  can_change_location?: boolean | null,
+  can_change_website?: boolean | null,
+  can_change_tracking_preferences?: boolean | null,
+  user_api_keys?: string | null | null,
+  user_passkeys?: any[] | null,
+  sidebar_tags?: any[] | null,
+  sidebar_category_ids?: any[] | null,
+  display_sidebar_tags?: boolean | null,
+  can_pick_theme_with_custom_homepage?: boolean | null,
+  user_auth_tokens?: {
+    id?: number | null,
+    client_ip?: string | null,
+    location?: string | null,
+    browser?: string | null,
+    device?: string | null,
+    os?: string | null,
+    icon?: string | null,
+    created_at?: string | null,
+    seen_at?: string | null,
+    is_active?: boolean | null
+  }[] | null,
+  user_notification_schedule?: {
+    enabled?: boolean | null,
+    day_0_start_time?: number | null,
+    day_0_end_time?: number | null,
+    day_1_start_time?: number | null,
+    day_1_end_time?: number | null,
+    day_2_start_time?: number | null,
+    day_2_end_time?: number | null,
+    day_3_start_time?: number | null,
+    day_3_end_time?: number | null,
+    day_4_start_time?: number | null,
+    day_4_end_time?: number | null,
+    day_5_start_time?: number | null,
+    day_5_end_time?: number | null,
+    day_6_start_time?: number | null,
+    day_6_end_time?: number | null
+  } | null,
+  use_logo_small_as_avatar?: boolean | null,
+  featured_user_badge_ids?: any[] | null,
+  invited_by?: string | null | null,
+  groups?: {
+    id?: number | null,
+    automatic?: boolean | null,
+    name?: string | null,
+    display_name?: string | null,
+    user_count?: number | null,
+    mentionable_level?: number | null,
+    messageable_level?: number | null,
+    visibility_level?: number | null,
+    primary_group?: boolean | null,
+    title?: string | null | null,
+    grant_trust_level?: string | null | null,
+    incoming_email?: string | null | null,
+    has_messages?: boolean | null,
+    flair_url?: string | null | null,
+    flair_bg_color?: string | null | null,
+    flair_color?: string | null | null,
+    bio_raw?: string | null | null,
+    bio_cooked?: string | null | null,
+    bio_excerpt?: string | null | null,
+    public_admission?: boolean | null,
+    public_exit?: boolean | null,
+    allow_membership_requests?: boolean | null,
+    full_name?: string | null | null,
+    default_notification_level?: number | null,
+    membership_request_template?: string | null | null,
+    members_visibility_level?: number | null,
+    can_see_members?: boolean | null,
+    can_admin_group?: boolean | null,
+    publish_read_state?: boolean | null
+  }[] | null,
+  group_users?: {
+    group_id?: number | null,
+    user_id?: number | null,
+    notification_level?: number | null,
+    owner?: boolean | null
+  }[] | null,
+  user_option?: {
+    user_id?: number | null,
+    mailing_list_mode?: boolean | null,
+    mailing_list_mode_frequency?: number | null,
+    email_digests?: boolean | null,
+    email_level?: number | null,
+    email_messages_level?: number | null,
+    external_links_in_new_tab?: boolean | null,
+    bookmark_auto_delete_preference?: number | null,
+    color_scheme_id?: string | null | null,
+    dark_scheme_id?: string | null | null,
+    dynamic_favicon?: boolean | null,
+    enable_quoting?: boolean | null,
+    enable_smart_lists?: boolean | null,
+    enable_markdown_monospace_font?: boolean | null,
+    digest_after_minutes?: number | null,
+    automatically_unpin_topics?: boolean | null,
+    auto_track_topics_after_msecs?: number | null,
+    notification_level_when_replying?: number | null,
+    new_topic_duration_minutes?: number | null,
+    email_previous_replies?: number | null,
+    email_in_reply_to?: boolean | null,
+    like_notification_frequency?: number | null,
+    notify_on_linked_posts?: boolean | null,
+    push_notification_level?: string | null,
+    enable_upcoming_change_available_notifications?: boolean | null,
+    include_tl0_in_digests?: boolean | null,
+    theme_ids?: any[] | null,
+    theme_key_seq?: number | null,
+    allow_private_messages?: boolean | null,
+    enable_allowed_pm_users?: boolean | null,
+    homepage_id?: string | null | null,
+    hide_profile_and_presence?: boolean | null,
+    hide_profile?: boolean | null,
+    hide_presence?: boolean | null,
+    text_size?: string | null,
+    text_size_seq?: number | null,
+    title_count_mode?: string | null,
+    timezone?: string | null | null,
+    skip_new_user_tips?: boolean | null,
+    default_calendar?: string | null,
+    oldest_search_log_date?: string | null | null,
+    sidebar_link_to_filtered_list?: boolean | null,
+    sidebar_show_count_of_new_items?: boolean | null,
+    watched_precedence_over_muted?: boolean | null,
+    seen_popups?: any[] | null | null,
+    composition_mode?: number | null,
+    interface_color_mode?: number | null,
+    automatically_translate?: boolean | null,
+    understood_languages?: string[] | null,
+    hidden_composer_toolbar_buttons?: string[] | null,
+    show_original_content?: boolean | null,
+    send_shortcut?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getByExternalId
+
+`users.getByExternalId`
+
+Get a user by external_id. (GET /u/by-external/&#123;external_id&#125;.json)
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.users.getByExternalId({ external_id: 'ext-42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `external_id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_badges` | `any[] \| null` | No | — |
+| `user` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  avatar_template?: string | null,
+  last_posted_at?: string | null | null,
+  last_seen_at?: string | null | null,
+  created_at?: string | null,
+  ignored?: boolean | null,
+  muted?: boolean | null,
+  can_ignore_user?: boolean | null,
+  can_ignore_users?: boolean | null,
+  can_mute_user?: boolean | null,
+  can_mute_users?: boolean | null,
+  can_send_private_messages?: boolean | null,
+  can_send_private_message_to_user?: boolean | null,
+  trust_level?: number | null,
+  moderator?: boolean | null,
+  admin?: boolean | null,
+  title?: string | null | null,
+  badge_count?: number | null,
+  second_factor_backup_enabled?: boolean | null,
+  user_fields?: {
+    1?: string | null | null,
+    2?: string | null | null
+  } | null,
+  custom_fields?: {
+    first_name?: string | null | null
+  } | null,
+  time_read?: number | null,
+  recent_time_read?: number | null,
+  primary_group_id?: number | null | null,
+  primary_group_name?: string | null | null,
+  flair_group_id?: number | null | null,
+  flair_name?: string | null | null,
+  flair_url?: string | null | null,
+  flair_bg_color?: string | null | null,
+  flair_color?: string | null | null,
+  featured_topic?: {
+    id?: number | null,
+    title?: string | null,
+    fancy_title?: string | null,
+    slug?: string | null,
+    posts_count?: number | null
+  } | null,
+  staged?: boolean | null,
+  can_edit?: boolean | null,
+  can_edit_avatar?: boolean | null,
+  can_upload_avatar?: boolean | null,
+  can_edit_username?: boolean | null,
+  can_edit_email?: boolean | null,
+  can_edit_name?: boolean | null,
+  uploaded_avatar_id?: number | null | null,
+  has_title_badges?: boolean | null,
+  pending_count?: number | null,
+  pending_posts_count?: number | null,
+  profile_view_count?: number | null,
+  second_factor_enabled?: boolean | null,
+  can_upload_profile_header?: boolean | null,
+  can_upload_user_card_background?: boolean | null,
+  post_count?: number | null,
+  topic_count?: number | null,
+  can_be_deleted?: boolean | null,
+  can_delete_all_posts?: boolean | null,
+  staff_only_settings?: string[] | null,
+  locale?: string | null | null,
+  muted_category_ids?: any[] | null,
+  regular_category_ids?: any[] | null,
+  watched_tags?: any[] | null,
+  watching_first_post_tags?: any[] | null,
+  tracked_tags?: any[] | null,
+  muted_tags?: any[] | null,
+  tracked_category_ids?: any[] | null,
+  watched_category_ids?: any[] | null,
+  watched_first_post_category_ids?: any[] | null,
+  system_avatar_upload_id?: string | null | null,
+  system_avatar_template?: string | null,
+  associated_account_avatars?: {
+    id?: number | null,
+    name?: string | null,
+    upload_id?: number | null,
+    avatar_template?: string | null
+  }[] | null,
+  selected_user_associated_account_id?: number | null | null,
+  muted_usernames?: any[] | null,
+  ignored_usernames?: any[] | null,
+  allowed_pm_usernames?: any[] | null,
+  mailing_list_posts_per_day?: number | null,
+  can_change_bio?: boolean | null,
+  can_change_location?: boolean | null,
+  can_change_website?: boolean | null,
+  can_change_tracking_preferences?: boolean | null,
+  user_api_keys?: string | null | null,
+  user_passkeys?: any[] | null,
+  sidebar_tags?: any[] | null,
+  sidebar_category_ids?: any[] | null,
+  display_sidebar_tags?: boolean | null,
+  can_pick_theme_with_custom_homepage?: boolean | null,
+  user_auth_tokens?: {
+    id?: number | null,
+    client_ip?: string | null,
+    location?: string | null,
+    browser?: string | null,
+    device?: string | null,
+    os?: string | null,
+    icon?: string | null,
+    created_at?: string | null,
+    seen_at?: string | null,
+    is_active?: boolean | null
+  }[] | null,
+  user_notification_schedule?: {
+    enabled?: boolean | null,
+    day_0_start_time?: number | null,
+    day_0_end_time?: number | null,
+    day_1_start_time?: number | null,
+    day_1_end_time?: number | null,
+    day_2_start_time?: number | null,
+    day_2_end_time?: number | null,
+    day_3_start_time?: number | null,
+    day_3_end_time?: number | null,
+    day_4_start_time?: number | null,
+    day_4_end_time?: number | null,
+    day_5_start_time?: number | null,
+    day_5_end_time?: number | null,
+    day_6_start_time?: number | null,
+    day_6_end_time?: number | null
+  } | null,
+  use_logo_small_as_avatar?: boolean | null,
+  featured_user_badge_ids?: any[] | null,
+  invited_by?: string | null | null,
+  groups?: {
+    id?: number | null,
+    automatic?: boolean | null,
+    name?: string | null,
+    display_name?: string | null,
+    user_count?: number | null,
+    mentionable_level?: number | null,
+    messageable_level?: number | null,
+    visibility_level?: number | null,
+    primary_group?: boolean | null,
+    title?: string | null | null,
+    grant_trust_level?: string | null | null,
+    incoming_email?: string | null | null,
+    has_messages?: boolean | null,
+    flair_url?: string | null | null,
+    flair_bg_color?: string | null | null,
+    flair_color?: string | null | null,
+    bio_raw?: string | null | null,
+    bio_cooked?: string | null | null,
+    bio_excerpt?: string | null | null,
+    public_admission?: boolean | null,
+    public_exit?: boolean | null,
+    allow_membership_requests?: boolean | null,
+    full_name?: string | null | null,
+    default_notification_level?: number | null,
+    membership_request_template?: string | null | null,
+    members_visibility_level?: number | null,
+    can_see_members?: boolean | null,
+    can_admin_group?: boolean | null,
+    publish_read_state?: boolean | null
+  }[] | null,
+  group_users?: {
+    group_id?: number | null,
+    user_id?: number | null,
+    notification_level?: number | null,
+    owner?: boolean | null
+  }[] | null,
+  user_option?: {
+    user_id?: number | null,
+    mailing_list_mode?: boolean | null,
+    mailing_list_mode_frequency?: number | null,
+    email_digests?: boolean | null,
+    email_level?: number | null,
+    email_messages_level?: number | null,
+    external_links_in_new_tab?: boolean | null,
+    bookmark_auto_delete_preference?: number | null,
+    color_scheme_id?: string | null | null,
+    dark_scheme_id?: string | null | null,
+    dynamic_favicon?: boolean | null,
+    enable_quoting?: boolean | null,
+    enable_smart_lists?: boolean | null,
+    enable_markdown_monospace_font?: boolean | null,
+    digest_after_minutes?: number | null,
+    automatically_unpin_topics?: boolean | null,
+    auto_track_topics_after_msecs?: number | null,
+    notification_level_when_replying?: number | null,
+    new_topic_duration_minutes?: number | null,
+    email_previous_replies?: number | null,
+    email_in_reply_to?: boolean | null,
+    like_notification_frequency?: number | null,
+    notify_on_linked_posts?: boolean | null,
+    push_notification_level?: string | null,
+    enable_upcoming_change_available_notifications?: boolean | null,
+    include_tl0_in_digests?: boolean | null,
+    theme_ids?: any[] | null,
+    theme_key_seq?: number | null,
+    allow_private_messages?: boolean | null,
+    enable_allowed_pm_users?: boolean | null,
+    homepage_id?: string | null | null,
+    hide_profile_and_presence?: boolean | null,
+    hide_profile?: boolean | null,
+    hide_presence?: boolean | null,
+    text_size?: string | null,
+    text_size_seq?: number | null,
+    title_count_mode?: string | null,
+    timezone?: string | null | null,
+    skip_new_user_tips?: boolean | null,
+    default_calendar?: string | null,
+    oldest_search_log_date?: string | null | null,
+    sidebar_link_to_filtered_list?: boolean | null,
+    sidebar_show_count_of_new_items?: boolean | null,
+    watched_precedence_over_muted?: boolean | null,
+    seen_popups?: any[] | null | null,
+    composition_mode?: number | null,
+    interface_color_mode?: number | null,
+    automatically_translate?: boolean | null,
+    understood_languages?: string[] | null,
+    hidden_composer_toolbar_buttons?: string[] | null,
+    show_original_content?: boolean | null,
+    send_shortcut?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getByProviderExternalId
+
+`users.getByProviderExternalId`
+
+Get a user by identity provider external ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.users.getByProviderExternalId({ provider: 'example', external_id: 'ext-42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `string \| number` | Yes | Authentication provider name. Can be found in the provider callback URL: `/auth/{provider}/callback` |
+| `external_id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_badges` | `any[] \| null` | No | — |
+| `user` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  avatar_template?: string | null,
+  last_posted_at?: string | null | null,
+  last_seen_at?: string | null | null,
+  created_at?: string | null,
+  ignored?: boolean | null,
+  muted?: boolean | null,
+  can_ignore_user?: boolean | null,
+  can_ignore_users?: boolean | null,
+  can_mute_user?: boolean | null,
+  can_mute_users?: boolean | null,
+  can_send_private_messages?: boolean | null,
+  can_send_private_message_to_user?: boolean | null,
+  trust_level?: number | null,
+  moderator?: boolean | null,
+  admin?: boolean | null,
+  title?: string | null | null,
+  badge_count?: number | null,
+  second_factor_backup_enabled?: boolean | null,
+  user_fields?: {
+    1?: string | null | null,
+    2?: string | null | null
+  } | null,
+  custom_fields?: {
+    first_name?: string | null | null
+  } | null,
+  time_read?: number | null,
+  recent_time_read?: number | null,
+  primary_group_id?: number | null | null,
+  primary_group_name?: string | null | null,
+  flair_group_id?: number | null | null,
+  flair_name?: string | null | null,
+  flair_url?: string | null | null,
+  flair_bg_color?: string | null | null,
+  flair_color?: string | null | null,
+  featured_topic?: {
+    id?: number | null,
+    title?: string | null,
+    fancy_title?: string | null,
+    slug?: string | null,
+    posts_count?: number | null
+  } | null,
+  staged?: boolean | null,
+  can_edit?: boolean | null,
+  can_edit_avatar?: boolean | null,
+  can_upload_avatar?: boolean | null,
+  can_edit_username?: boolean | null,
+  can_edit_email?: boolean | null,
+  can_edit_name?: boolean | null,
+  uploaded_avatar_id?: number | null | null,
+  has_title_badges?: boolean | null,
+  pending_count?: number | null,
+  pending_posts_count?: number | null,
+  profile_view_count?: number | null,
+  second_factor_enabled?: boolean | null,
+  can_upload_profile_header?: boolean | null,
+  can_upload_user_card_background?: boolean | null,
+  post_count?: number | null,
+  topic_count?: number | null,
+  can_be_deleted?: boolean | null,
+  can_delete_all_posts?: boolean | null,
+  staff_only_settings?: string[] | null,
+  locale?: string | null | null,
+  muted_category_ids?: any[] | null,
+  regular_category_ids?: any[] | null,
+  watched_tags?: any[] | null,
+  watching_first_post_tags?: any[] | null,
+  tracked_tags?: any[] | null,
+  muted_tags?: any[] | null,
+  tracked_category_ids?: any[] | null,
+  watched_category_ids?: any[] | null,
+  watched_first_post_category_ids?: any[] | null,
+  system_avatar_upload_id?: string | null | null,
+  system_avatar_template?: string | null,
+  associated_account_avatars?: {
+    id?: number | null,
+    name?: string | null,
+    upload_id?: number | null,
+    avatar_template?: string | null
+  }[] | null,
+  selected_user_associated_account_id?: number | null | null,
+  muted_usernames?: any[] | null,
+  ignored_usernames?: any[] | null,
+  allowed_pm_usernames?: any[] | null,
+  mailing_list_posts_per_day?: number | null,
+  can_change_bio?: boolean | null,
+  can_change_location?: boolean | null,
+  can_change_website?: boolean | null,
+  can_change_tracking_preferences?: boolean | null,
+  user_api_keys?: string | null | null,
+  user_passkeys?: any[] | null,
+  sidebar_tags?: any[] | null,
+  sidebar_category_ids?: any[] | null,
+  display_sidebar_tags?: boolean | null,
+  can_pick_theme_with_custom_homepage?: boolean | null,
+  user_auth_tokens?: {
+    id?: number | null,
+    client_ip?: string | null,
+    location?: string | null,
+    browser?: string | null,
+    device?: string | null,
+    os?: string | null,
+    icon?: string | null,
+    created_at?: string | null,
+    seen_at?: string | null,
+    is_active?: boolean | null
+  }[] | null,
+  user_notification_schedule?: {
+    enabled?: boolean | null,
+    day_0_start_time?: number | null,
+    day_0_end_time?: number | null,
+    day_1_start_time?: number | null,
+    day_1_end_time?: number | null,
+    day_2_start_time?: number | null,
+    day_2_end_time?: number | null,
+    day_3_start_time?: number | null,
+    day_3_end_time?: number | null,
+    day_4_start_time?: number | null,
+    day_4_end_time?: number | null,
+    day_5_start_time?: number | null,
+    day_5_end_time?: number | null,
+    day_6_start_time?: number | null,
+    day_6_end_time?: number | null
+  } | null,
+  use_logo_small_as_avatar?: boolean | null,
+  featured_user_badge_ids?: any[] | null,
+  invited_by?: string | null | null,
+  groups?: {
+    id?: number | null,
+    automatic?: boolean | null,
+    name?: string | null,
+    display_name?: string | null,
+    user_count?: number | null,
+    mentionable_level?: number | null,
+    messageable_level?: number | null,
+    visibility_level?: number | null,
+    primary_group?: boolean | null,
+    title?: string | null | null,
+    grant_trust_level?: string | null | null,
+    incoming_email?: string | null | null,
+    has_messages?: boolean | null,
+    flair_url?: string | null | null,
+    flair_bg_color?: string | null | null,
+    flair_color?: string | null | null,
+    bio_raw?: string | null | null,
+    bio_cooked?: string | null | null,
+    bio_excerpt?: string | null | null,
+    public_admission?: boolean | null,
+    public_exit?: boolean | null,
+    allow_membership_requests?: boolean | null,
+    full_name?: string | null | null,
+    default_notification_level?: number | null,
+    membership_request_template?: string | null | null,
+    members_visibility_level?: number | null,
+    can_see_members?: boolean | null,
+    can_admin_group?: boolean | null,
+    publish_read_state?: boolean | null
+  }[] | null,
+  group_users?: {
+    group_id?: number | null,
+    user_id?: number | null,
+    notification_level?: number | null,
+    owner?: boolean | null
+  }[] | null,
+  user_option?: {
+    user_id?: number | null,
+    mailing_list_mode?: boolean | null,
+    mailing_list_mode_frequency?: number | null,
+    email_digests?: boolean | null,
+    email_level?: number | null,
+    email_messages_level?: number | null,
+    external_links_in_new_tab?: boolean | null,
+    bookmark_auto_delete_preference?: number | null,
+    color_scheme_id?: string | null | null,
+    dark_scheme_id?: string | null | null,
+    dynamic_favicon?: boolean | null,
+    enable_quoting?: boolean | null,
+    enable_smart_lists?: boolean | null,
+    enable_markdown_monospace_font?: boolean | null,
+    digest_after_minutes?: number | null,
+    automatically_unpin_topics?: boolean | null,
+    auto_track_topics_after_msecs?: number | null,
+    notification_level_when_replying?: number | null,
+    new_topic_duration_minutes?: number | null,
+    email_previous_replies?: number | null,
+    email_in_reply_to?: boolean | null,
+    like_notification_frequency?: number | null,
+    notify_on_linked_posts?: boolean | null,
+    push_notification_level?: string | null,
+    enable_upcoming_change_available_notifications?: boolean | null,
+    include_tl0_in_digests?: boolean | null,
+    theme_ids?: any[] | null,
+    theme_key_seq?: number | null,
+    allow_private_messages?: boolean | null,
+    enable_allowed_pm_users?: boolean | null,
+    homepage_id?: string | null | null,
+    hide_profile_and_presence?: boolean | null,
+    hide_profile?: boolean | null,
+    hide_presence?: boolean | null,
+    text_size?: string | null,
+    text_size_seq?: number | null,
+    title_count_mode?: string | null,
+    timezone?: string | null | null,
+    skip_new_user_tips?: boolean | null,
+    default_calendar?: string | null,
+    oldest_search_log_date?: string | null | null,
+    sidebar_link_to_filtered_list?: boolean | null,
+    sidebar_show_count_of_new_items?: boolean | null,
+    watched_precedence_over_muted?: boolean | null,
+    seen_popups?: any[] | null | null,
+    composition_mode?: number | null,
+    interface_color_mode?: number | null,
+    automatically_translate?: boolean | null,
+    understood_languages?: string[] | null,
+    hidden_composer_toolbar_buttons?: string[] | null,
+    show_original_content?: boolean | null,
+    send_shortcut?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getEmails
+
+`users.getEmails`
+
+Get email addresses belonging to a user.
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.users.getEmails({ username: 'ada' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string \| null` | No | — |
+| `secondary_emails` | `any[] \| null` | No | — |
+| `unconfirmed_emails` | `any[] \| null` | No | — |
+| `associated_accounts` | `any[] \| null` | No | — |
+
+
+
+---
+
+### listActions
+
+`users.listActions`
+
+Get a list of user actions. (GET /user_actions.json)
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.users.listActions({ offset: 1, username: 'ada', filter: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | Yes | — |
+| `username` | `string` | Yes | — |
+| `filter` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_actions` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user_actions full type">
+
+```ts
+{
+  excerpt?: string | null,
+  action_type?: number | null,
+  created_at?: string | null,
+  avatar_template?: string | null,
+  acting_avatar_template?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  target_user_id?: number | null,
+  target_name?: string | null | null,
+  target_username?: string | null,
+  post_number?: number | null,
+  post_id?: number | null | null,
+  username?: string | null,
+  name?: string | null | null,
+  user_id?: number | null,
+  acting_username?: string | null,
+  acting_name?: string | null | null,
+  acting_user_id?: number | null,
+  title?: string | null,
+  deleted?: boolean | null,
+  hidden?: boolean | null | null,
+  post_type?: number | null | null,
+  action_code?: string | null | null,
+  category_id?: number | null,
+  closed?: boolean | null,
+  archived?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listDirectory
+
+`users.listDirectory`
+
+Get a public list of users. (GET /directory_items.json)
+
+**Risk:** `read`
+
+```ts
+await corsair.discourse.api.users.listDirectory({ period: 'daily', order: 'likes_received' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `period` | `daily \| weekly \| monthly \| quarterly \| yearly \| all` | Yes | — |
+| `order` | `likes_received \| likes_given \| topic_count \| post_count \| topics_entered \| posts_read \| days_visited` | Yes | — |
+| `asc` | `true` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `directory_items` | `object[] \| null` | No | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="directory_items full type">
+
+```ts
+{
+  id?: number | null,
+  likes_received?: number | null,
+  likes_given?: number | null,
+  topics_entered?: number | null,
+  topic_count?: number | null,
+  post_count?: number | null,
+  posts_read?: number | null,
+  days_visited?: number | null,
+  user?: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null | null,
+    avatar_template?: string | null,
+    title?: string | null | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  last_updated_at?: string | null | null,
+  total_rows_directory_items?: number | null,
+  load_more_directory_items?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### logOut
+
+`users.logOut`
+
+Log a user out. Needs an admin API key. (POST /admin/users/&#123;id&#125;/log_out.json)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.discourse.api.users.logOut({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `string \| null` | No | — |
+
+
+
+---
+
+### merge
+
+`users.merge`
+
+Merge a user. Merge a user into another user. Requires admin permissions. The source user cannot be a staff member. The merge runs in the background and deletes the source user when complete. Moves everything the user posted to another user and deletes the first one. Needs an admin API key.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.discourse.api.users.merge({ id: 42, target_username: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | ID of the user to merge |
+| `target_username` | `string` | Yes | Username of the user to merge into |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `string \| null` | No | — |
+
+
+
+---
+
+### refreshGravatar
+
+`users.refreshGravatar`
+
+Refresh gravatar. (POST /user_avatar/&#123;username&#125;/refresh_gravatar.json)
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.users.refreshGravatar({ username: 'ada' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `gravatar_upload_id` | `number \| null \| null` | No | — |
+| `gravatar_avatar_template` | `string \| null \| null` | No | — |
+
+
+
+---
+
+### sendPasswordResetEmail
+
+`users.sendPasswordResetEmail`
+
+Send password reset email. (POST /session/forgot_password.json)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.discourse.api.users.sendPasswordResetEmail({ login: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `login` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `string \| null` | No | — |
+| `user_found` | `boolean \| null` | No | — |
+
+
+
+---
+
+### silence
+
+`users.silence`
+
+Silence a user. Needs an admin API key. (PUT /admin/users/&#123;id&#125;/silence.json)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.discourse.api.users.silence({ id: 42, silenced_till: 'example', reason: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `silenced_till` | `string` | Yes | — |
+| `reason` | `string` | Yes | — |
+| `message` | `string` | No | Will send an email with this message when present |
+| `post_action` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `silence` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="silence full type">
+
+```ts
+{
+  silenced?: boolean | null,
+  silence_reason?: string | null,
+  full_silence_reason?: string | null,
+  silenced_till?: string | null,
+  silenced_at?: string | null,
+  silenced_by?: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    avatar_template?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### suspend
+
+`users.suspend`
+
+Suspend a user. Needs an admin API key. (PUT /admin/users/&#123;id&#125;/suspend.json)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.discourse.api.users.suspend({ id: 42, suspend_until: 'example', reason: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `suspend_until` | `string` | Yes | — |
+| `reason` | `string` | Yes | — |
+| `message` | `string` | No | Will send an email with this message when present |
+| `post_action` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suspension` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="suspension full type">
+
+```ts
+{
+  suspend_reason?: string | null,
+  full_suspend_reason?: string | null,
+  suspended_till?: string | null,
+  suspended_at?: string | null,
+  suspended_by?: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    avatar_template?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`users.update`
+
+Update a user. (PUT /u/&#123;username&#125;.json)
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.users.update({ username: 'ada' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string \| number` | Yes | — |
+| `name` | `string` | No | — |
+| `external_ids` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="external_ids full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `string \| null` | No | — |
+| `user` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateAvatar
+
+`users.updateAvatar`
+
+Update avatar. (PUT /u/&#123;username&#125;/preferences/avatar/pick.json)
+
+**Risk:** `write`
+
+```ts
+await corsair.discourse.api.users.updateAvatar({ username: 'ada', type: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string \| number` | Yes | — |
+| `upload_id` | `number` | No | — |
+| `associated_account_id` | `number` | No | — |
+| `type` | `string \| uploaded \| custom \| gravatar \| current \| associated_account \| system` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `string \| null` | No | — |
+
+
+
+---
+
+### updateEmail
+
+`users.updateEmail`
+
+Update email. (PUT /u/&#123;username&#125;/preferences/email.json)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.discourse.api.users.updateEmail({ username: 'ada', email: 'ada@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string \| number` | Yes | — |
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Discourse accepted the call; it answered with no body. |
+
+
+
+---
+
+### updateUsername
+
+`users.updateUsername`
+
+Update username. (PUT /u/&#123;username&#125;/preferences/username.json)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.discourse.api.users.updateUsername({ username: 'ada', new_username: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string \| number` | Yes | — |
+| `new_username` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Discourse accepted the call; it answered with no body. |
+
+
+
+---
+
