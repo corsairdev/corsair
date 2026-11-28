@@ -2867,7 +2867,7 @@ export const zohocrmEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			"Initiate a Test Run for a Kiosk. To initiate a test run for a kiosk before publishing it in your Zoho CRM organization. This operation executes all configured kiosk states and actions on live CRM data in real time. Runs the kiosk's actions on live records (emails, record changes); they are not undone.",
+			'Initiate a Test Run for a Kiosk. To initiate a test run for a kiosk before publishing it in your Zoho CRM organization. This operation executes all configured kiosk states and actions on live CRM data in real time. Starts a test of the kiosk and returns its first state; advance through the remaining states with kiosks.executeState. The actions run on live records (emails, record changes) and are not undone.',
 	},
 	'kiosks.update': {
 		riskLevel: 'write',
@@ -3021,7 +3021,7 @@ export const zohocrmEndpointMeta = {
 	'meetings.cancel': {
 		riskLevel: 'destructive',
 		description:
-			'Cancel a Meeting. To cancel a meeting and send an email regarding the meeting cancellation to the participants. A meeting can only be cancelled if attendees have already been invited and the meeting has not passed its scheduled end time. With send_cancelling_mail, every participant gets a cancellation email.',
+			'Cancel a Meeting. To cancel a meeting and send an email regarding the meeting cancellation to the participants. A meeting can only be cancelled if attendees have already been invited and the meeting has not passed its scheduled end time. With send_cancelling_mail: true every participant gets a cancellation email; with false the meeting is cancelled without one.',
 	},
 	'modules.create': {
 		riskLevel: 'write',
