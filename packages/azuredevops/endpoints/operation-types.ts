@@ -140,6 +140,8 @@ export const AZUREDEVOPS_OPERATION_IDS = [
 	'audit.streams.updateStatus',
 	'audit.streams.updateStream',
 	'build.artifacts.create',
+	'build.artifacts.getArtifact',
+	'build.artifacts.getFile',
 	'build.artifacts.list',
 	'build.attachments.get',
 	'build.attachments.list',
@@ -182,6 +184,8 @@ export const AZUREDEVOPS_OPERATION_IDS = [
 	'build.leases.delete',
 	'build.leases.get',
 	'build.leases.getRetentionLeasesByMinimalRetentionLeases',
+	'build.leases.getRetentionLeasesByOwnerId',
+	'build.leases.getRetentionLeasesByUserId',
 	'build.leases.update',
 	'build.metrics.getDefinitionMetrics',
 	'build.metrics.getProjectMetrics',
@@ -269,6 +273,7 @@ export const AZUREDEVOPS_OPERATION_IDS = [
 	'distributedTask.agentcloudtypes.list',
 	'distributedTask.agents.add',
 	'distributedTask.agents.delete',
+	'distributedTask.agents.getAgent',
 	'distributedTask.agents.getPoolPermission',
 	'distributedTask.agents.list',
 	'distributedTask.agents.replaceAgent',
@@ -301,11 +306,15 @@ export const AZUREDEVOPS_OPERATION_IDS = [
 	'distributedTask.pools.add',
 	'distributedTask.pools.delete',
 	'distributedTask.pools.get',
+	'distributedTask.pools.getAgentPools',
 	'distributedTask.pools.getAgentPoolsByIds',
 	'distributedTask.pools.update',
 	'distributedTask.queues.add',
 	'distributedTask.queues.delete',
 	'distributedTask.queues.get',
+	'distributedTask.queues.getAgentQueues',
+	'distributedTask.queues.getAgentQueuesByIds',
+	'distributedTask.queues.getAgentQueuesByNames',
 	'distributedTask.queues.getAgentQueuesForPools',
 	'distributedTask.records.update',
 	'distributedTask.requests.list',
@@ -320,6 +329,7 @@ export const AZUREDEVOPS_OPERATION_IDS = [
 	'distributedTask.variablegroups.add',
 	'distributedTask.variablegroups.delete',
 	'distributedTask.variablegroups.get',
+	'distributedTask.variablegroups.getVariableGroups',
 	'distributedTask.variablegroups.getVariableGroupsById',
 	'distributedTask.variablegroups.shareVariableGroup',
 	'distributedTask.variablegroups.update',
@@ -330,9 +340,14 @@ export const AZUREDEVOPS_OPERATION_IDS = [
 	'extensionManagement.installedExtensions.uninstallExtensionByName',
 	'extensionManagement.installedExtensions.update',
 	'favorite.favorites.createFavorite',
+	'favorite.favorites.createFavoriteOfOwner',
 	'favorite.favorites.deleteFavoriteById',
+	'favorite.favorites.deleteFavoriteOfOwnerById',
+	'favorite.favorites.getFavoriteByArtifact',
 	'favorite.favorites.getFavoriteById',
+	'favorite.favorites.getFavoriteOfOwnerById',
 	'favorite.favorites.getFavorites',
+	'favorite.favorites.getFavoritesOfOwner',
 	'git.annotatedTags.create',
 	'git.annotatedTags.get',
 	'git.blobs.getBlob',
@@ -342,6 +357,7 @@ export const AZUREDEVOPS_OPERATION_IDS = [
 	'git.cherryPicks.getCherryPickForRefName',
 	'git.commits.get',
 	'git.commits.getChanges',
+	'git.commits.getCommits',
 	'git.commits.getCommitsBatch',
 	'git.commits.getPushCommits',
 	'git.diffs.get',
@@ -353,6 +369,7 @@ export const AZUREDEVOPS_OPERATION_IDS = [
 	'git.importRequests.get',
 	'git.importRequests.query',
 	'git.importRequests.update',
+	'git.items.get',
 	'git.items.getItemsBatch',
 	'git.items.list',
 	'git.mergeBases.list',
@@ -429,12 +446,14 @@ export const AZUREDEVOPS_OPERATION_IDS = [
 	'git.repositories.getDeletedRepositories',
 	'git.repositories.getRecycleBinRepositories',
 	'git.repositories.getRepository',
+	'git.repositories.getRepositoryWithParent',
 	'git.repositories.list',
 	'git.repositories.restoreRepositoryFromRecycleBin',
 	'git.repositories.update',
 	'git.reverts.create',
 	'git.reverts.getRevert',
 	'git.reverts.getRevertForRefName',
+	'git.stats.get',
 	'git.stats.list',
 	'git.statuses.create',
 	'git.statuses.list',
@@ -556,6 +575,7 @@ export const AZUREDEVOPS_OPERATION_IDS = [
 	'policy.revisions.list',
 	'policy.types.get',
 	'policy.types.list',
+	'processadmin.behaviors.get',
 	'processadmin.behaviors.list',
 	'processadmin.processes.exportProcessTemplate',
 	'processadmin.processes.importProcessTemplate',
@@ -575,6 +595,7 @@ export const AZUREDEVOPS_OPERATION_IDS = [
 	'processes.fields.removeWorkItemTypeField',
 	'processes.fields.update',
 	'processes.groups.add',
+	'processes.groups.moveGroupToPage',
 	'processes.groups.moveGroupToSection',
 	'processes.groups.removeGroup',
 	'processes.groups.update',
@@ -641,6 +662,7 @@ export const AZUREDEVOPS_OPERATION_IDS = [
 	'release.manualInterventions.update',
 	'release.releases.create',
 	'release.releases.getLogs',
+	'release.releases.getRelease',
 	'release.releases.getReleaseEnvironment',
 	'release.releases.getReleaseRevision',
 	'release.releases.getTaskLog',
@@ -663,16 +685,19 @@ export const AZUREDEVOPS_OPERATION_IDS = [
 	'security.permissions.hasPermissionsBatch',
 	'security.permissions.removePermission',
 	'security.securityNamespaces.query',
+	'securityRoles.roleassignments.changeInheritance',
 	'securityRoles.roleassignments.list',
 	'securityRoles.roleassignments.removeRoleAssignment',
 	'securityRoles.roleassignments.removeRoleAssignments',
 	'securityRoles.roleassignments.setRoleAssignment',
 	'securityRoles.roleassignments.setRoleAssignments',
 	'securityRoles.roledefinitions.list',
+	'serviceEndpoint.endpointproxy.executeServiceEndpointRequest',
 	'serviceEndpoint.endpointproxy.query',
 	'serviceEndpoint.endpoints.create',
 	'serviceEndpoint.endpoints.delete',
 	'serviceEndpoint.endpoints.get',
+	'serviceEndpoint.endpoints.getServiceEndpoints',
 	'serviceEndpoint.endpoints.getServiceEndpointsByNames',
 	'serviceEndpoint.endpoints.getServiceEndpointsWithRefreshedAuthentication',
 	'serviceEndpoint.endpoints.shareServiceEndpoint',
@@ -686,6 +711,7 @@ export const AZUREDEVOPS_OPERATION_IDS = [
 	'symbol.contents.get',
 	'symbol.requests.createRequests',
 	'symbol.requests.createRequestsRequestIdDebugEntries',
+	'symbol.requests.createRequestsRequestNameDebugEntries',
 	'symbol.requests.deleteRequestsRequestId',
 	'symbol.requests.deleteRequestsRequestName',
 	'symbol.requests.getRequestsRequestId',
@@ -695,10 +721,13 @@ export const AZUREDEVOPS_OPERATION_IDS = [
 	'symbol.symsrv.get',
 	'test.attachments.createTestResultAttachment',
 	'test.attachments.createTestRunAttachment',
+	'test.attachments.createTestSubResultAttachment',
 	'test.attachments.getTestResultAttachmentZip',
 	'test.attachments.getTestResultAttachments',
 	'test.attachments.getTestRunAttachmentZip',
 	'test.attachments.getTestRunAttachments',
+	'test.attachments.getTestSubResultAttachmentZip',
+	'test.attachments.getTestSubResultAttachments',
 	'test.codeCoverage.getBuildCodeCoverage',
 	'test.codeCoverage.getTestRunCodeCoverage',
 	'test.iterations.get',
@@ -718,6 +747,7 @@ export const AZUREDEVOPS_OPERATION_IDS = [
 	'test.runs.getTestRunById',
 	'test.runs.getTestRunStatistics',
 	'test.runs.list',
+	'test.runs.query',
 	'test.runs.update',
 	'test.session.create',
 	'test.session.list',
@@ -737,6 +767,7 @@ export const AZUREDEVOPS_OPERATION_IDS = [
 	'testPlan.suiteTestCase.add',
 	'testPlan.suiteTestCase.getTestCase',
 	'testPlan.suiteTestCase.getTestCaseList',
+	'testPlan.suiteTestCase.removeTestCasesFromSuite',
 	'testPlan.suiteTestCase.removeTestCasesListFromSuite',
 	'testPlan.suiteTestCase.update',
 	'testPlan.testCaseClone.cloneTestCase',
@@ -750,6 +781,7 @@ export const AZUREDEVOPS_OPERATION_IDS = [
 	'testPlan.testPlans.list',
 	'testPlan.testPlans.update',
 	'testPlan.testPoint.getPoints',
+	'testPlan.testPoint.getPointsList',
 	'testPlan.testPoint.update',
 	'testPlan.testSuiteClone.cloneTestSuite',
 	'testPlan.testSuiteClone.get',
@@ -766,16 +798,22 @@ export const AZUREDEVOPS_OPERATION_IDS = [
 	'testPlan.variables.get',
 	'testPlan.variables.list',
 	'testPlan.variables.update',
+	'testResults.attachments.createTestIterationResultAttachment',
 	'testResults.attachments.createTestResultAttachment',
 	'testResults.attachments.createTestRunAttachment',
+	'testResults.attachments.createTestSubResultAttachment',
 	'testResults.attachments.deleteTestResultAttachment',
 	'testResults.attachments.deleteTestRunAttachment',
+	'testResults.attachments.getTestIterationAttachmentZip',
 	'testResults.attachments.getTestResultAttachmentZip',
 	'testResults.attachments.getTestResultAttachments',
 	'testResults.attachments.getTestRunAttachmentZip',
 	'testResults.attachments.getTestRunAttachments',
+	'testResults.attachments.getTestSubResultAttachmentZip',
+	'testResults.attachments.getTestSubResultAttachments',
 	'testResults.bugs.list',
 	'testResults.codecoverage.get',
+	'testResults.codecoverage.getBuildCodeCoverage',
 	'testResults.codecoverage.getTestRunCodeCoverage',
 	'testResults.codecoverage.update',
 	'testResults.filecoverage.get',
@@ -810,6 +848,7 @@ export const AZUREDEVOPS_OPERATION_IDS = [
 	'testResults.runs.delete',
 	'testResults.runs.get',
 	'testResults.runs.list',
+	'testResults.runs.query',
 	'testResults.runs.update',
 	'testResults.runsummary.get',
 	'testResults.settings.get',
@@ -818,12 +857,15 @@ export const AZUREDEVOPS_OPERATION_IDS = [
 	'testResults.statistics.get',
 	'testResults.status.get',
 	'testResults.tags.getTestTagsForBuild',
+	'testResults.tags.getTestTagsForRelease',
 	'testResults.tags.update',
 	'testResults.tagsummary.getTestTagSummaryForBuild',
+	'testResults.tagsummary.getTestTagSummaryForRelease',
 	'testResults.testHistory.query',
 	'testResults.testattachments.createBuildAttachmentInLogStore',
 	'testResults.testattachments.createTestRunLogStoreAttachment',
 	'testResults.testattachments.delete',
+	'testResults.testattachments.get',
 	'testResults.testattachments.list',
 	'testResults.testfailuretype.create',
 	'testResults.testfailuretype.delete',
@@ -831,9 +873,11 @@ export const AZUREDEVOPS_OPERATION_IDS = [
 	'testResults.testlog.getTestLogsForBuild',
 	'testResults.testlog.getTestResultLogs',
 	'testResults.testlog.getTestRunLogs',
+	'testResults.testlog.getTestSubResultLogs',
 	'testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForBuildLog',
 	'testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForResultLog',
 	'testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForRunLog',
+	'testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForSubResultLog',
 	'testResults.testlogstoreendpoint.testLogStoreEndpointDetailsForBuild',
 	'testResults.testlogstoreendpoint.testLogStoreEndpointDetailsForResult',
 	'testResults.testlogstoreendpoint.testLogStoreEndpointDetailsForRun',
@@ -843,14 +887,18 @@ export const AZUREDEVOPS_OPERATION_IDS = [
 	'testResults.workitems.add',
 	'testResults.workitems.delete',
 	'testResults.workitems.list',
+	'testResults.workitems.queryTestMethodLinkedWorkItems',
 	'testResults.workitems.queryTestResultWorkItems',
+	'tfvc.branches.get',
 	'tfvc.branches.getBranchRefs',
+	'tfvc.branches.getBranches',
 	'tfvc.changesets.create',
 	'tfvc.changesets.get',
 	'tfvc.changesets.getBatchedChangesets',
 	'tfvc.changesets.getChangesetChanges',
 	'tfvc.changesets.getChangesetWorkItems',
 	'tfvc.changesets.getChangesets',
+	'tfvc.items.get',
 	'tfvc.items.getItemsBatch',
 	'tfvc.items.list',
 	'tfvc.labels.get',
@@ -859,11 +907,13 @@ export const AZUREDEVOPS_OPERATION_IDS = [
 	'tfvc.shelvesets.get',
 	'tfvc.shelvesets.getShelvesetChanges',
 	'tfvc.shelvesets.getShelvesetWorkItems',
+	'tfvc.shelvesets.list',
 	'tokenAdmin.personalAccessTokens.list',
 	'tokenAdmin.revocationRules.create',
 	'tokenAdmin.revocations.revokeAuthorizations',
 	'tokens.pats.create',
 	'tokens.pats.get',
+	'tokens.pats.list',
 	'tokens.pats.revoke',
 	'tokens.pats.update',
 	'wiki.attachments.create',
@@ -890,14 +940,18 @@ export const AZUREDEVOPS_OPERATION_IDS = [
 	'wit.classificationNodes.createOrUpdate',
 	'wit.classificationNodes.delete',
 	'wit.classificationNodes.get',
+	'wit.classificationNodes.getClassificationNodes',
 	'wit.classificationNodes.getRootNodes',
 	'wit.classificationNodes.update',
 	'wit.commentReactionsEngagedUsers.list',
 	'wit.comments.addComment',
+	'wit.comments.addWorkItemComment',
 	'wit.comments.delete',
 	'wit.comments.getComment',
+	'wit.comments.getComments',
 	'wit.comments.getCommentsBatch',
 	'wit.comments.updateComment',
+	'wit.comments.updateWorkItemComment',
 	'wit.commentsReactions.create',
 	'wit.commentsReactions.delete',
 	'wit.commentsReactions.list',
@@ -914,10 +968,12 @@ export const AZUREDEVOPS_OPERATION_IDS = [
 	'wit.queries.get',
 	'wit.queries.getQueriesBatch',
 	'wit.queries.list',
+	'wit.queries.searchQueries',
 	'wit.queries.update',
 	'wit.recyclebin.destroyWorkItem',
 	'wit.recyclebin.get',
 	'wit.recyclebin.getDeletedWorkItemShallowReferences',
+	'wit.recyclebin.getDeletedWorkItems',
 	'wit.recyclebin.restoreWorkItem',
 	'wit.reportingWorkItemLinks.get',
 	'wit.reportingWorkItemRevisions.readReportingRevisionsGet',
@@ -1117,7 +1173,7 @@ export type AzureDevopsArtifactResourceInput = {
 	/** A link to download the resource. */
 	downloadUrl?: string;
 	/** Type-specific properties of the artifact. */
-	properties?: { [key: string]: string };
+	properties?: { [key: string]: string | null };
 	/** The type of the resource: File container, version control folder, UNC path, etc. */
 	type?: string;
 	/** The full http link to the resource. */
@@ -1168,7 +1224,7 @@ export type AzureDevopsBoardColumnInput = {
 	isSplit?: boolean;
 	itemLimit?: number;
 	name?: string;
-	stateMappings?: { [key: string]: string };
+	stateMappings?: { [key: string]: string | null };
 };
 
 export type AzureDevopsBoardRowInput = {
@@ -1255,11 +1311,11 @@ export type AzureDevopsBuildInput = {
 	status?: "none" | "inProgress" | "completed" | "cancelling" | "postponed" | "notStarted" | "all";
 	tags?: Array<string>;
 	/** Parameters to template expression evaluation */
-	templateParameters?: { [key: string]: string };
+	templateParameters?: { [key: string]: string | null };
 	/** The build that triggered this build via a Build completion trigger. */
 	triggeredByBuild?: AzureDevopsBuildInput;
 	/** Sourceprovider-specific information about what triggered the build */
-	triggerInfo?: { [key: string]: string };
+	triggerInfo?: { [key: string]: string | null };
 	/** The URI of the build. */
 	uri?: string;
 	/** The REST URL of the build. */
@@ -1405,7 +1461,7 @@ export type AzureDevopsBuildOptionInput = {
 	definition?: AzureDevopsBuildOptionDefinitionReferenceInput;
 	/** Indicates whether the behavior is enabled. */
 	enabled?: boolean;
-	inputs?: { [key: string]: string };
+	inputs?: { [key: string]: string | null };
 };
 
 /** Represents a reference to a build option definition. */
@@ -1432,7 +1488,7 @@ export type AzureDevopsBuildRepositoryInput = {
 	id?: string;
 	/** The friendly name of the repository. */
 	name?: string;
-	properties?: { [key: string]: string };
+	properties?: { [key: string]: string | null };
 	/** The root folder. */
 	rootFolder?: string;
 	/** The type of the repository. */
@@ -1528,7 +1584,7 @@ export type AzureDevopsCloneOptionsInput = {
 	/** Name of the workitem type of the clone */
 	destinationWorkItemType?: string;
 	/** Key value pairs where the key value is overridden by the value. */
-	overrideParameters?: { [key: string]: string };
+	overrideParameters?: { [key: string]: string | null };
 	/** Comment on the link that will link the new clone test case to the original Set null for no comment */
 	relatedLinkComment?: string;
 };
@@ -2173,7 +2229,7 @@ export type AzureDevopsFeedViewInput = {
 	visibility?: "private" | "collection" | "organization" | "aadTenant";
 };
 
-export type AzureDevopsFieldSettingInput = { [key: string]: string };
+export type AzureDevopsFieldSettingInput = { [key: string]: string | null };
 
 export type AzureDevopsFilterClauseInput = {
 	fieldName?: string;
@@ -2230,7 +2286,7 @@ export type AzureDevopsGitBaseChangeInput = {
 	/** The type of change that was made to the item. */
 	changeType?: "none" | "add" | "edit" | "encoding" | "rename" | "delete" | "undelete" | "branch" | "merge" | "lock" | "rollback" | "sourceRename" | "targetRename" | "property" | "all";
 	/** Current version. */
-	item?: string;
+	item?: AzureDevopsJsonValue;
 	/** Content of the item after the change. */
 	newContent?: AzureDevopsItemContentInput;
 	/** Path of the item on the server. */
@@ -2687,7 +2743,7 @@ export type AzureDevopsGroupEntitlementInput = {
 	status?: "applyPending" | "applied" | "incompatible" | "unableToApply";
 };
 
-export type AzureDevopsIDomainIdInput = Record<string, AzureDevopsJsonValue>;
+export type AzureDevopsIDomainIdInput = (string | Record<string, AzureDevopsJsonValue>);
 
 export type AzureDevopsISubscriptionChannelInput = {
 	type?: string;
@@ -2728,12 +2784,12 @@ export type AzureDevopsIdentityBaseInput = {
 };
 
 /** An Identity descriptor is a wrapper for the identity type (Windows SID, Passport) along with a unique identifier such as the SID or PUID. */
-export type AzureDevopsIdentityDescriptorInput = {
+export type AzureDevopsIdentityDescriptorInput = (string | {
 	/** The unique identifier for this identity, not exceeding 256 chars, which will be persisted. */
 	identifier?: string;
 	/** Type of descriptor (for example, Windows, Passport, etc.). */
 	identityType?: string;
-};
+});
 
 export type AzureDevopsIdentityRefInput = AzureDevopsGraphSubjectBaseInput & {
 	/** Deprecated - Can be retrieved by querying the Graph user referenced in the "self" entry of the IdentityRef "_links" dictionary */
@@ -2845,11 +2901,11 @@ export type AzureDevopsInputValidationInput = {
 	/** Gets or sets the maximum length of this descriptor. */
 	maxLength?: number;
 	/** Gets or sets the minimum value for this descriptor. */
-	maxValue?: string;
+	maxValue?: (number | string);
 	/** Gets or sets the minimum length of this descriptor. */
 	minLength?: number;
 	/** Gets or sets the minimum value for this descriptor. */
-	minValue?: string;
+	minValue?: (number | string);
 	/** Gets or sets the pattern to validate. */
 	pattern?: string;
 	/** Gets or sets the error on pattern mismatch. */
@@ -3126,7 +3182,7 @@ export type AzureDevopsNotificationDetailsInput = {
 	/** Gets or sets this notification detail's consumer identifier. */
 	consumerId?: string;
 	/** Gets or sets this notification detail's consumer inputs. */
-	consumerInputs?: { [key: string]: string };
+	consumerInputs?: { [key: string]: string | null };
 	/** Gets or sets the time that this notification was dequeued for processing */
 	dequeuedDate?: string;
 	/** Gets or sets this notification detail's error detail. */
@@ -3142,7 +3198,7 @@ export type AzureDevopsNotificationDetailsInput = {
 	/** Gets or sets this notification detail's publisher identifier. */
 	publisherId?: string;
 	/** Gets or sets this notification detail's publisher inputs. */
-	publisherInputs?: { [key: string]: string };
+	publisherInputs?: { [key: string]: string | null };
 	/** Gets or sets the time that this notification was queued (created) */
 	queuedDate?: string;
 	/** Gets or sets this notification detail's request. */
@@ -3317,7 +3373,7 @@ export type AzureDevopsPropertiesCollectionInput = {
 /** The class to represent a Generic store for test session data. */
 export type AzureDevopsPropertyBagInput = {
 	/** Generic store for test session data */
-	bag?: { [key: string]: string };
+	bag?: { [key: string]: string | null };
 };
 
 /** Defines the data contract of an event publisher. */
@@ -3497,7 +3553,7 @@ export type AzureDevopsReleaseDataSourceBindingBaseInput = {
 	/** Defines the initial value of the query params */
 	initialContextTemplate?: string;
 	/** Gets or sets the parameters for the data source. */
-	parameters?: { [key: string]: string };
+	parameters?: { [key: string]: string | null };
 	/** Gets or sets http request body */
 	requestContent?: string;
 	/** Gets or sets http request verb */
@@ -3766,7 +3822,7 @@ export type AzureDevopsReleaseGatesInput = {
 
 export type AzureDevopsReleaseIssueInput = {
 	/** Issue data. */
-	data?: { [key: string]: string };
+	data?: { [key: string]: string | null };
 	/** Issue type, for example error, warning or info. */
 	issueType?: string;
 	/** Issue message. */
@@ -4121,10 +4177,32 @@ export type AzureDevopsServiceEndpointBaseProjectReferenceInput = {
 	name?: string;
 };
 
+/** Represents details of the service endpoint data source. */
+export type AzureDevopsServiceEndpointDataSourceDetailsInput = {
+	/** Gets or sets the data source name. */
+	dataSourceName?: string;
+	/** Gets or sets the data source url. */
+	dataSourceUrl?: string;
+	/** Gets or sets the request headers. */
+	headers?: Array<AzureDevopsServiceEndpointAuthorizationHeaderInput>;
+	/** Gets or sets the initialization context used for the initial call to the data source */
+	initialContextTemplate?: string;
+	/** Gets the parameters of data source. */
+	parameters?: { [key: string]: string | null };
+	/** Gets or sets the data source request content. */
+	requestContent?: string;
+	/** Gets or sets the data source request verb. Get/Post are the only implemented types */
+	requestVerb?: string;
+	/** Gets or sets the resource url of data source. */
+	resourceUrl?: string;
+	/** Gets or sets the result selector. */
+	resultSelector?: string;
+};
+
 /** Represents the authorization used for service endpoint. */
 export type AzureDevopsServiceEndpointEndpointAuthorizationInput = {
 	/** Gets or sets the parameters for the selected authorization scheme. */
-	parameters?: { [key: string]: string };
+	parameters?: { [key: string]: string | null };
 	/** Gets or sets the scheme used for service endpoint authentication. */
 	scheme?: string;
 };
@@ -4145,6 +4223,16 @@ export type AzureDevopsServiceEndpointProjectReferenceInput = {
 	projectReference?: AzureDevopsServiceEndpointBaseProjectReferenceInput;
 };
 
+/** Represents template to transform the result data. */
+export type AzureDevopsServiceEndpointResultTransformationDetailsInput = {
+	/** Gets or sets the template for callback parameters */
+	callbackContextTemplate?: string;
+	/** Gets or sets the template to decide whether to callback or not */
+	callbackRequiredTemplate?: string;
+	/** Gets or sets the template for result transformation. */
+	resultTemplate?: string;
+};
+
 /** Represents an endpoint which may be used by an orchestration job. */
 export type AzureDevopsServiceEndpointServiceEndpointInput = {
 	/** This is a deprecated field. */
@@ -4153,7 +4241,7 @@ export type AzureDevopsServiceEndpointServiceEndpointInput = {
 	authorization?: AzureDevopsServiceEndpointEndpointAuthorizationInput;
 	/** Gets or sets the identity reference for the user who created the Service endpoint. */
 	createdBy?: AzureDevopsIdentityRefInput;
-	data?: { [key: string]: string };
+	data?: { [key: string]: string | null };
 	/** Gets or sets the description of endpoint. */
 	description?: string;
 	/** This is a deprecated field. */
@@ -4177,6 +4265,18 @@ export type AzureDevopsServiceEndpointServiceEndpointInput = {
 	/** Gets or sets the type of the endpoint. */
 	type?: string;
 	/** Gets or sets the url of the endpoint. */
+	url?: string;
+};
+
+/** Represents details of the service endpoint. */
+export type AzureDevopsServiceEndpointServiceEndpointDetailsInput = {
+	/** Gets or sets the authorization of service endpoint. */
+	authorization?: AzureDevopsServiceEndpointEndpointAuthorizationInput;
+	/** Gets or sets the data of service endpoint. */
+	data?: { [key: string]: string | null };
+	/** Gets or sets the type of service endpoint. */
+	type?: string;
+	/** Gets or sets the connection url of service endpoint. */
 	url?: string;
 };
 
@@ -4268,7 +4368,7 @@ export type AzureDevopsSubscriptionInput = {
 	consumerActionId?: string;
 	consumerId?: string;
 	/** Consumer input values */
-	consumerInputs?: { [key: string]: string };
+	consumerInputs?: { [key: string]: string | null };
 	createdBy?: AzureDevopsIdentityRefInput;
 	createdDate?: string;
 	eventDescription?: string;
@@ -4280,7 +4380,7 @@ export type AzureDevopsSubscriptionInput = {
 	probationRetries?: string;
 	publisherId?: string;
 	/** Publisher input values */
-	publisherInputs?: { [key: string]: string };
+	publisherInputs?: { [key: string]: string | null };
 	resourceVersion?: string;
 	status?: "enabled" | "onProbation" | "disabledByUser" | "disabledBySystem" | "disabledByInactiveIdentity";
 	subscriber?: AzureDevopsIdentityRefInput;
@@ -4298,7 +4398,7 @@ export type AzureDevopsSubscriptionQueryConditionInput = {
 	/** Filter conditions that matching subscriptions must have. Typically only the filter's type and event type are used for matching. */
 	filter?: AzureDevopsISubscriptionFilterInput;
 	/** Flags to specify the type subscriptions to query for. */
-	flags?: "none" | "groupSubscription" | "contributedSubscription" | "canOptOut" | "teamSubscription" | "oneActorMatches";
+	flags?: ("none" | "groupSubscription" | "contributedSubscription" | "canOptOut" | "teamSubscription" | "oneActorMatches" | number);
 	/** Scope that matching subscriptions must have. */
 	scope?: string;
 	/** ID of the subscriber (user or group) that matching subscriptions must be subscribed to. */
@@ -4363,7 +4463,7 @@ export type AzureDevopsTaskAgentJobRequestInput = {
 	/** The date/time this request was assigned. */
 	assignTime?: string;
 	/** Additional data about the request. */
-	data?: { [key: string]: string };
+	data?: { [key: string]: string | null };
 	/** The pipeline definition associated with this request */
 	definition?: AzureDevopsTaskOrchestrationOwnerInput;
 	/** A list of demands required to fulfill this request. */
@@ -4483,9 +4583,9 @@ export type AzureDevopsTaskGroupStepInput = {
 	/** Gets or sets as task is enabled or not. */
 	enabled?: boolean;
 	/** Gets dictionary of environment variables. */
-	environment?: { [key: string]: string };
+	environment?: { [key: string]: string | null };
 	/** Gets or sets dictionary of inputs. */
-	inputs?: { [key: string]: string };
+	inputs?: { [key: string]: string | null };
 	/** Gets or sets the maximum number of retries */
 	retryCountOnTaskFailure?: number;
 	/** Gets or sets the reference of the task. */
@@ -4503,8 +4603,8 @@ export type AzureDevopsTaskInputDefinitionBaseInput = {
 	helpMarkDown?: string;
 	label?: string;
 	name?: string;
-	options?: { [key: string]: string };
-	properties?: { [key: string]: string };
+	options?: { [key: string]: string | null };
+	properties?: { [key: string]: string | null };
 	required?: boolean;
 	type?: string;
 	validation?: AzureDevopsTaskInputValidationInput;
@@ -5223,7 +5323,7 @@ export type AzureDevopsTfvcBaseChangeInput = {
 	/** The type of change that was made to the item. */
 	changeType?: "none" | "add" | "edit" | "encoding" | "rename" | "delete" | "undelete" | "branch" | "merge" | "lock" | "rollback" | "sourceRename" | "targetRename" | "property" | "all";
 	/** Current version. */
-	item?: string;
+	item?: AzureDevopsJsonValue;
 	/** Content of the item after the change. */
 	newContent?: AzureDevopsItemContentInput;
 	/** Path of the item on the server. */
@@ -5654,13 +5754,13 @@ export type AzureDevopsWorkflowTaskInput = {
 	/** Gets or sets as the task enabled or not. */
 	enabled?: boolean;
 	/** Gets or sets the task environment variables. */
-	environment?: { [key: string]: string };
+	environment?: { [key: string]: string | null };
 	/** Gets or sets the task inputs. */
-	inputs?: { [key: string]: string };
+	inputs?: { [key: string]: string | null };
 	/** Gets or sets the name of the task. */
 	name?: string;
 	/** Gets or sets the task override inputs. */
-	overrideInputs?: { [key: string]: string };
+	overrideInputs?: { [key: string]: string | null };
 	/** Gets or sets the reference name of the task. */
 	refName?: string;
 	/** Gets or sets the task retryCount. */
@@ -5691,7 +5791,7 @@ export type AzureDevopsXamlBuildControllerReferenceInput = {
 	url?: string;
 };
 
-export type AzureDevopsAttributeInput = { [key: string]: string };
+export type AzureDevopsAttributeInput = { [key: string]: string | null };
 
 export type AzureDevopsAadGraphMember = AzureDevopsGraphMember & {
 	/** The short, generally unique name for the user in the backing directory. For AAD users, this corresponds to the mail nickname, which is often but not necessarily similar to the part of the user's mail address before the @ sign. For GitHub users, this corresponds to the GitHub user handle. */
@@ -6042,7 +6142,7 @@ export type AzureDevopsArtifactResource = {
 	/** A link to download the resource. */
 	downloadUrl?: string | null;
 	/** Type-specific properties of the artifact. */
-	properties?: { [key: string]: string } | null;
+	properties?: { [key: string]: string | null } | null;
 	/** The type of the resource: File container, version control folder, UNC path, etc. */
 	type?: string | null;
 	/** The full http link to the resource. */
@@ -6136,7 +6236,7 @@ export type AzureDevopsAuditLogQueryResult = {
 /** This class represents an audit stream */
 export type AzureDevopsAuditStream = {
 	/** Inputs used to communicate with external service. Inputs could be url, a connection string, a token, etc. */
-	consumerInputs?: { [key: string]: string } | null;
+	consumerInputs?: { [key: string]: string | null } | null;
 	/** Type of the consumer, i.e. splunk, azureEventHub, etc. */
 	consumerType?: string | null;
 	/** The time when the stream was created */
@@ -6162,7 +6262,8 @@ export type AzureDevopsAvatar = {
 	isAutoGenerated?: boolean | null;
 	size?: string | null;
 	timeStamp?: string | null;
-	value?: Array<string> | null;
+	/** The image, base64-encoded. */
+	value?: (string | Array<string>) | null;
 };
 
 export type AzureDevopsBacklogColumn = {
@@ -6192,7 +6293,7 @@ export type AzureDevopsBacklogConfiguration = {
 
 export type AzureDevopsBacklogFields = {
 	/** Field Type (e.g. Order, Activity) to Field Reference Name map */
-	typeFields?: { [key: string]: string } | null;
+	typeFields?: { [key: string]: string | null } | null;
 };
 
 /** Contract representing a backlog level */
@@ -6287,7 +6388,7 @@ export type AzureDevopsBoardColumn = {
 	isSplit?: boolean | null;
 	itemLimit?: number | null;
 	name?: string | null;
-	stateMappings?: { [key: string]: string } | null;
+	stateMappings?: { [key: string]: string | null } | null;
 };
 
 export type AzureDevopsBoardFields = {
@@ -6403,11 +6504,11 @@ export type AzureDevopsBuild = {
 	status?: string | null;
 	tags?: Array<string> | null;
 	/** Parameters to template expression evaluation */
-	templateParameters?: { [key: string]: string } | null;
+	templateParameters?: { [key: string]: string | null } | null;
 	/** The build that triggered this build via a Build completion trigger. */
 	triggeredByBuild?: AzureDevopsBuild | null;
 	/** Sourceprovider-specific information about what triggered the build */
-	triggerInfo?: { [key: string]: string } | null;
+	triggerInfo?: { [key: string]: string | null } | null;
 	/** The URI of the build. */
 	uri?: string | null;
 	/** The REST URL of the build. */
@@ -6569,7 +6670,7 @@ export type AzureDevopsBuildDefinitionTemplate = {
 	defaultHostedQueue?: string | null;
 	/** A description of the template. */
 	description?: string | null;
-	icons?: { [key: string]: string } | null;
+	icons?: { [key: string]: string | null } | null;
 	/** The ID of the task whose icon is used when showing this template in the UI. */
 	iconTaskId?: string | null;
 	/** The ID of the template. */
@@ -6628,7 +6729,7 @@ export type AzureDevopsBuildOption = {
 	definition?: AzureDevopsBuildOptionDefinitionReference | null;
 	/** Indicates whether the behavior is enabled. */
 	enabled?: boolean | null;
-	inputs?: { [key: string]: string } | null;
+	inputs?: { [key: string]: string | null } | null;
 };
 
 /** Represents an optional behavior that can be applied to a build definition. */
@@ -6667,12 +6768,12 @@ export type AzureDevopsBuildOptionInputDefinition = {
 	defaultValue?: string | null;
 	/** The name of the input group that this input belongs to. */
 	groupName?: string | null;
-	help?: { [key: string]: string } | null;
+	help?: { [key: string]: string | null } | null;
 	/** The label for the input. */
 	label?: string | null;
 	/** The name of the input. */
 	name?: string | null;
-	options?: { [key: string]: string } | null;
+	options?: { [key: string]: string | null } | null;
 	/** Indicates whether the input is required to have a value. */
 	required?: boolean | null;
 	/** Indicates the type of the input value. */
@@ -6709,7 +6810,7 @@ export type AzureDevopsBuildRepository = {
 	id?: string | null;
 	/** The friendly name of the repository. */
 	name?: string | null;
-	properties?: { [key: string]: string } | null;
+	properties?: { [key: string]: string | null } | null;
 	/** The root folder. */
 	rootFolder?: string | null;
 	/** The type of the repository. */
@@ -6947,7 +7048,7 @@ export type AzureDevopsCloneOptions = {
 	/** Name of the workitem type of the clone */
 	destinationWorkItemType?: string | null;
 	/** Key value pairs where the key value is overridden by the value. */
-	overrideParameters?: { [key: string]: string } | null;
+	overrideParameters?: { [key: string]: string | null } | null;
 	/** Comment on the link that will link the new clone test case to the original Set null for no comment */
 	relatedLinkComment?: string | null;
 };
@@ -7276,7 +7377,7 @@ export type AzureDevopsConsumerAction = {
 };
 
 export type AzureDevopsContainer = {
-	environment?: { [key: string]: string } | null;
+	environment?: { [key: string]: string | null } | null;
 	image?: string | null;
 	mapDockerSocket?: boolean | null;
 	options?: string | null;
@@ -7479,7 +7580,7 @@ export type AzureDevopsDataSourceBindingBase = {
 	/** Defines the initial value of the query params */
 	initialContextTemplate?: string | null;
 	/** Gets or sets the parameters for the data source. */
-	parameters?: { [key: string]: string } | null;
+	parameters?: { [key: string]: string | null } | null;
 	/** Gets or sets http request body */
 	requestContent?: string | null;
 	/** Gets or sets http request verb */
@@ -7745,7 +7846,7 @@ export type AzureDevopsDistributedTaskIssue = {
 	/** The category of the issue. <br />Example: Code - refers to compilation errors <br />Example: General - refers to generic errors */
 	category?: string | null;
 	/** A dictionary containing details about the issue. */
-	data?: { [key: string]: string } | null;
+	data?: { [key: string]: string | null } | null;
 	/** A description of issue. */
 	message?: string | null;
 	/** The type (error, warning) of the issue. */
@@ -7793,7 +7894,7 @@ export type AzureDevopsDistributedTaskTaskReference = {
 	/** The ID of the task definition. Corresponds to the id value of task.json file. <br />Example: CmdLineV2 { "id": "D9BAFED4-0B18-4F58-968D-86655B4D2CE9" } */
 	id?: string | null;
 	/** A dictionary of inputs specific to a task definition. Corresponds to inputs value of task.json file. */
-	inputs?: { [key: string]: string } | null;
+	inputs?: { [key: string]: string | null } | null;
 	/** The name of the task definition. Corresponds to the name value of task.json file. <br />Example: CmdLineV2 { "name": "CmdLine" } */
 	name?: string | null;
 	/** The version of the task definition. Corresponds to the version value of task.json file. <br />Example: CmdLineV2 { "version": { "Major": 2, "Minor": 212, "Patch": 0 } } */
@@ -8028,7 +8129,7 @@ export type AzureDevopsEntitlementOperationResultBase = {
 	/** Success status of the operation. */
 	isSuccess?: boolean | null;
 	/** Resulting entitlement property. For specific implementations, see also: <seealso cref="T:Microsoft.VisualStudio.Services.MemberEntitlementManagement.WebApi.ServicePrincipalEntitlementOperationResult" /><seealso… */
-	result?: string | null;
+	result?: AzureDevopsJsonValue | null;
 };
 
 /** Defines the base contract for search response. */
@@ -8486,7 +8587,7 @@ export type AzureDevopsFieldReference = {
 	url?: string | null;
 };
 
-export type AzureDevopsFieldSetting = { [key: string]: string };
+export type AzureDevopsFieldSetting = { [key: string]: string | null };
 
 export type AzureDevopsFileContentMetadata = {
 	contentType?: string | null;
@@ -8682,7 +8783,7 @@ export type AzureDevopsGitBaseChange = {
 	/** The type of change that was made to the item. */
 	changeType?: string | null;
 	/** Current version. */
-	item?: string | null;
+	item?: AzureDevopsJsonValue | null;
 	/** Content of the item after the change. */
 	newContent?: AzureDevopsItemContent | null;
 	/** Path of the item on the server. */
@@ -9493,7 +9594,7 @@ export type AzureDevopsHit = {
 	type?: string | null;
 };
 
-export type AzureDevopsIDomainId = Record<string, AzureDevopsJsonValue>;
+export type AzureDevopsIDomainId = (string | Record<string, AzureDevopsJsonValue>);
 
 /** Abstraction interface for the diagnostic log. Primarily for deserialization. */
 export type AzureDevopsINotificationDiagnosticLog = {
@@ -9510,7 +9611,7 @@ export type AzureDevopsINotificationDiagnosticLog = {
 	/** List of log messages. */
 	messages?: Array<AzureDevopsNotificationDiagnosticLogMessage> | null;
 	/** Dictionary of log properties and settings for the job. */
-	properties?: { [key: string]: string } | null;
+	properties?: { [key: string]: string | null } | null;
 	/** This identifier depends on the logType. For notification jobs, this will be the job Id. For subscription tracing, this will be a special root Guid with the subscription Id encoded. */
 	source?: string | null;
 	/** Time the log started. */
@@ -9561,12 +9662,12 @@ export type AzureDevopsIdentityBase = {
 };
 
 /** An Identity descriptor is a wrapper for the identity type (Windows SID, Passport) along with a unique identifier such as the SID or PUID. */
-export type AzureDevopsIdentityDescriptor = {
+export type AzureDevopsIdentityDescriptor = (string | {
 	/** The unique identifier for this identity, not exceeding 256 chars, which will be persisted. */
 	identifier?: string | null;
 	/** Type of descriptor (for example, Windows, Passport, etc.). */
 	identityType?: string | null;
-};
+});
 
 export type AzureDevopsIdentityRef = AzureDevopsGraphSubjectBase & {
 	/** Deprecated - Can be retrieved by querying the Graph user referenced in the "self" entry of the IdentityRef "_links" dictionary */
@@ -9678,11 +9779,11 @@ export type AzureDevopsInputValidation = {
 	/** Gets or sets the maximum length of this descriptor. */
 	maxLength?: number | null;
 	/** Gets or sets the minimum value for this descriptor. */
-	maxValue?: string | null;
+	maxValue?: (number | string) | null;
 	/** Gets or sets the minimum length of this descriptor. */
 	minLength?: number | null;
 	/** Gets or sets the minimum value for this descriptor. */
-	minValue?: string | null;
+	minValue?: (number | string) | null;
 	/** Gets or sets the pattern to validate. */
 	pattern?: string | null;
 	/** Gets or sets the error on pattern mismatch. */
@@ -9724,7 +9825,7 @@ export type AzureDevopsInputValuesError = {
 };
 
 export type AzureDevopsInputValuesQuery = {
-	currentValues?: { [key: string]: string } | null;
+	currentValues?: { [key: string]: string | null } | null;
 	/** The input values to return on input, and the result from the consumer on output. */
 	inputValues?: Array<AzureDevopsInputValues> | null;
 	/** Subscription containing information about the publisher/consumer and the current input values */
@@ -9740,7 +9841,7 @@ export type AzureDevopsInstalledExtension = AzureDevopsExtensionManifest & {
 	/** This is the set of files available from the extension. */
 	files?: Array<AzureDevopsExtensionFile> | null;
 	/** Extension flags relevant to contribution consumers */
-	flags?: string | null;
+	flags?: (string | number) | null;
 	/** Information about this particular installation of the extension */
 	installState?: AzureDevopsInstalledExtensionState | null;
 	/** This represents the date/time the extensions was last updated in the gallery. This doesnt mean this version was updated the value represents changes to any and all versions of the extension. */
@@ -9779,7 +9880,7 @@ export type AzureDevopsInstalledExtensionStateIssue = {
 export type AzureDevopsIssue = {
 	/** The category. */
 	category?: string | null;
-	data?: { [key: string]: string } | null;
+	data?: { [key: string]: string | null } | null;
 	/** A description of the issue. */
 	message?: string | null;
 	/** The type (error, warning) of the issue. */
@@ -10094,7 +10195,7 @@ export type AzureDevopsNotificationDetails = {
 	/** Gets or sets this notification detail's consumer identifier. */
 	consumerId?: string | null;
 	/** Gets or sets this notification detail's consumer inputs. */
-	consumerInputs?: { [key: string]: string } | null;
+	consumerInputs?: { [key: string]: string | null } | null;
 	/** Gets or sets the time that this notification was dequeued for processing */
 	dequeuedDate?: string | null;
 	/** Gets or sets this notification detail's error detail. */
@@ -10110,7 +10211,7 @@ export type AzureDevopsNotificationDetails = {
 	/** Gets or sets this notification detail's publisher identifier. */
 	publisherId?: string | null;
 	/** Gets or sets this notification detail's publisher inputs. */
-	publisherInputs?: { [key: string]: string } | null;
+	publisherInputs?: { [key: string]: string | null } | null;
 	/** Gets or sets the time that this notification was queued (created) */
 	queuedDate?: string | null;
 	/** Gets or sets this notification detail's request. */
@@ -10243,7 +10344,7 @@ export type AzureDevopsNotificationSubscription = {
 	/** Diagnostics for this subscription. */
 	diagnostics?: AzureDevopsSubscriptionDiagnostics | null;
 	/** Any extra properties like detailed description for different contexts, user/group contexts */
-	extendedProperties?: { [key: string]: string } | null;
+	extendedProperties?: { [key: string]: string | null } | null;
 	/** Matching criteria for the subscription. ExpressionFilter */
 	filter?: AzureDevopsISubscriptionFilter | null;
 	/** Read-only indicators that further describe the subscription. */
@@ -10666,6 +10767,14 @@ export type AzureDevopsPagedGraphMemberList = {
 	totalCount?: number | null;
 };
 
+/** Returned by the List method; contains a list of personal access tokens (PATs) and the continuation token to get the next page of results */
+export type AzureDevopsPagedPatTokens = {
+	/** Used to access the next page of results in successive API calls to list personal access tokens (PATs) */
+	continuationToken?: string | null;
+	/** The list of personal access tokens (PATs) */
+	patTokens?: Array<AzureDevopsPatToken> | null;
+};
+
 /** A page of user entitlements */
 export type AzureDevopsPagedUserEntitlementsList = {
 	/** The continuation token for next page of data. Can be null, if no more data exists. */
@@ -10909,7 +11018,7 @@ export type AzureDevopsPlan = {
 	/** The resource url to locate the plan via rest api */
 	url?: string | null;
 	/** Bit flag indicating set of permissions a user has to the plan. */
-	userPermissions?: string | null;
+	userPermissions?: (string | number) | null;
 };
 
 /** Base class for plan view data contracts. Anything common goes here. */
@@ -11298,7 +11407,7 @@ export type AzureDevopsProfileAttributeBase = {
 	/** The time the attribute was last changed. */
 	timeStamp?: string | null;
 	/** The value of the attribute. */
-	value?: string | null;
+	value?: AzureDevopsJsonValue | null;
 };
 
 /** Defines the details of the project. */
@@ -11374,7 +11483,7 @@ export type AzureDevopsPropertiesCollection = {
 /** The class to represent a Generic store for test session data. */
 export type AzureDevopsPropertyBag = {
 	/** Generic store for test session data */
-	bag?: { [key: string]: string } | null;
+	bag?: { [key: string]: string | null } | null;
 };
 
 /** Extended metadata for a specific package type. */
@@ -11388,7 +11497,7 @@ export type AzureDevopsProtocolMetadata = {
 /** Data about the origin of a published package */
 export type AzureDevopsProvenance = {
 	/** Other provenance data. */
-	data?: { [key: string]: string } | null;
+	data?: { [key: string]: string | null } | null;
 	/** Type of provenance source, for example "InternalBuild", "InternalRelease" */
 	provenanceSource?: string | null;
 	/** Identity of user that published the package */
@@ -11422,7 +11531,7 @@ export type AzureDevopsPublishersQuery = {
 	/** Optional list of publisher ids to restrict the results to */
 	publisherIds?: Array<string> | null;
 	/** Filter for publisher inputs */
-	publisherInputs?: { [key: string]: string } | null;
+	publisherInputs?: { [key: string]: string | null } | null;
 	/** Results from the query */
 	results?: Array<AzureDevopsPublisher> | null;
 };
@@ -11517,6 +11626,15 @@ export type AzureDevopsQueryHierarchyItem = AzureDevopsWorkItemTrackingResource 
 	targetClauses?: AzureDevopsWorkItemQueryClause | null;
 	/** The WIQL text of the query */
 	wiql?: string | null;
+};
+
+export type AzureDevopsQueryHierarchyItemsResult = {
+	/** The count of items. */
+	count?: number | null;
+	/** Indicates if the max return limit was hit but there are still more items */
+	hasMore?: boolean | null;
+	/** The list of items */
+	value?: Array<AzureDevopsQueryHierarchyItem> | null;
 };
 
 /** A single package version within the recycle bin. */
@@ -11673,7 +11791,7 @@ export type AzureDevopsReleaseDataSourceBindingBase = {
 	/** Defines the initial value of the query params */
 	initialContextTemplate?: string | null;
 	/** Gets or sets the parameters for the data source. */
-	parameters?: { [key: string]: string } | null;
+	parameters?: { [key: string]: string | null } | null;
 	/** Gets or sets http request body */
 	requestContent?: string | null;
 	/** Gets or sets http request verb */
@@ -12060,7 +12178,7 @@ export type AzureDevopsReleaseGates = {
 
 export type AzureDevopsReleaseIssue = {
 	/** Issue data. */
-	data?: { [key: string]: string } | null;
+	data?: { [key: string]: string | null } | null;
 	/** Issue type, for example error, warning or info. */
 	issueType?: string | null;
 	/** Issue message. */
@@ -12641,7 +12759,7 @@ export type AzureDevopsSemanticVersion = {
 /** Specifies the authentication scheme to be used for authentication. */
 export type AzureDevopsServiceEndpointAuthenticationSchemeReference = {
 	/** Gets or sets the key and value of the fields used for authentication. */
-	inputs?: { [key: string]: string } | null;
+	inputs?: { [key: string]: string | null } | null;
 	/** Gets or sets the type of authentication scheme of an endpoint. */
 	type?: string | null;
 };
@@ -12711,7 +12829,7 @@ export type AzureDevopsServiceEndpointDataSourceBindingBase = {
 	/** Defines the initial value of the query params */
 	initialContextTemplate?: string | null;
 	/** Gets or sets the parameters for the data source. */
-	parameters?: { [key: string]: string } | null;
+	parameters?: { [key: string]: string | null } | null;
 	/** Gets or sets http request body */
 	requestContent?: string | null;
 	/** Gets or sets http request verb */
@@ -12751,7 +12869,7 @@ export type AzureDevopsServiceEndpointDependsOn = {
 /** Represents the authorization used for service endpoint. */
 export type AzureDevopsServiceEndpointEndpointAuthorization = {
 	/** Gets or sets the parameters for the selected authorization scheme. */
-	parameters?: { [key: string]: string } | null;
+	parameters?: { [key: string]: string | null } | null;
 	/** Gets or sets the scheme used for service endpoint authentication. */
 	scheme?: string | null;
 };
@@ -12813,7 +12931,7 @@ export type AzureDevopsServiceEndpointServiceEndpoint = {
 	authorization?: AzureDevopsServiceEndpointEndpointAuthorization | null;
 	/** Gets or sets the identity reference for the user who created the Service endpoint. */
 	createdBy?: AzureDevopsIdentityRef | null;
-	data?: { [key: string]: string } | null;
+	data?: { [key: string]: string | null } | null;
 	/** Gets or sets the description of endpoint. */
 	description?: string | null;
 	/** This is a deprecated field. */
@@ -12855,7 +12973,7 @@ export type AzureDevopsServiceEndpointServiceEndpointAuthenticationScheme = {
 	/** Gets or sets the input descriptors for the service endpoint authentication scheme. */
 	inputDescriptors?: Array<AzureDevopsInputDescriptor> | null;
 	/** Gets or sets the properties of service endpoint authentication scheme. */
-	properties?: { [key: string]: string } | null;
+	properties?: { [key: string]: string | null } | null;
 	/** Gets or sets whether this auth scheme requires OAuth2 configuration or not. */
 	requiresOAuth2Configuration?: boolean | null;
 	/** Gets or sets the scheme for service endpoint authentication. */
@@ -12888,6 +13006,20 @@ export type AzureDevopsServiceEndpointServiceEndpointExecutionRecord = {
 	data?: AzureDevopsServiceEndpointServiceEndpointExecutionData | null;
 	/** Gets the Id of service endpoint. */
 	endpointId?: string | null;
+};
+
+/** Represents result of the service endpoint request. */
+export type AzureDevopsServiceEndpointServiceEndpointRequestResult = {
+	/** Gets or sets the parameters used to make subsequent calls to the data source */
+	callbackContextParameters?: { [key: string]: string | null } | null;
+	/** Gets or sets the flat that decides if another call to the data source is to be made */
+	callbackRequired?: boolean | null;
+	/** Gets or sets the error message of the service endpoint request result. */
+	errorMessage?: string | null;
+	/** Gets or sets the result of service endpoint request. */
+	result?: AzureDevopsJToken | null;
+	/** Gets or sets the status code of the service endpoint request result. */
+	statusCode?: string | null;
 };
 
 /** Represents type of the service endpoint. */
@@ -13050,7 +13182,7 @@ export type AzureDevopsSourceRepository = {
 	id?: string | null;
 	/** The friendly name of the repository. */
 	name?: string | null;
-	properties?: { [key: string]: string } | null;
+	properties?: { [key: string]: string | null } | null;
 	/** The name of the source provider the repository is from. */
 	sourceProviderName?: string | null;
 	/** The URL of the repository. */
@@ -13119,7 +13251,7 @@ export type AzureDevopsStreamedBatch = {
 	/** The next link for the work item. */
 	nextLink?: string | null;
 	/** Values such as rel, sourceId, TargetId, ChangedDate, isActive. */
-	values?: Array<string> | null;
+	values?: Array<AzureDevopsJsonValue> | null;
 };
 
 /** Encapsulates an event subscription. */
@@ -13130,7 +13262,7 @@ export type AzureDevopsSubscription = {
 	consumerActionId?: string | null;
 	consumerId?: string | null;
 	/** Consumer input values */
-	consumerInputs?: { [key: string]: string } | null;
+	consumerInputs?: { [key: string]: string | null } | null;
 	createdBy?: AzureDevopsIdentityRef | null;
 	createdDate?: string | null;
 	eventDescription?: string | null;
@@ -13142,7 +13274,7 @@ export type AzureDevopsSubscription = {
 	probationRetries?: string | null;
 	publisherId?: string | null;
 	/** Publisher input values */
-	publisherInputs?: { [key: string]: string } | null;
+	publisherInputs?: { [key: string]: string | null } | null;
 	resourceVersion?: string | null;
 	status?: string | null;
 	subscriber?: AzureDevopsIdentityRef | null;
@@ -13274,9 +13406,9 @@ export type AzureDevopsTaskAgent = AzureDevopsTaskAgentReference & {
 	/** Date on which the last connectivity status change occurred. */
 	statusChangedOn?: string | null;
 	/** System-defined capabilities supported by this agent's host. Warning: To set capabilities use the PUT method, PUT will completely overwrite existing capabilities. */
-	systemCapabilities?: { [key: string]: string } | null;
+	systemCapabilities?: { [key: string]: string | null } | null;
 	/** User-defined capabilities supported by this agent's host. Warning: To set capabilities use the PUT method, PUT will completely overwrite existing capabilities. */
-	userCapabilities?: { [key: string]: string } | null;
+	userCapabilities?: { [key: string]: string | null } | null;
 };
 
 /** Provides data necessary for authorizing the agent using OAuth 2.0 authentication flows. */
@@ -13336,7 +13468,7 @@ export type AzureDevopsTaskAgentJobRequest = {
 	/** The date/time this request was assigned. */
 	assignTime?: string | null;
 	/** Additional data about the request. */
-	data?: { [key: string]: string } | null;
+	data?: { [key: string]: string | null } | null;
 	/** The pipeline definition associated with this request */
 	definition?: AzureDevopsTaskOrchestrationOwner | null;
 	/** A list of demands required to fulfill this request. */
@@ -13527,7 +13659,7 @@ export type AzureDevopsTaskExecution = {
 	/** The utility task to run. Specifying this means that this task definition is simply a meta task to call another task. This is useful for tasks that call utility tasks like powershell and commandline */
 	execTask?: AzureDevopsDistributedTaskTaskReference | null;
 	/** If a task is going to run code, then this provides the type/script etc... information by platform. For example, it might look like. net45: { typeName: "Microsoft.TeamFoundation.Automation.Tasks.PowerShellTask", assemblyName: "Microsoft.TeamFoundation.Automation.Tasks.PowerShell.dll" } net20: {… */
-	platformInstructions?: { [key: string]: { [key: string]: string } } | null;
+	platformInstructions?: { [key: string]: { [key: string]: string | null } } | null;
 };
 
 export type AzureDevopsTaskGroup = AzureDevopsTaskDefinition & {
@@ -13574,9 +13706,9 @@ export type AzureDevopsTaskGroupStep = {
 	/** Gets or sets as task is enabled or not. */
 	enabled?: boolean | null;
 	/** Gets dictionary of environment variables. */
-	environment?: { [key: string]: string } | null;
+	environment?: { [key: string]: string | null } | null;
 	/** Gets or sets dictionary of inputs. */
-	inputs?: { [key: string]: string } | null;
+	inputs?: { [key: string]: string | null } | null;
 	/** Gets or sets the maximum number of retries */
 	retryCountOnTaskFailure?: number | null;
 	/** Gets or sets the reference of the task. */
@@ -13598,8 +13730,8 @@ export type AzureDevopsTaskInputDefinitionBase = {
 	helpMarkDown?: string | null;
 	label?: string | null;
 	name?: string | null;
-	options?: { [key: string]: string } | null;
-	properties?: { [key: string]: string } | null;
+	options?: { [key: string]: string | null } | null;
+	properties?: { [key: string]: string | null } | null;
 	required?: boolean | null;
 	type?: string | null;
 	validation?: AzureDevopsTaskInputValidation | null;
@@ -13779,7 +13911,7 @@ export type AzureDevopsTeamProject = AzureDevopsTeamProjectReference & {
 	/** The links to other objects related to this object. */
 	_links?: AzureDevopsReferenceLinks | null;
 	/** Set of capabilities this project has (such as process template & version control). */
-	capabilities?: { [key: string]: { [key: string]: string } } | null;
+	capabilities?: { [key: string]: { [key: string]: string | null } } | null;
 	/** The shallow ref to the default team. */
 	defaultTeam?: AzureDevopsWebApiTeamRef | null;
 };
@@ -14180,7 +14312,7 @@ export type AzureDevopsTestLog = {
 	/** Test Log Context run, build */
 	logReference?: AzureDevopsTestLogReference | null;
 	/** Meta data for Log file */
-	metaData?: { [key: string]: string } | null;
+	metaData?: { [key: string]: string | null } | null;
 	/** LastUpdatedDate for Log file */
 	modifiedOn?: string | null;
 	/** Size in Bytes for Log file */
@@ -15082,6 +15214,11 @@ export type AzureDevopsTestTagSummary = {
 	tagsGroupByTestArtifact?: { [key: string]: Array<AzureDevopsTestTag> } | null;
 };
 
+export type AzureDevopsTestToWorkItemLinks = {
+	test?: AzureDevopsTestMethod | null;
+	workItems?: Array<AzureDevopsWorkItemReference> | null;
+};
+
 /** Test Variable Create or Update Parameters */
 export type AzureDevopsTestVariableCreateUpdateParameters = {
 	/** Description of the test variable */
@@ -15096,13 +15233,35 @@ export type AzureDevopsTfvcBaseChange = {
 	/** The type of change that was made to the item. */
 	changeType?: string | null;
 	/** Current version. */
-	item?: string | null;
+	item?: AzureDevopsJsonValue | null;
 	/** Content of the item after the change. */
 	newContent?: AzureDevopsItemContent | null;
 	/** Path of the item on the server. */
 	sourceServerItem?: string | null;
 	/** URL to retrieve the item. */
 	url?: string | null;
+};
+
+/** Class representing a branch object. */
+export type AzureDevopsTfvcBranch = AzureDevopsTfvcBranchRef & {
+	/** List of children for the branch. */
+	children?: Array<AzureDevopsTfvcBranch> | null;
+	/** List of branch mappings. */
+	mappings?: Array<AzureDevopsTfvcBranchMapping> | null;
+	/** Path of the branch's parent. */
+	parent?: AzureDevopsTfvcShallowBranchRef | null;
+	/** List of paths of the related branches. */
+	relatedBranches?: Array<AzureDevopsTfvcShallowBranchRef> | null;
+};
+
+/** A branch mapping. */
+export type AzureDevopsTfvcBranchMapping = {
+	/** Depth of the branch. */
+	depth?: string | null;
+	/** Server item for the branch. */
+	serverItem?: string | null;
+	/** Type of the branch. */
+	type?: string | null;
 };
 
 /** Metadata for a branchref. */
@@ -15457,7 +15616,7 @@ export type AzureDevopsTokenAdminSessionToken = {
 	/** This is populated when user requests a compact token. The alternate token value is self describing token. */
 	alternateToken?: string | null;
 	authorizationId?: string | null;
-	claims?: { [key: string]: string } | null;
+	claims?: { [key: string]: string | null } | null;
 	clientId?: string | null;
 	displayName?: string | null;
 	hostAuthorizationId?: string | null;
@@ -15966,7 +16125,7 @@ export type AzureDevopsWikiV2 = AzureDevopsWikiCreateBaseParameters & {
 	/** Is wiki repository disabled */
 	isDisabled?: boolean | null;
 	/** Properties of the wiki. */
-	properties?: { [key: string]: string } | null;
+	properties?: { [key: string]: string | null } | null;
 	/** Remote web url to the wiki. */
 	remoteUrl?: string | null;
 	/** REST url for this wiki. */
@@ -16372,7 +16531,7 @@ export type AzureDevopsWorkItemRelationUpdates = {
 /** Defines the work item result that matched a work item search request. */
 export type AzureDevopsWorkItemResult = {
 	/** A standard set of work item fields and their values. */
-	fields?: { [key: string]: string } | null;
+	fields?: { [key: string]: string | null } | null;
 	/** Highlighted snippets of fields that match the search request. The list is sorted by relevance of the snippets. */
 	hits?: Array<AzureDevopsWorkItemHit> | null;
 	/** Project details of the work item. */
@@ -16437,7 +16596,7 @@ export type AzureDevopsWorkItemTagDefinition = {
 /** Describes a work item template. */
 export type AzureDevopsWorkItemTemplate = AzureDevopsWorkItemTemplateReference & {
 	/** Mapping of field and its templated value. */
-	fields?: { [key: string]: string } | null;
+	fields?: { [key: string]: string | null } | null;
 };
 
 /** Describes a shallow reference to a work item template. */
@@ -16560,7 +16719,7 @@ export type AzureDevopsWorkItemTypeReference = AzureDevopsWorkItemTrackingResour
 
 export type AzureDevopsWorkItemTypeStateInfo = {
 	/** State name to state category map */
-	states?: { [key: string]: string } | null;
+	states?: { [key: string]: string | null } | null;
 	/** Work Item type name */
 	workItemTypeName?: string | null;
 };
@@ -16613,13 +16772,13 @@ export type AzureDevopsWorkflowTask = {
 	/** Gets or sets as the task enabled or not. */
 	enabled?: boolean | null;
 	/** Gets or sets the task environment variables. */
-	environment?: { [key: string]: string } | null;
+	environment?: { [key: string]: string | null } | null;
 	/** Gets or sets the task inputs. */
-	inputs?: { [key: string]: string } | null;
+	inputs?: { [key: string]: string | null } | null;
 	/** Gets or sets the name of the task. */
 	name?: string | null;
 	/** Gets or sets the task override inputs. */
-	overrideInputs?: { [key: string]: string } | null;
+	overrideInputs?: { [key: string]: string | null } | null;
 	/** Gets or sets the reference name of the task. */
 	refName?: string | null;
 	/** Gets or sets the task retryCount. */
@@ -16656,7 +16815,7 @@ export type AzureDevopsYamlBuild = {
 	yaml?: string | null;
 };
 
-export type AzureDevopsAttribute = { [key: string]: string };
+export type AzureDevopsAttribute = { [key: string]: string | null };
 
 export type AzureDevopsOperationInputs = {
 	'account.accounts.list': {
@@ -16816,7 +16975,7 @@ export type AzureDevopsOperationInputs = {
 		/** Id of the package (GUID Id, not name). */
 		packageId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifacts.artifactDetails.getPackage': {
 		/** Name or Id of the feed. */
@@ -16824,7 +16983,7 @@ export type AzureDevopsOperationInputs = {
 		/** The package Id (GUID Id, not the package name). */
 		packageId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** True to return all versions of the package in the response. Default is false (latest version only). */
 		includeAllVersions?: boolean;
 		/** True to return REST Urls with the response. Default is True. */
@@ -16846,7 +17005,7 @@ export type AzureDevopsOperationInputs = {
 		/** Id of the package version (GUID Id, not name). */
 		packageVersionId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** True to include urls for each version. Default is true. */
 		includeUrls?: boolean;
 		/** Only applicable for NuGet packages. If false, delisted package versions will be returned. */
@@ -16862,7 +17021,7 @@ export type AzureDevopsOperationInputs = {
 		/** Id of the package version (GUID Id, not name). */
 		packageVersionId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifacts.artifactDetails.getPackageVersions': {
 		/** Name or Id of the feed. */
@@ -16870,7 +17029,7 @@ export type AzureDevopsOperationInputs = {
 		/** Id of the package (GUID Id, not name). */
 		packageId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** True to include urls for each version. Default is true. */
 		includeUrls?: boolean;
 		/** Only applicable for NuGet packages. If false, delisted package versions will be returned. */
@@ -16882,7 +17041,7 @@ export type AzureDevopsOperationInputs = {
 		/** Name or Id of the feed. */
 		feedId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** One of the supported artifact package types. */
 		protocolType?: string;
 		/** Filter to packages that contain the provided string. Characters in the string must conform to the package name constraints. */
@@ -16915,7 +17074,7 @@ export type AzureDevopsOperationInputs = {
 	'artifacts.artifactDetails.queryPackageMetrics': {
 		feedId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** List of package ids */
 		packageIds?: Array<string>;
 	};
@@ -16923,7 +17082,7 @@ export type AzureDevopsOperationInputs = {
 		feedId: string;
 		packageId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** List of package version ids */
 		packageVersionIds?: Array<string>;
 	};
@@ -16931,11 +17090,11 @@ export type AzureDevopsOperationInputs = {
 		/** Name or ID of the feed. */
 		feedId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifacts.changeTracking.getFeedChanges': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** If true, get changes for all feeds including deleted feeds. The default value is false. */
 		includeDeleted?: boolean;
 		/** A continuation token which acts as a bookmark to a previously retrieved change. This token allows the user to continue retrieving changes in batches, picking up where the previous batch left off. If specified, all the changes that occur strictly after the token will be returned. If not specified… */
@@ -16947,7 +17106,7 @@ export type AzureDevopsOperationInputs = {
 		/** Name or Id of the feed. */
 		feedId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** A continuation token which acts as a bookmark to a previously retrieved change. This token allows the user to continue retrieving changes in batches, picking up where the previous batch left off. If specified, all the changes that occur strictly after the token will be returned. If not specified… */
 		continuationToken?: number;
 		/** Number of package changes to fetch. The default value is 1000. The maximum value is 2000. */
@@ -16955,7 +17114,7 @@ export type AzureDevopsOperationInputs = {
 	};
 	'artifacts.feedManagement.createFeed': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Supported capabilities of a feed. */
 		capabilities?: "none" | "upstreamV2" | "underMaintenance" | "defaultCapabilities";
 		/** This will either be the feed GUID or the feed GUID and view GUID depending on how the feed was accessed. */
@@ -17005,7 +17164,7 @@ export type AzureDevopsOperationInputs = {
 		/** Name or Id of the feed. */
 		feedId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Related REST links. */
 		_links?: AzureDevopsReferenceLinksInput;
 		/** Id of the view. */
@@ -17023,7 +17182,7 @@ export type AzureDevopsOperationInputs = {
 		/** Name or Id of the feed. */
 		feedId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifacts.feedManagement.deleteFeedView': {
 		/** Name or Id of the feed. */
@@ -17031,13 +17190,13 @@ export type AzureDevopsOperationInputs = {
 		/** Name or Id of the view. */
 		viewId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifacts.feedManagement.getFeed': {
 		/** Name or Id of the feed. */
 		feedId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Include upstreams that have been deleted in the response. */
 		includeDeletedUpstreams?: boolean;
 	};
@@ -17045,7 +17204,7 @@ export type AzureDevopsOperationInputs = {
 		/** Name or Id of the feed. */
 		feedId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** True to include user Ids in the response. Default is false. */
 		includeIds?: boolean;
 		/** True to only return explicitly set permissions on the feed. Default is false. */
@@ -17061,17 +17220,17 @@ export type AzureDevopsOperationInputs = {
 		/** Name or Id of the view. */
 		viewId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifacts.feedManagement.getFeedViews': {
 		/** Name or Id of the feed. */
 		feedId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifacts.feedManagement.getFeeds': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Filter by this role, either Administrator(4), Contributor(3), or Reader(2) level permissions. */
 		feedRole?: "custom" | "none" | "reader" | "contributor" | "administrator" | "collaborator";
 		/** Include upstreams that have been deleted in the response. */
@@ -17083,14 +17242,14 @@ export type AzureDevopsOperationInputs = {
 		/** Name or Id of the feed. */
 		feedId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		body: Array<AzureDevopsFeedPermissionInput>;
 	};
 	'artifacts.feedManagement.updateFeed': {
 		/** Name or Id of the feed. */
 		feedId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** If set, the feed will allow upload of packages that exist on the upstream */
 		allowUpstreamNameConflict?: boolean;
 		/** If set, this feed supports generation of package badges. */
@@ -17116,7 +17275,7 @@ export type AzureDevopsOperationInputs = {
 		/** Name or Id of the view. */
 		viewId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Related REST links. */
 		_links?: AzureDevopsReferenceLinksInput;
 		/** Id of the view. */
@@ -17132,26 +17291,26 @@ export type AzureDevopsOperationInputs = {
 	};
 	'artifacts.feedRecycleBin.list': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifacts.feedRecycleBin.permanentDeleteFeed': {
 		feedId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifacts.feedRecycleBin.restoreDeletedFeed': {
 		feedId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		body: AzureDevopsJsonPatchDocumentInput;
 	};
 	'artifacts.provenance.createSession': {
 		/** The protocol that the session will target */
 		protocol: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Generic property bag to store data about the session */
-		data?: { [key: string]: string };
+		data?: { [key: string]: string | null };
 		/** The feed name or id for the session */
 		feed?: string;
 		/** The type of session If a known value is provided, the Data dictionary will be validated for the presence of properties required by that type */
@@ -17161,7 +17320,7 @@ export type AzureDevopsOperationInputs = {
 		/** Name or Id of the feed */
 		feedId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifacts.recycleBin.getRecycleBinPackage': {
 		/** Name or Id of the feed. */
@@ -17169,7 +17328,7 @@ export type AzureDevopsOperationInputs = {
 		/** The package Id (GUID Id, not the package name). */
 		packageId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** True to return REST Urls with the response. Default is True. */
 		includeUrls?: boolean;
 	};
@@ -17181,7 +17340,7 @@ export type AzureDevopsOperationInputs = {
 		/** The package version Id 9guid Id, not the version string). */
 		packageVersionId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** True to return REST Urls with the response. Default is True. */
 		includeUrls?: boolean;
 	};
@@ -17191,7 +17350,7 @@ export type AzureDevopsOperationInputs = {
 		/** The package Id (GUID Id, not the package name). */
 		packageId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** True to return REST Urls with the response. Default is True. */
 		includeUrls?: boolean;
 	};
@@ -17199,7 +17358,7 @@ export type AzureDevopsOperationInputs = {
 		/** Name or Id of the feed. */
 		feedId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Type of package (e.g. NuGet, npm, ...). */
 		protocolType?: string;
 		/** Filter to packages matching this name. */
@@ -17217,19 +17376,19 @@ export type AzureDevopsOperationInputs = {
 		/** Name or ID of the feed. */
 		feedId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifacts.retentionPolicies.getRetentionPolicy': {
 		/** Name or ID of the feed. */
 		feedId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifacts.retentionPolicies.setRetentionPolicy': {
 		/** Name or ID of the feed. */
 		feedId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** This attribute is deprecated and is not honoured by retention */
 		ageLimitInDays?: number;
 		/** Maximum versions to preserve per package and package type. */
@@ -17254,7 +17413,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		version: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.maven.deletePackageVersionFromRecycleBin': {
 		/** Name or ID of the feed. */
@@ -17266,7 +17425,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		version: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.maven.downloadPackage': {
 		/** Name or ID of the feed. */
@@ -17280,7 +17439,7 @@ export type AzureDevopsOperationInputs = {
 		/** File name to download */
 		fileName: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.maven.getPackageVersion': {
 		/** Name or ID of the feed. */
@@ -17292,7 +17451,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		version: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** True to show information for deleted packages. */
 		showDeleted?: boolean;
 	};
@@ -17306,7 +17465,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		version: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.maven.getUpstreamingBehavior': {
 		/** The name or id of the feed */
@@ -17316,7 +17475,7 @@ export type AzureDevopsOperationInputs = {
 		/** The artifact id of the package */
 		artifactId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.maven.restorePackageVersionFromRecycleBin': {
 		/** Name or ID of the feed. */
@@ -17328,7 +17487,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		version: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Setting to false will undo earlier deletion and restore the package to feed. */
 		deleted?: boolean;
 	};
@@ -17338,7 +17497,7 @@ export type AzureDevopsOperationInputs = {
 		groupId: string;
 		artifactId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Indicates whether external upstream versions should be considered for this package */
 		versionsFromExternalUpstreams?: "auto" | "allowExternalVersions";
 	};
@@ -17352,7 +17511,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		version: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** The view to which the package version will be added */
 		views?: AzureDevopsJsonPatchOperationInput;
 	};
@@ -17360,7 +17519,7 @@ export type AzureDevopsOperationInputs = {
 		/** Feed which contains the packages to update. */
 		feedId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Data required to perform the operation. This is optional based on type of operation. Use BatchPromoteData if performing a promote operation. */
 		data?: AzureDevopsBatchOperationDataInput;
 		/** Type of operation that needs to be performed on packages. */
@@ -17371,7 +17530,7 @@ export type AzureDevopsOperationInputs = {
 	'artifactsPackageTypes.maven.updateRecycleBinPackages': {
 		feed: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Data required to perform the operation. This is optional based on type of operation. Use BatchPromoteData if performing a promote operation. */
 		data?: AzureDevopsBatchOperationDataInput;
 		/** Type of operation that needs to be performed on packages. */
@@ -17387,7 +17546,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.npm.deleteScopedPackageVersionFromRecycleBin': {
 		/** Name or ID of the feed. */
@@ -17399,7 +17558,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.npm.downloadPackage': {
 		/** Name or ID of the feed. */
@@ -17409,7 +17568,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.npm.downloadScopedPackage': {
 		feedId: string;
@@ -17417,7 +17576,7 @@ export type AzureDevopsOperationInputs = {
 		unscopedPackageName: string;
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.npm.getPackageReadme': {
 		/** Name or ID of the feed. */
@@ -17427,7 +17586,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.npm.getPackageUpstreamingBehavior': {
 		/** The name or id of the feed */
@@ -17437,7 +17596,7 @@ export type AzureDevopsOperationInputs = {
 		/** The name of the scoped package */
 		unscopedPackageName: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.npm.getPackageVersion': {
 		/** Name or ID of the feed. */
@@ -17447,7 +17606,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.npm.getPackageVersionFromRecycleBin': {
 		/** Name or ID of the feed. */
@@ -17457,7 +17616,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.npm.getScopedPackageReadme': {
 		/** Name or ID of the feed. */
@@ -17469,7 +17628,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.npm.getScopedPackageUpstreamingBehavior': {
 		/** The name or id of the feed */
@@ -17477,7 +17636,7 @@ export type AzureDevopsOperationInputs = {
 		/** The name of the package */
 		packageName: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.npm.getScopedPackageVersion': {
 		/** Name or ID of the feed. */
@@ -17489,7 +17648,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.npm.getScopedPackageVersionFromRecycleBin': {
 		/** Name or ID of the feed. */
@@ -17501,7 +17660,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.npm.restorePackageVersionFromRecycleBin': {
 		/** Name or ID of the feed. */
@@ -17511,7 +17670,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Setting to false will undo earlier deletion and restore the package to feed. */
 		deleted?: boolean;
 	};
@@ -17525,7 +17684,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Setting to false will undo earlier deletion and restore the package to feed. */
 		deleted?: boolean;
 	};
@@ -17537,7 +17696,7 @@ export type AzureDevopsOperationInputs = {
 		/** The name of the scoped package */
 		unscopedPackageName: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Indicates whether external upstream versions should be considered for this package */
 		versionsFromExternalUpstreams?: "auto" | "allowExternalVersions";
 	};
@@ -17547,7 +17706,7 @@ export type AzureDevopsOperationInputs = {
 		/** The name of the package */
 		packageName: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Indicates whether external upstream versions should be considered for this package */
 		versionsFromExternalUpstreams?: "auto" | "allowExternalVersions";
 	};
@@ -17559,7 +17718,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.npm.unpublishScopedPackage': {
 		/** Name or ID of the feed. */
@@ -17571,14 +17730,14 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.npm.updatePackage': {
 		feedId: string;
 		packageName: string;
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Indicates the deprecate message of a package version */
 		deprecateMessage?: string;
 		/** The view to which the package version will be added */
@@ -17588,7 +17747,7 @@ export type AzureDevopsOperationInputs = {
 		/** Name or ID of the feed. */
 		feedId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Data required to perform the operation. This is optional based on type of operation. Use BatchPromoteData if performing a promote operation. */
 		data?: AzureDevopsBatchOperationDataInput;
 		/** Type of operation that needs to be performed on packages. */
@@ -17600,7 +17759,7 @@ export type AzureDevopsOperationInputs = {
 		/** Name or ID of the feed. */
 		feedId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Data required to perform the operation. This is optional based on type of operation. Use BatchPromoteData if performing a promote operation. */
 		data?: AzureDevopsBatchOperationDataInput;
 		/** Type of operation that needs to be performed on packages. */
@@ -17614,7 +17773,7 @@ export type AzureDevopsOperationInputs = {
 		unscopedPackageName: string;
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Indicates the deprecate message of a package version */
 		deprecateMessage?: string;
 		/** The view to which the package version will be added */
@@ -17628,7 +17787,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package to delete. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.nuGet.deletePackageVersionFromRecycleBin': {
 		/** Name or ID of the feed. */
@@ -17638,7 +17797,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.nuGet.downloadPackage': {
 		/** Name or ID of the feed. */
@@ -17648,7 +17807,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Unused */
 		sourceProtocolVersion?: string;
 	};
@@ -17660,7 +17819,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** True to include deleted packages in the response. */
 		showDeleted?: boolean;
 	};
@@ -17672,7 +17831,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.nuGet.getUpstreamingBehavior': {
 		/** The name or id of the feed */
@@ -17680,7 +17839,7 @@ export type AzureDevopsOperationInputs = {
 		/** The name of the package */
 		packageName: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.nuGet.restorePackageVersionFromRecycleBin': {
 		/** Name or ID of the feed. */
@@ -17690,7 +17849,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Setting to false will undo earlier deletion and restore the package to feed. */
 		deleted?: boolean;
 	};
@@ -17700,7 +17859,7 @@ export type AzureDevopsOperationInputs = {
 		/** The name of the package */
 		packageName: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Indicates whether external upstream versions should be considered for this package */
 		versionsFromExternalUpstreams?: "auto" | "allowExternalVersions";
 	};
@@ -17712,7 +17871,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package to update. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Indicates the listing state of a package */
 		listed?: boolean;
 		/** The view to which the package version will be added */
@@ -17722,7 +17881,7 @@ export type AzureDevopsOperationInputs = {
 		/** Name or ID of the feed. */
 		feedId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Data required to perform the operation. This is optional based on the type of the operation. Use BatchPromoteData if performing a promote operation. */
 		data?: AzureDevopsBatchOperationDataInput;
 		/** Type of operation that needs to be performed on packages. */
@@ -17734,7 +17893,7 @@ export type AzureDevopsOperationInputs = {
 		/** Name or ID of the feed. */
 		feedId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Data required to perform the operation. This is optional based on the type of the operation. Use BatchPromoteData if performing a promote operation. */
 		data?: AzureDevopsBatchOperationDataInput;
 		/** Type of operation that needs to be performed on packages. */
@@ -17750,7 +17909,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.python.deletePackageVersionFromRecycleBin': {
 		/** Name or ID of the feed. */
@@ -17760,7 +17919,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.python.downloadPackage': {
 		/** Name or ID of the feed. */
@@ -17772,7 +17931,7 @@ export type AzureDevopsOperationInputs = {
 		/** Name of the file in the package */
 		fileName: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.python.getPackageVersion': {
 		/** Name or ID of the feed. */
@@ -17782,7 +17941,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** True to show information for deleted package versions. */
 		showDeleted?: boolean;
 	};
@@ -17794,7 +17953,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.python.getUpstreamingBehavior': {
 		/** The name or id of the feed */
@@ -17802,7 +17961,7 @@ export type AzureDevopsOperationInputs = {
 		/** The name of the package */
 		packageName: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.python.restorePackageVersionFromRecycleBin': {
 		/** Name or ID of the feed. */
@@ -17812,7 +17971,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Setting to false will undo earlier deletion and restore the package to feed. */
 		deleted?: boolean;
 	};
@@ -17822,7 +17981,7 @@ export type AzureDevopsOperationInputs = {
 		/** The name of the package */
 		packageName: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Indicates whether external upstream versions should be considered for this package */
 		versionsFromExternalUpstreams?: "auto" | "allowExternalVersions";
 	};
@@ -17834,7 +17993,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** The view to which the package version will be added */
 		views?: AzureDevopsJsonPatchOperationInput;
 	};
@@ -17842,7 +18001,7 @@ export type AzureDevopsOperationInputs = {
 		/** Name or ID of the feed. */
 		feedId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Data required to perform the operation. This is optional based on the type of the operation. Use BatchPromoteData if performing a promote operation. */
 		data?: AzureDevopsBatchOperationDataInput;
 		/** Type of operation that needs to be performed on packages. */
@@ -17854,7 +18013,7 @@ export type AzureDevopsOperationInputs = {
 		/** Feed which contains the packages to update. */
 		feedId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Data required to perform the operation. This is optional based on the type of the operation. Use BatchPromoteData if performing a promote operation. */
 		data?: AzureDevopsBatchOperationDataInput;
 		/** Type of operation that needs to be performed on packages. */
@@ -17870,7 +18029,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.universal.deletePackageVersionFromRecycleBin': {
 		/** Name or ID of the feed. */
@@ -17880,7 +18039,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.universal.getPackageVersion': {
 		/** Name or ID of the feed. */
@@ -17890,7 +18049,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** True to show information for deleted versions */
 		showDeleted?: boolean;
 	};
@@ -17902,7 +18061,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'artifactsPackageTypes.universal.restorePackageVersionFromRecycleBin': {
 		/** Name or ID of the feed. */
@@ -17912,7 +18071,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Setting to false will undo earlier deletion and restore the package to feed. */
 		deleted?: boolean;
 	};
@@ -17924,7 +18083,7 @@ export type AzureDevopsOperationInputs = {
 		/** Version of the package. */
 		packageVersion: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** The view to which the package version will be added */
 		views?: AzureDevopsJsonPatchOperationInput;
 	};
@@ -17932,7 +18091,7 @@ export type AzureDevopsOperationInputs = {
 		/** Name or ID of the feed. */
 		feedId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Data required to perform the operation. This is optional based on the type of the operation. Use BatchPromoteData if performing a promote operation. */
 		data?: AzureDevopsBatchOperationDataInput;
 		/** Type of operation that needs to be performed on packages. */
@@ -17944,7 +18103,7 @@ export type AzureDevopsOperationInputs = {
 		/** Feed which contains the packages to update. */
 		feedId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Data required to perform the operation. This is optional based on the type of the operation. Use BatchPromoteData if performing a promote operation. */
 		data?: AzureDevopsBatchOperationDataInput;
 		/** Type of operation that needs to be performed on packages. */
@@ -17980,7 +18139,7 @@ export type AzureDevopsOperationInputs = {
 		/** The number of days of previously recorded audit data that will be replayed into the stream. A value of zero will result in only new events being streamed. */
 		daysToBackfill: number;
 		/** Inputs used to communicate with external service. Inputs could be url, a connection string, a token, etc. */
-		consumerInputs?: { [key: string]: string };
+		consumerInputs?: { [key: string]: string | null };
 		/** Type of the consumer, i.e. splunk, azureEventHub, etc. */
 		consumerType?: string;
 		/** The time when the stream was created */
@@ -18013,7 +18172,7 @@ export type AzureDevopsOperationInputs = {
 	};
 	'audit.streams.updateStream': {
 		/** Inputs used to communicate with external service. Inputs could be url, a connection string, a token, etc. */
-		consumerInputs?: { [key: string]: string };
+		consumerInputs?: { [key: string]: string | null };
 		/** Type of the consumer, i.e. splunk, azureEventHub, etc. */
 		consumerType?: string;
 		/** The time when the stream was created */
@@ -18042,6 +18201,26 @@ export type AzureDevopsOperationInputs = {
 		resource?: AzureDevopsArtifactResourceInput;
 		/** The artifact source, which will be the ID of the job that produced this artifact. If an artifact is associated with multiple sources, this points to the first source. */
 		source?: string;
+	};
+	'build.artifacts.getArtifact': {
+		/** Project ID or project name */
+		project: string;
+		/** The ID of the build. */
+		buildId: number;
+		/** The name of the artifact. */
+		artifactName: string;
+	};
+	'build.artifacts.getFile': {
+		/** Project ID or project name */
+		project: string;
+		/** The ID of the build. */
+		buildId: number;
+		/** The name of the artifact. */
+		artifactName: string;
+		/** The primary key for the file. */
+		fileId: string;
+		/** The name that the file will be set to. */
+		fileName: string;
 	};
 	'build.artifacts.list': {
 		/** Project ID or project name */
@@ -18308,11 +18487,11 @@ export type AzureDevopsOperationInputs = {
 		status?: "none" | "inProgress" | "completed" | "cancelling" | "postponed" | "notStarted" | "all";
 		tags?: Array<string>;
 		/** Parameters to template expression evaluation */
-		templateParameters?: { [key: string]: string };
+		templateParameters?: { [key: string]: string | null };
 		/** The build that triggered this build via a Build completion trigger. */
 		triggeredByBuild?: AzureDevopsBuildInput;
 		/** Sourceprovider-specific information about what triggered the build */
-		triggerInfo?: { [key: string]: string };
+		triggerInfo?: { [key: string]: string | null };
 		/** The URI of the build. */
 		uri?: string;
 		/** The REST URL of the build. */
@@ -18399,11 +18578,11 @@ export type AzureDevopsOperationInputs = {
 		status?: "none" | "inProgress" | "completed" | "cancelling" | "postponed" | "notStarted" | "all";
 		tags?: Array<string>;
 		/** Parameters to template expression evaluation */
-		templateParameters?: { [key: string]: string };
+		templateParameters?: { [key: string]: string | null };
 		/** The build that triggered this build via a Build completion trigger. */
 		triggeredByBuild?: AzureDevopsBuildInput;
 		/** Sourceprovider-specific information about what triggered the build */
-		triggerInfo?: { [key: string]: string };
+		triggerInfo?: { [key: string]: string | null };
 		/** The URI of the build. */
 		uri?: string;
 		/** The REST URL of the build. */
@@ -18656,7 +18835,7 @@ export type AzureDevopsOperationInputs = {
 		/** Project ID or project name */
 		project: string;
 		/** The path to start with. */
-		path: string;
+		path?: string;
 		/** The order in which folders should be returned. */
 		queryOrder?: "none" | "folderAscending" | "folderDescending";
 	};
@@ -18756,6 +18935,25 @@ export type AzureDevopsOperationInputs = {
 		/** List of JSON-serialized MinimalRetentionLeases separated by '|' */
 		leasesToFetch: string;
 	};
+	'build.leases.getRetentionLeasesByOwnerId': {
+		/** Project ID or project name */
+		project: string;
+		ownerId?: string;
+		/** An optional parameter to limit the search to a specific pipeline definition. */
+		definitionId?: number;
+		/** An optional parameter to limit the search to a single pipeline run. Requires definitionId. */
+		runId?: number;
+	};
+	'build.leases.getRetentionLeasesByUserId': {
+		/** Project ID or project name */
+		project: string;
+		/** The user id to search for. */
+		userOwnerId: string;
+		/** An optional parameter to limit the search to a specific pipeline definition. */
+		definitionId?: number;
+		/** An optional parameter to limit the search to a single pipeline run. Requires definitionId. */
+		runId?: number;
+	};
 	'build.leases.update': {
 		/** Project ID or project name */
 		project: string;
@@ -18778,13 +18976,13 @@ export type AzureDevopsOperationInputs = {
 		/** Project ID or project name */
 		project: string;
 		/** The aggregation type to use (hourly, daily). */
-		metricAggregationType: string;
+		metricAggregationType?: string;
 		/** The date from which to calculate metrics. */
 		minMetricsTime?: string;
 	};
 	'build.options.list': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'build.properties.getBuildProperties': {
 		/** Project ID or project name */
@@ -18849,11 +19047,11 @@ export type AzureDevopsOperationInputs = {
 	};
 	'build.settings.get': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'build.settings.update': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** The number of days to keep records of deleted builds. */
 		daysToKeepDeletedBuildsBeforeDestroy?: number;
 		/** The default retention policy. */
@@ -18958,7 +19156,7 @@ export type AzureDevopsOperationInputs = {
 		buildId: number;
 		stageRefName: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		forceRetryAllJobs?: boolean;
 		state?: "cancel" | "retry";
 	};
@@ -19093,7 +19291,7 @@ export type AzureDevopsOperationInputs = {
 		defaultHostedQueue?: string;
 		/** A description of the template. */
 		description?: string;
-		icons?: { [key: string]: string };
+		icons?: { [key: string]: string | null };
 		/** The ID of the task whose icon is used when showing this template in the UI. */
 		iconTaskId?: string;
 		/** The ID of the template. */
@@ -19107,7 +19305,7 @@ export type AzureDevopsOperationInputs = {
 		/** Project ID or project name */
 		project: string;
 		buildId: number;
-		timelineId: string;
+		timelineId?: string;
 		changeId?: number;
 		planId?: string;
 	};
@@ -19173,7 +19371,7 @@ export type AzureDevopsOperationInputs = {
 		/** The links to other objects related to this object. */
 		_links?: AzureDevopsReferenceLinksInput;
 		/** Set of capabilities this project has (such as process template & version control). */
-		capabilities?: { [key: string]: { [key: string]: string } };
+		capabilities?: { [key: string]: { [key: string]: string | null } };
 		/** The shallow ref to the default team. */
 		defaultTeam?: AzureDevopsWebApiTeamRefInput;
 	};
@@ -19234,7 +19432,7 @@ export type AzureDevopsOperationInputs = {
 		/** The links to other objects related to this object. */
 		_links?: AzureDevopsReferenceLinksInput;
 		/** Set of capabilities this project has (such as process template & version control). */
-		capabilities?: { [key: string]: { [key: string]: string } };
+		capabilities?: { [key: string]: { [key: string]: string | null } };
 		/** The shallow ref to the default team. */
 		defaultTeam?: AzureDevopsWebApiTeamRefInput;
 	};
@@ -19321,7 +19519,7 @@ export type AzureDevopsOperationInputs = {
 		/** Project ID or project name */
 		project: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 		_links?: AzureDevopsReferenceLinksInput;
 		/** Entity to which the dashboard is scoped. */
 		dashboardScope?: "collection_User" | "project_Team" | "project";
@@ -19357,20 +19555,20 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the dashboard to delete. */
 		dashboardId: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 	};
 	'dashboard.dashboards.get': {
 		/** Project ID or project name */
 		project: string;
 		dashboardId: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 	};
 	'dashboard.dashboards.list': {
 		/** Project ID or project name */
 		project: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 	};
 	'dashboard.dashboards.replaceDashboard': {
 		/** Project ID or project name */
@@ -19378,7 +19576,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the dashboard to replace. */
 		dashboardId: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 		_links?: AzureDevopsReferenceLinksInput;
 		/** Entity to which the dashboard is scoped. */
 		dashboardScope?: "collection_User" | "project_Team" | "project";
@@ -19412,7 +19610,7 @@ export type AzureDevopsOperationInputs = {
 		/** Project ID or project name */
 		project: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 		_links?: AzureDevopsReferenceLinksInput;
 		/** A list of Dashboards held by the Dashboard Group */
 		dashboardEntries?: Array<AzureDevopsDashboardGroupEntryInput>;
@@ -19426,12 +19624,12 @@ export type AzureDevopsOperationInputs = {
 		/** The ID of Contribution for the Widget */
 		contributionId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'dashboard.widgetTypes.getWidgetTypes': {
 		$scope: "collection_User" | "project_Team";
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'dashboard.widgets.create': {
 		/** Project ID or project name */
@@ -19439,7 +19637,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of dashboard the widget will be added to. */
 		dashboardId: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 		_links?: AzureDevopsReferenceLinksInput;
 		/** Refers to the allowed sizes for the widget. This gets populated when user wants to configure the widget */
 		allowedSizes?: Array<AzureDevopsWidgetSizeInput>;
@@ -19476,7 +19674,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the widget to update. */
 		widgetId: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 	};
 	'dashboard.widgets.getWidget': {
 		/** Project ID or project name */
@@ -19486,7 +19684,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the widget to read. */
 		widgetId: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 	};
 	'dashboard.widgets.getWidgets': {
 		/** Project ID or project name */
@@ -19494,7 +19692,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the dashboard to read. */
 		dashboardId: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 		/** Dashboard Widgets Version */
 		eTag?: string;
 	};
@@ -19506,7 +19704,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the widget to update. */
 		widgetId: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 		_links?: AzureDevopsReferenceLinksInput;
 		/** Refers to the allowed sizes for the widget. This gets populated when user wants to configure the widget */
 		allowedSizes?: Array<AzureDevopsWidgetSizeInput>;
@@ -19541,7 +19739,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the Dashboard to modify. */
 		dashboardId: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 		/** Dashboard Widgets Version */
 		eTag?: string;
 		body: Array<AzureDevopsWidgetInput>;
@@ -19554,7 +19752,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the widget to update. */
 		widgetId: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 		_links?: AzureDevopsReferenceLinksInput;
 		/** Refers to the allowed sizes for the widget. This gets populated when user wants to configure the widget */
 		allowedSizes?: Array<AzureDevopsWidgetSizeInput>;
@@ -19589,7 +19787,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the Dashboard to modify. */
 		dashboardId: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 		/** Dashboard Widgets Version */
 		eTag?: string;
 		body: Array<AzureDevopsWidgetInput>;
@@ -19676,15 +19874,29 @@ export type AzureDevopsOperationInputs = {
 		/** Date on which the last connectivity status change occurred. */
 		statusChangedOn?: string;
 		/** System-defined capabilities supported by this agent's host. Warning: To set capabilities use the PUT method, PUT will completely overwrite existing capabilities. */
-		systemCapabilities?: { [key: string]: string };
+		systemCapabilities?: { [key: string]: string | null };
 		/** User-defined capabilities supported by this agent's host. Warning: To set capabilities use the PUT method, PUT will completely overwrite existing capabilities. */
-		userCapabilities?: { [key: string]: string };
+		userCapabilities?: { [key: string]: string | null };
 	};
 	'distributedTask.agents.delete': {
 		/** The pool ID to remove the agent from */
 		poolId: number;
 		/** The agent ID to remove */
 		agentId: number;
+	};
+	'distributedTask.agents.getAgent': {
+		/** The agent pool containing the agent */
+		poolId: number;
+		/** The agent ID to get information about */
+		agentId: number;
+		/** Whether to include the agent's capabilities in the response */
+		includeCapabilities?: boolean;
+		/** Whether to include details about the agent's current work */
+		includeAssignedRequest?: boolean;
+		/** Whether to include details about the agents' most recent completed work */
+		includeLastCompletedRequest?: boolean;
+		/** Filter which custom properties will be returned */
+		propertyFilters?: string;
 	};
 	'distributedTask.agents.getPoolPermission': {
 		/** The agent pool to use */
@@ -19750,9 +19962,9 @@ export type AzureDevopsOperationInputs = {
 		/** Date on which the last connectivity status change occurred. */
 		statusChangedOn?: string;
 		/** System-defined capabilities supported by this agent's host. Warning: To set capabilities use the PUT method, PUT will completely overwrite existing capabilities. */
-		systemCapabilities?: { [key: string]: string };
+		systemCapabilities?: { [key: string]: string | null };
 		/** User-defined capabilities supported by this agent's host. Warning: To set capabilities use the PUT method, PUT will completely overwrite existing capabilities. */
-		userCapabilities?: { [key: string]: string };
+		userCapabilities?: { [key: string]: string | null };
 	};
 	'distributedTask.agents.update': {
 		/** The agent pool to use */
@@ -19794,9 +20006,9 @@ export type AzureDevopsOperationInputs = {
 		/** Date on which the last connectivity status change occurred. */
 		statusChangedOn?: string;
 		/** System-defined capabilities supported by this agent's host. Warning: To set capabilities use the PUT method, PUT will completely overwrite existing capabilities. */
-		systemCapabilities?: { [key: string]: string };
+		systemCapabilities?: { [key: string]: string | null };
 		/** User-defined capabilities supported by this agent's host. Warning: To set capabilities use the PUT method, PUT will completely overwrite existing capabilities. */
-		userCapabilities?: { [key: string]: string };
+		userCapabilities?: { [key: string]: string | null };
 	};
 	'distributedTask.deploymentgroups.add': {
 		/** Project ID or project name */
@@ -20107,6 +20319,16 @@ export type AzureDevopsOperationInputs = {
 		/** Filter by whether the calling user has use or manage permissions */
 		actionFilter?: "none" | "manage" | "use";
 	};
+	'distributedTask.pools.getAgentPools': {
+		/** Filter by name */
+		poolName?: string;
+		/** Filter by agent pool properties (comma-separated) */
+		properties?: string;
+		/** Filter by pool type */
+		poolType?: "automation" | "deployment";
+		/** Filter by whether the calling user has use or manage permissions */
+		actionFilter?: "none" | "manage" | "use";
+	};
 	'distributedTask.pools.getAgentPoolsByIds': {
 		/** pool Ids to fetch */
 		poolIds: string;
@@ -20149,7 +20371,7 @@ export type AzureDevopsOperationInputs = {
 	};
 	'distributedTask.queues.add': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Automatically authorize this queue when using YAML */
 		authorizePipelines?: boolean;
 		/** ID of the queue */
@@ -20165,13 +20387,37 @@ export type AzureDevopsOperationInputs = {
 		/** The agent queue to remove */
 		queueId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'distributedTask.queues.get': {
 		/** The agent queue to get information about */
 		queueId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
+		/** Filter by whether the calling user has use or manage permissions */
+		actionFilter?: "none" | "manage" | "use";
+	};
+	'distributedTask.queues.getAgentQueues': {
+		/** Project ID or project name */
+		project?: string;
+		/** Filter on the agent queue name */
+		queueName?: string;
+		/** Filter by whether the calling user has use or manage permissions */
+		actionFilter?: "none" | "manage" | "use";
+	};
+	'distributedTask.queues.getAgentQueuesByIds': {
+		/** A comma-separated list of agent queue IDs to retrieve */
+		queueIds: string;
+		/** Project ID or project name */
+		project?: string;
+		/** Filter by whether the calling user has use or manage permissions */
+		actionFilter?: "none" | "manage" | "use";
+	};
+	'distributedTask.queues.getAgentQueuesByNames': {
+		/** A comma-separated list of agent names to retrieve */
+		queueNames: string;
+		/** Project ID or project name */
+		project?: string;
 		/** Filter by whether the calling user has use or manage permissions */
 		actionFilter?: "none" | "manage" | "use";
 	};
@@ -20179,7 +20425,7 @@ export type AzureDevopsOperationInputs = {
 		/** A comma-separated list of pool ids to get the corresponding queues for */
 		poolIds: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Filter by whether the calling user has use or manage permissions */
 		actionFilter?: "none" | "manage" | "use";
 	};
@@ -20195,7 +20441,7 @@ export type AzureDevopsOperationInputs = {
 		/** The number of serialized items. */
 		count?: number;
 		/** The serialized item. */
-		value?: string;
+		value?: AzureDevopsJsonValue;
 	};
 	'distributedTask.requests.list': {
 		agentCloudId: number;
@@ -20290,7 +20536,7 @@ export type AzureDevopsOperationInputs = {
 		/** Project ID or project name */
 		project: string;
 		/** Id of the task group. */
-		taskGroupId: string;
+		taskGroupId?: string;
 		/** 'true' to recursively expand task groups. Default is 'false'. */
 		expanded?: boolean;
 		/** Guid of the taskId to filter. */
@@ -20308,7 +20554,7 @@ export type AzureDevopsOperationInputs = {
 		/** Project ID or project name */
 		project: string;
 		/** Id of the task group to update. */
-		taskGroupId: string;
+		taskGroupId?: string;
 		/** Sets author name of the task group. */
 		author?: string;
 		/** Sets category of the task group. */
@@ -20364,6 +20610,20 @@ export type AzureDevopsOperationInputs = {
 		/** Id of the variable group. */
 		groupId: number;
 	};
+	'distributedTask.variablegroups.getVariableGroups': {
+		/** Project ID or project name */
+		project: string;
+		/** Name of variable group. */
+		groupName?: string;
+		/** Action filter for the variable group. It specifies the action which can be performed on the variable groups. */
+		actionFilter?: "none" | "manage" | "use";
+		/** Number of variable groups to get. */
+		$top?: number;
+		/** Gets the variable groups after the continuation token provided. */
+		continuationToken?: number;
+		/** Gets the results in the defined order. Default is 'IdDescending'. */
+		queryOrder?: "idAscending" | "idDescending";
+	};
 	'distributedTask.variablegroups.getVariableGroupsById': {
 		/** Project ID or project name */
 		project: string;
@@ -20406,7 +20666,7 @@ export type AzureDevopsOperationInputs = {
 		publisherName: string;
 		/** Name of the extension. Example: "ops-tools". */
 		extensionName: string;
-		version: string;
+		version?: string;
 	};
 	'extensionManagement.installedExtensions.list': {
 		/** If true (the default), include disabled extensions in the results. */
@@ -20459,7 +20719,7 @@ export type AzureDevopsOperationInputs = {
 		/** This is the set of files available from the extension. */
 		files?: Array<AzureDevopsExtensionFileInput>;
 		/** Extension flags relevant to contribution consumers */
-		flags?: "builtIn" | "trusted";
+		flags?: ("builtIn" | "trusted" | number);
 		/** Information about this particular installation of the extension */
 		installState?: AzureDevopsInstalledExtensionStateInput;
 		/** This represents the date/time the extensions was last updated in the gallery. This doesnt mean this version was updated the value represents changes to any and all versions of the extension. */
@@ -20480,11 +20740,35 @@ export type AzureDevopsOperationInputs = {
 		artifactScope?: AzureDevopsArtifactScopeInput;
 		artifactType?: string;
 	};
+	'favorite.favorites.createFavoriteOfOwner': {
+		ownerScopeType: string;
+		ownerScopeId: string;
+		artifactId?: string;
+		artifactName?: string;
+		artifactProperties?: AzureDevopsArtifactPropertiesInput;
+		artifactScope?: AzureDevopsArtifactScopeInput;
+		artifactType?: string;
+	};
 	'favorite.favorites.deleteFavoriteById': {
 		favoriteId: string;
 		artifactType: string;
 		artifactScopeType: string;
 		artifactScopeId?: string;
+	};
+	'favorite.favorites.deleteFavoriteOfOwnerById': {
+		favoriteId: string;
+		ownerScopeType: string;
+		ownerScopeId: string;
+		artifactType: string;
+		artifactScopeType: string;
+		artifactScopeId?: string;
+	};
+	'favorite.favorites.getFavoriteByArtifact': {
+		artifactType: string;
+		artifactId: string;
+		artifactScopeType: string;
+		artifactScopeId?: string;
+		includeExtendedDetails?: boolean;
 	};
 	'favorite.favorites.getFavoriteById': {
 		favoriteId: string;
@@ -20493,7 +20777,24 @@ export type AzureDevopsOperationInputs = {
 		artifactScopeId?: string;
 		includeExtendedDetails?: boolean;
 	};
+	'favorite.favorites.getFavoriteOfOwnerById': {
+		favoriteId: string;
+		ownerScopeType: string;
+		ownerScopeId: string;
+		artifactScopeType: string;
+		artifactType: string;
+		artifactScopeId?: string;
+		includeExtendedDetails?: boolean;
+	};
 	'favorite.favorites.getFavorites': {
+		artifactType?: string;
+		artifactScopeType?: string;
+		artifactScopeId?: string;
+		includeExtendedDetails?: boolean;
+	};
+	'favorite.favorites.getFavoritesOfOwner': {
+		ownerScopeType: string;
+		ownerScopeId: string;
 		artifactType?: string;
 		artifactScopeType?: string;
 		artifactScopeId?: string;
@@ -20530,7 +20831,7 @@ export type AzureDevopsOperationInputs = {
 		/** SHA1 hash of the file. You can get the SHA1 of a file using the "Git/Items/Get Item" endpoint. */
 		sha1: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** If true, prompt for a download rather than rendering in a browser. Note: this value defaults to true if $format is zip */
 		download?: boolean;
 		/** Provide a fileName to use for a download. */
@@ -20544,7 +20845,7 @@ export type AzureDevopsOperationInputs = {
 		/** The name or ID of the repository. */
 		repositoryId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		filename?: string;
 		body: Array<string>;
 	};
@@ -20584,7 +20885,7 @@ export type AzureDevopsOperationInputs = {
 		/** The id or friendly name of the repository. To use the friendly name, projectId must also be specified. */
 		repositoryId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** The number of changes to include in the result. */
 		changeCount?: number;
 	};
@@ -20594,17 +20895,69 @@ export type AzureDevopsOperationInputs = {
 		/** The id or friendly name of the repository. To use the friendly name, projectId must also be specified. */
 		repositoryId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** The maximum number of changes to return. */
 		top?: number;
 		/** The number of changes to skip. */
 		skip?: number;
 	};
+	'git.commits.getCommits': {
+		/** The id or friendly name of the repository. To use the friendly name, projectId must also be specified. */
+		repositoryId: string;
+		/** Project ID or project name */
+		project?: string;
+		/** Number of entries to skip */
+		"searchCriteria.$skip"?: number;
+		/** Maximum number of entries to retrieve */
+		"searchCriteria.$top"?: number;
+		/** Alias or display name of the author */
+		"searchCriteria.author"?: string;
+		/** Version string identifier (name of tag/branch, SHA1 of commit) */
+		"searchCriteria.compareVersion.version"?: string;
+		/** Version options - Specify additional modifiers to version (e.g Previous) */
+		"searchCriteria.compareVersion.versionOptions"?: "none" | "previousChange" | "firstParent";
+		/** Version type (branch, tag, or commit). Determines how Id is interpreted */
+		"searchCriteria.compareVersion.versionType"?: "branch" | "tag" | "commit";
+		/** Only applies when an itemPath is specified. This determines whether to exclude delete entries of the specified path. */
+		"searchCriteria.excludeDeletes"?: boolean;
+		/** If provided, a lower bound for filtering commits alphabetically */
+		"searchCriteria.fromCommitId"?: string;
+		/** If provided, only include history entries created after this date (string) */
+		"searchCriteria.fromDate"?: string;
+		/** What Git history mode should be used. This only applies to the search criteria when Ids = null and an itemPath is specified. */
+		"searchCriteria.historyMode"?: "simplifiedHistory" | "firstParent" | "fullHistory" | "fullHistorySimplifyMerges";
+		/** If provided, specifies the exact commit ids of the commits to fetch. May not be combined with other parameters. */
+		"searchCriteria.ids"?: Array<string>;
+		/** Whether to include the _links field on the shallow references */
+		"searchCriteria.includeLinks"?: boolean;
+		/** Whether to include the push information */
+		"searchCriteria.includePushData"?: boolean;
+		/** Whether to include the image Url for committers and authors */
+		"searchCriteria.includeUserImageUrl"?: boolean;
+		/** Whether to include linked work items */
+		"searchCriteria.includeWorkItems"?: boolean;
+		/** Path of item to search under */
+		"searchCriteria.itemPath"?: string;
+		/** Version string identifier (name of tag/branch, SHA1 of commit) */
+		"searchCriteria.itemVersion.version"?: string;
+		/** Version options - Specify additional modifiers to version (e.g Previous) */
+		"searchCriteria.itemVersion.versionOptions"?: "none" | "previousChange" | "firstParent";
+		/** Version type (branch, tag, or commit). Determines how Id is interpreted */
+		"searchCriteria.itemVersion.versionType"?: "branch" | "tag" | "commit";
+		/** If enabled, this option will ignore the itemVersion and compareVersion parameters */
+		"searchCriteria.showOldestCommitsFirst"?: boolean;
+		/** If provided, an upper bound for filtering commits alphabetically */
+		"searchCriteria.toCommitId"?: string;
+		/** If provided, only include history entries created before this date (string) */
+		"searchCriteria.toDate"?: string;
+		/** Alias or display name of the committer */
+		"searchCriteria.user"?: string;
+	};
 	'git.commits.getCommitsBatch': {
 		/** The name or ID of the repository. */
 		repositoryId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Number of commits to skip. The value cannot exceed 3,000,000. */
 		$skip?: number;
 		/** Maximum number of commits to return. The value cannot exceed 50,000. */
@@ -20656,7 +21009,7 @@ export type AzureDevopsOperationInputs = {
 		/** The id of the push. */
 		pushId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** The maximum number of commits to return ("get the top x commits"). */
 		top?: number;
 		/** The number of commits to skip. */
@@ -20668,7 +21021,7 @@ export type AzureDevopsOperationInputs = {
 		/** The name or ID of the repository. */
 		repositoryId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** If true, diff between common and target commits. If false, diff between base and target commits. */
 		diffCommonCommit?: boolean;
 		/** Maximum number of changes to return. Defaults to 100. */
@@ -20692,7 +21045,7 @@ export type AzureDevopsOperationInputs = {
 		/** The name or ID of the repository. */
 		repositoryNameOrId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** True to include links */
 		includeLinks?: boolean;
 		/** Fully-qualified identifier for the source repository. */
@@ -20706,7 +21059,7 @@ export type AzureDevopsOperationInputs = {
 		/** OperationId of the sync request. */
 		forkSyncOperationId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** True to include links. */
 		includeLinks?: boolean;
 	};
@@ -20714,7 +21067,7 @@ export type AzureDevopsOperationInputs = {
 		/** The name or ID of the repository. */
 		repositoryNameOrId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** True to include abandoned requests. */
 		includeAbandoned?: boolean;
 		/** True to include links. */
@@ -20726,7 +21079,7 @@ export type AzureDevopsOperationInputs = {
 		/** Team project collection ID. */
 		collectionId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** True to include links. */
 		includeLinks?: boolean;
 	};
@@ -20786,11 +21139,43 @@ export type AzureDevopsOperationInputs = {
 		/** A link back to this import request resource. */
 		url?: string;
 	};
+	'git.items.get': {
+		/** The name or ID of the repository. */
+		repositoryId: string;
+		/** The item path. */
+		path: string;
+		/** Project ID or project name */
+		project?: string;
+		/** The path scope. The default is null. */
+		scopePath?: string;
+		/** The recursion level of this request. The default is 'none', no recursion. */
+		recursionLevel?: "none" | "oneLevel" | "oneLevelPlusNestedEmptyFolders" | "full";
+		/** Set to true to include content metadata. Default is false. */
+		includeContentMetadata?: boolean;
+		/** Set to true to include the latest changes. Default is false. */
+		latestProcessedChange?: boolean;
+		/** Set to true to download the response as a file. Default is false. */
+		download?: boolean;
+		/** If specified, this overrides the HTTP Accept request header to return either 'json' or 'zip'. If $format is specified, then api-version should also be specified as a query parameter. */
+		$format?: string;
+		/** Version string identifier (name of tag/branch, SHA1 of commit) */
+		"versionDescriptor.version"?: string;
+		/** Version options - Specify additional modifiers to version (e.g Previous) */
+		"versionDescriptor.versionOptions"?: "none" | "previousChange" | "firstParent";
+		/** Version type (branch, tag, or commit). Determines how Id is interpreted */
+		"versionDescriptor.versionType"?: "branch" | "tag" | "commit";
+		/** Set to true to include item content when requesting json. Default is false. */
+		includeContent?: boolean;
+		/** Set to true to resolve Git LFS pointer files to return actual content from Git LFS. Default is false. */
+		resolveLfs?: boolean;
+		/** Set to true to sanitize an svg file and return it as image. Useful only if requested for svg file. Default is false. */
+		sanitize?: boolean;
+	};
 	'git.items.getItemsBatch': {
 		/** The name or ID of the repository */
 		repositoryId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Whether to include metadata for all items */
 		includeContentMetadata?: boolean;
 		/** Whether to include the _links field on the shallow references */
@@ -20804,7 +21189,7 @@ export type AzureDevopsOperationInputs = {
 		/** The name or ID of the repository. */
 		repositoryId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** The path scope. The default is null. */
 		scopePath?: string;
 		/** The recursion level of this request. The default is 'none', no recursion. */
@@ -20836,7 +21221,7 @@ export type AzureDevopsOperationInputs = {
 		/** Other commit, usually the tip of the source branch of the potential merge. */
 		otherCommitId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** The collection ID where otherCommitId lives. */
 		otherCollectionId?: string;
 		/** The repository ID where otherCommitId lives. */
@@ -20886,7 +21271,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request. */
 		pullRequestId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Stream to upload */
 		file: FileInput;
 	};
@@ -20898,7 +21283,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request. */
 		pullRequestId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'git.pullRequestAttachments.get': {
 		/** The name of the attachment. */
@@ -20908,7 +21293,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request. */
 		pullRequestId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'git.pullRequestAttachments.list': {
 		/** The repository ID of the pull request’s target branch. */
@@ -20916,7 +21301,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request. */
 		pullRequestId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'git.pullRequestCommentLikes.create': {
 		/** The repository ID of the pull request's target branch. */
@@ -20928,7 +21313,7 @@ export type AzureDevopsOperationInputs = {
 		/** The ID of the comment. */
 		commentId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'git.pullRequestCommentLikes.delete': {
 		/** The repository ID of the pull request's target branch. */
@@ -20940,7 +21325,7 @@ export type AzureDevopsOperationInputs = {
 		/** The ID of the comment. */
 		commentId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'git.pullRequestCommentLikes.list': {
 		/** The repository ID of the pull request's target branch. */
@@ -20952,7 +21337,7 @@ export type AzureDevopsOperationInputs = {
 		/** The ID of the comment. */
 		commentId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'git.pullRequestCommits.getPullRequestCommits': {
 		/** ID or name of the repository. */
@@ -20960,7 +21345,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request. */
 		pullRequestId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Maximum number of commits to return. */
 		$top?: number;
 		/** The continuation token used for pagination. */
@@ -20974,7 +21359,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the iteration from which to get the commits. */
 		iterationId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Maximum number of commits to return. The maximum number of commits that can be returned per batch is 500. */
 		top?: number;
 		/** Number of commits to skip. */
@@ -20988,7 +21373,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request iteration. <br /> Iteration one is the head of the source branch at the time the pull request is created and subsequent iterations are created when there are pushes to the source branch. Allowed values are between 1 and the maximum iteration on this pull request. */
 		iterationId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Optional. The number of changes to retrieve. The default value is 100 and the maximum value is 2000. */
 		$top?: number;
 		/** Optional. The number of changes to ignore. For example, to retrieve changes 101-150, set top 50 and skip to 100. */
@@ -21004,7 +21389,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request iteration. */
 		iterationId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Reference links. */
 		_links?: AzureDevopsReferenceLinksInput;
 		/** Context of the status. */
@@ -21036,7 +21421,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request status. */
 		statusId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'git.pullRequestIterationStatuses.get': {
 		/** The repository ID of the pull request’s target branch. */
@@ -21048,7 +21433,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request status. */
 		statusId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'git.pullRequestIterationStatuses.list': {
 		/** The repository ID of the pull request’s target branch. */
@@ -21058,7 +21443,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request iteration. */
 		iterationId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'git.pullRequestIterationStatuses.update': {
 		/** The repository ID of the pull request’s target branch. */
@@ -21068,7 +21453,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request iteration. */
 		iterationId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		body: AzureDevopsJsonPatchDocumentInput;
 	};
 	'git.pullRequestIterations.get': {
@@ -21079,7 +21464,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request iteration to return. */
 		iterationId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'git.pullRequestIterations.list': {
 		/** ID or name of the repository. */
@@ -21087,7 +21472,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request. */
 		pullRequestId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** If true, include the commits associated with each iteration in the response. */
 		includeCommits?: boolean;
 	};
@@ -21097,7 +21482,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request. */
 		pullRequestId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Project ID or project name. */
 		projectId?: string;
 		/** Name of the tag definition that will be created. */
@@ -21111,7 +21496,7 @@ export type AzureDevopsOperationInputs = {
 		/** The name or ID of the label requested. */
 		labelIdOrName: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Project ID or project name. */
 		projectId?: string;
 	};
@@ -21123,7 +21508,7 @@ export type AzureDevopsOperationInputs = {
 		/** The name or ID of the label requested. */
 		labelIdOrName: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Project ID or project name. */
 		projectId?: string;
 	};
@@ -21133,7 +21518,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request. */
 		pullRequestId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Project ID or project name. */
 		projectId?: string;
 	};
@@ -21143,7 +21528,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request. */
 		pullRequestId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'git.pullRequestProperties.update': {
 		/** The repository ID of the pull request’s target branch. */
@@ -21151,14 +21536,14 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request. */
 		pullRequestId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		body: AzureDevopsJsonPatchDocumentInput;
 	};
 	'git.pullRequestQuery.get': {
 		/** ID of the repository. */
 		repositoryId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** The queries to perform. */
 		queries?: Array<AzureDevopsGitPullRequestQueryInputInput>;
 		/** The results of the queries. This matches the QueryInputs list so Results[n] are the results of QueryInputs[n]. Each entry in the list is a dictionary of commit->pull requests. */
@@ -21172,7 +21557,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the reviewer. */
 		reviewerId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** This field contains zero or more interesting links about the graph subject. These links may be invoked to obtain additional relationships or more detailed information about this graph subject. */
 		_links?: AzureDevopsReferenceLinksInput;
 		/** The descriptor is the primary way to reference the graph subject while the system is running. This field will uniquely identify the same graph subject across both Accounts and Organizations. */
@@ -21218,7 +21603,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request. */
 		pullRequestId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		body: Array<AzureDevopsIdentityRefInput>;
 	};
 	'git.pullRequestReviewers.createUnmaterializedPullRequestReviewer': {
@@ -21227,7 +21612,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request. */
 		pullRequestId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** This field contains zero or more interesting links about the graph subject. These links may be invoked to obtain additional relationships or more detailed information about this graph subject. */
 		_links?: AzureDevopsReferenceLinksInput;
 		/** The descriptor is the primary way to reference the graph subject while the system is running. This field will uniquely identify the same graph subject across both Accounts and Organizations. */
@@ -21275,7 +21660,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the reviewer to remove. */
 		reviewerId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'git.pullRequestReviewers.get': {
 		/** The repository ID of the pull request's target branch. */
@@ -21285,7 +21670,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the reviewer. */
 		reviewerId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'git.pullRequestReviewers.list': {
 		/** The repository ID of the pull request's target branch. */
@@ -21293,7 +21678,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request. */
 		pullRequestId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'git.pullRequestReviewers.updatePullRequestReviewer': {
 		/** The repository ID of the pull request's target branch. */
@@ -21303,7 +21688,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the reviewer. */
 		reviewerId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** This field contains zero or more interesting links about the graph subject. These links may be invoked to obtain additional relationships or more detailed information about this graph subject. */
 		_links?: AzureDevopsReferenceLinksInput;
 		/** The descriptor is the primary way to reference the graph subject while the system is running. This field will uniquely identify the same graph subject across both Accounts and Organizations. */
@@ -21349,7 +21734,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request */
 		pullRequestId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		body: Array<AzureDevopsIdentityRefWithVoteInput>;
 	};
 	'git.pullRequestShare.sharePullRequest': {
@@ -21358,7 +21743,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request. */
 		pullRequestId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Optional user note or message. */
 		message?: string;
 		/** Identities of users who will receive a share notification. */
@@ -21370,7 +21755,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request. */
 		pullRequestId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Reference links. */
 		_links?: AzureDevopsReferenceLinksInput;
 		/** Context of the status. */
@@ -21402,7 +21787,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request status. */
 		statusId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'git.pullRequestStatuses.get': {
 		/** The repository ID of the pull request’s target branch. */
@@ -21412,7 +21797,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request status. */
 		statusId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'git.pullRequestStatuses.list': {
 		/** The repository ID of the pull request’s target branch. */
@@ -21420,7 +21805,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request. */
 		pullRequestId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'git.pullRequestStatuses.update': {
 		/** The repository ID of the pull request’s target branch. */
@@ -21428,7 +21813,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request. */
 		pullRequestId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		body: AzureDevopsJsonPatchDocumentInput;
 	};
 	'git.pullRequestThreadComments.create': {
@@ -21439,7 +21824,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the thread that the desired comment is in. */
 		threadId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Links to other related objects. */
 		_links?: AzureDevopsReferenceLinksInput;
 		/** The author of the comment. */
@@ -21473,7 +21858,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the comment. */
 		commentId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'git.pullRequestThreadComments.get': {
 		/** The repository ID of the pull request's target branch. */
@@ -21485,7 +21870,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the comment. */
 		commentId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'git.pullRequestThreadComments.list': {
 		/** The repository ID of the pull request's target branch. */
@@ -21495,7 +21880,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the thread. */
 		threadId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'git.pullRequestThreadComments.update': {
 		/** The repository ID of the pull request's target branch. */
@@ -21507,7 +21892,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the comment to update. */
 		commentId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Links to other related objects. */
 		_links?: AzureDevopsReferenceLinksInput;
 		/** The author of the comment. */
@@ -21537,7 +21922,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request. */
 		pullRequestId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Links to other related objects. */
 		_links?: AzureDevopsReferenceLinksInput;
 		/** A list of the comments. */
@@ -21569,7 +21954,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the thread. */
 		threadId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** If specified, thread position will be tracked using this iteration as the right side of the diff. */
 		$iteration?: number;
 		/** If specified, thread position will be tracked using this iteration as the left side of the diff. */
@@ -21581,7 +21966,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request. */
 		pullRequestId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** If specified, thread positions will be tracked using this iteration as the right side of the diff. */
 		$iteration?: number;
 		/** If specified, thread positions will be tracked using this iteration as the left side of the diff. */
@@ -21595,7 +21980,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the thread to update. */
 		threadId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Links to other related objects. */
 		_links?: AzureDevopsReferenceLinksInput;
 		/** A list of the comments. */
@@ -21625,13 +22010,13 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request. */
 		pullRequestId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'git.pullRequests.create': {
 		/** The repository ID of the pull request's target branch. */
 		repositoryId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** If true, subsequent pushes to the pull request will be individually reviewable. Set this to false for large pull requests for performance reasons if this functionality is not needed. */
 		supportsIterations?: boolean;
 		/** Links to other related objects. */
@@ -21711,7 +22096,7 @@ export type AzureDevopsOperationInputs = {
 		/** The ID of the pull request to retrieve. */
 		pullRequestId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Not used. */
 		maxCommentLength?: number;
 		/** Not used. */
@@ -21727,13 +22112,13 @@ export type AzureDevopsOperationInputs = {
 		/** The ID of the pull request to retrieve. */
 		pullRequestId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'git.pullRequests.getPullRequests': {
 		/** The repository ID of the pull request's target branch. */
 		repositoryId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** If set, search for pull requests that were created by this identity. */
 		"searchCriteria.creatorId"?: string;
 		/** Whether to include the _links field on the shallow references */
@@ -21801,7 +22186,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the pull request to update. */
 		pullRequestId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Links to other related objects. */
 		_links?: AzureDevopsReferenceLinksInput;
 		/** A string which uniquely identifies this pull request. To generate an artifact ID for a pull request, use this template: ```vstfs:///Git/PullRequestId/{projectId}/{repositoryId}/{pullRequestId}``` */
@@ -21875,7 +22260,7 @@ export type AzureDevopsOperationInputs = {
 		/** The name or ID of the repository. */
 		repositoryId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		_links?: AzureDevopsReferenceLinksInput;
 		date?: string;
 		pushedBy?: AzureDevopsIdentityRefInput;
@@ -21891,7 +22276,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the push. */
 		pushId: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** The number of commits to include in the result. */
 		includeCommits?: number;
 		/** If true, include the list of refs that were updated by the push. */
@@ -21901,7 +22286,7 @@ export type AzureDevopsOperationInputs = {
 		/** The name or ID of the repository. */
 		repositoryId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Number of pushes to skip. */
 		$skip?: number;
 		/** Number of pushes to return. */
@@ -21923,7 +22308,7 @@ export type AzureDevopsOperationInputs = {
 		/** The name or ID of the repository. */
 		repositoryId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** [optional] A filter to apply to the refs (starts with). */
 		filter?: string;
 		/** [optional] Specifies if referenceLinks should be included in the result. default is false. */
@@ -21949,7 +22334,7 @@ export type AzureDevopsOperationInputs = {
 		/** The name of the branch to lock/unlock */
 		filter: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** ID or name of the team project. Optional if specifying an ID for repository. */
 		projectId?: string;
 		isLocked?: boolean;
@@ -21961,7 +22346,7 @@ export type AzureDevopsOperationInputs = {
 		/** The name or ID of the repository. */
 		repositoryId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** ID or name of the team project. Optional if specifying an ID for repository. */
 		projectId?: string;
 		body: Array<AzureDevopsGitRefUpdateInput>;
@@ -21999,7 +22384,7 @@ export type AzureDevopsOperationInputs = {
 	};
 	'git.repositories.create': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** [optional] Specify the source refs to use while creating a fork repo */
 		sourceRef?: string;
 		name?: string;
@@ -22009,7 +22394,7 @@ export type AzureDevopsOperationInputs = {
 		/** The ID of the repository. */
 		repositoryId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'git.repositories.deleteRepositoryFromRecycleBin': {
 		/** Project ID or project name */
@@ -22029,11 +22414,19 @@ export type AzureDevopsOperationInputs = {
 		/** The name or ID of the repository. */
 		repositoryId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
+	};
+	'git.repositories.getRepositoryWithParent': {
+		/** The name or ID of the repository. */
+		repositoryId: string;
+		/** True to include parent repository. Only available in authenticated calls. */
+		includeParent: boolean;
+		/** Project ID or project name */
+		project?: string;
 	};
 	'git.repositories.list': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** [optional] True to include reference links. The default value is false. */
 		includeLinks?: boolean;
 		/** [optional] True to include all remote URLs. The default value is false. */
@@ -22053,7 +22446,7 @@ export type AzureDevopsOperationInputs = {
 		/** The ID of the repository. */
 		repositoryId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		_links?: AzureDevopsReferenceLinksInput;
 		defaultBranch?: string;
 		id?: string;
@@ -22103,11 +22496,25 @@ export type AzureDevopsOperationInputs = {
 		/** The GitAsyncRefOperationParameters generatedRefName used for the revert operation. */
 		refName: string;
 	};
+	'git.stats.get': {
+		/** The name or ID of the repository. */
+		repositoryId: string;
+		/** Name of the branch. */
+		name: string;
+		/** Project ID or project name */
+		project?: string;
+		/** Version string identifier (name of tag/branch, SHA1 of commit) */
+		"baseVersionDescriptor.version"?: string;
+		/** Version options - Specify additional modifiers to version (e.g Previous) */
+		"baseVersionDescriptor.versionOptions"?: "none" | "previousChange" | "firstParent";
+		/** Version type (branch, tag, or commit). Determines how Id is interpreted */
+		"baseVersionDescriptor.versionType"?: "branch" | "tag" | "commit";
+	};
 	'git.stats.list': {
 		/** The name or ID of the repository. */
 		repositoryId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Version string identifier (name of tag/branch, SHA1 of commit) */
 		"baseVersionDescriptor.version"?: string;
 		/** Version options - Specify additional modifiers to version (e.g Previous) */
@@ -22121,7 +22528,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the repository. */
 		repositoryId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Reference links. */
 		_links?: AzureDevopsReferenceLinksInput;
 		/** Context of the status. */
@@ -22147,7 +22554,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the repository. */
 		repositoryId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Optional. The number of statuses to retrieve. Default is 1000. */
 		top?: number;
 		/** Optional. The number of statuses to ignore. Default is 0. For example, to retrieve results 101-150, set top to 50 and skip to 100. */
@@ -22159,7 +22566,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the git repository. */
 		repositoryId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'git.trees.get': {
 		/** Repository Id. */
@@ -22167,7 +22574,7 @@ export type AzureDevopsOperationInputs = {
 		/** SHA1 hash of the tree object. */
 		sha1: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Project Id. */
 		projectId?: string;
 		/** Search recursively. Include trees underneath this tree. Default is false. */
@@ -22190,7 +22597,8 @@ export type AzureDevopsOperationInputs = {
 		isAutoGenerated?: boolean;
 		size?: "small" | "medium" | "large";
 		timeStamp?: string;
-		value?: Array<string>;
+		/** The image, base64-encoded. */
+		value?: (string | Array<string>);
 	};
 	'graph.descriptors.get': {
 		/** Storage key of the subject (user, group, scope, etc.) to resolve */
@@ -22450,7 +22858,7 @@ export type AzureDevopsOperationInputs = {
 	};
 	'hooks.publishers.queryInputValues': {
 		publisherId: string;
-		currentValues?: { [key: string]: string };
+		currentValues?: { [key: string]: string | null };
 		/** The input values to return on input, and the result from the consumer on output. */
 		inputValues?: Array<AzureDevopsInputValuesInput>;
 		/** Subscription containing information about the publisher/consumer and the current input values */
@@ -22460,7 +22868,7 @@ export type AzureDevopsOperationInputs = {
 		/** Optional list of publisher ids to restrict the results to */
 		publisherIds?: Array<string>;
 		/** Filter for publisher inputs */
-		publisherInputs?: { [key: string]: string };
+		publisherInputs?: { [key: string]: string | null };
 		/** Results from the query */
 		results?: Array<AzureDevopsPublisherInput>;
 	};
@@ -22471,7 +22879,7 @@ export type AzureDevopsOperationInputs = {
 		consumerActionId?: string;
 		consumerId?: string;
 		/** Consumer input values */
-		consumerInputs?: { [key: string]: string };
+		consumerInputs?: { [key: string]: string | null };
 		createdBy?: AzureDevopsIdentityRefInput;
 		createdDate?: string;
 		eventDescription?: string;
@@ -22483,7 +22891,7 @@ export type AzureDevopsOperationInputs = {
 		probationRetries?: string;
 		publisherId?: string;
 		/** Publisher input values */
-		publisherInputs?: { [key: string]: string };
+		publisherInputs?: { [key: string]: string | null };
 		resourceVersion?: string;
 		status?: "enabled" | "onProbation" | "disabledByUser" | "disabledBySystem" | "disabledByInactiveIdentity";
 		subscriber?: AzureDevopsIdentityRefInput;
@@ -22526,14 +22934,14 @@ export type AzureDevopsOperationInputs = {
 		consumerActionId?: string;
 	};
 	'hooks.subscriptions.replaceSubscription': {
-		subscriptionId: string;
+		subscriptionId?: string;
 		/** Reference Links */
 		_links?: AzureDevopsReferenceLinksInput;
 		actionDescription?: string;
 		consumerActionId?: string;
 		consumerId?: string;
 		/** Consumer input values */
-		consumerInputs?: { [key: string]: string };
+		consumerInputs?: { [key: string]: string | null };
 		createdBy?: AzureDevopsIdentityRefInput;
 		createdDate?: string;
 		eventDescription?: string;
@@ -22545,7 +22953,7 @@ export type AzureDevopsOperationInputs = {
 		probationRetries?: string;
 		publisherId?: string;
 		/** Publisher input values */
-		publisherInputs?: { [key: string]: string };
+		publisherInputs?: { [key: string]: string | null };
 		resourceVersion?: string;
 		status?: "enabled" | "onProbation" | "disabledByUser" | "disabledBySystem" | "disabledByInactiveIdentity";
 		subscriber?: AzureDevopsIdentityRefInput;
@@ -22713,7 +23121,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID specifying which type of logs to check diagnostics for. */
 		source: string;
 		/** The ID of the specific log to query for. */
-		entryId: string;
+		entryId?: string;
 		/** Start time for the time range to query in. */
 		startTime?: string;
 		/** End time for the time range to query in. */
@@ -22788,7 +23196,7 @@ export type AzureDevopsOperationInputs = {
 		/** One or more conditions to query on. If more than 2 conditions are specified, the combined results of each condition is returned (i.e. conditions are logically OR'ed). */
 		conditions?: Array<AzureDevopsSubscriptionQueryConditionInput>;
 		/** Flags the refine the types of subscriptions that will be returned from the query. */
-		queryFlags?: "none" | "includeInvalidSubscriptions" | "includeDeletedSubscriptions" | "includeFilterDetails" | "alwaysReturnBasicInformation" | "includeSystemSubscriptions";
+		queryFlags?: ("none" | "includeInvalidSubscriptions" | "includeDeletedSubscriptions" | "includeFilterDetails" | "alwaysReturnBasicInformation" | "includeSystemSubscriptions" | number);
 	};
 	'notification.subscriptions.update': {
 		subscriptionId: string;
@@ -22913,7 +23321,7 @@ export type AzureDevopsOperationInputs = {
 		/** The resources the run requires. */
 		resources?: AzureDevopsRunResourcesParametersInput;
 		stagesToSkip?: Array<string>;
-		templateParameters?: { [key: string]: string };
+		templateParameters?: { [key: string]: string | null };
 		variables?: { [key: string]: AzureDevopsVariableInput };
 		/** If you use the preview run option, you may optionally supply different YAML. This allows you to preview the final YAML document without committing a changed file. */
 		yamlOverride?: string;
@@ -22944,7 +23352,7 @@ export type AzureDevopsOperationInputs = {
 		/** The resources the run requires. */
 		resources?: AzureDevopsRunResourcesParametersInput;
 		stagesToSkip?: Array<string>;
-		templateParameters?: { [key: string]: string };
+		templateParameters?: { [key: string]: string | null };
 		variables?: { [key: string]: AzureDevopsVariableInput };
 		/** If you use the preview run option, you may optionally supply different YAML. This allows you to preview the final YAML document without committing a changed file. */
 		yamlOverride?: string;
@@ -23082,6 +23490,12 @@ export type AzureDevopsOperationInputs = {
 	'policy.types.list': {
 		/** Project ID or project name */
 		project: string;
+	};
+	'processadmin.behaviors.get': {
+		/** The ID of the process */
+		processId: string;
+		/** The reference name of the behavior */
+		behaviorRefName: string;
 	};
 	'processadmin.behaviors.list': {
 		/** The ID of the process */
@@ -23329,6 +23743,42 @@ export type AzureDevopsOperationInputs = {
 		pageId: string;
 		/** The ID of the section to add the group to. */
 		sectionId: string;
+		/** Contribution for the group. */
+		contribution?: AzureDevopsWitContributionInput;
+		/** Controls to be put in the group. */
+		controls?: Array<AzureDevopsControlInput>;
+		/** The height for the contribution. */
+		height?: number;
+		/** The id for the layout node. */
+		id?: string;
+		/** A value indicating whether this layout node has been inherited from a parent layout. This is expected to only be only set by the combiner. */
+		inherited?: boolean;
+		/** A value indicating if the layout node is contribution are not. */
+		isContribution?: boolean;
+		/** Label for the group. */
+		label?: string;
+		/** Order in which the group should appear in the section. */
+		order?: number;
+		/** A value indicating whether this layout node has been overridden by a child layout. */
+		overridden?: boolean;
+		/** A value indicating if the group should be hidden or not. */
+		visible?: boolean;
+	};
+	'processes.groups.moveGroupToPage': {
+		/** The ID of the process. */
+		processId: string;
+		/** The reference name of the work item type. */
+		witRefName: string;
+		/** The ID of the page the group is in. */
+		pageId: string;
+		/** The ID of the section the group is i.n */
+		sectionId: string;
+		/** The ID of the group. */
+		groupId: string;
+		/** ID of the page to remove the group from. */
+		removeFromPageId: string;
+		/** ID of the section to remove the group from. */
+		removeFromSectionId: string;
 		/** Contribution for the group. */
 		contribution?: AzureDevopsWitContributionInput;
 		/** Controls to be put in the group. */
@@ -24163,7 +24613,7 @@ export type AzureDevopsOperationInputs = {
 		/** Project ID or project name */
 		project: string;
 		/** Path of the folder. */
-		path: string;
+		path?: string;
 		/** Identity who created this folder. */
 		createdBy?: AzureDevopsIdentityRefInput;
 		/** Time when this folder created. */
@@ -24174,6 +24624,8 @@ export type AzureDevopsOperationInputs = {
 		lastChangedBy?: AzureDevopsIdentityRefInput;
 		/** Time when this folder last changed. */
 		lastChangedDate?: string;
+		/** path of the folder. */
+		bodyPath?: string;
 	};
 	'release.folders.delete': {
 		/** Project ID or project name */
@@ -24185,7 +24637,7 @@ export type AzureDevopsOperationInputs = {
 		/** Project ID or project name */
 		project: string;
 		/** Path of the folder. */
-		path: string;
+		path?: string;
 		/** Gets the results in the defined order. Default is 'None'. */
 		queryOrder?: "none" | "ascending" | "descending";
 	};
@@ -24204,6 +24656,8 @@ export type AzureDevopsOperationInputs = {
 		lastChangedBy?: AzureDevopsIdentityRefInput;
 		/** Time when this folder last changed. */
 		lastChangedDate?: string;
+		/** path of the folder. */
+		bodyPath?: string;
 	};
 	'release.gates.update': {
 		/** Project ID or project name */
@@ -24268,6 +24722,20 @@ export type AzureDevopsOperationInputs = {
 		/** Id of the release. */
 		releaseId: number;
 	};
+	'release.releases.getRelease': {
+		/** Project ID or project name */
+		project: string;
+		/** Id of the release. */
+		releaseId: number;
+		/** A filter which would allow fetching approval steps selectively based on whether it is automated, or manual. This would also decide whether we should fetch pre and post approval snapshots. Assumes All by default */
+		approvalFilters?: "none" | "manualApprovals" | "automatedApprovals" | "approvalSnapshots" | "all";
+		/** A comma-delimited list of extended properties to be retrieved. If set, the returned Release will contain values for the specified property Ids (if they exist). If not set, properties will not be included. */
+		propertyFilters?: string;
+		/** A property that should be expanded in the release. */
+		$expand?: "none" | "tasks";
+		/** Number of release gate records to get. Default is 5. */
+		$topGateRecords?: number;
+	};
 	'release.releases.getReleaseEnvironment': {
 		/** Project ID or project name */
 		project: string;
@@ -24304,7 +24772,7 @@ export type AzureDevopsOperationInputs = {
 	};
 	'release.releases.list': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Releases from this release definition Id. */
 		definitionId?: number;
 		definitionEnvironmentId?: number;
@@ -24438,7 +24906,7 @@ export type AzureDevopsOperationInputs = {
 	};
 	'search.codeSearchResults.fetchCodeSearchResults': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Filters to be applied. Set it to null if there are no filters to be applied. */
 		filters?: { [key: string]: Array<string> } | null;
 		/** The search text. */
@@ -24480,7 +24948,7 @@ export type AzureDevopsOperationInputs = {
 	};
 	'search.wikiSearchResults.fetchWikiSearchResults': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Filters to be applied. Set it to null if there are no filters to be applied. */
 		filters?: { [key: string]: Array<string> } | null;
 		/** The search text. */
@@ -24496,7 +24964,7 @@ export type AzureDevopsOperationInputs = {
 	};
 	'search.workItemSearchResults.fetchWorkItemSearchResults': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Filters to be applied. Set it to null if there are no filters to be applied. */
 		filters?: { [key: string]: Array<string> } | null;
 		/** The search text. */
@@ -24551,13 +25019,13 @@ export type AzureDevopsOperationInputs = {
 		/** The number of serialized items. */
 		count?: number;
 		/** The serialized item. */
-		value?: string;
+		value?: AzureDevopsJsonValue;
 	};
 	'security.permissions.hasPermissions': {
 		/** Security namespace identifier. */
 		securityNamespaceId: string;
 		/** Permissions to evaluate. */
-		permissions: number;
+		permissions?: number;
 		/** One or more security tokens to evaluate. */
 		tokens?: string;
 		/** If true and if the caller is an administrator, always return true. */
@@ -24577,15 +25045,20 @@ export type AzureDevopsOperationInputs = {
 		/** Identity descriptor of the user to remove permissions for. */
 		descriptor: string;
 		/** Permissions to remove. */
-		permissions: number;
+		permissions?: number;
 		/** Security token to remove permissions for. */
 		token?: string;
 	};
 	'security.securityNamespaces.query': {
 		/** Security namespace identifier. */
-		securityNamespaceId: string;
+		securityNamespaceId?: string;
 		/** If true, retrieve only local security namespaces. */
 		localOnly?: boolean;
+	};
+	'securityRoles.roleassignments.changeInheritance': {
+		scopeId: string;
+		resourceId: string;
+		inheritPermissions: boolean;
 	};
 	'securityRoles.roleassignments.list': {
 		/** Id of the assigned scope */
@@ -24630,6 +25103,18 @@ export type AzureDevopsOperationInputs = {
 	'securityRoles.roledefinitions.list': {
 		scopeId: string;
 	};
+	'serviceEndpoint.endpointproxy.executeServiceEndpointRequest': {
+		/** Project ID or project name */
+		project: string;
+		/** Id of the service endpoint. */
+		endpointId: string;
+		/** Gets or sets the data source details for the service endpoint request. */
+		dataSourceDetails?: AzureDevopsServiceEndpointDataSourceDetailsInput;
+		/** Gets or sets the result transformation details for the service endpoint request. */
+		resultTransformationDetails?: AzureDevopsServiceEndpointResultTransformationDetailsInput;
+		/** Gets or sets the service endpoint details for the service endpoint request. */
+		serviceEndpointDetails?: AzureDevopsServiceEndpointServiceEndpointDetailsInput;
+	};
 	'serviceEndpoint.endpointproxy.query': {
 		/** Project ID or project name */
 		project: string;
@@ -24648,7 +25133,7 @@ export type AzureDevopsOperationInputs = {
 		/** Defines the initial value of the query params */
 		initialContextTemplate?: string;
 		/** Gets or sets the parameters for the data source. */
-		parameters?: { [key: string]: string };
+		parameters?: { [key: string]: string | null };
 		/** Gets or sets http request body */
 		requestContent?: string;
 		/** Gets or sets http request verb */
@@ -24667,7 +25152,7 @@ export type AzureDevopsOperationInputs = {
 		authorization?: AzureDevopsServiceEndpointEndpointAuthorizationInput;
 		/** Gets or sets the identity reference for the user who created the Service endpoint. */
 		createdBy?: AzureDevopsIdentityRefInput;
-		data?: { [key: string]: string };
+		data?: { [key: string]: string | null };
 		/** Gets or sets the description of endpoint. */
 		description?: string;
 		/** This is a deprecated field. */
@@ -24709,6 +25194,24 @@ export type AzureDevopsOperationInputs = {
 		/** Action filter for the service connection. It specifies the action which can be performed on the service connection. */
 		actionFilter?: "none" | "manage" | "use" | "view";
 	};
+	'serviceEndpoint.endpoints.getServiceEndpoints': {
+		/** Project ID or project name */
+		project: string;
+		/** Type of the service endpoints. */
+		type?: string;
+		/** Authorization schemes used for service endpoints. */
+		authSchemes?: string;
+		/** Ids of the service endpoints. */
+		endpointIds?: string;
+		/** Owner for service endpoints. */
+		owner?: string;
+		/** Failed flag for service endpoints. */
+		includeFailed?: boolean;
+		/** Flag to include more details for service endpoints. This is for internal use only and the flag will be treated as false for all other requests */
+		includeDetails?: boolean;
+		/** The "actionFilter" parameter allows users to evaluate requestor permissions and retrieve a list of endpoints that match the specified conditions, ensuring that only relevant endpoints are returned based on their permissions */
+		actionFilter?: "none" | "manage" | "use" | "view";
+	};
 	'serviceEndpoint.endpoints.getServiceEndpointsByNames': {
 		/** Project ID or project name */
 		project: string;
@@ -24748,7 +25251,7 @@ export type AzureDevopsOperationInputs = {
 		authorization?: AzureDevopsServiceEndpointEndpointAuthorizationInput;
 		/** Gets or sets the identity reference for the user who created the Service endpoint. */
 		createdBy?: AzureDevopsIdentityRefInput;
-		data?: { [key: string]: string };
+		data?: { [key: string]: string | null };
 		/** Gets or sets the description of endpoint. */
 		description?: string;
 		/** This is a deprecated field. */
@@ -24839,6 +25342,18 @@ export type AzureDevopsOperationInputs = {
 	'symbol.requests.createRequestsRequestIdDebugEntries': {
 		/** The symbol request identifier. */
 		requestId: string;
+		/** A valid debug entry collection name. Must be "debugentries". */
+		collection: string;
+		/** Defines what to do when a debug entry in the batch already exists. */
+		createBehavior?: "throwIfExists" | "skipIfExists" | "overwriteIfExists";
+		/** The debug entries. */
+		debugEntries?: Array<AzureDevopsDebugEntryInput>;
+		/** Serialized Proof nodes, used to verify uploads on server side for Chunk Dedup DebugEntry */
+		proofNodes?: Array<string>;
+	};
+	'symbol.requests.createRequestsRequestNameDebugEntries': {
+		/** The symbol request name. */
+		requestName: string;
 		/** A valid debug entry collection name. Must be "debugentries". */
 		collection: string;
 		/** Defines what to do when a debug entry in the batch already exists. */
@@ -24958,6 +25473,24 @@ export type AzureDevopsOperationInputs = {
 		/** Base64 encoded file stream */
 		stream?: string;
 	};
+	'test.attachments.createTestSubResultAttachment': {
+		/** Project ID or project name */
+		project: string;
+		/** ID of the test run that contains the result. */
+		runId: number;
+		/** ID of the test results that contains sub result. */
+		testCaseResultId: number;
+		/** ID of the test sub results against which attachment has to be uploaded. */
+		testSubResultId: number;
+		/** Attachment type By Default it will be GeneralAttachment. It can be one of the following type. { GeneralAttachment, AfnStrip, BugFilingData, CodeCoverage, IntermediateCollectorData, RunConfig, TestImpactDetails, TmiTestRunDeploymentFiles, TmiTestRunReverseDeploymentFiles, TmiTestResultDetail,… */
+		attachmentType?: string;
+		/** Comment associated with attachment */
+		comment?: string;
+		/** Attachment filename */
+		fileName?: string;
+		/** Base64 encoded file stream */
+		stream?: string;
+	};
 	'test.attachments.getTestResultAttachmentZip': {
 		/** Project ID or project name */
 		project: string;
@@ -24989,6 +25522,28 @@ export type AzureDevopsOperationInputs = {
 		project: string;
 		/** ID of the test run. */
 		runId: number;
+	};
+	'test.attachments.getTestSubResultAttachmentZip': {
+		/** Project ID or project name */
+		project: string;
+		/** ID of the test run that contains the result. */
+		runId: number;
+		/** ID of the test results that contains sub result. */
+		testCaseResultId: number;
+		/** ID of the test result attachment to be downloaded */
+		attachmentId: number;
+		/** ID of the test sub result whose attachment has to be downloaded */
+		testSubResultId: number;
+	};
+	'test.attachments.getTestSubResultAttachments': {
+		/** Project ID or project name */
+		project: string;
+		/** ID of the test run that contains the result. */
+		runId: number;
+		/** ID of the test results that contains sub result. */
+		testCaseResultId: number;
+		/** ID of the test sub result whose attachment has to be downloaded */
+		testSubResultId: number;
 	};
 	'test.codeCoverage.getBuildCodeCoverage': {
 		/** Project ID or project name */
@@ -25262,6 +25817,42 @@ export type AzureDevopsOperationInputs = {
 		/** Number of test runs to return. */
 		$top?: number;
 	};
+	'test.runs.query': {
+		/** Project ID or project name */
+		project: string;
+		/** Minimum Last Modified Date of run to be queried (Mandatory). */
+		minLastUpdatedDate: string;
+		/** Maximum Last Modified Date of run to be queried (Mandatory, difference between min and max date can be atmost 7 days). */
+		maxLastUpdatedDate: string;
+		/** Current state of the Runs to be queried. */
+		state?: "unspecified" | "notStarted" | "inProgress" | "completed" | "aborted" | "waiting" | "needsInvestigation";
+		/** Plan Ids of the Runs to be queried, comma separated list of valid ids (limit no. of ids 10). */
+		planIds?: string;
+		/** Automation type of the Runs to be queried. */
+		isAutomated?: boolean;
+		/** PublishContext of the Runs to be queried. */
+		publishContext?: "build" | "release" | "all";
+		/** Build Ids of the Runs to be queried, comma separated list of valid ids (limit no. of ids 10). */
+		buildIds?: string;
+		/** Build Definition Ids of the Runs to be queried, comma separated list of valid ids (limit no. of ids 10). */
+		buildDefIds?: string;
+		/** Source Branch name of the Runs to be queried. */
+		branchName?: string;
+		/** Release Ids of the Runs to be queried, comma separated list of valid ids (limit no. of ids 10). */
+		releaseIds?: string;
+		/** Release Definition Ids of the Runs to be queried, comma separated list of valid ids (limit no. of ids 10). */
+		releaseDefIds?: string;
+		/** Release Environment Ids of the Runs to be queried, comma separated list of valid ids (limit no. of ids 10). */
+		releaseEnvIds?: string;
+		/** Release Environment Definition Ids of the Runs to be queried, comma separated list of valid ids (limit no. of ids 10). */
+		releaseEnvDefIds?: string;
+		/** Run Title of the Runs to be queried. */
+		runTitle?: string;
+		/** Number of runs to be queried. Limit is 100 */
+		$top?: number;
+		/** continuationToken received from previous batch or null for first batch. It is not supposed to be created (or altered, if received from last batch) by user. */
+		continuationToken?: string;
+	};
 	'test.runs.update': {
 		/** Project ID or project name */
 		project: string;
@@ -25323,7 +25914,7 @@ export type AzureDevopsOperationInputs = {
 		/** Project ID or project name */
 		project: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 		/** Area path of the test session */
 		area?: AzureDevopsShallowReferenceInput;
 		/** Comments in the test session */
@@ -25357,7 +25948,7 @@ export type AzureDevopsOperationInputs = {
 		/** Project ID or project name */
 		project: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 		/** Period in days from now, for which test sessions are fetched. */
 		period?: number;
 		/** If false, returns test sessions for current user. Otherwise, it returns test sessions for all users */
@@ -25373,7 +25964,7 @@ export type AzureDevopsOperationInputs = {
 		/** Project ID or project name */
 		project: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 		/** Area path of the test session */
 		area?: AzureDevopsShallowReferenceInput;
 		/** Comments in the test session */
@@ -25577,6 +26168,16 @@ export type AzureDevopsOperationInputs = {
 		excludeFlags?: "none" | "pointAssignments" | "extraInformation";
 		isRecursive?: boolean;
 	};
+	'testPlan.suiteTestCase.removeTestCasesFromSuite': {
+		/** Project ID or project name */
+		project: string;
+		/** ID of the test plan from which test cases are to be removed. */
+		planId: number;
+		/** ID of the test suite from which test cases are to be removed. */
+		suiteId: number;
+		/** Test Case Ids to be removed. */
+		testCaseIds: string;
+	};
 	'testPlan.suiteTestCase.removeTestCasesListFromSuite': {
 		/** Project ID or project name */
 		project: string;
@@ -25739,6 +26340,26 @@ export type AzureDevopsOperationInputs = {
 		returnIdentityRef?: boolean;
 		/** If set to false, will get a smaller payload containing only basic details about the test point object */
 		includePointDetails?: boolean;
+	};
+	'testPlan.testPoint.getPointsList': {
+		/** Project ID or project name */
+		project: string;
+		/** ID of the test plan for which test points are requested. */
+		planId: number;
+		/** ID of the test suite for which test points are requested */
+		suiteId: number;
+		/** ID of test points to fetch. */
+		testPointIds?: string;
+		/** Get Test Points for specific test case Ids. */
+		testCaseId?: string;
+		/** If the list of test point returned is not complete, a continuation token to query next batch of test points is included in the response header as "x-ms-continuationtoken". Omit this parameter to get the first batch of test points. */
+		continuationToken?: string;
+		/** If set to true, returns the AssignedTo field in TestCaseReference as IdentityRef object. */
+		returnIdentityRef?: boolean;
+		/** If set to false, will get a smaller payload containing only basic details about the test point object */
+		includePointDetails?: boolean;
+		/** If set to true, will also fetch test points belonging to child suites recursively. */
+		isRecursive?: boolean;
 	};
 	'testPlan.testPoint.update': {
 		/** Project ID or project name */
@@ -25903,6 +26524,22 @@ export type AzureDevopsOperationInputs = {
 		/** List of allowed values */
 		values?: Array<string>;
 	};
+	'testResults.attachments.createTestIterationResultAttachment': {
+		/** Project ID or project name */
+		project: string;
+		runId: number;
+		testCaseResultId: number;
+		iterationId: number;
+		actionPath?: string;
+		/** Attachment type By Default it will be GeneralAttachment. It can be one of the following type. { GeneralAttachment, AfnStrip, BugFilingData, CodeCoverage, IntermediateCollectorData, RunConfig, TestImpactDetails, TmiTestRunDeploymentFiles, TmiTestRunReverseDeploymentFiles, TmiTestResultDetail,… */
+		attachmentType?: string;
+		/** Comment associated with attachment */
+		comment?: string;
+		/** Attachment filename */
+		fileName?: string;
+		/** Base64 encoded file stream */
+		stream?: string;
+	};
 	'testResults.attachments.createTestResultAttachment': {
 		/** Project ID or project name */
 		project: string;
@@ -25930,6 +26567,21 @@ export type AzureDevopsOperationInputs = {
 		/** Base64 encoded file stream */
 		stream?: string;
 	};
+	'testResults.attachments.createTestSubResultAttachment': {
+		/** Project ID or project name */
+		project: string;
+		runId: number;
+		testCaseResultId: number;
+		testSubResultId: number;
+		/** Attachment type By Default it will be GeneralAttachment. It can be one of the following type. { GeneralAttachment, AfnStrip, BugFilingData, CodeCoverage, IntermediateCollectorData, RunConfig, TestImpactDetails, TmiTestRunDeploymentFiles, TmiTestRunReverseDeploymentFiles, TmiTestResultDetail,… */
+		attachmentType?: string;
+		/** Comment associated with attachment */
+		comment?: string;
+		/** Attachment filename */
+		fileName?: string;
+		/** Base64 encoded file stream */
+		stream?: string;
+	};
 	'testResults.attachments.deleteTestResultAttachment': {
 		/** Project ID or project name */
 		project: string;
@@ -25942,6 +26594,14 @@ export type AzureDevopsOperationInputs = {
 		project: string;
 		runId: number;
 		attachmentId: number;
+	};
+	'testResults.attachments.getTestIterationAttachmentZip': {
+		/** Project ID or project name */
+		project: string;
+		runId: number;
+		testCaseResultId: number;
+		attachmentId: number;
+		iterationId: number;
 	};
 	'testResults.attachments.getTestResultAttachmentZip': {
 		/** Project ID or project name */
@@ -25967,6 +26627,21 @@ export type AzureDevopsOperationInputs = {
 		project: string;
 		runId: number;
 	};
+	'testResults.attachments.getTestSubResultAttachmentZip': {
+		/** Project ID or project name */
+		project: string;
+		runId: number;
+		testCaseResultId: number;
+		attachmentId: number;
+		testSubResultId: number;
+	};
+	'testResults.attachments.getTestSubResultAttachments': {
+		/** Project ID or project name */
+		project: string;
+		runId: number;
+		testCaseResultId: number;
+		testSubResultId: number;
+	};
 	'testResults.bugs.list': {
 		/** Project ID or project name */
 		project: string;
@@ -25978,6 +26653,12 @@ export type AzureDevopsOperationInputs = {
 		project: string;
 		buildId: number;
 		deltaBuildId?: number;
+	};
+	'testResults.codecoverage.getBuildCodeCoverage': {
+		/** Project ID or project name */
+		project: string;
+		buildId: number;
+		flags: number;
 	};
 	'testResults.codecoverage.getTestRunCodeCoverage': {
 		/** Project ID or project name */
@@ -26402,6 +27083,42 @@ export type AzureDevopsOperationInputs = {
 		$skip?: number;
 		$top?: number;
 	};
+	'testResults.runs.query': {
+		/** Project ID or project name */
+		project: string;
+		/** Minimum Last Modified Date of run to be queried (Mandatory). */
+		minLastUpdatedDate: string;
+		/** Maximum Last Modified Date of run to be queried (Mandatory, difference between min and max date can be atmost 7 days). */
+		maxLastUpdatedDate: string;
+		/** Current state of the Runs to be queried. */
+		state?: "unspecified" | "notStarted" | "inProgress" | "completed" | "aborted" | "waiting" | "needsInvestigation";
+		/** Plan Ids of the Runs to be queried, comma separated list of valid ids. */
+		planIds?: string;
+		/** Automation type of the Runs to be queried. */
+		isAutomated?: boolean;
+		/** PublishContext of the Runs to be queried. */
+		publishContext?: "build" | "release" | "all";
+		/** Build Ids of the Runs to be queried, comma separated list of valid ids. */
+		buildIds?: string;
+		/** Build Definition Ids of the Runs to be queried, comma separated list of valid ids. */
+		buildDefIds?: string;
+		/** Source Branch name of the Runs to be queried. */
+		branchName?: string;
+		/** Release Ids of the Runs to be queried, comma separated list of valid ids. */
+		releaseIds?: string;
+		/** Release Definition Ids of the Runs to be queried, comma separated list of valid ids. */
+		releaseDefIds?: string;
+		/** Release Environment Ids of the Runs to be queried, comma separated list of valid ids. */
+		releaseEnvIds?: string;
+		/** Release Environment Definition Ids of the Runs to be queried, comma separated list of valid ids. */
+		releaseEnvDefIds?: string;
+		/** Run Title of the Runs to be queried. */
+		runTitle?: string;
+		/** Number of runs to be queried. Limit is 100 */
+		$top?: number;
+		/** continuationToken received from previous batch or null for first batch. It is not supposed to be created (or altered, if received from last batch) by user. */
+		continuationToken?: string;
+	};
 	'testResults.runs.update': {
 		/** Project ID or project name */
 		project: string;
@@ -26512,6 +27229,12 @@ export type AzureDevopsOperationInputs = {
 		project: string;
 		buildId: number;
 	};
+	'testResults.tags.getTestTagsForRelease': {
+		/** Project ID or project name */
+		project: string;
+		releaseId: number;
+		releaseEnvId: number;
+	};
 	'testResults.tags.update': {
 		/** Project ID or project name */
 		project: string;
@@ -26522,6 +27245,12 @@ export type AzureDevopsOperationInputs = {
 		/** Project ID or project name */
 		project: string;
 		buildId: number;
+	};
+	'testResults.tagsummary.getTestTagSummaryForRelease': {
+		/** Project ID or project name */
+		project: string;
+		releaseId: number;
+		releaseEnvId: number;
 	};
 	'testResults.testHistory.query': {
 		/** Project ID or project name */
@@ -26576,6 +27305,14 @@ export type AzureDevopsOperationInputs = {
 		stream?: string;
 	};
 	'testResults.testattachments.delete': {
+		/** Project ID or project name */
+		project: string;
+		/** Test RunId */
+		runId: number;
+		/** Attachment FileName */
+		filename: string;
+	};
+	'testResults.testattachments.get': {
 		/** Project ID or project name */
 		project: string;
 		/** Test RunId */
@@ -26660,6 +27397,28 @@ export type AzureDevopsOperationInputs = {
 		/** Header to pass the continuationToken */
 		continuationToken?: string;
 	};
+	'testResults.testlog.getTestSubResultLogs': {
+		/** Project ID or project name */
+		project: string;
+		/** Id of the test run that contains the results */
+		runId: number;
+		/** Id of the test result that contains subresult */
+		resultId: number;
+		/** Id of the test subresult */
+		subResultId: number;
+		/** type of the attachments to get */
+		type: "generalAttachment";
+		/** directory path of the attachment to get */
+		directoryPath?: string;
+		/** file name prefix to filter the list of attachments */
+		fileNamePrefix?: string;
+		/** Default is false, set if metadata is needed */
+		fetchMetaData?: boolean;
+		/** Number of attachments reference to return */
+		top?: number;
+		/** Header to pass the continuationToken */
+		continuationToken?: string;
+	};
 	'testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForBuildLog': {
 		/** Project ID or project name */
 		project: string;
@@ -26687,6 +27446,20 @@ export type AzureDevopsOperationInputs = {
 		project: string;
 		/** Id of the test run whose file has to be downloaded */
 		runId: number;
+		/** type of the file */
+		type: "generalAttachment";
+		/** filePath for which sas uri is needed */
+		filePath: string;
+	};
+	'testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForSubResultLog': {
+		/** Project ID or project name */
+		project: string;
+		/** Id of the test run that contains result */
+		runId: number;
+		/** Id of the test result that contains subresult */
+		resultId: number;
+		/** Id of the test subresult whose file sas uri is needed */
+		subResultId: number;
 		/** type of the file */
 		type: "generalAttachment";
 		/** filePath for which sas uri is needed */
@@ -26773,6 +27546,11 @@ export type AzureDevopsOperationInputs = {
 		runId: number;
 		testCaseResultId: number;
 	};
+	'testResults.workitems.queryTestMethodLinkedWorkItems': {
+		/** Project ID or project name */
+		project: string;
+		testName: string;
+	};
 	'testResults.workitems.queryTestResultWorkItems': {
 		/** Project ID or project name */
 		project: string;
@@ -26784,11 +27562,33 @@ export type AzureDevopsOperationInputs = {
 		days?: number;
 		$workItemCount?: number;
 	};
+	'tfvc.branches.get': {
+		/** Full path to the branch. Default: $/ Examples: $/, $/MyProject, $/MyProject/SomeFolder. */
+		path: string;
+		/** Project ID or project name */
+		project?: string;
+		/** Return the parent branch, if there is one. Default: False */
+		includeParent?: boolean;
+		/** Return child branches, if there are any. Default: False */
+		includeChildren?: boolean;
+	};
 	'tfvc.branches.getBranchRefs': {
 		/** Full path to the branch. Default: $/ Examples: $/, $/MyProject, $/MyProject/SomeFolder. */
 		scopePath: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
+		/** Return deleted branches. Default: False */
+		includeDeleted?: boolean;
+		/** Return links. Default: False */
+		includeLinks?: boolean;
+	};
+	'tfvc.branches.getBranches': {
+		/** Project ID or project name */
+		project?: string;
+		/** Return the parent branch, if there is one. Default: False */
+		includeParent?: boolean;
+		/** Return the child branches for each root branch. Default: False */
+		includeChildren?: boolean;
 		/** Return deleted branches. Default: False */
 		includeDeleted?: boolean;
 		/** Return links. Default: False */
@@ -26796,7 +27596,7 @@ export type AzureDevopsOperationInputs = {
 	};
 	'tfvc.changesets.create': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** A collection of REST reference links. */
 		_links?: AzureDevopsReferenceLinksInput;
 		/** Alias or display name of user. */
@@ -26834,7 +27634,7 @@ export type AzureDevopsOperationInputs = {
 		/** Changeset Id to retrieve. */
 		id: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Number of changes to return (maximum 100 changes) Default: 0 */
 		maxChangeCount?: number;
 		/** Include policy details and check-in notes in the response. Default: false */
@@ -26880,7 +27680,7 @@ export type AzureDevopsOperationInputs = {
 	};
 	'tfvc.changesets.getChangesetChanges': {
 		/** ID of the changeset. Default: null */
-		id: number;
+		id?: number;
 		/** Number of results to skip. Default: null */
 		$skip?: number;
 		/** The maximum number of results to return. Default: null */
@@ -26890,11 +27690,11 @@ export type AzureDevopsOperationInputs = {
 	};
 	'tfvc.changesets.getChangesetWorkItems': {
 		/** ID of the changeset. */
-		id: number;
+		id?: number;
 	};
 	'tfvc.changesets.getChangesets': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Include details about associated work items in the response. Default: null */
 		maxCommentLength?: number;
 		/** Number of results to skip. Default: null */
@@ -26922,9 +27722,31 @@ export type AzureDevopsOperationInputs = {
 		/** If provided, a version descriptor for the latest change list to include. */
 		"searchCriteria.toId"?: number;
 	};
+	'tfvc.items.get': {
+		/** Version control path of an individual item to return. */
+		path: string;
+		/** Project ID or project name */
+		project?: string;
+		/** file name of item returned. */
+		fileName?: string;
+		/** If true, create a downloadable attachment. */
+		download?: boolean;
+		/** Version control path of a folder to return multiple items. */
+		scopePath?: string;
+		/** None (just the item), or OneLevel (contents of a folder). */
+		recursionLevel?: "none" | "oneLevel" | "oneLevelPlusNestedEmptyFolders" | "full";
+		/** Version object. */
+		"versionDescriptor.version"?: string;
+		/** Version descriptor. Default is null. */
+		"versionDescriptor.versionOption"?: "none" | "previous" | "useRename";
+		/** Version descriptor. Default is null. */
+		"versionDescriptor.versionType"?: "none" | "changeset" | "shelveset" | "change" | "date" | "latest" | "tip" | "mergeSource";
+		/** Set to true to include item content when requesting json. Default is false. */
+		includeContent?: boolean;
+	};
 	'tfvc.items.getItemsBatch': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** If true, include metadata about the file type */
 		includeContentMetadata?: boolean;
 		/** Whether to include the _links field on the shallow references */
@@ -26933,7 +27755,7 @@ export type AzureDevopsOperationInputs = {
 	};
 	'tfvc.items.list': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Version control path of a folder to return multiple items. */
 		scopePath?: string;
 		/** None (just the item), or OneLevel (contents of a folder). */
@@ -26949,7 +27771,7 @@ export type AzureDevopsOperationInputs = {
 		/** Unique identifier of label */
 		labelId: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Whether to include the _links field on the shallow references */
 		"requestData.includeLinks"?: boolean;
 		/** maxItemCount */
@@ -26973,7 +27795,7 @@ export type AzureDevopsOperationInputs = {
 	};
 	'tfvc.labels.list': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Whether to include the _links field on the shallow references */
 		"requestData.includeLinks"?: boolean;
 		/** labelScope, name, owner, and itemLabelFilter */
@@ -27021,6 +27843,26 @@ export type AzureDevopsOperationInputs = {
 		/** Shelveset's unique ID */
 		shelvesetId: string;
 	};
+	'tfvc.shelvesets.list': {
+		/** Whether to include policyOverride and notes Only applies when requesting a single deep shelveset */
+		"requestData.includeDetails"?: boolean;
+		/** Whether to include the _links field on the shallow references. Does not apply when requesting a single deep shelveset object. Links will always be included in the deep shelveset. */
+		"requestData.includeLinks"?: boolean;
+		/** Whether to include workItems */
+		"requestData.includeWorkItems"?: boolean;
+		/** Max number of changes to include */
+		"requestData.maxChangeCount"?: number;
+		/** Max length of comment */
+		"requestData.maxCommentLength"?: number;
+		/** Shelveset name */
+		"requestData.name"?: string;
+		/** Owner's ID. Could be a name or a guid. */
+		"requestData.owner"?: string;
+		/** Max number of shelvesets to return */
+		$top?: number;
+		/** Number of shelvesets to skip */
+		$skip?: number;
+	};
 	'tokenAdmin.personalAccessTokens.list': {
 		/** The descriptor of the target user. */
 		subjectDescriptor: string;
@@ -27055,6 +27897,18 @@ export type AzureDevopsOperationInputs = {
 	'tokens.pats.get': {
 		/** The authorizationId identifying a single, unique personal access token (PAT) */
 		authorizationId: string;
+	};
+	'tokens.pats.list': {
+		/** (Optional) Refers to the status of the personal access token (PAT) */
+		displayFilterOption?: "active" | "revoked" | "expired" | "all";
+		/** (Optional) Which field to sort by */
+		sortByOption?: "displayName" | "displayDate" | "status";
+		/** (Optional) Ascending or descending */
+		isSortAscending?: boolean;
+		/** (Optional) Where to start returning tokens from */
+		continuationToken?: string;
+		/** (Optional) How many tokens to return, limit of 100 */
+		$top?: number;
 	};
 	'tokens.pats.revoke': {
 		/** The authorizationId identifying a single, unique personal access token (PAT) */
@@ -27228,7 +28082,7 @@ export type AzureDevopsOperationInputs = {
 	};
 	'wiki.wikis.create': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Folder path inside repository which is shown as Wiki. Not required for ProjectWiki type. */
 		mappedPath?: string;
 		/** Wiki name. */
@@ -27246,23 +28100,23 @@ export type AzureDevopsOperationInputs = {
 		/** Wiki ID or wiki name. */
 		wikiIdentifier: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'wiki.wikis.get': {
 		/** Wiki ID or wiki name. */
 		wikiIdentifier: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'wiki.wikis.list': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'wiki.wikis.update': {
 		/** Wiki ID or wiki name. */
 		wikiIdentifier: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Name for wiki. */
 		name?: string;
 		/** Versions of the wiki. */
@@ -27272,13 +28126,13 @@ export type AzureDevopsOperationInputs = {
 	'wit.artifactLinkTypes.list': Record<string, never>;
 	'wit.artifactUriQuery.query': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** List of artifact URIs to use for querying work items. */
 		artifactUris?: Array<string>;
 	};
 	'wit.attachments.create': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** The name of the file */
 		fileName?: string;
 		/** Attachment upload type: Simple or Chunked */
@@ -27292,7 +28146,7 @@ export type AzureDevopsOperationInputs = {
 		/** Attachment ID */
 		id: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Name of the file */
 		fileName?: string;
 		/** If set to <c>true</c> always download attachment */
@@ -27304,7 +28158,7 @@ export type AzureDevopsOperationInputs = {
 		/** starting and ending byte positions for chunked file upload, format is "Content-Range": "bytes 0-10000/50000" */
 		contentRange?: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		fileName?: string;
 		/** Stream to upload */
 		file: FileInput;
@@ -27315,7 +28169,7 @@ export type AzureDevopsOperationInputs = {
 		/** Structure group of the classification node, area or iteration. */
 		structureGroup: "areas" | "iterations";
 		/** Path of the classification node. */
-		path: string;
+		path?: string;
 		url?: string;
 		/** Link references to related REST resources. */
 		_links?: AzureDevopsReferenceLinksInput;
@@ -27340,7 +28194,7 @@ export type AzureDevopsOperationInputs = {
 		/** Structure group of the classification node, area or iteration. */
 		structureGroup: "areas" | "iterations";
 		/** Path of the classification node. */
-		path: string;
+		path?: string;
 		/** Id of the target classification node for reclassification. */
 		$reclassifyId?: number;
 	};
@@ -27350,9 +28204,19 @@ export type AzureDevopsOperationInputs = {
 		/** Structure group of the classification node, area or iteration. */
 		structureGroup: "areas" | "iterations";
 		/** Path of the classification node. */
-		path: string;
+		path?: string;
 		/** Depth of children to fetch. */
 		$depth?: number;
+	};
+	'wit.classificationNodes.getClassificationNodes': {
+		/** Project ID or project name */
+		project: string;
+		/** Comma separated integer classification nodes ids. It's not required, if you want root nodes. */
+		ids: string;
+		/** Depth of children to fetch. */
+		$depth?: number;
+		/** Flag to handle errors in getting some nodes. Possible options are Fail and Omit. */
+		errorPolicy?: "fail" | "omit";
 	};
 	'wit.classificationNodes.getRootNodes': {
 		/** Project ID or project name */
@@ -27366,7 +28230,7 @@ export type AzureDevopsOperationInputs = {
 		/** Structure group of the classification node, area or iteration. */
 		structureGroup: "areas" | "iterations";
 		/** Path of the classification node. */
-		path: string;
+		path?: string;
 		url?: string;
 		/** Link references to related REST resources. */
 		_links?: AzureDevopsReferenceLinksInput;
@@ -27405,6 +28269,16 @@ export type AzureDevopsOperationInputs = {
 		/** The text of the comment. */
 		text?: string;
 	};
+	'wit.comments.addWorkItemComment': {
+		/** Project ID or project name */
+		project: string;
+		/** Id of a work item. */
+		workItemId: number;
+		/** Format of a work item comment (Markdown or Html). */
+		format: "markdown" | "html";
+		/** The text of the comment. */
+		text?: string;
+	};
 	'wit.comments.delete': {
 		/** Project ID or project name */
 		project: string;
@@ -27424,6 +28298,22 @@ export type AzureDevopsOperationInputs = {
 		/** Specifies the additional data retrieval options for work item comments. */
 		$expand?: "none" | "reactions" | "renderedText" | "renderedTextOnly" | "all";
 	};
+	'wit.comments.getComments': {
+		/** Project ID or project name */
+		project: string;
+		/** Id of a work item to get comments for. */
+		workItemId: number;
+		/** Max number of comments to return. */
+		$top?: number;
+		/** Used to query for the next page of comments. */
+		continuationToken?: string;
+		/** Specify if the deleted comments should be retrieved. */
+		includeDeleted?: boolean;
+		/** Specifies the additional data retrieval options for work item comments. */
+		$expand?: "none" | "reactions" | "renderedText" | "renderedTextOnly" | "all";
+		/** Order in which the comments should be returned. */
+		order?: "asc" | "desc";
+	};
 	'wit.comments.getCommentsBatch': {
 		/** Project ID or project name */
 		project: string;
@@ -27442,6 +28332,17 @@ export type AzureDevopsOperationInputs = {
 		/** Id of a work item. */
 		workItemId: number;
 		commentId: number;
+		/** The updated text of the comment. */
+		text?: string;
+	};
+	'wit.comments.updateWorkItemComment': {
+		/** Project ID or project name */
+		project: string;
+		/** Id of a work item. */
+		workItemId: number;
+		commentId: number;
+		/** Format of a work item comment (Markdown or Html). */
+		format: "markdown" | "html";
 		/** The updated text of the comment. */
 		text?: string;
 	};
@@ -27488,7 +28389,7 @@ export type AzureDevopsOperationInputs = {
 	};
 	'wit.fields.create': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		url?: string;
 		/** Link references to related REST resources. */
 		_links?: AzureDevopsReferenceLinksInput;
@@ -27527,17 +28428,17 @@ export type AzureDevopsOperationInputs = {
 		/** Field simple name or reference name */
 		fieldNameOrRefName: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'wit.fields.get': {
 		/** Field simple name or reference name */
 		fieldNameOrRefName: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'wit.fields.list': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Use ExtensionFields to include extension fields, otherwise exclude them. Unless the feature flag for this parameter is enabled, extension fields are always included. */
 		$expand?: "none" | "extensionFields" | "includeDeleted";
 	};
@@ -27545,7 +28446,7 @@ export type AzureDevopsOperationInputs = {
 		/** Name/reference name of the field to be updated */
 		fieldNameOrRefName: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Indicates whether the user wants to restore the field. */
 		isDeleted?: boolean;
 		/** Indicates whether the user wants to lock the field. */
@@ -27658,6 +28559,17 @@ export type AzureDevopsOperationInputs = {
 		/** Include deleted queries and folders */
 		$includeDeleted?: boolean;
 	};
+	'wit.queries.searchQueries': {
+		/** Project ID or project name */
+		project: string;
+		/** The text to filter the queries with. */
+		$filter: string;
+		/** The number of queries to return (Default is 50 and maximum is 200). */
+		$top?: number;
+		$expand?: "none" | "wiql" | "clauses" | "all" | "minimal";
+		/** Include deleted queries and folders */
+		$includeDeleted?: boolean;
+	};
 	'wit.queries.update': {
 		/** Project ID or project name */
 		project: string;
@@ -27723,29 +28635,35 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the work item to be destroyed permanently */
 		id: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'wit.recyclebin.get': {
 		/** ID of the work item to be returned */
 		id: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'wit.recyclebin.getDeletedWorkItemShallowReferences': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
+	};
+	'wit.recyclebin.getDeletedWorkItems': {
+		/** Comma separated list of IDs of the deleted work items to be returned */
+		ids: string;
+		/** Project ID or project name */
+		project?: string;
 	};
 	'wit.recyclebin.restoreWorkItem': {
 		/** ID of the work item to be restored */
 		id: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Sets a value indicating whether this work item is deleted. */
 		isDeleted?: boolean;
 	};
 	'wit.reportingWorkItemLinks.get': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** A list of types to filter the results to specific link types. Omit this parameter to get work item links of all link types. */
 		linkTypes?: string;
 		/** A list of types to filter the results to specific work item types. Omit this parameter to get work item links of all work item types. */
@@ -27757,7 +28675,7 @@ export type AzureDevopsOperationInputs = {
 	};
 	'wit.reportingWorkItemRevisions.readReportingRevisionsGet': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** A list of fields to return in work item revisions. Omit this parameter to get all reportable fields. */
 		fields?: string;
 		/** A list of types to filter the results to specific work item types. Omit this parameter to get work item revisions of all work item types. */
@@ -27783,7 +28701,7 @@ export type AzureDevopsOperationInputs = {
 	};
 	'wit.reportingWorkItemRevisions.readReportingRevisionsPost': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Specifies the watermark to start the batch from. Omit this parameter to get the first batch of revisions. */
 		continuationToken?: string;
 		/** Date/time to use as a starting point for revisions, all revisions will occur after this date/time. Cannot be used in conjunction with 'watermark' parameter. */
@@ -27806,20 +28724,20 @@ export type AzureDevopsOperationInputs = {
 		id: number;
 		revisionNumber: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		$expand?: "none" | "relations" | "fields" | "links" | "all";
 	};
 	'wit.revisions.list': {
 		id: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		$top?: number;
 		$skip?: number;
 		$expand?: "none" | "relations" | "fields" | "links" | "all";
 	};
 	'wit.sendMail.sendMail': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		fields?: Array<string>;
 		ids?: Array<number>;
 		message?: AzureDevopsWitMailMessageInput;
@@ -27881,7 +28799,7 @@ export type AzureDevopsOperationInputs = {
 		/** The name of the work item type. */
 		workItemTypeName?: string;
 		/** Mapping of field and its templated value. */
-		fields?: { [key: string]: string };
+		fields?: { [key: string]: string | null };
 	};
 	'wit.templates.delete': {
 		/** Project ID or project name */
@@ -27926,18 +28844,18 @@ export type AzureDevopsOperationInputs = {
 		/** The name of the work item type. */
 		workItemTypeName?: string;
 		/** Mapping of field and its templated value. */
-		fields?: { [key: string]: string };
+		fields?: { [key: string]: string | null };
 	};
 	'wit.updates.get': {
 		id: number;
 		updateNumber: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'wit.updates.list': {
 		id: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		$top?: number;
 		$skip?: number;
 	};
@@ -27945,9 +28863,9 @@ export type AzureDevopsOperationInputs = {
 		/** The query ID. */
 		id: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 		/** Whether or not to use time precision. */
 		timePrecision?: boolean;
 		/** The max number of results to return. */
@@ -27955,9 +28873,9 @@ export type AzureDevopsOperationInputs = {
 	};
 	'wit.wiql.queryByWiql': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 		/** Whether or not to use time precision. */
 		timePrecision?: boolean;
 		/** The max number of results to return. */
@@ -27981,7 +28899,7 @@ export type AzureDevopsOperationInputs = {
 	'wit.workItemRelationTypes.list': Record<string, never>;
 	'wit.workItemRevisionsDiscussions.readReportingDiscussions': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		continuationToken?: string;
 		$maxPageSize?: number;
 	};
@@ -28053,13 +28971,13 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the work item to be deleted */
 		id: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Optional parameter, if set to true, the work item is deleted permanently. Please note: the destroy action is PERMANENT and cannot be undone. */
 		destroy?: boolean;
 	};
 	'wit.workItems.deleteWorkItems': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Optional parameter, if set to true, the work item is deleted permanently. Please note: the destroy action is PERMANENT and cannot be undone. */
 		destroy?: boolean;
 		/** The requested work item ids */
@@ -28071,7 +28989,7 @@ export type AzureDevopsOperationInputs = {
 		/** The work item id */
 		id: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Comma-separated list of requested fields */
 		fields?: string;
 		/** AsOf UTC date time string */
@@ -28093,7 +29011,7 @@ export type AzureDevopsOperationInputs = {
 	};
 	'wit.workItems.getWorkItemsBatch': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** The expand parameters for work item attributes. Possible options are { None, Relations, Fields, Links, All } */
 		$expand?: "none" | "relations" | "fields" | "links" | "all";
 		/** AsOf UTC date time string */
@@ -28109,7 +29027,7 @@ export type AzureDevopsOperationInputs = {
 		/** The comma-separated list of requested work item ids. (Maximum 200 ids allowed). */
 		ids: string;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Comma-separated list of requested fields */
 		fields?: string;
 		/** AsOf UTC date time string */
@@ -28123,7 +29041,7 @@ export type AzureDevopsOperationInputs = {
 		/** The id of the work item to update */
 		id: number;
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 		/** Indicate if you only want to validate the changes without saving the work item */
 		validateOnly?: boolean;
 		/** Do not enforce the work item type rules on this update */
@@ -28138,7 +29056,7 @@ export type AzureDevopsOperationInputs = {
 		/** Project ID or project name */
 		project: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 	};
 	'work.backlogs.getBacklog': {
 		/** Project ID or project name */
@@ -28163,7 +29081,7 @@ export type AzureDevopsOperationInputs = {
 	};
 	'work.boardcolumns.list': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'work.boardparents.list': {
 		/** Project ID or project name */
@@ -28171,11 +29089,11 @@ export type AzureDevopsOperationInputs = {
 		childBacklogContextCategoryRefName: string;
 		workitemIds: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 	};
 	'work.boardrows.list': {
 		/** Project ID or project name */
-		project: string;
+		project?: string;
 	};
 	'work.boards.get': {
 		/** Project ID or project name */
@@ -28183,13 +29101,13 @@ export type AzureDevopsOperationInputs = {
 		/** identifier for board, either board's backlog level name (Eg:"Stories") or Id */
 		id: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 	};
 	'work.boards.list': {
 		/** Project ID or project name */
 		project: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 	};
 	'work.boards.setBoardOptions': {
 		/** Project ID or project name */
@@ -28197,7 +29115,7 @@ export type AzureDevopsOperationInputs = {
 		/** identifier for board, either category plural name (Eg:"Stories") or guid */
 		id: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 	};
 	'work.boardusersettings.get': {
 		/** Project ID or project name */
@@ -28205,14 +29123,14 @@ export type AzureDevopsOperationInputs = {
 		/** Board ID or Name */
 		board: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 	};
 	'work.boardusersettings.update': {
 		/** Project ID or project name */
 		project: string;
 		board: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 	};
 	'work.capacities.getCapacitiesWithIdentityRefAndTotals': {
 		/** Project ID or project name */
@@ -28220,7 +29138,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the iteration */
 		iterationId: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 	};
 	'work.capacities.getCapacityWithIdentityRef': {
 		/** Project ID or project name */
@@ -28230,7 +29148,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the team member */
 		teamMemberId: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 	};
 	'work.capacities.replaceCapacitiesWithIdentityRef': {
 		/** Project ID or project name */
@@ -28238,7 +29156,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the iteration */
 		iterationId: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 		body: Array<AzureDevopsTeamMemberCapacityIdentityRefInput>;
 	};
 	'work.capacities.update': {
@@ -28249,7 +29167,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the team member */
 		teamMemberId: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 		activities?: Array<AzureDevopsActivityInput>;
 		daysOff?: Array<AzureDevopsDateRangeInput>;
 	};
@@ -28258,14 +29176,14 @@ export type AzureDevopsOperationInputs = {
 		project: string;
 		board: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 	};
 	'work.cardrulesettings.updateBoardCardRuleSettings': {
 		/** Project ID or project name */
 		project: string;
 		board: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 		_links?: AzureDevopsReferenceLinksInput;
 		rules?: { [key: string]: Array<AzureDevopsRuleInput> };
 		url?: string;
@@ -28284,14 +29202,14 @@ export type AzureDevopsOperationInputs = {
 		project: string;
 		board: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 	};
 	'work.cardsettings.updateBoardCardSettings': {
 		/** Project ID or project name */
 		project: string;
 		board: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 		cards?: { [key: string]: Array<AzureDevopsFieldSettingInput> };
 	};
 	'work.cardsettings.updateTaskboardCardSettings': {
@@ -28363,7 +29281,7 @@ export type AzureDevopsOperationInputs = {
 		/** The chart name */
 		name: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 	};
 	'work.charts.list': {
 		/** Project ID or project name */
@@ -28371,7 +29289,7 @@ export type AzureDevopsOperationInputs = {
 		/** Identifier for board, either board's backlog level name (Eg:"Stories") or Id */
 		board: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 	};
 	'work.charts.update': {
 		/** Project ID or project name */
@@ -28381,7 +29299,7 @@ export type AzureDevopsOperationInputs = {
 		/** The chart name */
 		name: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 		/** Full http link to the resource */
 		url?: string;
 		/** The links for the resource */
@@ -28395,7 +29313,7 @@ export type AzureDevopsOperationInputs = {
 		/** Name or ID of the specific board */
 		board: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 	};
 	'work.columns.update': {
 		/** Project ID or project name */
@@ -28403,7 +29321,7 @@ export type AzureDevopsOperationInputs = {
 		/** Name or ID of the specific board */
 		board: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 		body: Array<AzureDevopsBoardColumnInput>;
 	};
 	'work.deliverytimeline.get': {
@@ -28430,7 +29348,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the iteration */
 		id: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 	};
 	'work.iterations.get': {
 		/** Project ID or project name */
@@ -28438,7 +29356,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the iteration */
 		id: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 	};
 	'work.iterations.getIterationWorkItems': {
 		/** Project ID or project name */
@@ -28446,13 +29364,13 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the iteration */
 		iterationId: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 	};
 	'work.iterations.list': {
 		/** Project ID or project name */
 		project: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 		/** A filter for which iterations are returned based on relative time. Only Current is supported currently. */
 		$timeframe?: string;
 	};
@@ -28460,7 +29378,7 @@ export type AzureDevopsOperationInputs = {
 		/** Project ID or project name */
 		project: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 		/** Collection of links relevant to resource */
 		_links?: AzureDevopsReferenceLinksInput;
 		/** Full http link to the resource */
@@ -28528,7 +29446,7 @@ export type AzureDevopsOperationInputs = {
 		/** Name or ID of the specific board */
 		board: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 	};
 	'work.rows.update': {
 		/** Project ID or project name */
@@ -28536,7 +29454,7 @@ export type AzureDevopsOperationInputs = {
 		/** Name or ID of the specific board */
 		board: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 		body: Array<AzureDevopsBoardRowInput>;
 	};
 	'work.taskboardColumns.get': {
@@ -28574,7 +29492,7 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the iteration */
 		iterationId: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 	};
 	'work.teamdaysoff.update': {
 		/** Project ID or project name */
@@ -28582,20 +29500,20 @@ export type AzureDevopsOperationInputs = {
 		/** ID of the iteration */
 		iterationId: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 		daysOff?: Array<AzureDevopsDateRangeInput>;
 	};
 	'work.teamfieldvalues.get': {
 		/** Project ID or project name */
 		project: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 	};
 	'work.teamfieldvalues.update': {
 		/** Project ID or project name */
 		project: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 		defaultValue?: string;
 		values?: Array<AzureDevopsTeamFieldValueInput>;
 	};
@@ -28603,13 +29521,13 @@ export type AzureDevopsOperationInputs = {
 		/** Project ID or project name */
 		project: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 	};
 	'work.teamsettings.update': {
 		/** Project ID or project name */
 		project: string;
 		/** Team ID or team name */
-		team: string;
+		team?: string;
 		backlogIteration?: string;
 		backlogVisibilities?: { [key: string]: boolean };
 		bugsBehavior?: "off" | "asRequirements" | "asTasks";
@@ -28781,7 +29699,7 @@ export type AzureDevopsOperationOutputs = {
 		success: true;
 	};
 	'artifacts.provenance.createSession': AzureDevopsSessionResponse;
-	'artifacts.recycleBin.emptyRecycleBin': AzureDevopsOperationReference;
+	'artifacts.recycleBin.emptyRecycleBin': (AzureDevopsOperationReference) | { /** Azure DevOps accepted the call; it answered with no body. */ success: true; };
 	'artifacts.recycleBin.getRecycleBinPackage': AzureDevopsPackage;
 	'artifacts.recycleBin.getRecycleBinPackageVersion': AzureDevopsRecycleBinPackageVersion;
 	'artifacts.recycleBin.getRecycleBinPackageVersions': {
@@ -28886,9 +29804,9 @@ export type AzureDevopsOperationOutputs = {
 		/** Azure DevOps accepted the call; it answered with no body. */
 		success: true;
 	};
-	'artifactsPackageTypes.npm.unpublishPackage': AzureDevopsPackageNpm;
-	'artifactsPackageTypes.npm.unpublishScopedPackage': AzureDevopsPackageNpm;
-	'artifactsPackageTypes.npm.updatePackage': AzureDevopsPackageNpm;
+	'artifactsPackageTypes.npm.unpublishPackage': (AzureDevopsPackageNpm) | { /** Azure DevOps accepted the call; it answered with no body. */ success: true; };
+	'artifactsPackageTypes.npm.unpublishScopedPackage': (AzureDevopsPackageNpm) | { /** Azure DevOps accepted the call; it answered with no body. */ success: true; };
+	'artifactsPackageTypes.npm.updatePackage': (AzureDevopsPackageNpm) | { /** Azure DevOps accepted the call; it answered with no body. */ success: true; };
 	'artifactsPackageTypes.npm.updatePackages': {
 		/** Azure DevOps accepted the call; it answered with no body. */
 		success: true;
@@ -28897,8 +29815,8 @@ export type AzureDevopsOperationOutputs = {
 		/** Azure DevOps accepted the call; it answered with no body. */
 		success: true;
 	};
-	'artifactsPackageTypes.npm.updateScopedPackage': AzureDevopsPackageNpm;
-	'artifactsPackageTypes.nuGet.deletePackageVersion': AzureDevopsPackageNuGet;
+	'artifactsPackageTypes.npm.updateScopedPackage': (AzureDevopsPackageNpm) | { /** Azure DevOps accepted the call; it answered with no body. */ success: true; };
+	'artifactsPackageTypes.nuGet.deletePackageVersion': (AzureDevopsPackageNuGet) | { /** Azure DevOps accepted the call; it answered with no body. */ success: true; };
 	'artifactsPackageTypes.nuGet.deletePackageVersionFromRecycleBin': {
 		/** Azure DevOps accepted the call; it answered with no body. */
 		success: true;
@@ -28927,7 +29845,7 @@ export type AzureDevopsOperationOutputs = {
 		/** Azure DevOps accepted the call; it answered with no body. */
 		success: true;
 	};
-	'artifactsPackageTypes.python.deletePackageVersion': AzureDevopsPackagePyPiApi;
+	'artifactsPackageTypes.python.deletePackageVersion': (AzureDevopsPackagePyPiApi) | { /** Azure DevOps accepted the call; it answered with no body. */ success: true; };
 	'artifactsPackageTypes.python.deletePackageVersionFromRecycleBin': {
 		/** Azure DevOps accepted the call; it answered with no body. */
 		success: true;
@@ -28956,7 +29874,7 @@ export type AzureDevopsOperationOutputs = {
 		/** Azure DevOps accepted the call; it answered with no body. */
 		success: true;
 	};
-	'artifactsPackageTypes.universal.deletePackageVersion': AzureDevopsPackageUniversal;
+	'artifactsPackageTypes.universal.deletePackageVersion': (AzureDevopsPackageUniversal) | { /** Azure DevOps accepted the call; it answered with no body. */ success: true; };
 	'artifactsPackageTypes.universal.deletePackageVersionFromRecycleBin': {
 		/** Azure DevOps accepted the call; it answered with no body. */
 		success: true;
@@ -29005,6 +29923,8 @@ export type AzureDevopsOperationOutputs = {
 	'audit.streams.updateStatus': AzureDevopsAuditStream;
 	'audit.streams.updateStream': AzureDevopsAuditStream;
 	'build.artifacts.create': AzureDevopsBuildArtifact;
+	'build.artifacts.getArtifact': AzureDevopsBuildArtifact;
+	'build.artifacts.getFile': FileOutput;
 	'build.artifacts.list': {
 		/** How many items value holds. */
 		count?: number | null;
@@ -29043,7 +29963,7 @@ export type AzureDevopsOperationOutputs = {
 		/** Pass as continuationToken to read the next page; null on the last page. */
 		nextCursor: string | null;
 	};
-	'build.builds.getBuildLog': string;
+	'build.builds.getBuildLog': (string | Record<string, AzureDevopsJsonValue>);
 	'build.builds.getBuildLogs': {
 		/** How many items value holds. */
 		count?: number | null;
@@ -29150,6 +30070,16 @@ export type AzureDevopsOperationOutputs = {
 		count?: number | null;
 		value?: Array<AzureDevopsRetentionLease> | null;
 	};
+	'build.leases.getRetentionLeasesByOwnerId': {
+		/** How many items value holds. */
+		count?: number | null;
+		value?: Array<AzureDevopsRetentionLease> | null;
+	};
+	'build.leases.getRetentionLeasesByUserId': {
+		/** How many items value holds. */
+		count?: number | null;
+		value?: Array<AzureDevopsRetentionLease> | null;
+	};
 	'build.leases.update': AzureDevopsRetentionLease;
 	'build.metrics.getDefinitionMetrics': {
 		/** How many items value holds. */
@@ -29248,21 +30178,21 @@ export type AzureDevopsOperationOutputs = {
 		count?: number | null;
 		value?: Array<string> | null;
 	};
-	'build.tags.deleteBuildTag': {
+	'build.tags.deleteBuildTag': ({
 		/** How many items value holds. */
 		count?: number | null;
 		value?: Array<string> | null;
-	};
-	'build.tags.deleteDefinitionTag': {
+	}) | { /** Azure DevOps accepted the call; it answered with no body. */ success: true; };
+	'build.tags.deleteDefinitionTag': ({
 		/** How many items value holds. */
 		count?: number | null;
 		value?: Array<string> | null;
-	};
-	'build.tags.deleteTag': {
+	}) | { /** Azure DevOps accepted the call; it answered with no body. */ success: true; };
+	'build.tags.deleteTag': ({
 		/** How many items value holds. */
 		count?: number | null;
 		value?: Array<string> | null;
-	};
+	}) | { /** Azure DevOps accepted the call; it answered with no body. */ success: true; };
 	'build.tags.getBuildTags': {
 		/** How many items value holds. */
 		count?: number | null;
@@ -29317,7 +30247,7 @@ export type AzureDevopsOperationOutputs = {
 		value?: Array<AzureDevopsProcess> | null;
 	};
 	'core.projects.create': AzureDevopsOperationReference;
-	'core.projects.delete': AzureDevopsOperationReference;
+	'core.projects.delete': (AzureDevopsOperationReference) | { /** Azure DevOps accepted the call; it answered with no body. */ success: true; };
 	'core.projects.get': AzureDevopsTeamProject;
 	'core.projects.getProjectProperties': {
 		/** How many items value holds. */
@@ -29377,7 +30307,7 @@ export type AzureDevopsOperationOutputs = {
 	'dashboard.widgetTypes.getWidgetMetadata': AzureDevopsWidgetMetadataResponse;
 	'dashboard.widgetTypes.getWidgetTypes': AzureDevopsWidgetTypesResponse;
 	'dashboard.widgets.create': AzureDevopsWidget;
-	'dashboard.widgets.delete': AzureDevopsDashboard;
+	'dashboard.widgets.delete': (AzureDevopsDashboard) | { /** Azure DevOps accepted the call; it answered with no body. */ success: true; };
 	'dashboard.widgets.getWidget': AzureDevopsWidget;
 	'dashboard.widgets.getWidgets': {
 		/** How many items value holds. */
@@ -29397,7 +30327,7 @@ export type AzureDevopsOperationOutputs = {
 		value?: Array<AzureDevopsWidget> | null;
 	};
 	'distributedTask.agentclouds.add': AzureDevopsTaskAgentCloud;
-	'distributedTask.agentclouds.delete': AzureDevopsTaskAgentCloud;
+	'distributedTask.agentclouds.delete': (AzureDevopsTaskAgentCloud) | { /** Azure DevOps accepted the call; it answered with no body. */ success: true; };
 	'distributedTask.agentclouds.get': AzureDevopsTaskAgentCloud;
 	'distributedTask.agentclouds.list': {
 		/** How many items value holds. */
@@ -29415,6 +30345,7 @@ export type AzureDevopsOperationOutputs = {
 		/** Azure DevOps accepted the call; it answered with no body. */
 		success: true;
 	};
+	'distributedTask.agents.getAgent': AzureDevopsTaskAgent;
 	'distributedTask.agents.getPoolPermission': boolean;
 	'distributedTask.agents.list': {
 		/** How many items value holds. */
@@ -29505,6 +30436,11 @@ export type AzureDevopsOperationOutputs = {
 		success: true;
 	};
 	'distributedTask.pools.get': AzureDevopsTaskAgentPool;
+	'distributedTask.pools.getAgentPools': {
+		/** How many items value holds. */
+		count?: number | null;
+		value?: Array<AzureDevopsTaskAgentPool> | null;
+	};
 	'distributedTask.pools.getAgentPoolsByIds': {
 		/** How many items value holds. */
 		count?: number | null;
@@ -29517,6 +30453,21 @@ export type AzureDevopsOperationOutputs = {
 		success: true;
 	};
 	'distributedTask.queues.get': AzureDevopsTaskAgentQueue;
+	'distributedTask.queues.getAgentQueues': {
+		/** How many items value holds. */
+		count?: number | null;
+		value?: Array<AzureDevopsTaskAgentQueue> | null;
+	};
+	'distributedTask.queues.getAgentQueuesByIds': {
+		/** How many items value holds. */
+		count?: number | null;
+		value?: Array<AzureDevopsTaskAgentQueue> | null;
+	};
+	'distributedTask.queues.getAgentQueuesByNames': {
+		/** How many items value holds. */
+		count?: number | null;
+		value?: Array<AzureDevopsTaskAgentQueue> | null;
+	};
 	'distributedTask.queues.getAgentQueuesForPools': {
 		/** How many items value holds. */
 		count?: number | null;
@@ -29574,6 +30525,16 @@ export type AzureDevopsOperationOutputs = {
 		success: true;
 	};
 	'distributedTask.variablegroups.get': AzureDevopsDistributedTaskVariableGroup;
+	'distributedTask.variablegroups.getVariableGroups': {
+		/** This page of results. */
+		items: {
+			/** How many items value holds. */
+			count?: number | null;
+			value?: Array<AzureDevopsDistributedTaskVariableGroup> | null;
+		};
+		/** Pass as continuationToken to read the next page; null on the last page. */
+		nextCursor: string | null;
+	};
 	'distributedTask.variablegroups.getVariableGroupsById': {
 		/** How many items value holds. */
 		count?: number | null;
@@ -29598,12 +30559,24 @@ export type AzureDevopsOperationOutputs = {
 	};
 	'extensionManagement.installedExtensions.update': AzureDevopsInstalledExtension;
 	'favorite.favorites.createFavorite': AzureDevopsFavorite;
+	'favorite.favorites.createFavoriteOfOwner': AzureDevopsFavorite;
 	'favorite.favorites.deleteFavoriteById': {
 		/** Azure DevOps accepted the call; it answered with no body. */
 		success: true;
 	};
-	'favorite.favorites.getFavoriteById': AzureDevopsFavorite;
+	'favorite.favorites.deleteFavoriteOfOwnerById': {
+		/** Azure DevOps accepted the call; it answered with no body. */
+		success: true;
+	};
+	'favorite.favorites.getFavoriteByArtifact': AzureDevopsFavorite | null;
+	'favorite.favorites.getFavoriteById': AzureDevopsFavorite | null;
+	'favorite.favorites.getFavoriteOfOwnerById': AzureDevopsFavorite | null;
 	'favorite.favorites.getFavorites': {
+		/** How many items value holds. */
+		count?: number | null;
+		value?: Array<AzureDevopsFavorite> | null;
+	};
+	'favorite.favorites.getFavoritesOfOwner': {
 		/** How many items value holds. */
 		count?: number | null;
 		value?: Array<AzureDevopsFavorite> | null;
@@ -29617,6 +30590,11 @@ export type AzureDevopsOperationOutputs = {
 	'git.cherryPicks.getCherryPickForRefName': AzureDevopsGitCherryPick;
 	'git.commits.get': AzureDevopsGitCommit;
 	'git.commits.getChanges': AzureDevopsGitCommitChanges;
+	'git.commits.getCommits': {
+		/** How many items value holds. */
+		count?: number | null;
+		value?: Array<AzureDevopsGitCommitRef> | null;
+	};
 	'git.commits.getCommitsBatch': {
 		/** How many items value holds. */
 		count?: number | null;
@@ -29648,6 +30626,7 @@ export type AzureDevopsOperationOutputs = {
 		value?: Array<AzureDevopsGitImportRequest> | null;
 	};
 	'git.importRequests.update': AzureDevopsGitImportRequest;
+	'git.items.get': AzureDevopsGitItem;
 	'git.items.getItemsBatch': {
 		/** How many items value holds. */
 		count?: number | null;
@@ -29884,6 +30863,7 @@ export type AzureDevopsOperationOutputs = {
 		value?: Array<AzureDevopsGitDeletedRepository> | null;
 	};
 	'git.repositories.getRepository': AzureDevopsGitRepository;
+	'git.repositories.getRepositoryWithParent': AzureDevopsGitRepository;
 	'git.repositories.list': {
 		/** How many items value holds. */
 		count?: number | null;
@@ -29894,6 +30874,7 @@ export type AzureDevopsOperationOutputs = {
 	'git.reverts.create': AzureDevopsGitRevert;
 	'git.reverts.getRevert': AzureDevopsGitRevert;
 	'git.reverts.getRevertForRefName': AzureDevopsGitRevert;
+	'git.stats.get': AzureDevopsGitBranchStats;
 	'git.stats.list': {
 		/** How many items value holds. */
 		count?: number | null;
@@ -29972,7 +30953,11 @@ export type AzureDevopsOperationOutputs = {
 		nextCursor: string | null;
 	};
 	'graph.storageKeys.get': AzureDevopsGraphStorageKeyResult;
-	'graph.subjectLookup.lookupSubjects': { [key: string]: AzureDevopsGraphSubject };
+	'graph.subjectLookup.lookupSubjects': {
+		/** How many subjects value holds. */
+		count?: number | null;
+		value?: { [key: string]: AzureDevopsGraphSubject } | null;
+	};
 	'graph.subjectQuery.query': {
 		/** How many items value holds. */
 		count?: number | null;
@@ -30050,7 +31035,7 @@ export type AzureDevopsOperationOutputs = {
 		value?: Array<AzureDevopsIdentity> | null;
 	};
 	'memberEntitlementManagement.groupEntitlements.add': AzureDevopsGroupEntitlementOperationReference;
-	'memberEntitlementManagement.groupEntitlements.delete': AzureDevopsGroupEntitlementOperationReference;
+	'memberEntitlementManagement.groupEntitlements.delete': (AzureDevopsGroupEntitlementOperationReference) | { /** Azure DevOps accepted the call; it answered with no body. */ success: true; };
 	'memberEntitlementManagement.groupEntitlements.get': AzureDevopsGroupEntitlement;
 	'memberEntitlementManagement.groupEntitlements.list': {
 		/** How many items value holds. */
@@ -30208,6 +31193,7 @@ export type AzureDevopsOperationOutputs = {
 		count?: number | null;
 		value?: Array<AzureDevopsPolicyType> | null;
 	};
+	'processadmin.behaviors.get': AzureDevopsAdminBehavior;
 	'processadmin.behaviors.list': {
 		/** How many items value holds. */
 		count?: number | null;
@@ -30248,6 +31234,7 @@ export type AzureDevopsOperationOutputs = {
 	};
 	'processes.fields.update': AzureDevopsProcessWorkItemTypeField;
 	'processes.groups.add': AzureDevopsProcessesGroup;
+	'processes.groups.moveGroupToPage': AzureDevopsProcessesGroup;
 	'processes.groups.moveGroupToSection': AzureDevopsProcessesGroup;
 	'processes.groups.removeGroup': {
 		/** Azure DevOps accepted the call; it answered with no body. */
@@ -30310,11 +31297,11 @@ export type AzureDevopsOperationOutputs = {
 		value?: Array<AzureDevopsWorkItemStateResultModel> | null;
 	};
 	'processes.states.update': AzureDevopsWorkItemStateResultModel;
-	'processes.systemControls.delete': {
+	'processes.systemControls.delete': ({
 		/** How many items value holds. */
 		count?: number | null;
 		value?: Array<AzureDevopsControl> | null;
-	};
+	}) | { /** Azure DevOps accepted the call; it answered with no body. */ success: true; };
 	'processes.systemControls.list': {
 		/** How many items value holds. */
 		count?: number | null;
@@ -30428,6 +31415,7 @@ export type AzureDevopsOperationOutputs = {
 	'release.manualInterventions.update': AzureDevopsManualIntervention;
 	'release.releases.create': AzureDevopsRelease;
 	'release.releases.getLogs': FileOutput;
+	'release.releases.getRelease': AzureDevopsRelease;
 	'release.releases.getReleaseEnvironment': AzureDevopsReleaseEnvironment;
 	'release.releases.getReleaseRevision': {
 		/** The response body as text. */
@@ -30460,7 +31448,7 @@ export type AzureDevopsOperationOutputs = {
 	'search.tfvc.get': AzureDevopsTfvcRepositoryStatusResponse;
 	'search.wikiSearchResults.fetchWikiSearchResults': AzureDevopsWikiSearchResponse;
 	'search.workItemSearchResults.fetchWorkItemSearchResults': AzureDevopsWorkItemSearchResponse;
-	'security.accessControlEntries.removeAccessControlEntries': boolean;
+	'security.accessControlEntries.removeAccessControlEntries': (boolean) | { /** Azure DevOps accepted the call; it answered with no body. */ success: true; };
 	'security.accessControlEntries.setAccessControlEntries': {
 		/** How many items value holds. */
 		count?: number | null;
@@ -30471,7 +31459,7 @@ export type AzureDevopsOperationOutputs = {
 		count?: number | null;
 		value?: Array<AzureDevopsAccessControlList> | null;
 	};
-	'security.accessControlLists.removeAccessControlLists': boolean;
+	'security.accessControlLists.removeAccessControlLists': (boolean) | { /** Azure DevOps accepted the call; it answered with no body. */ success: true; };
 	'security.accessControlLists.setAccessControlLists': {
 		/** Azure DevOps accepted the call; it answered with no body. */
 		success: true;
@@ -30482,11 +31470,15 @@ export type AzureDevopsOperationOutputs = {
 		value?: Array<boolean> | null;
 	};
 	'security.permissions.hasPermissionsBatch': AzureDevopsPermissionEvaluationBatch;
-	'security.permissions.removePermission': AzureDevopsAccessControlEntry;
+	'security.permissions.removePermission': (AzureDevopsAccessControlEntry) | { /** Azure DevOps accepted the call; it answered with no body. */ success: true; };
 	'security.securityNamespaces.query': {
 		/** How many items value holds. */
 		count?: number | null;
 		value?: Array<AzureDevopsSecurityNamespaceDescription> | null;
+	};
+	'securityRoles.roleassignments.changeInheritance': {
+		/** Azure DevOps accepted the call; it answered with no body. */
+		success: true;
 	};
 	'securityRoles.roleassignments.list': {
 		/** How many items value holds. */
@@ -30512,6 +31504,7 @@ export type AzureDevopsOperationOutputs = {
 		count?: number | null;
 		value?: Array<AzureDevopsSecurityRole> | null;
 	};
+	'serviceEndpoint.endpointproxy.executeServiceEndpointRequest': AzureDevopsServiceEndpointServiceEndpointRequestResult;
 	'serviceEndpoint.endpointproxy.query': {
 		/** How many items value holds. */
 		count?: number | null;
@@ -30523,6 +31516,11 @@ export type AzureDevopsOperationOutputs = {
 		success: true;
 	};
 	'serviceEndpoint.endpoints.get': AzureDevopsServiceEndpointServiceEndpoint;
+	'serviceEndpoint.endpoints.getServiceEndpoints': {
+		/** How many items value holds. */
+		count?: number | null;
+		value?: Array<AzureDevopsServiceEndpointServiceEndpoint> | null;
+	};
 	'serviceEndpoint.endpoints.getServiceEndpointsByNames': {
 		/** How many items value holds. */
 		count?: number | null;
@@ -30574,6 +31572,11 @@ export type AzureDevopsOperationOutputs = {
 		count?: number | null;
 		value?: Array<AzureDevopsDebugEntry> | null;
 	};
+	'symbol.requests.createRequestsRequestNameDebugEntries': {
+		/** How many items value holds. */
+		count?: number | null;
+		value?: Array<AzureDevopsDebugEntry> | null;
+	};
 	'symbol.requests.deleteRequestsRequestId': {
 		/** Azure DevOps accepted the call; it answered with no body. */
 		success: true;
@@ -30592,6 +31595,7 @@ export type AzureDevopsOperationOutputs = {
 	};
 	'test.attachments.createTestResultAttachment': AzureDevopsTestAttachmentReference;
 	'test.attachments.createTestRunAttachment': AzureDevopsTestAttachmentReference;
+	'test.attachments.createTestSubResultAttachment': AzureDevopsTestAttachmentReference;
 	'test.attachments.getTestResultAttachmentZip': FileOutput;
 	'test.attachments.getTestResultAttachments': {
 		/** How many items value holds. */
@@ -30600,6 +31604,12 @@ export type AzureDevopsOperationOutputs = {
 	};
 	'test.attachments.getTestRunAttachmentZip': FileOutput;
 	'test.attachments.getTestRunAttachments': {
+		/** How many items value holds. */
+		count?: number | null;
+		value?: Array<AzureDevopsTestAttachment> | null;
+	};
+	'test.attachments.getTestSubResultAttachmentZip': FileOutput;
+	'test.attachments.getTestSubResultAttachments': {
 		/** How many items value holds. */
 		count?: number | null;
 		value?: Array<AzureDevopsTestAttachment> | null;
@@ -30661,6 +31671,16 @@ export type AzureDevopsOperationOutputs = {
 		/** How many items value holds. */
 		count?: number | null;
 		value?: Array<AzureDevopsTestRun> | null;
+	};
+	'test.runs.query': {
+		/** This page of results. */
+		items: {
+			/** How many items value holds. */
+			count?: number | null;
+			value?: Array<AzureDevopsTestRun> | null;
+		};
+		/** Pass as continuationToken to read the next page; null on the last page. */
+		nextCursor: string | null;
 	};
 	'test.runs.update': AzureDevopsTestRun;
 	'test.session.create': AzureDevopsTestSession;
@@ -30732,6 +31752,10 @@ export type AzureDevopsOperationOutputs = {
 		/** Pass as continuationToken to read the next page; null on the last page. */
 		nextCursor: string | null;
 	};
+	'testPlan.suiteTestCase.removeTestCasesFromSuite': {
+		/** Azure DevOps accepted the call; it answered with no body. */
+		success: true;
+	};
 	'testPlan.suiteTestCase.removeTestCasesListFromSuite': {
 		/** Azure DevOps accepted the call; it answered with no body. */
 		success: true;
@@ -30770,6 +31794,16 @@ export type AzureDevopsOperationOutputs = {
 		/** How many items value holds. */
 		count?: number | null;
 		value?: Array<AzureDevopsTestPlanTestPoint> | null;
+	};
+	'testPlan.testPoint.getPointsList': {
+		/** This page of results. */
+		items: {
+			/** How many items value holds. */
+			count?: number | null;
+			value?: Array<AzureDevopsTestPlanTestPoint> | null;
+		};
+		/** Pass as continuationToken to read the next page; null on the last page. */
+		nextCursor: string | null;
 	};
 	'testPlan.testPoint.update': {
 		/** How many items value holds. */
@@ -30827,8 +31861,10 @@ export type AzureDevopsOperationOutputs = {
 		nextCursor: string | null;
 	};
 	'testPlan.variables.update': AzureDevopsTestPlanTestVariable;
+	'testResults.attachments.createTestIterationResultAttachment': AzureDevopsTestAttachmentReference;
 	'testResults.attachments.createTestResultAttachment': AzureDevopsTestAttachmentReference;
 	'testResults.attachments.createTestRunAttachment': AzureDevopsTestAttachmentReference;
+	'testResults.attachments.createTestSubResultAttachment': AzureDevopsTestAttachmentReference;
 	'testResults.attachments.deleteTestResultAttachment': {
 		/** Azure DevOps accepted the call; it answered with no body. */
 		success: true;
@@ -30837,6 +31873,7 @@ export type AzureDevopsOperationOutputs = {
 		/** Azure DevOps accepted the call; it answered with no body. */
 		success: true;
 	};
+	'testResults.attachments.getTestIterationAttachmentZip': FileOutput;
 	'testResults.attachments.getTestResultAttachmentZip': FileOutput;
 	'testResults.attachments.getTestResultAttachments': {
 		/** How many items value holds. */
@@ -30849,12 +31886,23 @@ export type AzureDevopsOperationOutputs = {
 		count?: number | null;
 		value?: Array<AzureDevopsTestAttachment> | null;
 	};
+	'testResults.attachments.getTestSubResultAttachmentZip': FileOutput;
+	'testResults.attachments.getTestSubResultAttachments': {
+		/** How many items value holds. */
+		count?: number | null;
+		value?: Array<AzureDevopsTestAttachment> | null;
+	};
 	'testResults.bugs.list': {
 		/** How many items value holds. */
 		count?: number | null;
 		value?: Array<AzureDevopsWorkItemReference> | null;
 	};
 	'testResults.codecoverage.get': AzureDevopsCodeCoverageSummary;
+	'testResults.codecoverage.getBuildCodeCoverage': {
+		/** How many items value holds. */
+		count?: number | null;
+		value?: Array<AzureDevopsBuildCoverage> | null;
+	};
 	'testResults.codecoverage.getTestRunCodeCoverage': {
 		/** How many items value holds. */
 		count?: number | null;
@@ -30993,6 +32041,16 @@ export type AzureDevopsOperationOutputs = {
 		count?: number | null;
 		value?: Array<AzureDevopsTestRun> | null;
 	};
+	'testResults.runs.query': {
+		/** This page of results. */
+		items: {
+			/** How many items value holds. */
+			count?: number | null;
+			value?: Array<AzureDevopsTestRun> | null;
+		};
+		/** Pass as continuationToken to read the next page; null on the last page. */
+		nextCursor: string | null;
+	};
 	'testResults.runs.update': AzureDevopsTestRun;
 	'testResults.runsummary.get': AzureDevopsTestRunStatistic;
 	'testResults.settings.get': AzureDevopsTestResultsSettings;
@@ -31014,12 +32072,18 @@ export type AzureDevopsOperationOutputs = {
 		count?: number | null;
 		value?: Array<AzureDevopsTestTag> | null;
 	};
+	'testResults.tags.getTestTagsForRelease': {
+		/** How many items value holds. */
+		count?: number | null;
+		value?: Array<AzureDevopsTestTag> | null;
+	};
 	'testResults.tags.update': {
 		/** How many items value holds. */
 		count?: number | null;
 		value?: Array<AzureDevopsTestTag> | null;
 	};
-	'testResults.tagsummary.getTestTagSummaryForBuild': AzureDevopsTestTagSummary;
+	'testResults.tagsummary.getTestTagSummaryForBuild': AzureDevopsTestTagSummary | null;
+	'testResults.tagsummary.getTestTagSummaryForRelease': AzureDevopsTestTagSummary | null;
 	'testResults.testHistory.query': AzureDevopsTestHistoryQuery;
 	'testResults.testattachments.createBuildAttachmentInLogStore': {
 		/** Azure DevOps accepted the call; it answered with no body. */
@@ -31030,6 +32094,7 @@ export type AzureDevopsOperationOutputs = {
 		/** Azure DevOps accepted the call; it answered with no body. */
 		success: true;
 	};
+	'testResults.testattachments.get': FileOutput;
 	'testResults.testattachments.list': {
 		/** How many items value holds. */
 		count?: number | null;
@@ -31037,8 +32102,10 @@ export type AzureDevopsOperationOutputs = {
 	};
 	'testResults.testfailuretype.create': AzureDevopsTestResultFailureType;
 	'testResults.testfailuretype.delete': {
-		/** Azure DevOps accepted the call; it answered with no body. */
-		success: true;
+		/** The response body as text. */
+		text: string;
+		/** The content type Azure DevOps answered with. */
+		contentType: string | null;
 	};
 	'testResults.testfailuretype.list': {
 		/** How many items value holds. */
@@ -31075,9 +32142,20 @@ export type AzureDevopsOperationOutputs = {
 		/** Pass as continuationToken to read the next page; null on the last page. */
 		nextCursor: string | null;
 	};
+	'testResults.testlog.getTestSubResultLogs': {
+		/** This page of results. */
+		items: {
+			/** How many items value holds. */
+			count?: number | null;
+			value?: Array<AzureDevopsTestLog> | null;
+		};
+		/** Pass as continuationToken to read the next page; null on the last page. */
+		nextCursor: string | null;
+	};
 	'testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForBuildLog': AzureDevopsTestLogStoreEndpointDetails;
 	'testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForResultLog': AzureDevopsTestLogStoreEndpointDetails;
 	'testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForRunLog': AzureDevopsTestLogStoreEndpointDetails;
+	'testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForSubResultLog': AzureDevopsTestLogStoreEndpointDetails;
 	'testResults.testlogstoreendpoint.testLogStoreEndpointDetailsForBuild': AzureDevopsTestLogStoreEndpointDetails;
 	'testResults.testlogstoreendpoint.testLogStoreEndpointDetailsForResult': AzureDevopsTestLogStoreEndpointDetails;
 	'testResults.testlogstoreendpoint.testLogStoreEndpointDetailsForRun': AzureDevopsTestLogStoreEndpointDetails;
@@ -31088,21 +32166,28 @@ export type AzureDevopsOperationOutputs = {
 	};
 	'testResults.testsettings.get': AzureDevopsTestSettings;
 	'testResults.workitems.add': AzureDevopsWorkItemToTestLinks;
-	'testResults.workitems.delete': boolean;
+	'testResults.workitems.delete': (boolean) | { /** Azure DevOps accepted the call; it answered with no body. */ success: true; };
 	'testResults.workitems.list': {
 		/** How many items value holds. */
 		count?: number | null;
 		value?: Array<AzureDevopsWorkItemReference> | null;
 	};
+	'testResults.workitems.queryTestMethodLinkedWorkItems': AzureDevopsTestToWorkItemLinks;
 	'testResults.workitems.queryTestResultWorkItems': {
 		/** How many items value holds. */
 		count?: number | null;
 		value?: Array<AzureDevopsWorkItemReference> | null;
 	};
+	'tfvc.branches.get': AzureDevopsTfvcBranch;
 	'tfvc.branches.getBranchRefs': {
 		/** How many items value holds. */
 		count?: number | null;
 		value?: Array<AzureDevopsTfvcBranchRef> | null;
+	};
+	'tfvc.branches.getBranches': {
+		/** How many items value holds. */
+		count?: number | null;
+		value?: Array<AzureDevopsTfvcBranch> | null;
 	};
 	'tfvc.changesets.create': AzureDevopsTfvcChangesetRef;
 	'tfvc.changesets.get': AzureDevopsTfvcChangeset;
@@ -31131,6 +32216,7 @@ export type AzureDevopsOperationOutputs = {
 		count?: number | null;
 		value?: Array<AzureDevopsTfvcChangesetRef> | null;
 	};
+	'tfvc.items.get': AzureDevopsTfvcItem;
 	'tfvc.items.getItemsBatch': {
 		/** How many items value holds. */
 		count?: number | null;
@@ -31163,6 +32249,11 @@ export type AzureDevopsOperationOutputs = {
 		count?: number | null;
 		value?: Array<AzureDevopsAssociatedWorkItem> | null;
 	};
+	'tfvc.shelvesets.list': {
+		/** How many items value holds. */
+		count?: number | null;
+		value?: Array<AzureDevopsTfvcShelvesetRef> | null;
+	};
 	'tokenAdmin.personalAccessTokens.list': {
 		/** This page of results. */
 		items: AzureDevopsTokenAdminPagedSessionTokens;
@@ -31179,6 +32270,12 @@ export type AzureDevopsOperationOutputs = {
 	};
 	'tokens.pats.create': AzureDevopsPatTokenResult;
 	'tokens.pats.get': AzureDevopsPatTokenResult;
+	'tokens.pats.list': {
+		/** This page of results. */
+		items: AzureDevopsPagedPatTokens;
+		/** Pass as continuationToken to read the next page; null on the last page. */
+		nextCursor: string | null;
+	};
 	'tokens.pats.revoke': {
 		/** Azure DevOps accepted the call; it answered with no body. */
 		success: true;
@@ -31187,19 +32284,31 @@ export type AzureDevopsOperationOutputs = {
 	'wiki.attachments.create': AzureDevopsWikiAttachment;
 	'wiki.pageMoves.create': AzureDevopsWikiPageMove;
 	'wiki.pageStats.get': AzureDevopsWikiPageDetail;
-	'wiki.pages.createOrUpdate': AzureDevopsWikiPage;
-	'wiki.pages.deletePage': AzureDevopsWikiPage;
-	'wiki.pages.deletePageById': AzureDevopsWikiPage;
-	'wiki.pages.getPage': AzureDevopsWikiPage;
-	'wiki.pages.getPageById': AzureDevopsWikiPage;
-	'wiki.pages.update': AzureDevopsWikiPage;
+	'wiki.pages.createOrUpdate': AzureDevopsWikiPage & {
+		/** The page version (the ETag header). Pass it as ifMatch to update or replace the page. */
+		eTag?: string | null;
+	};
+	'wiki.pages.deletePage': (AzureDevopsWikiPage) | { /** Azure DevOps accepted the call; it answered with no body. */ success: true; };
+	'wiki.pages.deletePageById': (AzureDevopsWikiPage) | { /** Azure DevOps accepted the call; it answered with no body. */ success: true; };
+	'wiki.pages.getPage': AzureDevopsWikiPage & {
+		/** The page version (the ETag header). Pass it as ifMatch to update or replace the page. */
+		eTag?: string | null;
+	};
+	'wiki.pages.getPageById': AzureDevopsWikiPage & {
+		/** The page version (the ETag header). Pass it as ifMatch to update or replace the page. */
+		eTag?: string | null;
+	};
+	'wiki.pages.update': AzureDevopsWikiPage & {
+		/** The page version (the ETag header). Pass it as ifMatch to update or replace the page. */
+		eTag?: string | null;
+	};
 	'wiki.pagesBatch.get': {
 		/** How many items value holds. */
 		count?: number | null;
 		value?: Array<AzureDevopsWikiPageDetail> | null;
 	};
 	'wiki.wikis.create': AzureDevopsWikiV2;
-	'wiki.wikis.delete': AzureDevopsWikiV2;
+	'wiki.wikis.delete': (AzureDevopsWikiV2) | { /** Azure DevOps accepted the call; it answered with no body. */ success: true; };
 	'wiki.wikis.get': AzureDevopsWikiV2;
 	'wiki.wikis.list': {
 		/** How many items value holds. */
@@ -31227,6 +32336,11 @@ export type AzureDevopsOperationOutputs = {
 		success: true;
 	};
 	'wit.classificationNodes.get': AzureDevopsWorkItemClassificationNode;
+	'wit.classificationNodes.getClassificationNodes': {
+		/** How many items value holds. */
+		count?: number | null;
+		value?: Array<AzureDevopsWorkItemClassificationNode> | null;
+	};
 	'wit.classificationNodes.getRootNodes': {
 		/** How many items value holds. */
 		count?: number | null;
@@ -31239,15 +32353,23 @@ export type AzureDevopsOperationOutputs = {
 		value?: Array<AzureDevopsIdentityRef> | null;
 	};
 	'wit.comments.addComment': AzureDevopsWitComment;
+	'wit.comments.addWorkItemComment': AzureDevopsWitComment;
 	'wit.comments.delete': {
 		/** Azure DevOps accepted the call; it answered with no body. */
 		success: true;
 	};
 	'wit.comments.getComment': AzureDevopsWitComment;
+	'wit.comments.getComments': {
+		/** This page of results. */
+		items: AzureDevopsWitCommentList;
+		/** Pass as continuationToken to read the next page; null on the last page. */
+		nextCursor: string | null;
+	};
 	'wit.comments.getCommentsBatch': AzureDevopsWitCommentList;
 	'wit.comments.updateComment': AzureDevopsWitComment;
+	'wit.comments.updateWorkItemComment': AzureDevopsWitComment;
 	'wit.commentsReactions.create': AzureDevopsWitCommentReaction;
-	'wit.commentsReactions.delete': AzureDevopsWitCommentReaction;
+	'wit.commentsReactions.delete': (AzureDevopsWitCommentReaction) | { /** Azure DevOps accepted the call; it answered with no body. */ success: true; };
 	'wit.commentsReactions.list': {
 		/** How many items value holds. */
 		count?: number | null;
@@ -31288,6 +32410,7 @@ export type AzureDevopsOperationOutputs = {
 		count?: number | null;
 		value?: Array<AzureDevopsQueryHierarchyItem> | null;
 	};
+	'wit.queries.searchQueries': AzureDevopsQueryHierarchyItemsResult;
 	'wit.queries.update': AzureDevopsQueryHierarchyItem;
 	'wit.recyclebin.destroyWorkItem': {
 		/** Azure DevOps accepted the call; it answered with no body. */
@@ -31298,6 +32421,11 @@ export type AzureDevopsOperationOutputs = {
 		/** How many items value holds. */
 		count?: number | null;
 		value?: Array<AzureDevopsWorkItemDeleteShallowReference> | null;
+	};
+	'wit.recyclebin.getDeletedWorkItems': {
+		/** How many items value holds. */
+		count?: number | null;
+		value?: Array<AzureDevopsWorkItemDeleteReference> | null;
 	};
 	'wit.recyclebin.restoreWorkItem': AzureDevopsWorkItemDelete;
 	'wit.reportingWorkItemLinks.get': {
@@ -31402,8 +32530,8 @@ export type AzureDevopsOperationOutputs = {
 		value?: Array<AzureDevopsWorkItemTypeFieldWithReferences> | null;
 	};
 	'wit.workItems.create': AzureDevopsWitWorkItem;
-	'wit.workItems.delete': AzureDevopsWorkItemDelete;
-	'wit.workItems.deleteWorkItems': AzureDevopsWorkItemDeleteBatch;
+	'wit.workItems.delete': (AzureDevopsWorkItemDelete) | { /** Azure DevOps accepted the call; it answered with no body. */ success: true; };
+	'wit.workItems.deleteWorkItems': (AzureDevopsWorkItemDeleteBatch) | { /** Azure DevOps accepted the call; it answered with no body. */ success: true; };
 	'wit.workItems.getWorkItem': AzureDevopsWitWorkItem;
 	'wit.workItems.getWorkItemTemplate': AzureDevopsWitWorkItem;
 	'wit.workItems.getWorkItemsBatch': {
@@ -31446,7 +32574,7 @@ export type AzureDevopsOperationOutputs = {
 		count?: number | null;
 		value?: Array<AzureDevopsBoardReference> | null;
 	};
-	'work.boards.setBoardOptions': { [key: string]: string };
+	'work.boards.setBoardOptions': { [key: string]: string | null };
 	'work.boardusersettings.get': AzureDevopsBoardUserSettings;
 	'work.boardusersettings.update': AzureDevopsBoardUserSettings;
 	'work.capacities.getCapacitiesWithIdentityRefAndTotals': AzureDevopsTeamCapacity;

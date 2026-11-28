@@ -6,6 +6,7 @@ import type { AzureDevopsRequest } from '../client';
 import {
 	AZUREDEVOPS_UPLOAD_MAX_BYTES,
 	makeAzureDevopsHeaderPagedRequest,
+	makeAzureDevopsHeaderRequest,
 	makeAzureDevopsRequest,
 } from '../client';
 import type { AzureDevopsContext } from '../index';
@@ -435,6 +436,14 @@ export function createAzureDevopsOperation<Id extends AzureDevopsOperationId>(
 		// Slash-keeping values are encoded here, segment by segment, and sent
 		// as they are; the route keeps its placeholder for error URLs.
 		const rawPathValues = new Set<string>();
+		// An optional segment that wasn't given leaves the route without it
+		// (`/{project}/{team}/_apis/...` without a team is the default team).
+		let route = operation.path;
+		for (const field of fields) {
+			if (field.optionalSegment && pathParameters[field.wire] === undefined) {
+				route = route.replace(`/{${field.wire}}`, '');
+			}
+		}
 		for (const field of fields) {
 			const value = pathParameters[field.wire];
 			if (!field.slashes || value === undefined) continue;
@@ -444,7 +453,7 @@ export function createAzureDevopsOperation<Id extends AzureDevopsOperationId>(
 
 		const request: AzureDevopsRequest = {
 			method: operation.method,
-			path: operation.path,
+			path: route,
 			...(rawPathValues.size > 0 ? { rawPathValues } : {}),
 			pathParameters,
 			query: { ...query, ...operation.fixedQuery },
@@ -485,7 +494,9 @@ export function createAzureDevopsOperation<Id extends AzureDevopsOperationId>(
 			request.mediaType = 'application/x-www-form-urlencoded';
 		} else if (operation.request === 'binary') {
 			const resolved = await bytesOf(rawBody, operation.maxUploadBytes);
-			request.body = resolved.file;
+			request.body = operation.base64Body
+				? Buffer.from(await resolved.file.arrayBuffer()).toString('base64')
+				: resolved.file;
 			request.mediaType = operation.bodyMediaType;
 		}
 
@@ -493,6 +504,14 @@ export function createAzureDevopsOperation<Id extends AzureDevopsOperationId>(
 		let response: unknown;
 		if (operation.response === 'file') {
 			request.responseType = 'binary';
+			// A download asks for the types the route documents: some answer 400
+			// to `application/json` or `*/*` (Azure DevOps blob zips).
+			if (operation.fileTypes?.length) {
+				request.headers = {
+					Accept: operation.fileTypes.join(', '),
+					...headers,
+				};
+			}
 			const binary = await makeAzureDevopsRequest(ctx, request);
 			if (!isBinaryResponse(binary))
 				throw new Error('Azure DevOps returned no file');
@@ -548,6 +567,17 @@ export function createAzureDevopsOperation<Id extends AzureDevopsOperationId>(
 			// counting as a success.
 			decodeMaybeEmpty(id, await makeAzureDevopsRequest(ctx, request));
 			response = { success: true };
+		} else if (operation.responseHeader) {
+			const kept = operation.responseHeader;
+			const answer = await makeAzureDevopsHeaderRequest(
+				ctx,
+				request,
+				kept.header,
+			);
+			response = {
+				...(answer.body as Record<string, unknown>),
+				[kept.field]: answer.header,
+			};
 		} else if (operation.headerCursor) {
 			const paging = operation.headerCursor;
 			const page = await makeAzureDevopsHeaderPagedRequest(

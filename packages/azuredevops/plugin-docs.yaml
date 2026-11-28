@@ -3,7 +3,7 @@
 # docs-examples.test.ts parses every example with its input schema.
 displayName: Azure DevOps
 domain: dev.azure.com
-description: "Azure DevOps Services: repositories, pull requests, work items, builds, pipelines, releases, artifacts, test plans, wikis, users and permissions (1002 operations)."
+description: "Azure DevOps Services: repositories, pull requests, work items, builds, pipelines, releases, artifacts, test plans, wikis, users and permissions (1058 operations)."
 recommendedAuth: api_key
 overviewNote: |
   Create a personal access token in Azure DevOps (User settings > Personal access tokens) with the scopes you need, and connect it with the organization name (`fabrikam` for `dev.azure.com/fabrikam`). Things to know before you write:
@@ -13,7 +13,11 @@ overviewNote: |
   - **Work items** are created and updated with a JSON Patch list in `body`: `[{ "op": "add", "path": "/fields/System.Title", "value": "..." }]`.
   - **Paging.** List routes that page with a continuation token return `{ items, nextCursor }`; pass `nextCursor` back as `continuationToken`. Others take `$top` and `$skip`.
   - **What costs money or acts.** Queuing builds and running pipelines use pipeline minutes; adding users or raising access levels can add paid licences; completing a pull request merges it; service connections hold credentials. These and every delete are `destructive`.
-  - **New organizations.** Creating an organization now asks for an Azure subscription (seen 2026-11-28), and an Azure free account needs a card and a phone number.
+  - **Optional segments.** Where Microsoft's route leaves a segment optional, so does the plugin: leave out `project` for an organization-scoped feed or a Git route across projects, `team` for the project's default team, `path` for the area or iteration root (pass `Parent/Child` for a nested node), `timelineId` for a build's main timeline.
+  - **New organizations.** Creating an organization now asks for an Azure subscription (seen 2026-11-28), and an Azure free account needs a card and a phone number. A new organization has classic build and release pipelines turned off: classic definitions, task groups and deployment groups answer 400 "classic pipelines are disabled" until an admin turns them on. Creating test plans needs the Basic + Test Plans access level (403 without it).
+  - **Records you can't delete.** Test settings answer "in use" to every delete, exploratory test sessions and permissions reports have no delete route, and a team's last dashboard can't be deleted (VS402433).
+  - **Retention.** A build's `keepForever` flag is retired (400 "deprecated in favor of retention leases"): add a lease with `build.leases.add`. Every run also gets leases of its own (the branch's and the pipeline's), and a build with a lease can't be deleted until they are.
+  - **Not-found as 500.** Some areas (agent clouds, build controllers and templates, security role scopes, hooks, test attachments) answer a missing record with a 500 that says so; reads are retried twice first.
 examples:
   read:
     path: core.projects.list
@@ -274,6 +278,10 @@ apiExamples:
     args: {}
   build.artifacts.create:
     args: {"project": "Fabrikam-Fiber", "buildId": 391}
+  build.artifacts.getArtifact:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391, "artifactName": "example"}
+  build.artifacts.getFile:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391, "artifactName": "example", "fileId": "example", "fileName": "example"}
   build.artifacts.list:
     args: {"project": "Fabrikam-Fiber", "buildId": 391}
   build.attachments.get:
@@ -358,6 +366,10 @@ apiExamples:
     args: {"project": "Fabrikam-Fiber", "leaseId": 1}
   build.leases.getRetentionLeasesByMinimalRetentionLeases:
     args: {"project": "Fabrikam-Fiber", "leasesToFetch": "example"}
+  build.leases.getRetentionLeasesByOwnerId:
+    args: {"project": "Fabrikam-Fiber"}
+  build.leases.getRetentionLeasesByUserId:
+    args: {"project": "Fabrikam-Fiber", "userOwnerId": "example"}
   build.leases.update:
     args: {"project": "Fabrikam-Fiber", "leaseId": 1}
   build.metrics.getDefinitionMetrics:
@@ -532,6 +544,8 @@ apiExamples:
     args: {"poolId": 1}
   distributedTask.agents.delete:
     args: {"poolId": 1, "agentId": 1}
+  distributedTask.agents.getAgent:
+    args: {"poolId": 1, "agentId": 1}
   distributedTask.agents.getPoolPermission:
     args: {"poolId": 1, "agentId": 1, "isCheckPermissions": true}
   distributedTask.agents.list:
@@ -596,6 +610,8 @@ apiExamples:
     args: {"poolId": 1}
   distributedTask.pools.get:
     args: {"poolId": 1}
+  distributedTask.pools.getAgentPools:
+    args: {}
   distributedTask.pools.getAgentPoolsByIds:
     args: {"poolIds": "example"}
   distributedTask.pools.update:
@@ -606,6 +622,12 @@ apiExamples:
     args: {"queueId": 1, "project": "Fabrikam-Fiber"}
   distributedTask.queues.get:
     args: {"queueId": 1, "project": "Fabrikam-Fiber"}
+  distributedTask.queues.getAgentQueues:
+    args: {"project": "Fabrikam-Fiber"}
+  distributedTask.queues.getAgentQueuesByIds:
+    args: {"queueIds": "example", "project": "Fabrikam-Fiber"}
+  distributedTask.queues.getAgentQueuesByNames:
+    args: {"queueNames": "example", "project": "Fabrikam-Fiber"}
   distributedTask.queues.getAgentQueuesForPools:
     args: {"poolIds": "example", "project": "Fabrikam-Fiber"}
   distributedTask.records.update:
@@ -634,6 +656,8 @@ apiExamples:
     args: {"groupId": 1, "projectIds": "example"}
   distributedTask.variablegroups.get:
     args: {"project": "Fabrikam-Fiber", "groupId": 1}
+  distributedTask.variablegroups.getVariableGroups:
+    args: {"project": "Fabrikam-Fiber"}
   distributedTask.variablegroups.getVariableGroupsById:
     args: {"project": "Fabrikam-Fiber", "groupIds": "example"}
   distributedTask.variablegroups.shareVariableGroup:
@@ -654,12 +678,22 @@ apiExamples:
     args: {}
   favorite.favorites.createFavorite:
     args: {}
+  favorite.favorites.createFavoriteOfOwner:
+    args: {"ownerScopeType": "example", "ownerScopeId": "example"}
   favorite.favorites.deleteFavoriteById:
     args: {"favoriteId": "example", "artifactType": "example", "artifactScopeType": "example"}
+  favorite.favorites.deleteFavoriteOfOwnerById:
+    args: {"favoriteId": "example", "ownerScopeType": "example", "ownerScopeId": "example", "artifactType": "example", "artifactScopeType": "example"}
+  favorite.favorites.getFavoriteByArtifact:
+    args: {"artifactType": "example", "artifactId": "example", "artifactScopeType": "example"}
   favorite.favorites.getFavoriteById:
     args: {"favoriteId": "example", "artifactScopeType": "example", "artifactType": "example"}
+  favorite.favorites.getFavoriteOfOwnerById:
+    args: {"favoriteId": "example", "ownerScopeType": "example", "ownerScopeId": "example", "artifactScopeType": "example", "artifactType": "example"}
   favorite.favorites.getFavorites:
     args: {}
+  favorite.favorites.getFavoritesOfOwner:
+    args: {"ownerScopeType": "example", "ownerScopeId": "example"}
   git.annotatedTags.create:
     args: {"project": "Fabrikam-Fiber", "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719"}
   git.annotatedTags.get:
@@ -678,6 +712,8 @@ apiExamples:
     args: {"commitId": "example", "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber"}
   git.commits.getChanges:
     args: {"commitId": "example", "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber"}
+  git.commits.getCommits:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber"}
   git.commits.getCommitsBatch:
     args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber"}
   git.commits.getPushCommits:
@@ -700,6 +736,8 @@ apiExamples:
     args: {"project": "Fabrikam-Fiber", "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719"}
   git.importRequests.update:
     args: {"project": "Fabrikam-Fiber", "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "importRequestId": 1}
+  git.items.get:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "path": "example", "project": "Fabrikam-Fiber"}
   git.items.getItemsBatch:
     args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber"}
   git.items.list:
@@ -852,6 +890,8 @@ apiExamples:
     args: {"project": "Fabrikam-Fiber"}
   git.repositories.getRepository:
     args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber"}
+  git.repositories.getRepositoryWithParent:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "includeParent": true, "project": "Fabrikam-Fiber"}
   git.repositories.list:
     args: {"project": "Fabrikam-Fiber"}
   git.repositories.restoreRepositoryFromRecycleBin:
@@ -864,6 +904,8 @@ apiExamples:
     args: {"project": "Fabrikam-Fiber", "revertId": 1, "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719"}
   git.reverts.getRevertForRefName:
     args: {"project": "Fabrikam-Fiber", "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "refName": "example"}
+  git.stats.get:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "name": "example", "project": "Fabrikam-Fiber"}
   git.stats.list:
     args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber"}
   git.statuses.create:
@@ -1106,6 +1148,8 @@ apiExamples:
     args: {"project": "Fabrikam-Fiber", "typeId": "example"}
   policy.types.list:
     args: {"project": "Fabrikam-Fiber"}
+  processadmin.behaviors.get:
+    args: {"processId": "example", "behaviorRefName": "example"}
   processadmin.behaviors.list:
     args: {"processId": "example"}
   processadmin.processes.exportProcessTemplate:
@@ -1144,6 +1188,8 @@ apiExamples:
     args: {"processId": "example", "witRefName": "example", "fieldRefName": "example"}
   processes.groups.add:
     args: {"processId": "example", "witRefName": "example", "pageId": "example", "sectionId": "example"}
+  processes.groups.moveGroupToPage:
+    args: {"processId": "example", "witRefName": "example", "pageId": "example", "sectionId": "example", "groupId": "example", "removeFromPageId": "example", "removeFromSectionId": "example"}
   processes.groups.moveGroupToSection:
     args: {"processId": "example", "witRefName": "example", "pageId": "example", "sectionId": "example", "groupId": "example", "removeFromSectionId": "example"}
   processes.groups.removeGroup:
@@ -1276,6 +1322,8 @@ apiExamples:
     args: {"project": "Fabrikam-Fiber"}
   release.releases.getLogs:
     args: {"project": "Fabrikam-Fiber", "releaseId": 1}
+  release.releases.getRelease:
+    args: {"project": "Fabrikam-Fiber", "releaseId": 1}
   release.releases.getReleaseEnvironment:
     args: {"project": "Fabrikam-Fiber", "releaseId": 1, "environmentId": 1}
   release.releases.getReleaseRevision:
@@ -1320,6 +1368,8 @@ apiExamples:
     args: {"securityNamespaceId": "example", "descriptor": "example", "permissions": 1}
   security.securityNamespaces.query:
     args: {"securityNamespaceId": "example"}
+  securityRoles.roleassignments.changeInheritance:
+    args: {"scopeId": "example", "resourceId": "example", "inheritPermissions": true}
   securityRoles.roleassignments.list:
     args: {"scopeId": "example", "resourceId": "example"}
   securityRoles.roleassignments.removeRoleAssignment:
@@ -1332,6 +1382,8 @@ apiExamples:
     args: {"scopeId": "example", "resourceId": "example", "body": [{}]}
   securityRoles.roledefinitions.list:
     args: {"scopeId": "example"}
+  serviceEndpoint.endpointproxy.executeServiceEndpointRequest:
+    args: {"project": "Fabrikam-Fiber", "endpointId": "example"}
   serviceEndpoint.endpointproxy.query:
     args: {"project": "Fabrikam-Fiber"}
   serviceEndpoint.endpoints.create:
@@ -1340,6 +1392,8 @@ apiExamples:
     args: {"endpointId": "example", "projectIds": "example"}
   serviceEndpoint.endpoints.get:
     args: {"project": "Fabrikam-Fiber", "endpointId": "example"}
+  serviceEndpoint.endpoints.getServiceEndpoints:
+    args: {"project": "Fabrikam-Fiber"}
   serviceEndpoint.endpoints.getServiceEndpointsByNames:
     args: {"project": "Fabrikam-Fiber", "endpointNames": "example"}
   serviceEndpoint.endpoints.getServiceEndpointsWithRefreshedAuthentication:
@@ -1366,6 +1420,8 @@ apiExamples:
     args: {}
   symbol.requests.createRequestsRequestIdDebugEntries:
     args: {"requestId": "example", "collection": "example"}
+  symbol.requests.createRequestsRequestNameDebugEntries:
+    args: {"requestName": "example", "collection": "example"}
   symbol.requests.deleteRequestsRequestId:
     args: {"requestId": "example"}
   symbol.requests.deleteRequestsRequestName:
@@ -1384,6 +1440,8 @@ apiExamples:
     args: {"project": "Fabrikam-Fiber", "runId": 1, "testCaseResultId": 1}
   test.attachments.createTestRunAttachment:
     args: {"project": "Fabrikam-Fiber", "runId": 1}
+  test.attachments.createTestSubResultAttachment:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "testCaseResultId": 1, "testSubResultId": 1}
   test.attachments.getTestResultAttachmentZip:
     args: {"project": "Fabrikam-Fiber", "runId": 1, "testCaseResultId": 1, "attachmentId": 1}
   test.attachments.getTestResultAttachments:
@@ -1392,6 +1450,10 @@ apiExamples:
     args: {"project": "Fabrikam-Fiber", "runId": 1, "attachmentId": 1}
   test.attachments.getTestRunAttachments:
     args: {"project": "Fabrikam-Fiber", "runId": 1}
+  test.attachments.getTestSubResultAttachmentZip:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "testCaseResultId": 1, "attachmentId": 1, "testSubResultId": 1}
+  test.attachments.getTestSubResultAttachments:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "testCaseResultId": 1, "testSubResultId": 1}
   test.codeCoverage.getBuildCodeCoverage:
     args: {"project": "Fabrikam-Fiber", "buildId": 391, "flags": 1}
   test.codeCoverage.getTestRunCodeCoverage:
@@ -1430,6 +1492,8 @@ apiExamples:
     args: {"project": "Fabrikam-Fiber", "runId": 1}
   test.runs.list:
     args: {"project": "Fabrikam-Fiber"}
+  test.runs.query:
+    args: {"project": "Fabrikam-Fiber", "minLastUpdatedDate": "example", "maxLastUpdatedDate": "example"}
   test.runs.update:
     args: {"project": "Fabrikam-Fiber", "runId": 1}
   test.session.create:
@@ -1468,6 +1532,8 @@ apiExamples:
     args: {"project": "Fabrikam-Fiber", "planId": 1, "suiteId": 1, "testCaseId": "example"}
   testPlan.suiteTestCase.getTestCaseList:
     args: {"project": "Fabrikam-Fiber", "planId": 1, "suiteId": 1}
+  testPlan.suiteTestCase.removeTestCasesFromSuite:
+    args: {"project": "Fabrikam-Fiber", "planId": 1, "suiteId": 1, "testCaseIds": "example"}
   testPlan.suiteTestCase.removeTestCasesListFromSuite:
     args: {"project": "Fabrikam-Fiber", "planId": 1, "suiteId": 1, "testIds": "example"}
   testPlan.suiteTestCase.update:
@@ -1494,6 +1560,8 @@ apiExamples:
     args: {"project": "Fabrikam-Fiber", "planId": 1}
   testPlan.testPoint.getPoints:
     args: {"project": "Fabrikam-Fiber", "planId": 1, "suiteId": 1, "pointId": "example"}
+  testPlan.testPoint.getPointsList:
+    args: {"project": "Fabrikam-Fiber", "planId": 1, "suiteId": 1}
   testPlan.testPoint.update:
     args: {"project": "Fabrikam-Fiber", "planId": 1, "suiteId": 1, "body": [{}]}
   testPlan.testSuiteClone.cloneTestSuite:
@@ -1526,14 +1594,20 @@ apiExamples:
     args: {"project": "Fabrikam-Fiber"}
   testPlan.variables.update:
     args: {"project": "Fabrikam-Fiber", "testVariableId": 1}
+  testResults.attachments.createTestIterationResultAttachment:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "testCaseResultId": 1, "iterationId": 1}
   testResults.attachments.createTestResultAttachment:
     args: {"project": "Fabrikam-Fiber", "runId": 1, "testCaseResultId": 1}
   testResults.attachments.createTestRunAttachment:
     args: {"project": "Fabrikam-Fiber", "runId": 1}
+  testResults.attachments.createTestSubResultAttachment:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "testCaseResultId": 1, "testSubResultId": 1}
   testResults.attachments.deleteTestResultAttachment:
     args: {"project": "Fabrikam-Fiber", "runId": 1, "testCaseResultId": 1, "attachmentId": 1}
   testResults.attachments.deleteTestRunAttachment:
     args: {"project": "Fabrikam-Fiber", "runId": 1, "attachmentId": 1}
+  testResults.attachments.getTestIterationAttachmentZip:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "testCaseResultId": 1, "attachmentId": 1, "iterationId": 1}
   testResults.attachments.getTestResultAttachmentZip:
     args: {"project": "Fabrikam-Fiber", "runId": 1, "testCaseResultId": 1, "attachmentId": 1}
   testResults.attachments.getTestResultAttachments:
@@ -1542,10 +1616,16 @@ apiExamples:
     args: {"project": "Fabrikam-Fiber", "runId": 1, "attachmentId": 1}
   testResults.attachments.getTestRunAttachments:
     args: {"project": "Fabrikam-Fiber", "runId": 1}
+  testResults.attachments.getTestSubResultAttachmentZip:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "testCaseResultId": 1, "attachmentId": 1, "testSubResultId": 1}
+  testResults.attachments.getTestSubResultAttachments:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "testCaseResultId": 1, "testSubResultId": 1}
   testResults.bugs.list:
     args: {"project": "Fabrikam-Fiber", "runId": 1, "testCaseResultId": 1}
   testResults.codecoverage.get:
     args: {"project": "Fabrikam-Fiber", "buildId": 391}
+  testResults.codecoverage.getBuildCodeCoverage:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391, "flags": 1}
   testResults.codecoverage.getTestRunCodeCoverage:
     args: {"project": "Fabrikam-Fiber", "runId": 1, "flags": 1}
   testResults.codecoverage.update:
@@ -1614,6 +1694,8 @@ apiExamples:
     args: {"project": "Fabrikam-Fiber", "runId": 1}
   testResults.runs.list:
     args: {"project": "Fabrikam-Fiber"}
+  testResults.runs.query:
+    args: {"project": "Fabrikam-Fiber", "minLastUpdatedDate": "example", "maxLastUpdatedDate": "example"}
   testResults.runs.update:
     args: {"project": "Fabrikam-Fiber", "runId": 1}
   testResults.runsummary.get:
@@ -1630,10 +1712,14 @@ apiExamples:
     args: {"project": "Fabrikam-Fiber", "definition": "example"}
   testResults.tags.getTestTagsForBuild:
     args: {"project": "Fabrikam-Fiber", "buildId": 391}
+  testResults.tags.getTestTagsForRelease:
+    args: {"project": "Fabrikam-Fiber", "releaseId": 1, "releaseEnvId": 1}
   testResults.tags.update:
     args: {"project": "Fabrikam-Fiber", "runId": 1}
   testResults.tagsummary.getTestTagSummaryForBuild:
     args: {"project": "Fabrikam-Fiber", "buildId": 391}
+  testResults.tagsummary.getTestTagSummaryForRelease:
+    args: {"project": "Fabrikam-Fiber", "releaseId": 1, "releaseEnvId": 1}
   testResults.testHistory.query:
     args: {"project": "Fabrikam-Fiber"}
   testResults.testattachments.createBuildAttachmentInLogStore:
@@ -1641,6 +1727,8 @@ apiExamples:
   testResults.testattachments.createTestRunLogStoreAttachment:
     args: {"project": "Fabrikam-Fiber", "runId": 1}
   testResults.testattachments.delete:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "filename": "example"}
+  testResults.testattachments.get:
     args: {"project": "Fabrikam-Fiber", "runId": 1, "filename": "example"}
   testResults.testattachments.list:
     args: {"project": "Fabrikam-Fiber", "runId": 1}
@@ -1656,12 +1744,16 @@ apiExamples:
     args: {"project": "Fabrikam-Fiber", "runId": 1, "resultId": 1, "type": "generalAttachment"}
   testResults.testlog.getTestRunLogs:
     args: {"project": "Fabrikam-Fiber", "runId": 1, "type": "generalAttachment"}
+  testResults.testlog.getTestSubResultLogs:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "resultId": 1, "subResultId": 1, "type": "generalAttachment"}
   testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForBuildLog:
     args: {"project": "Fabrikam-Fiber", "build": 1, "type": "generalAttachment", "filePath": "example"}
   testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForResultLog:
     args: {"project": "Fabrikam-Fiber", "runId": 1, "resultId": 1, "type": "generalAttachment", "filePath": "example"}
   testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForRunLog:
     args: {"project": "Fabrikam-Fiber", "runId": 1, "type": "generalAttachment", "filePath": "example"}
+  testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForSubResultLog:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "resultId": 1, "subResultId": 1, "type": "generalAttachment", "filePath": "example"}
   testResults.testlogstoreendpoint.testLogStoreEndpointDetailsForBuild:
     args: {"project": "Fabrikam-Fiber", "buildId": 391, "testLogStoreOperationType": "read"}
   testResults.testlogstoreendpoint.testLogStoreEndpointDetailsForResult:
@@ -1680,10 +1772,16 @@ apiExamples:
     args: {"project": "Fabrikam-Fiber", "testName": "example", "workItemId": 1}
   testResults.workitems.list:
     args: {"project": "Fabrikam-Fiber", "runId": 1, "testCaseResultId": 1}
+  testResults.workitems.queryTestMethodLinkedWorkItems:
+    args: {"project": "Fabrikam-Fiber", "testName": "example"}
   testResults.workitems.queryTestResultWorkItems:
     args: {"project": "Fabrikam-Fiber", "workItemCategory": "example"}
+  tfvc.branches.get:
+    args: {"path": "example", "project": "Fabrikam-Fiber"}
   tfvc.branches.getBranchRefs:
     args: {"scopePath": "example", "project": "Fabrikam-Fiber"}
+  tfvc.branches.getBranches:
+    args: {"project": "Fabrikam-Fiber"}
   tfvc.changesets.create:
     args: {"project": "Fabrikam-Fiber"}
   tfvc.changesets.get:
@@ -1696,6 +1794,8 @@ apiExamples:
     args: {"id": 1}
   tfvc.changesets.getChangesets:
     args: {"project": "Fabrikam-Fiber"}
+  tfvc.items.get:
+    args: {"path": "example", "project": "Fabrikam-Fiber"}
   tfvc.items.getItemsBatch:
     args: {"project": "Fabrikam-Fiber"}
   tfvc.items.list:
@@ -1712,6 +1812,8 @@ apiExamples:
     args: {"shelvesetId": "example"}
   tfvc.shelvesets.getShelvesetWorkItems:
     args: {"shelvesetId": "example"}
+  tfvc.shelvesets.list:
+    args: {}
   tokenAdmin.personalAccessTokens.list:
     args: {"subjectDescriptor": "example"}
   tokenAdmin.revocationRules.create:
@@ -1722,6 +1824,8 @@ apiExamples:
     args: {}
   tokens.pats.get:
     args: {"authorizationId": "example"}
+  tokens.pats.list:
+    args: {}
   tokens.pats.revoke:
     args: {"authorizationId": "example"}
   tokens.pats.update:
@@ -1769,27 +1873,35 @@ apiExamples:
   wit.attachments.uploadChunk:
     args: {"id": "1", "project": "Fabrikam-Fiber", "file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
   wit.classificationNodes.createOrUpdate:
-    args: {"project": "Fabrikam-Fiber", "structureGroup": "areas", "path": "example"}
+    args: {"project": "Fabrikam-Fiber", "structureGroup": "areas", "path": "Web", "name": "Frontend"}
   wit.classificationNodes.delete:
-    args: {"project": "Fabrikam-Fiber", "structureGroup": "areas", "path": "example"}
+    args: {"project": "Fabrikam-Fiber", "structureGroup": "areas", "path": "Web/Frontend"}
   wit.classificationNodes.get:
-    args: {"project": "Fabrikam-Fiber", "structureGroup": "areas", "path": "example"}
+    args: {"project": "Fabrikam-Fiber", "structureGroup": "areas", "path": "Web/Frontend"}
+  wit.classificationNodes.getClassificationNodes:
+    args: {"project": "Fabrikam-Fiber", "ids": "example"}
   wit.classificationNodes.getRootNodes:
     args: {"project": "Fabrikam-Fiber"}
   wit.classificationNodes.update:
-    args: {"project": "Fabrikam-Fiber", "structureGroup": "areas", "path": "example"}
+    args: {"project": "Fabrikam-Fiber", "structureGroup": "areas", "path": "Web/Frontend", "name": "Front end"}
   wit.commentReactionsEngagedUsers.list:
     args: {"project": "Fabrikam-Fiber", "workItemId": 1, "commentId": 1, "reactionType": "like"}
   wit.comments.addComment:
     args: {"project": "Fabrikam-Fiber", "workItemId": 1}
+  wit.comments.addWorkItemComment:
+    args: {"project": "Fabrikam-Fiber", "workItemId": 1, "format": "markdown"}
   wit.comments.delete:
     args: {"project": "Fabrikam-Fiber", "workItemId": 1, "commentId": 1}
   wit.comments.getComment:
     args: {"project": "Fabrikam-Fiber", "workItemId": 1, "commentId": 1}
+  wit.comments.getComments:
+    args: {"project": "Fabrikam-Fiber", "workItemId": 1}
   wit.comments.getCommentsBatch:
     args: {"project": "Fabrikam-Fiber", "workItemId": 1, "ids": "example"}
   wit.comments.updateComment:
     args: {"project": "Fabrikam-Fiber", "workItemId": 1, "commentId": 1}
+  wit.comments.updateWorkItemComment:
+    args: {"project": "Fabrikam-Fiber", "workItemId": 1, "commentId": 1, "format": "markdown"}
   wit.commentsReactions.create:
     args: {"project": "Fabrikam-Fiber", "workItemId": 1, "commentId": 1, "reactionType": "like"}
   wit.commentsReactions.delete:
@@ -1822,6 +1934,8 @@ apiExamples:
     args: {"project": "Fabrikam-Fiber"}
   wit.queries.list:
     args: {"project": "Fabrikam-Fiber"}
+  wit.queries.searchQueries:
+    args: {"project": "Fabrikam-Fiber", "$filter": "example"}
   wit.queries.update:
     args: {"project": "Fabrikam-Fiber", "query": "example"}
   wit.recyclebin.destroyWorkItem:
@@ -1830,6 +1944,8 @@ apiExamples:
     args: {"id": 1, "project": "Fabrikam-Fiber"}
   wit.recyclebin.getDeletedWorkItemShallowReferences:
     args: {"project": "Fabrikam-Fiber"}
+  wit.recyclebin.getDeletedWorkItems:
+    args: {"ids": "example", "project": "Fabrikam-Fiber"}
   wit.recyclebin.restoreWorkItem:
     args: {"id": 1, "project": "Fabrikam-Fiber"}
   wit.reportingWorkItemLinks.get:

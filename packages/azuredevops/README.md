@@ -1,6 +1,6 @@
 # @corsair-dev/azuredevops
 
-Azure DevOps Services: Git repositories, pull requests, Boards work items and queries, builds, pipelines, releases, artifacts feeds, test plans and results, wikis, service connections, agents, users, groups, permissions and organization settings (1002 operations).
+Azure DevOps Services: Git repositories, pull requests, Boards work items and queries, builds, pipelines, releases, artifacts feeds, test plans and results, wikis, service connections, agents, users, groups, permissions and organization settings (1058 operations).
 
 ## Install
 
@@ -137,6 +137,8 @@ pnpm add @corsair-dev/azuredevops
 | `audit.streams.updateStatus` | `azuredevops.api.audit.streams.updateStatus` | `write` | Update existing Audit Stream status. Preview API (api-version 7.1-preview.1). Token scope: vso.auditstreams_manage. |
 | `audit.streams.updateStream` | `azuredevops.api.audit.streams.updateStream` | `write` | Update existing Audit Stream. Preview API (api-version 7.1-preview.1). Token scope: vso.auditstreams_manage. |
 | `build.artifacts.create` | `azuredevops.api.build.artifacts.create` | `write` | Associates an artifact with a build. Token scope: vso.build_execute. |
+| `build.artifacts.getArtifact` | `azuredevops.api.build.artifacts.getArtifact` | `read` | Gets a specific artifact for a build. Token scope: vso.build. |
+| `build.artifacts.getFile` | `azuredevops.api.build.artifacts.getFile` | `read` | Gets a file from the build. Token scope: vso.build. |
 | `build.artifacts.list` | `azuredevops.api.build.artifacts.list` | `read` | Gets all artifacts for a build. Token scope: vso.build. |
 | `build.attachments.get` | `azuredevops.api.build.attachments.get` | `read` | Gets a specific attachment. Token scope: vso.build. |
 | `build.attachments.list` | `azuredevops.api.build.attachments.list` | `read` | Gets the list of attachments of a specific type that are associated with a build. Token scope: vso.build. |
@@ -179,6 +181,8 @@ pnpm add @corsair-dev/azuredevops
 | `build.leases.delete` | `azuredevops.api.build.leases.delete` | `destructive` | Removes specific retention leases. Token scope: vso.build_execute. Cannot be undone. |
 | `build.leases.get` | `azuredevops.api.build.leases.get` | `read` | Returns the details of the retention lease given a lease id. Token scope: vso.build. |
 | `build.leases.getRetentionLeasesByMinimalRetentionLeases` | `azuredevops.api.build.leases.getRetentionLeasesByMinimalRetentionLeases` | `read` | Returns any leases matching the specified MinimalRetentionLeases. Token scope: vso.build. |
+| `build.leases.getRetentionLeasesByOwnerId` | `azuredevops.api.build.leases.getRetentionLeasesByOwnerId` | `read` | Returns any leases owned by the specified entity, optionally scoped to a single pipeline definition and run. Token scope: vso.build. |
+| `build.leases.getRetentionLeasesByUserId` | `azuredevops.api.build.leases.getRetentionLeasesByUserId` | `read` | Returns any leases owned by the specified user, optionally scoped to a single pipeline definition and run. Token scope: vso.build. |
 | `build.leases.update` | `azuredevops.api.build.leases.update` | `write` | Updates the duration or pipeline protection status of a retention lease. Token scope: vso.build_execute. |
 | `build.metrics.getDefinitionMetrics` | `azuredevops.api.build.metrics.getDefinitionMetrics` | `read` | Gets build metrics for a definition. Preview API (api-version 7.1-preview.1). Token scope: vso.build. |
 | `build.metrics.getProjectMetrics` | `azuredevops.api.build.metrics.getProjectMetrics` | `read` | Gets build metrics for a project. Preview API (api-version 7.1-preview.1). Token scope: vso.build. |
@@ -266,6 +270,7 @@ pnpm add @corsair-dev/azuredevops
 | `distributedTask.agentcloudtypes.list` | `azuredevops.api.distributedTask.agentcloudtypes.list` | `read` | Get agent cloud types. Preview API (api-version 7.1-preview.1). Token scope: vso.agentpools. |
 | `distributedTask.agents.add` | `azuredevops.api.distributedTask.agents.add` | `destructive` | Adds an agent to a pool. You probably don't want to call this endpoint directly. Instead, configure an agent using the agent download package. Token scope: vso.agentpools_manage. |
 | `distributedTask.agents.delete` | `azuredevops.api.distributedTask.agents.delete` | `destructive` | Delete an agent. You probably don't want to call this endpoint directly. Instead, use the agent configuration script to remove an agent from your organization. Token scope: vso.agentpools_manage. Cannot be undone. |
+| `distributedTask.agents.getAgent` | `azuredevops.api.distributedTask.agents.getAgent` | `read` | Get information about an agent. Token scope: vso.agentpools. |
 | `distributedTask.agents.getPoolPermission` | `azuredevops.api.distributedTask.agents.getPoolPermission` | `read` | Get Permissions on Pool. Token scope: vso.agentpools. |
 | `distributedTask.agents.list` | `azuredevops.api.distributedTask.agents.list` | `read` | Get a list of agents. Token scope: vso.agentpools. |
 | `distributedTask.agents.replaceAgent` | `azuredevops.api.distributedTask.agents.replaceAgent` | `destructive` | Replace an agent. You probably don't want to call this endpoint directly. Instead, use the agent configuration script to remove and reconfigure an agent from your organization. Token scope: vso.agentpools_manage. |
@@ -298,11 +303,15 @@ pnpm add @corsair-dev/azuredevops
 | `distributedTask.pools.add` | `azuredevops.api.distributedTask.pools.add` | `write` | Create an agent pool. Token scope: vso.agentpools_manage. |
 | `distributedTask.pools.delete` | `azuredevops.api.distributedTask.pools.delete` | `destructive` | Delete an agent pool. Token scope: vso.agentpools_manage. Cannot be undone. |
 | `distributedTask.pools.get` | `azuredevops.api.distributedTask.pools.get` | `read` | Get information about an agent pool. Token scope: vso.agentpools. |
+| `distributedTask.pools.getAgentPools` | `azuredevops.api.distributedTask.pools.getAgentPools` | `read` | Get a list of agent pools. Token scope: vso.agentpools. |
 | `distributedTask.pools.getAgentPoolsByIds` | `azuredevops.api.distributedTask.pools.getAgentPoolsByIds` | `read` | Get a list of agent pools. Token scope: vso.agentpools. |
 | `distributedTask.pools.update` | `azuredevops.api.distributedTask.pools.update` | `write` | Update properties on an agent pool. Token scope: vso.agentpools_manage. |
 | `distributedTask.queues.add` | `azuredevops.api.distributedTask.queues.add` | `write` | Create a new agent queue to connect a project to an agent pool. Token scope: vso.agentpools_manage. |
 | `distributedTask.queues.delete` | `azuredevops.api.distributedTask.queues.delete` | `destructive` | Removes an agent queue from a project. Token scope: vso.agentpools_manage. Cannot be undone. |
 | `distributedTask.queues.get` | `azuredevops.api.distributedTask.queues.get` | `read` | Get information about an agent queue. Token scope: vso.agentpools. |
+| `distributedTask.queues.getAgentQueues` | `azuredevops.api.distributedTask.queues.getAgentQueues` | `read` | Get a list of agent queues. Token scope: vso.agentpools. |
+| `distributedTask.queues.getAgentQueuesByIds` | `azuredevops.api.distributedTask.queues.getAgentQueuesByIds` | `read` | Get a list of agent queues by their IDs. Token scope: vso.agentpools. |
+| `distributedTask.queues.getAgentQueuesByNames` | `azuredevops.api.distributedTask.queues.getAgentQueuesByNames` | `read` | Get a list of agent queues by their names. Token scope: vso.agentpools. |
 | `distributedTask.queues.getAgentQueuesForPools` | `azuredevops.api.distributedTask.queues.getAgentQueuesForPools` | `read` | Get a list of agent queues by pool ids. Token scope: vso.agentpools. |
 | `distributedTask.records.update` | `azuredevops.api.distributedTask.records.update` | `write` | Update timeline records if they already exist, otherwise create new ones for the same timeline. |
 | `distributedTask.requests.list` | `azuredevops.api.distributedTask.requests.list` | `read` | Token scope: vso.agentpools. (GET /_apis/distributedtask/agentclouds/{agentCloudId}/requests) |
@@ -317,6 +326,7 @@ pnpm add @corsair-dev/azuredevops
 | `distributedTask.variablegroups.add` | `azuredevops.api.distributedTask.variablegroups.add` | `destructive` | Add a variable group. Token scope: vso.variablegroups_manage. |
 | `distributedTask.variablegroups.delete` | `azuredevops.api.distributedTask.variablegroups.delete` | `destructive` | Delete a variable group. Token scope: vso.variablegroups_manage. Cannot be undone. |
 | `distributedTask.variablegroups.get` | `azuredevops.api.distributedTask.variablegroups.get` | `read` | Get a variable group. Token scope: vso.variablegroups_read. |
+| `distributedTask.variablegroups.getVariableGroups` | `azuredevops.api.distributedTask.variablegroups.getVariableGroups` | `read` | Get variable groups. Token scope: vso.variablegroups_read. |
 | `distributedTask.variablegroups.getVariableGroupsById` | `azuredevops.api.distributedTask.variablegroups.getVariableGroupsById` | `read` | Get variable groups by ids. Token scope: vso.variablegroups_read. |
 | `distributedTask.variablegroups.shareVariableGroup` | `azuredevops.api.distributedTask.variablegroups.shareVariableGroup` | `write` | Add a variable group. Token scope: vso.variablegroups_manage. |
 | `distributedTask.variablegroups.update` | `azuredevops.api.distributedTask.variablegroups.update` | `destructive` | Update a variable group. Token scope: vso.variablegroups_manage. |
@@ -327,9 +337,14 @@ pnpm add @corsair-dev/azuredevops
 | `extensionManagement.installedExtensions.uninstallExtensionByName` | `azuredevops.api.extensionManagement.installedExtensions.uninstallExtensionByName` | `destructive` | Uninstall the specified extension from the account / project collection. Preview API (api-version 7.1-preview.1). Token scope: vso.extension_manage. Cannot be undone. |
 | `extensionManagement.installedExtensions.update` | `azuredevops.api.extensionManagement.installedExtensions.update` | `destructive` | Update an installed extension. Typically this API is used to enable or disable an extension. Preview API (api-version 7.1-preview.1). Token scope: vso.extension_manage. |
 | `favorite.favorites.createFavorite` | `azuredevops.api.favorite.favorites.createFavorite` | `write` | Preview API (api-version 7.1-preview.1). Token scope: vso.profile_write. |
+| `favorite.favorites.createFavoriteOfOwner` | `azuredevops.api.favorite.favorites.createFavoriteOfOwner` | `write` | Preview API (api-version 7.1-preview.1). Token scope: vso.profile_write. |
 | `favorite.favorites.deleteFavoriteById` | `azuredevops.api.favorite.favorites.deleteFavoriteById` | `destructive` | Preview API (api-version 7.1-preview.1). Token scope: vso.profile_write. Cannot be undone. |
+| `favorite.favorites.deleteFavoriteOfOwnerById` | `azuredevops.api.favorite.favorites.deleteFavoriteOfOwnerById` | `destructive` | Preview API (api-version 7.1-preview.1). Token scope: vso.profile_write. Cannot be undone. |
+| `favorite.favorites.getFavoriteByArtifact` | `azuredevops.api.favorite.favorites.getFavoriteByArtifact` | `read` | Preview API (api-version 7.1-preview.1). Token scope: vso.profile. |
 | `favorite.favorites.getFavoriteById` | `azuredevops.api.favorite.favorites.getFavoriteById` | `read` | Preview API (api-version 7.1-preview.1). Token scope: vso.profile. |
+| `favorite.favorites.getFavoriteOfOwnerById` | `azuredevops.api.favorite.favorites.getFavoriteOfOwnerById` | `read` | Preview API (api-version 7.1-preview.1). Token scope: vso.profile. |
 | `favorite.favorites.getFavorites` | `azuredevops.api.favorite.favorites.getFavorites` | `read` | Preview API (api-version 7.1-preview.1). Token scope: vso.profile. |
+| `favorite.favorites.getFavoritesOfOwner` | `azuredevops.api.favorite.favorites.getFavoritesOfOwner` | `read` | Preview API (api-version 7.1-preview.1). Token scope: vso.profile. |
 | `git.annotatedTags.create` | `azuredevops.api.git.annotatedTags.create` | `write` | Create an annotated tag. Repositories have both a name and an identifier. Identifiers are globally unique, but several projects may contain a repository of the same name. You don't need to include the project if you specify a repository by ID. Token scope: vso.code_manage. |
 | `git.annotatedTags.get` | `azuredevops.api.git.annotatedTags.get` | `read` | Get an annotated tag. Repositories have both a name and an identifier. Identifiers are globally unique, but several projects may contain a repository of the same name. You don't need to include the project if you specify a repository by ID. Token scope: vso.code. |
 | `git.blobs.getBlob` | `azuredevops.api.git.blobs.getBlob` | `read` | Get a single blob. Repositories have both a name and an identifier. Identifiers are globally unique, but several projects may contain a repository of the same name. You don't need to include the project if you specify a repository by ID. Token scope: vso.code. |
@@ -339,6 +354,7 @@ pnpm add @corsair-dev/azuredevops
 | `git.cherryPicks.getCherryPickForRefName` | `azuredevops.api.git.cherryPicks.getCherryPickForRefName` | `read` | Retrieve information about a cherry pick operation for a specific branch. This operation is expensive due to the underlying object structure, so this API only looks at the 1000 most recent cherry pick operations. Token scope: vso.code. |
 | `git.commits.get` | `azuredevops.api.git.commits.get` | `read` | Retrieve a particular commit. Token scope: vso.code. |
 | `git.commits.getChanges` | `azuredevops.api.git.commits.getChanges` | `read` | Retrieve changes for a particular commit. Token scope: vso.code. |
+| `git.commits.getCommits` | `azuredevops.api.git.commits.getCommits` | `read` | Retrieve git commits for a project Parameters that use the searchCriteria prefix in their name can be specified without it as query parameters, e.g. searchCriteria.$top -> $top. Token scope: vso.code. |
 | `git.commits.getCommitsBatch` | `azuredevops.api.git.commits.getCommitsBatch` | `read` | Retrieve git commits for a project matching the search criteria. Token scope: vso.code. |
 | `git.commits.getPushCommits` | `azuredevops.api.git.commits.getPushCommits` | `read` | Retrieve a list of commits associated with a particular push. Token scope: vso.code. |
 | `git.diffs.get` | `azuredevops.api.git.diffs.get` | `read` | Find the closest common commit (the merge base) between base and target commits, and get the diff between either the base and target commits or common and target commits. Token scope: vso.code. |
@@ -350,6 +366,7 @@ pnpm add @corsair-dev/azuredevops
 | `git.importRequests.get` | `azuredevops.api.git.importRequests.get` | `read` | Retrieve a particular import request. Token scope: vso.code. |
 | `git.importRequests.query` | `azuredevops.api.git.importRequests.query` | `read` | Retrieve import requests for a repository. Token scope: vso.code. |
 | `git.importRequests.update` | `azuredevops.api.git.importRequests.update` | `write` | Retry or abandon a failed import request. There can only be one active import request associated with a repository. Marking a failed import request abandoned makes it inactive. Token scope: vso.code_manage. |
+| `git.items.get` | `azuredevops.api.git.items.get` | `read` | Get Item Metadata and/or Content for a single item. The download parameter is to indicate whether the content should be available as a download or just sent as a stream in the response. Doesn't apply to zipped content, which is always returned as a download. Token scope: vso.code. |
 | `git.items.getItemsBatch` | `azuredevops.api.git.items.getItemsBatch` | `read` | Retrieves a batch of items in a repo / project for a given list of paths or a long path. Token scope: vso.code. |
 | `git.items.list` | `azuredevops.api.git.items.list` | `read` | Get Item Metadata and/or Content for a collection of items. The download parameter is to indicate whether the content should be available as a download or just sent as a stream in the response. Doesn't apply to zipped content which is always returned as a download. Token scope: vso.code. |
 | `git.mergeBases.list` | `azuredevops.api.git.mergeBases.list` | `read` | Find the merge bases of two commits, optionally across forks. If otherRepositoryId is not specified, the merge bases will only be calculated within the context of the local repositoryNameOrId. Token scope: vso.code. |
@@ -426,12 +443,14 @@ pnpm add @corsair-dev/azuredevops
 | `git.repositories.getDeletedRepositories` | `azuredevops.api.git.repositories.getDeletedRepositories` | `read` | Retrieve deleted git repositories. Token scope: vso.code. |
 | `git.repositories.getRecycleBinRepositories` | `azuredevops.api.git.repositories.getRecycleBinRepositories` | `read` | Retrieve soft-deleted git repositories from the recycle bin. Token scope: vso.code. |
 | `git.repositories.getRepository` | `azuredevops.api.git.repositories.getRepository` | `read` | Retrieve a git repository. Token scope: vso.code. |
+| `git.repositories.getRepositoryWithParent` | `azuredevops.api.git.repositories.getRepositoryWithParent` | `read` | Retrieve a git repository. Token scope: vso.code. |
 | `git.repositories.list` | `azuredevops.api.git.repositories.list` | `read` | Retrieve git repositories. Token scope: vso.code. |
 | `git.repositories.restoreRepositoryFromRecycleBin` | `azuredevops.api.git.repositories.restoreRepositoryFromRecycleBin` | `destructive` | Recover a soft-deleted Git repository. Recently deleted repositories go into a soft-delete state for a period of time before they are hard deleted and become unrecoverable. Token scope: vso.code_manage. |
 | `git.repositories.update` | `azuredevops.api.git.repositories.update` | `write` | Updates the Git repository with either a new repo name or a new default branch. Token scope: vso.code_manage. |
 | `git.reverts.create` | `azuredevops.api.git.reverts.create` | `write` | Starts the operation to create a new branch which reverts changes introduced by either a specific commit or commits that are associated to a pull request. Token scope: vso.code_manage. |
 | `git.reverts.getRevert` | `azuredevops.api.git.reverts.getRevert` | `read` | Retrieve information about a revert operation by revert Id. Token scope: vso.code. |
 | `git.reverts.getRevertForRefName` | `azuredevops.api.git.reverts.getRevertForRefName` | `read` | Retrieve information about a revert operation for a specific branch. Token scope: vso.code. |
+| `git.stats.get` | `azuredevops.api.git.stats.get` | `read` | Retrieve statistics about a single branch. Token scope: vso.code. |
 | `git.stats.list` | `azuredevops.api.git.stats.list` | `read` | Retrieve statistics about all branches within a repository. Token scope: vso.code. |
 | `git.statuses.create` | `azuredevops.api.git.statuses.create` | `write` | Create Git commit status. Token scope: vso.code_status, vso.code_write. |
 | `git.statuses.list` | `azuredevops.api.git.statuses.list` | `read` | Get statuses associated with the Git commit. Token scope: vso.code, vso.code_status. |
@@ -553,6 +572,7 @@ pnpm add @corsair-dev/azuredevops
 | `policy.revisions.list` | `azuredevops.api.policy.revisions.list` | `read` | Retrieve all revisions for a given policy. Token scope: vso.code. |
 | `policy.types.get` | `azuredevops.api.policy.types.get` | `read` | Retrieve a specific policy type by ID. Token scope: vso.code. |
 | `policy.types.list` | `azuredevops.api.policy.types.list` | `read` | Retrieve all available policy types. Token scope: vso.code. |
+| `processadmin.behaviors.get` | `azuredevops.api.processadmin.behaviors.get` | `read` | Returns a behavior for the process. Token scope: vso.work. |
 | `processadmin.behaviors.list` | `azuredevops.api.processadmin.behaviors.list` | `read` | Returns a list of behaviors for the process. Token scope: vso.work. |
 | `processadmin.processes.exportProcessTemplate` | `azuredevops.api.processadmin.processes.exportProcessTemplate` | `read` | Returns requested process template. Token scope: vso.work. |
 | `processadmin.processes.importProcessTemplate` | `azuredevops.api.processadmin.processes.importProcessTemplate` | `write` | Imports a process from zip file. Token scope: vso.work_write. |
@@ -572,6 +592,7 @@ pnpm add @corsair-dev/azuredevops
 | `processes.fields.removeWorkItemTypeField` | `azuredevops.api.processes.fields.removeWorkItemTypeField` | `destructive` | Removes a field from a work item type. Does not permanently delete the field. Token scope: vso.work_write. Cannot be undone. |
 | `processes.fields.update` | `azuredevops.api.processes.fields.update` | `write` | Updates a field in a work item type. Token scope: vso.work_write. |
 | `processes.groups.add` | `azuredevops.api.processes.groups.add` | `write` | Adds a group to the work item form. Token scope: vso.work_write. |
+| `processes.groups.moveGroupToPage` | `azuredevops.api.processes.groups.moveGroupToPage` | `write` | Moves a group to a different page and section. Token scope: vso.work_write. |
 | `processes.groups.moveGroupToSection` | `azuredevops.api.processes.groups.moveGroupToSection` | `write` | Moves a group to a different section. Token scope: vso.work_write. |
 | `processes.groups.removeGroup` | `azuredevops.api.processes.groups.removeGroup` | `destructive` | Removes a group from the work item form. Token scope: vso.work_write. Cannot be undone. |
 | `processes.groups.update` | `azuredevops.api.processes.groups.update` | `write` | Updates a group in the work item form. Token scope: vso.work_write. |
@@ -638,6 +659,7 @@ pnpm add @corsair-dev/azuredevops
 | `release.manualInterventions.update` | `azuredevops.api.release.manualInterventions.update` | `write` | Update manual intervention. Release management lives on vsrm.dev.azure.com. Token scope: vso.release_execute. |
 | `release.releases.create` | `azuredevops.api.release.releases.create` | `destructive` | Create a release. Release management lives on vsrm.dev.azure.com. Token scope: vso.release_execute. |
 | `release.releases.getLogs` | `azuredevops.api.release.releases.getLogs` | `read` | Get logs for a release Id. Token scope: vso.release. |
+| `release.releases.getRelease` | `azuredevops.api.release.releases.getRelease` | `read` | Get a Release. Token scope: vso.release. |
 | `release.releases.getReleaseEnvironment` | `azuredevops.api.release.releases.getReleaseEnvironment` | `read` | Get a release environment. Token scope: vso.release. |
 | `release.releases.getReleaseRevision` | `azuredevops.api.release.releases.getReleaseRevision` | `read` | Get release for a given revision number. Token scope: vso.release. |
 | `release.releases.getTaskLog` | `azuredevops.api.release.releases.getTaskLog` | `read` | Gets the task log of a release as a plain text file. Token scope: vso.release. |
@@ -660,16 +682,19 @@ pnpm add @corsair-dev/azuredevops
 | `security.permissions.hasPermissionsBatch` | `azuredevops.api.security.permissions.hasPermissionsBatch` | `destructive` | Evaluates multiple permissions for the calling user. Note: This method does not aggregate the results, nor does it short-circuit if one of the permissions evaluates to false. |
 | `security.permissions.removePermission` | `azuredevops.api.security.permissions.removePermission` | `destructive` | Removes the specified permissions on a security token for a user or group. Token scope: vso.security_manage. Cannot be undone. |
 | `security.securityNamespaces.query` | `azuredevops.api.security.securityNamespaces.query` | `read` | List all security namespaces or just the specified namespace. |
+| `securityRoles.roleassignments.changeInheritance` | `azuredevops.api.securityRoles.roleassignments.changeInheritance` | `write` | Preview API (api-version 7.1-preview.1). Token scope: vso.security_manage. |
 | `securityRoles.roleassignments.list` | `azuredevops.api.securityRoles.roleassignments.list` | `read` | Get role assignments for the resource. Preview API (api-version 7.1-preview.1). |
 | `securityRoles.roleassignments.removeRoleAssignment` | `azuredevops.api.securityRoles.roleassignments.removeRoleAssignment` | `destructive` | Remove the role assignment on a resource. Preview API (api-version 7.1-preview.1). Token scope: vso.security_manage. Cannot be undone. |
 | `securityRoles.roleassignments.removeRoleAssignments` | `azuredevops.api.securityRoles.roleassignments.removeRoleAssignments` | `write` | Preview API (api-version 7.1-preview.1). Token scope: vso.security_manage. |
 | `securityRoles.roleassignments.setRoleAssignment` | `azuredevops.api.securityRoles.roleassignments.setRoleAssignment` | `write` | Set role assignment on a resource. Preview API (api-version 7.1-preview.1). Token scope: vso.security_manage. |
 | `securityRoles.roleassignments.setRoleAssignments` | `azuredevops.api.securityRoles.roleassignments.setRoleAssignments` | `write` | Set role assignments on a resource. Preview API (api-version 7.1-preview.1). Token scope: vso.security_manage. |
 | `securityRoles.roledefinitions.list` | `azuredevops.api.securityRoles.roledefinitions.list` | `read` | Preview API (api-version 7.1-preview.1). |
+| `serviceEndpoint.endpointproxy.executeServiceEndpointRequest` | `azuredevops.api.serviceEndpoint.endpointproxy.executeServiceEndpointRequest` | `destructive` | Proxy for a GET request defined by a service endpoint. Token scope: vso.serviceendpoint_query. |
 | `serviceEndpoint.endpointproxy.query` | `azuredevops.api.serviceEndpoint.endpointproxy.query` | `read` | Use ExecuteServiceEndpointRequest API Instead. Token scope: vso.serviceendpoint_query. |
 | `serviceEndpoint.endpoints.create` | `azuredevops.api.serviceEndpoint.endpoints.create` | `destructive` | Creates a new service endpoint. Token scope: vso.serviceendpoint_manage. |
 | `serviceEndpoint.endpoints.delete` | `azuredevops.api.serviceEndpoint.endpoints.delete` | `destructive` | Delete a service endpoint. Token scope: vso.serviceendpoint_manage. Cannot be undone. |
 | `serviceEndpoint.endpoints.get` | `azuredevops.api.serviceEndpoint.endpoints.get` | `read` | Get the service endpoint details. Token scope: vso.serviceendpoint. |
+| `serviceEndpoint.endpoints.getServiceEndpoints` | `azuredevops.api.serviceEndpoint.endpoints.getServiceEndpoints` | `read` | Get the service endpoints. Token scope: vso.serviceendpoint. |
 | `serviceEndpoint.endpoints.getServiceEndpointsByNames` | `azuredevops.api.serviceEndpoint.endpoints.getServiceEndpointsByNames` | `read` | Get the service endpoints by name. Token scope: vso.serviceendpoint. |
 | `serviceEndpoint.endpoints.getServiceEndpointsWithRefreshedAuthentication` | `azuredevops.api.serviceEndpoint.endpoints.getServiceEndpointsWithRefreshedAuthentication` | `read` | Gets the service endpoints and patch new authorization parameters. Token scope: vso.serviceendpoint_manage. |
 | `serviceEndpoint.endpoints.shareServiceEndpoint` | `azuredevops.api.serviceEndpoint.endpoints.shareServiceEndpoint` | `destructive` | Share service endpoint across projects. Token scope: vso.serviceendpoint_manage. |
@@ -683,6 +708,7 @@ pnpm add @corsair-dev/azuredevops
 | `symbol.contents.get` | `azuredevops.api.symbol.contents.get` | `read` | Get a stitched debug entry for a symbol request as specified by symbol request identifier and debug entry identifier. Token scope: vso.symbols. |
 | `symbol.requests.createRequests` | `azuredevops.api.symbol.requests.createRequests` | `write` | Create a new symbol request. Token scope: vso.symbols_write. |
 | `symbol.requests.createRequestsRequestIdDebugEntries` | `azuredevops.api.symbol.requests.createRequestsRequestIdDebugEntries` | `write` | Create debug entries for a symbol request as specified by its identifier. Token scope: vso.symbols_write. |
+| `symbol.requests.createRequestsRequestNameDebugEntries` | `azuredevops.api.symbol.requests.createRequestsRequestNameDebugEntries` | `write` | Create debug entries for a symbol request as specified by its name. Token scope: vso.symbols_write. |
 | `symbol.requests.deleteRequestsRequestId` | `azuredevops.api.symbol.requests.deleteRequestsRequestId` | `destructive` | Delete a symbol request by request identifier. Token scope: vso.symbols_manage. Cannot be undone. |
 | `symbol.requests.deleteRequestsRequestName` | `azuredevops.api.symbol.requests.deleteRequestsRequestName` | `destructive` | Delete a symbol request by request name. Token scope: vso.symbols_manage. Cannot be undone. |
 | `symbol.requests.getRequestsRequestId` | `azuredevops.api.symbol.requests.getRequestsRequestId` | `read` | Get a symbol request by request identifier. Token scope: vso.symbols. |
@@ -692,10 +718,13 @@ pnpm add @corsair-dev/azuredevops
 | `symbol.symsrv.get` | `azuredevops.api.symbol.symsrv.get` | `read` | Given a client key, returns the best matched debug entry. Token scope: vso.symbols. |
 | `test.attachments.createTestResultAttachment` | `azuredevops.api.test.attachments.createTestResultAttachment` | `write` | Attach a file to a test result. Token scope: vso.test_write. |
 | `test.attachments.createTestRunAttachment` | `azuredevops.api.test.attachments.createTestRunAttachment` | `write` | Attach a file to a test run. Token scope: vso.test_write. |
+| `test.attachments.createTestSubResultAttachment` | `azuredevops.api.test.attachments.createTestSubResultAttachment` | `write` | Attach a file to a test result. Token scope: vso.test_write. |
 | `test.attachments.getTestResultAttachments` | `azuredevops.api.test.attachments.getTestResultAttachments` | `read` | Get list of test result attachments reference. Token scope: vso.test. |
 | `test.attachments.getTestResultAttachmentZip` | `azuredevops.api.test.attachments.getTestResultAttachmentZip` | `read` | Download a test result attachment by its ID. Token scope: vso.test. |
 | `test.attachments.getTestRunAttachments` | `azuredevops.api.test.attachments.getTestRunAttachments` | `read` | Get list of test run attachments reference. Token scope: vso.test. |
 | `test.attachments.getTestRunAttachmentZip` | `azuredevops.api.test.attachments.getTestRunAttachmentZip` | `read` | Download a test run attachment by its ID. Token scope: vso.test. |
+| `test.attachments.getTestSubResultAttachments` | `azuredevops.api.test.attachments.getTestSubResultAttachments` | `read` | Get list of test sub result attachments. Token scope: vso.test. |
+| `test.attachments.getTestSubResultAttachmentZip` | `azuredevops.api.test.attachments.getTestSubResultAttachmentZip` | `read` | Download a test sub result attachment. Token scope: vso.test. |
 | `test.codeCoverage.getBuildCodeCoverage` | `azuredevops.api.test.codeCoverage.getBuildCodeCoverage` | `read` | Get code coverage data for a build. Token scope: vso.test. |
 | `test.codeCoverage.getTestRunCodeCoverage` | `azuredevops.api.test.codeCoverage.getTestRunCodeCoverage` | `read` | Get code coverage data for a test run. Token scope: vso.test. |
 | `test.iterations.get` | `azuredevops.api.test.iterations.get` | `read` | Get iteration for a result. Token scope: vso.test. |
@@ -715,6 +744,7 @@ pnpm add @corsair-dev/azuredevops
 | `test.runs.getTestRunById` | `azuredevops.api.test.runs.getTestRunById` | `read` | Get a test run by its ID. Token scope: vso.test. |
 | `test.runs.getTestRunStatistics` | `azuredevops.api.test.runs.getTestRunStatistics` | `read` | Get test run statistics , used when we want to get summary of a run by outcome. Token scope: vso.test. |
 | `test.runs.list` | `azuredevops.api.test.runs.list` | `read` | Get a list of test runs. Token scope: vso.test. |
+| `test.runs.query` | `azuredevops.api.test.runs.query` | `read` | Query Test Runs based on filters. Mandatory fields are minLastUpdatedDate and maxLastUpdatedDate. Token scope: vso.test. |
 | `test.runs.update` | `azuredevops.api.test.runs.update` | `write` | Update test run by its ID. Token scope: vso.test_write. |
 | `test.session.create` | `azuredevops.api.test.session.create` | `write` | Create a test session. Token scope: vso.test_write. |
 | `test.session.list` | `azuredevops.api.test.session.list` | `read` | Get a list of test sessions. Token scope: vso.test. |
@@ -734,6 +764,7 @@ pnpm add @corsair-dev/azuredevops
 | `testPlan.suiteTestCase.add` | `azuredevops.api.testPlan.suiteTestCase.add` | `write` | Add test cases to a suite with specified configurations. Token scope: vso.test_write. |
 | `testPlan.suiteTestCase.getTestCase` | `azuredevops.api.testPlan.suiteTestCase.getTestCase` | `read` | Get a particular Test Case from a Suite. Token scope: vso.test. |
 | `testPlan.suiteTestCase.getTestCaseList` | `azuredevops.api.testPlan.suiteTestCase.getTestCaseList` | `read` | Get Test Case List return those test cases which have all the configuration Ids as mentioned in the optional parameter. If configuration Ids is null, it return all the test cases. Token scope: vso.test. |
+| `testPlan.suiteTestCase.removeTestCasesFromSuite` | `azuredevops.api.testPlan.suiteTestCase.removeTestCasesFromSuite` | `destructive` | Removes test cases from a suite based on the list of test case Ids provided. Token scope: vso.test_write. Cannot be undone. |
 | `testPlan.suiteTestCase.removeTestCasesListFromSuite` | `azuredevops.api.testPlan.suiteTestCase.removeTestCasesListFromSuite` | `destructive` | Removes test cases from a suite based on the list of test case Ids provided. This API can be used to remove a larger number of test cases. Token scope: vso.test_write. Cannot be undone. |
 | `testPlan.suiteTestCase.update` | `azuredevops.api.testPlan.suiteTestCase.update` | `write` | Update the configurations for test cases. Token scope: vso.test_write. |
 | `testPlan.testCaseClone.cloneTestCase` | `azuredevops.api.testPlan.testCaseClone.cloneTestCase` | `write` | Token scope: vso.test_write. (POST /{project}/_apis/testplan/TestCases/CloneTestCaseOperation) |
@@ -747,6 +778,7 @@ pnpm add @corsair-dev/azuredevops
 | `testPlan.testPlans.list` | `azuredevops.api.testPlan.testPlans.list` | `read` | Get a list of test plans. Token scope: vso.test. |
 | `testPlan.testPlans.update` | `azuredevops.api.testPlan.testPlans.update` | `write` | Update a test plan. Token scope: vso.test_write. |
 | `testPlan.testPoint.getPoints` | `azuredevops.api.testPlan.testPoint.getPoints` | `read` | Get a particular Test Point from a suite. Token scope: vso.test. |
+| `testPlan.testPoint.getPointsList` | `azuredevops.api.testPlan.testPoint.getPointsList` | `read` | Get all the points inside a suite based on some filters. Token scope: vso.test. |
 | `testPlan.testPoint.update` | `azuredevops.api.testPlan.testPoint.update` | `write` | Update Test Points. This is used to Reset test point to active, update the outcome of a test point or update the tester of a test point. Token scope: vso.test_write. |
 | `testPlan.testSuiteClone.cloneTestSuite` | `azuredevops.api.testPlan.testSuiteClone.cloneTestSuite` | `write` | Clone test suite. Token scope: vso.test_write. |
 | `testPlan.testSuiteClone.get` | `azuredevops.api.testPlan.testSuiteClone.get` | `read` | Get clone information. Token scope: vso.test. |
@@ -763,16 +795,22 @@ pnpm add @corsair-dev/azuredevops
 | `testPlan.variables.get` | `azuredevops.api.testPlan.variables.get` | `read` | Get a test variable by its ID. Token scope: vso.test. |
 | `testPlan.variables.list` | `azuredevops.api.testPlan.variables.list` | `read` | Get a list of test variables. Token scope: vso.test. |
 | `testPlan.variables.update` | `azuredevops.api.testPlan.variables.update` | `write` | Update a test variable by its ID. Token scope: vso.test_write. |
+| `testResults.attachments.createTestIterationResultAttachment` | `azuredevops.api.testResults.attachments.createTestIterationResultAttachment` | `write` | Preview API (api-version 7.1-preview.1). Token scope: vso.test_write. |
 | `testResults.attachments.createTestResultAttachment` | `azuredevops.api.testResults.attachments.createTestResultAttachment` | `write` | Preview API (api-version 7.1-preview.1). Token scope: vso.test_write. |
 | `testResults.attachments.createTestRunAttachment` | `azuredevops.api.testResults.attachments.createTestRunAttachment` | `write` | Preview API (api-version 7.1-preview.1). Token scope: vso.test_write. |
+| `testResults.attachments.createTestSubResultAttachment` | `azuredevops.api.testResults.attachments.createTestSubResultAttachment` | `write` | Preview API (api-version 7.1-preview.1). Token scope: vso.test_write. |
 | `testResults.attachments.deleteTestResultAttachment` | `azuredevops.api.testResults.attachments.deleteTestResultAttachment` | `destructive` | Preview API (api-version 7.1-preview.1). Token scope: vso.test_write. Cannot be undone. |
 | `testResults.attachments.deleteTestRunAttachment` | `azuredevops.api.testResults.attachments.deleteTestRunAttachment` | `destructive` | Preview API (api-version 7.1-preview.1). Token scope: vso.test_write. Cannot be undone. |
+| `testResults.attachments.getTestIterationAttachmentZip` | `azuredevops.api.testResults.attachments.getTestIterationAttachmentZip` | `read` | Returns a test iteration attachment. Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
 | `testResults.attachments.getTestResultAttachments` | `azuredevops.api.testResults.attachments.getTestResultAttachments` | `read` | Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
 | `testResults.attachments.getTestResultAttachmentZip` | `azuredevops.api.testResults.attachments.getTestResultAttachmentZip` | `read` | Returns a test result attachment. Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
 | `testResults.attachments.getTestRunAttachments` | `azuredevops.api.testResults.attachments.getTestRunAttachments` | `read` | Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
 | `testResults.attachments.getTestRunAttachmentZip` | `azuredevops.api.testResults.attachments.getTestRunAttachmentZip` | `read` | Returns a test run attachment. Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
+| `testResults.attachments.getTestSubResultAttachments` | `azuredevops.api.testResults.attachments.getTestSubResultAttachments` | `read` | Returns attachment references for test sub result. Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
+| `testResults.attachments.getTestSubResultAttachmentZip` | `azuredevops.api.testResults.attachments.getTestSubResultAttachmentZip` | `read` | Returns a test sub result attachment. Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
 | `testResults.bugs.list` | `azuredevops.api.testResults.bugs.list` | `read` | Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
 | `testResults.codecoverage.get` | `azuredevops.api.testResults.codecoverage.get` | `read` | Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
+| `testResults.codecoverage.getBuildCodeCoverage` | `azuredevops.api.testResults.codecoverage.getBuildCodeCoverage` | `read` | Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
 | `testResults.codecoverage.getTestRunCodeCoverage` | `azuredevops.api.testResults.codecoverage.getTestRunCodeCoverage` | `read` | Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
 | `testResults.codecoverage.update` | `azuredevops.api.testResults.codecoverage.update` | `write` | http://(tfsserver):8080/tfs/DefaultCollection/_apis/test/CodeCoverage?buildId=10 Request: Json of code coverage summary. Preview API (api-version 7.1-preview.1). Token scope: vso.test_write. |
 | `testResults.filecoverage.get` | `azuredevops.api.testResults.filecoverage.get` | `read` | Get file coverage for the specified file. Preview API (api-version 7.1-preview.1). Token scope: vso.test_write. |
@@ -807,6 +845,7 @@ pnpm add @corsair-dev/azuredevops
 | `testResults.runs.delete` | `azuredevops.api.testResults.runs.delete` | `destructive` | Preview API (api-version 7.1-preview.1). Token scope: vso.test_write. Cannot be undone. |
 | `testResults.runs.get` | `azuredevops.api.testResults.runs.get` | `read` | Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
 | `testResults.runs.list` | `azuredevops.api.testResults.runs.list` | `read` | Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
+| `testResults.runs.query` | `azuredevops.api.testResults.runs.query` | `read` | Query Test Runs based on filters. Mandatory fields are minLastUpdatedDate and maxLastUpdatedDate. Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
 | `testResults.runs.update` | `azuredevops.api.testResults.runs.update` | `write` | Preview API (api-version 7.1-preview.1). Token scope: vso.test_write. |
 | `testResults.runsummary.get` | `azuredevops.api.testResults.runsummary.get` | `read` | Get test run summary, used when we want to get summary of a run by outcome. Test run should be in completed state. Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
 | `testResults.settings.get` | `azuredevops.api.testResults.settings.get` | `read` | Get TestResultsSettings data. Preview API (api-version 7.1-preview.3). |
@@ -815,11 +854,14 @@ pnpm add @corsair-dev/azuredevops
 | `testResults.statistics.get` | `azuredevops.api.testResults.statistics.get` | `read` | Get test run statistics , used when we want to get summary of a run by outcome. Token scope: vso.test. |
 | `testResults.status.get` | `azuredevops.api.testResults.status.get` | `read` | Gets the coverage status for the last successful build of a definition, optionally scoped to a specific branch. Preview API (api-version 7.1-preview.1). |
 | `testResults.tags.getTestTagsForBuild` | `azuredevops.api.testResults.tags.getTestTagsForBuild` | `read` | Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
+| `testResults.tags.getTestTagsForRelease` | `azuredevops.api.testResults.tags.getTestTagsForRelease` | `read` | Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
 | `testResults.tags.update` | `azuredevops.api.testResults.tags.update` | `write` | Preview API (api-version 7.1-preview.1). Token scope: vso.test_write. |
 | `testResults.tagsummary.getTestTagSummaryForBuild` | `azuredevops.api.testResults.tagsummary.getTestTagSummaryForBuild` | `read` | Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
+| `testResults.tagsummary.getTestTagSummaryForRelease` | `azuredevops.api.testResults.tagsummary.getTestTagSummaryForRelease` | `read` | Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
 | `testResults.testattachments.createBuildAttachmentInLogStore` | `azuredevops.api.testResults.testattachments.createBuildAttachmentInLogStore` | `write` | Creates an attachment in the LogStore for the specified buildId. Preview API (api-version 7.1-preview.1). Token scope: vso.test_write. |
 | `testResults.testattachments.createTestRunLogStoreAttachment` | `azuredevops.api.testResults.testattachments.createTestRunLogStoreAttachment` | `write` | Creates an attachment in the LogStore for the specified runId. Preview API (api-version 7.1-preview.1). Token scope: vso.test_write. |
 | `testResults.testattachments.delete` | `azuredevops.api.testResults.testattachments.delete` | `destructive` | Deletes the attachment with the specified filename for the specified runId from the LogStore. Preview API (api-version 7.1-preview.1). Token scope: vso.test_write. Cannot be undone. |
+| `testResults.testattachments.get` | `azuredevops.api.testResults.testattachments.get` | `read` | Returns the attachment with the specified filename for the specified runId from the LogStore. Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
 | `testResults.testattachments.list` | `azuredevops.api.testResults.testattachments.list` | `read` | Returns a list of attachments for the specified runId from the LogStore. Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
 | `testResults.testfailuretype.create` | `azuredevops.api.testResults.testfailuretype.create` | `write` | Creates a new test failure type. Preview API (api-version 7.1-preview.1). Token scope: vso.test_write. |
 | `testResults.testfailuretype.delete` | `azuredevops.api.testResults.testfailuretype.delete` | `destructive` | Deletes a test failure type with specified failureTypeId. Preview API (api-version 7.1-preview.1). Token scope: vso.test_write. Cannot be undone. |
@@ -828,9 +870,11 @@ pnpm add @corsair-dev/azuredevops
 | `testResults.testlog.getTestLogsForBuild` | `azuredevops.api.testResults.testlog.getTestLogsForBuild` | `read` | Get list of build attachments reference. Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
 | `testResults.testlog.getTestResultLogs` | `azuredevops.api.testResults.testlog.getTestResultLogs` | `read` | Get list of test result attachments reference. Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
 | `testResults.testlog.getTestRunLogs` | `azuredevops.api.testResults.testlog.getTestRunLogs` | `read` | Get list of test run attachments reference. Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
+| `testResults.testlog.getTestSubResultLogs` | `azuredevops.api.testResults.testlog.getTestSubResultLogs` | `read` | Get list of test subresult attachments reference. Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
 | `testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForBuildLog` | `azuredevops.api.testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForBuildLog` | `read` | Get SAS Uri of a build attachment. Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
 | `testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForResultLog` | `azuredevops.api.testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForResultLog` | `read` | Get SAS Uri of a test results attachment. Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
 | `testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForRunLog` | `azuredevops.api.testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForRunLog` | `read` | Get SAS Uri of a test run attachment. Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
+| `testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForSubResultLog` | `azuredevops.api.testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForSubResultLog` | `read` | Get SAS Uri of a test subresults attachment. Preview API (api-version 7.1-preview.1). Token scope: vso.test. |
 | `testResults.testlogstoreendpoint.testLogStoreEndpointDetailsForBuild` | `azuredevops.api.testResults.testlogstoreendpoint.testLogStoreEndpointDetailsForBuild` | `write` | Create and Get sas uri of the build container. Preview API (api-version 7.1-preview.1). Token scope: vso.test_write. |
 | `testResults.testlogstoreendpoint.testLogStoreEndpointDetailsForResult` | `azuredevops.api.testResults.testlogstoreendpoint.testLogStoreEndpointDetailsForResult` | `write` | Create empty file for a result and Get Sas uri for the file. Preview API (api-version 7.1-preview.1). Token scope: vso.test_write. |
 | `testResults.testlogstoreendpoint.testLogStoreEndpointDetailsForRun` | `azuredevops.api.testResults.testlogstoreendpoint.testLogStoreEndpointDetailsForRun` | `write` | Create empty file for a run and Get Sas uri for the file. Preview API (api-version 7.1-preview.1). Token scope: vso.test_write. |
@@ -840,7 +884,10 @@ pnpm add @corsair-dev/azuredevops
 | `testResults.workitems.add` | `azuredevops.api.testResults.workitems.add` | `write` | Preview API (api-version 7.1-preview.2). Token scope: vso.test_write. |
 | `testResults.workitems.delete` | `azuredevops.api.testResults.workitems.delete` | `destructive` | Preview API (api-version 7.1-preview.2). Token scope: vso.test_write. Cannot be undone. |
 | `testResults.workitems.list` | `azuredevops.api.testResults.workitems.list` | `read` | Preview API (api-version 7.1-preview.2). Token scope: vso.test. |
+| `testResults.workitems.queryTestMethodLinkedWorkItems` | `azuredevops.api.testResults.workitems.queryTestMethodLinkedWorkItems` | `read` | Preview API (api-version 7.1-preview.2). Token scope: vso.test_write. |
 | `testResults.workitems.queryTestResultWorkItems` | `azuredevops.api.testResults.workitems.queryTestResultWorkItems` | `read` | Query Test Result WorkItems based on filter. Preview API (api-version 7.1-preview.2). Token scope: vso.test. |
+| `tfvc.branches.get` | `azuredevops.api.tfvc.branches.get` | `read` | Get a single branch hierarchy at the given path with parents or children as specified. Token scope: vso.code. |
+| `tfvc.branches.getBranches` | `azuredevops.api.tfvc.branches.getBranches` | `read` | Get a collection of branch roots -- first-level children, branches with no parents. Token scope: vso.code. |
 | `tfvc.branches.getBranchRefs` | `azuredevops.api.tfvc.branches.getBranchRefs` | `read` | Get branch hierarchies below the specified scopePath. Token scope: vso.code. |
 | `tfvc.changesets.create` | `azuredevops.api.tfvc.changesets.create` | `write` | Create a new changeset. Accepts TfvcChangeset as JSON body. Token scope: vso.code_write. |
 | `tfvc.changesets.get` | `azuredevops.api.tfvc.changesets.get` | `read` | Retrieve a Tfvc Changeset. Token scope: vso.code. |
@@ -848,6 +895,7 @@ pnpm add @corsair-dev/azuredevops
 | `tfvc.changesets.getChangesetChanges` | `azuredevops.api.tfvc.changesets.getChangesetChanges` | `read` | Retrieve Tfvc changes for a given changeset. Token scope: vso.code. |
 | `tfvc.changesets.getChangesets` | `azuredevops.api.tfvc.changesets.getChangesets` | `read` | Retrieve Tfvc Changesets Note: This is a new version of the GetChangesets API that doesn't expose the unneeded queryParams present in the 1.0 version of the API. Token scope: vso.code. |
 | `tfvc.changesets.getChangesetWorkItems` | `azuredevops.api.tfvc.changesets.getChangesetWorkItems` | `read` | Retrieves the work items associated with a particular changeset. Token scope: vso.code. |
+| `tfvc.items.get` | `azuredevops.api.tfvc.items.get` | `read` | Get Item Metadata and/or Content for a single item. The download parameter is to indicate whether the content should be available as a download or just sent as a stream in the response. Doesn't apply to zipped content which is always returned as a download. Token scope: vso.code. |
 | `tfvc.items.getItemsBatch` | `azuredevops.api.tfvc.items.getItemsBatch` | `read` | Post for retrieving a set of items given a list of paths or a long path. Allows for specifying the recursionLevel and version descriptors for each path. Token scope: vso.code. |
 | `tfvc.items.list` | `azuredevops.api.tfvc.items.list` | `read` | Get a list of Tfvc items. Token scope: vso.code. |
 | `tfvc.labels.get` | `azuredevops.api.tfvc.labels.get` | `read` | Get a single deep label. Token scope: vso.code. |
@@ -856,11 +904,13 @@ pnpm add @corsair-dev/azuredevops
 | `tfvc.shelvesets.get` | `azuredevops.api.tfvc.shelvesets.get` | `read` | Get a single deep shelveset. Token scope: vso.code. |
 | `tfvc.shelvesets.getShelvesetChanges` | `azuredevops.api.tfvc.shelvesets.getShelvesetChanges` | `read` | Get changes included in a shelveset. Token scope: vso.code. |
 | `tfvc.shelvesets.getShelvesetWorkItems` | `azuredevops.api.tfvc.shelvesets.getShelvesetWorkItems` | `read` | Get work items associated with a shelveset. Token scope: vso.code. |
+| `tfvc.shelvesets.list` | `azuredevops.api.tfvc.shelvesets.list` | `read` | Return a collection of shallow shelveset references. Token scope: vso.code. |
 | `tokenAdmin.personalAccessTokens.list` | `azuredevops.api.tokenAdmin.personalAccessTokens.list` | `read` | Lists of all the session token details of the personal access tokens (PATs) for a particular user. Token scope: vso.tokenadministration. |
 | `tokenAdmin.revocationRules.create` | `azuredevops.api.tokenAdmin.revocationRules.create` | `destructive` | Creates a revocation rule to prevent the further usage of any OAuth authorizations that were created before the current point in time and which match the conditions in the rule. Not all kinds of OAuth authorizations can be revoked directly. Organization admins only. Token scope: vso.tokenadministration. |
 | `tokenAdmin.revocations.revokeAuthorizations` | `azuredevops.api.tokenAdmin.revocations.revokeAuthorizations` | `destructive` | Revokes the listed OAuth authorizations. Organization admins only. Token scope: vso.tokenadministration. |
 | `tokens.pats.create` | `azuredevops.api.tokens.pats.create` | `destructive` | Creates a new personal access token (PAT) for the requesting user. Personal access tokens: needs an Entra (Microsoft identity) token, not a PAT. Preview API (api-version 7.1-preview.1). |
 | `tokens.pats.get` | `azuredevops.api.tokens.pats.get` | `read` | Gets a single personal access token (PAT). Personal access tokens: needs an Entra (Microsoft identity) token, not a PAT. Preview API (api-version 7.1-preview.1). |
+| `tokens.pats.list` | `azuredevops.api.tokens.pats.list` | `read` | Gets a paged list of personal access tokens (PATs) created in this organization. Subsequent calls to the API require the same filtering options to be supplied. Personal access tokens: needs an Entra (Microsoft identity) token, not a PAT. Preview API (api-version 7.1-preview.1). |
 | `tokens.pats.revoke` | `azuredevops.api.tokens.pats.revoke` | `destructive` | Revokes a personal access token (PAT) by authorizationId. Personal access tokens: needs an Entra (Microsoft identity) token, not a PAT. Preview API (api-version 7.1-preview.1). Cannot be undone. |
 | `tokens.pats.update` | `azuredevops.api.tokens.pats.update` | `destructive` | Updates an existing personal access token (PAT) with the new parameters. To update a token, it must be valid (has not been revoked). Personal access tokens: needs an Entra (Microsoft identity) token, not a PAT. Preview API (api-version 7.1-preview.1). |
 | `wiki.attachments.create` | `azuredevops.api.wiki.attachments.create` | `write` | Creates an attachment in the wiki. Token scope: vso.wiki_write. |
@@ -887,14 +937,18 @@ pnpm add @corsair-dev/azuredevops
 | `wit.classificationNodes.createOrUpdate` | `azuredevops.api.wit.classificationNodes.createOrUpdate` | `write` | Create new or update an existing classification node. Token scope: vso.work_write. |
 | `wit.classificationNodes.delete` | `azuredevops.api.wit.classificationNodes.delete` | `destructive` | Delete an existing classification node. Token scope: vso.work_write. Cannot be undone. |
 | `wit.classificationNodes.get` | `azuredevops.api.wit.classificationNodes.get` | `read` | Gets the classification node for a given node path. Token scope: vso.work. |
+| `wit.classificationNodes.getClassificationNodes` | `azuredevops.api.wit.classificationNodes.getClassificationNodes` | `read` | Gets root classification nodes or list of classification nodes for a given list of nodes ids, for a given project. In case ids parameter is supplied you will get list of classification nodes for those ids. Otherwise you will get root classification nodes for this project. Token scope: vso.work. |
 | `wit.classificationNodes.getRootNodes` | `azuredevops.api.wit.classificationNodes.getRootNodes` | `read` | Gets root classification nodes under the project. Token scope: vso.work. |
 | `wit.classificationNodes.update` | `azuredevops.api.wit.classificationNodes.update` | `write` | Update an existing classification node. Token scope: vso.work_write. |
 | `wit.commentReactionsEngagedUsers.list` | `azuredevops.api.wit.commentReactionsEngagedUsers.list` | `read` | Get users who reacted on the comment. Preview API (api-version 7.1-preview.1). Token scope: vso.work. |
 | `wit.comments.addComment` | `azuredevops.api.wit.comments.addComment` | `write` | Add a comment on a work item. Preview API (api-version 7.1-preview.4). Token scope: vso.work_write. |
+| `wit.comments.addWorkItemComment` | `azuredevops.api.wit.comments.addWorkItemComment` | `write` | Add a comment on a work item. Preview API (api-version 7.1-preview.4). Token scope: vso.work_write. |
 | `wit.comments.delete` | `azuredevops.api.wit.comments.delete` | `destructive` | Delete a comment on a work item. Preview API (api-version 7.1-preview.4). Token scope: vso.work_write. Cannot be undone. |
 | `wit.comments.getComment` | `azuredevops.api.wit.comments.getComment` | `read` | Returns a work item comment. Preview API (api-version 7.1-preview.4). Token scope: vso.work. |
+| `wit.comments.getComments` | `azuredevops.api.wit.comments.getComments` | `read` | Returns a list of work item comments, pageable. Preview API (api-version 7.1-preview.4). Token scope: vso.work. |
 | `wit.comments.getCommentsBatch` | `azuredevops.api.wit.comments.getCommentsBatch` | `read` | Returns a list of work item comments by ids. Preview API (api-version 7.1-preview.4). Token scope: vso.work. |
 | `wit.comments.updateComment` | `azuredevops.api.wit.comments.updateComment` | `write` | Update a comment on a work item. Preview API (api-version 7.1-preview.4). Token scope: vso.work_write. |
+| `wit.comments.updateWorkItemComment` | `azuredevops.api.wit.comments.updateWorkItemComment` | `write` | Update a comment on a work item. Preview API (api-version 7.1-preview.4). Token scope: vso.work_write. |
 | `wit.commentsReactions.create` | `azuredevops.api.wit.commentsReactions.create` | `write` | Adds a new reaction to a comment. Preview API (api-version 7.1-preview.1). Token scope: vso.work_write. |
 | `wit.commentsReactions.delete` | `azuredevops.api.wit.commentsReactions.delete` | `destructive` | Deletes an existing reaction on a comment. Preview API (api-version 7.1-preview.1). Token scope: vso.work_write. Cannot be undone. |
 | `wit.commentsReactions.list` | `azuredevops.api.wit.commentsReactions.list` | `read` | Gets reactions of a comment. Preview API (api-version 7.1-preview.1). Token scope: vso.work. |
@@ -911,9 +965,11 @@ pnpm add @corsair-dev/azuredevops
 | `wit.queries.get` | `azuredevops.api.wit.queries.get` | `read` | Retrieves an individual query and its children. Token scope: vso.work. |
 | `wit.queries.getQueriesBatch` | `azuredevops.api.wit.queries.getQueriesBatch` | `read` | Gets a list of queries by ids (Maximum 1000) Token scope: vso.work. |
 | `wit.queries.list` | `azuredevops.api.wit.queries.list` | `read` | Gets the root queries and their children. Token scope: vso.work. |
+| `wit.queries.searchQueries` | `azuredevops.api.wit.queries.searchQueries` | `read` | Searches all queries the user has access to in the current project. Token scope: vso.work. |
 | `wit.queries.update` | `azuredevops.api.wit.queries.update` | `write` | Update a query or a folder. This allows you to update, rename and move queries and folders. Token scope: vso.work_write. |
 | `wit.recyclebin.destroyWorkItem` | `azuredevops.api.wit.recyclebin.destroyWorkItem` | `destructive` | Destroys the specified work item permanently from the Recycle Bin. This action can not be undone. Token scope: vso.work_write. Cannot be undone. |
 | `wit.recyclebin.get` | `azuredevops.api.wit.recyclebin.get` | `read` | Gets a deleted work item from Recycle Bin. Token scope: vso.work. |
+| `wit.recyclebin.getDeletedWorkItems` | `azuredevops.api.wit.recyclebin.getDeletedWorkItems` | `read` | Gets the work items from the recycle bin, whose IDs have been specified in the parameters. Token scope: vso.work. |
 | `wit.recyclebin.getDeletedWorkItemShallowReferences` | `azuredevops.api.wit.recyclebin.getDeletedWorkItemShallowReferences` | `read` | Gets a list of the IDs and the URLs of the deleted the work items in the Recycle Bin. Token scope: vso.work. |
 | `wit.recyclebin.restoreWorkItem` | `azuredevops.api.wit.recyclebin.restoreWorkItem` | `destructive` | Restores the deleted work item from Recycle Bin. Token scope: vso.work_write. |
 | `wit.reportingWorkItemLinks.get` | `azuredevops.api.wit.reportingWorkItemLinks.get` | `read` | Get a batch of work item links. Token scope: vso.work. |

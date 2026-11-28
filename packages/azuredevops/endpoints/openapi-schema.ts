@@ -585,6 +585,8 @@ export type AzureDevopsInputField = {
 	join?: string;
 	/** A path value that may hold slashes (a file path): each segment is encoded on its own. */
 	slashes?: boolean;
+	/** A route segment the vendor marks optional: left out of the route when the value is not given. */
+	optionalSegment?: boolean;
 };
 
 const fieldCache = new Map<string, readonly AzureDevopsInputField[]>();
@@ -619,6 +621,9 @@ export function azuredevopsInputFields(
 				? { join: record['x-corsair-join'] }
 				: {}),
 			...(record['x-corsair-slashes'] === true ? { slashes: true } : {}),
+			...(record['x-corsair-optional-segment'] === true
+				? { optionalSegment: true }
+				: {}),
 		};
 	});
 	fieldCache.set(id, fields);

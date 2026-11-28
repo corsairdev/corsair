@@ -12,7 +12,7 @@ import {
 import { AZUREDEVOPS_OPERATION_IDS } from './endpoints/operation-types';
 
 const ids = azuredevopsOperations.map((operation) => operation.id);
-const OPERATION_COUNT = 1002;
+const OPERATION_COUNT = 1058;
 
 describe('azuredevops-manifest.json', () => {
 	it('matches the manifest schema', () => {
@@ -22,14 +22,16 @@ describe('azuredevops-manifest.json', () => {
 		).toEqual([]);
 	});
 
-	it(`has ${OPERATION_COUNT} operations, one per id and route`, () => {
+	it(`has ${OPERATION_COUNT} operations, one per id`, () => {
 		expect(ids).toHaveLength(OPERATION_COUNT);
 		expect(new Set(ids).size).toBe(OPERATION_COUNT);
 		expect([...AZUREDEVOPS_OPERATION_IDS].sort()).toEqual([...ids].sort());
+		// 56 routes carry two operations that differ by their query (Get Agent
+		// Pools and Get Agent Pools By Ids, Get Release and Get Release Revision).
 		const routes = new Set(
 			azuredevopsOperations.map((o) => `${o.method} ${o.path}`),
 		);
-		expect(routes.size).toBe(OPERATION_COUNT);
+		expect(routes.size).toBe(1002);
 	});
 
 	it('resolves every schema reference', () => {
@@ -65,7 +67,12 @@ describe('azuredevops-manifest.json', () => {
 				(operation.input.required as string[] | undefined) ?? [],
 			);
 			for (const [name, schema] of Object.entries(properties)) {
-				if (schema['x-corsair-in'] === 'path' && !required.has(name)) {
+				// A segment the vendor marks optional is the one exception.
+				if (
+					schema['x-corsair-in'] === 'path' &&
+					schema['x-corsair-optional-segment'] !== true &&
+					!required.has(name)
+				) {
 					loose.push(`${operation.id}.${name}`);
 				}
 			}

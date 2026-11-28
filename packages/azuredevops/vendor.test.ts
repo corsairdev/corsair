@@ -137,6 +137,47 @@ describe('requests', () => {
 		);
 	});
 
+	it('creates a classification node under the root, and keeps a nested path whole', async () => {
+		reply(200, { id: 7, name: 'Frontend' });
+		await api.wit.classificationNodes.createOrUpdate(ctx(), {
+			project: 'Fabrikam-Fiber',
+			structureGroup: 'areas',
+			name: 'Frontend',
+		});
+		expect(new URL(calls[0]?.url ?? '').pathname).toBe(
+			'/fabrikam/Fabrikam-Fiber/_apis/wit/classificationnodes/areas',
+		);
+		reply(200, { id: 8, name: 'Widgets' });
+		await api.wit.classificationNodes.get(ctx(), {
+			project: 'Fabrikam-Fiber',
+			structureGroup: 'areas',
+			path: 'Web/Frontend',
+		});
+		expect(new URL(calls[1]?.url ?? '').pathname).toBe(
+			'/fabrikam/Fabrikam-Fiber/_apis/wit/classificationnodes/areas/Web/Frontend',
+		);
+		await expect(
+			api.wit.classificationNodes.get(ctx(), {
+				project: 'Fabrikam-Fiber',
+				structureGroup: 'areas',
+				path: 'Web/../../keys',
+			}),
+		).rejects.toThrow();
+	});
+
+	it('leaves out optional segments: an organization feed, the default team', async () => {
+		reply(200, { count: 0, value: [] });
+		await api.artifacts.feedManagement.getFeeds(ctx(), {});
+		expect(new URL(calls[0]?.url ?? '').pathname).toBe(
+			'/fabrikam/_apis/packaging/feeds',
+		);
+		reply(200, { count: 0, value: [] });
+		await api.work.iterations.list(ctx(), { project: 'Fabrikam-Fiber' });
+		expect(new URL(calls[1]?.url ?? '').pathname).toBe(
+			'/fabrikam/Fabrikam-Fiber/_apis/work/teamsettings/iterations',
+		);
+	});
+
 	it('sends an Entra access token as a bearer token', async () => {
 		reply(200, { count: 0, value: [] });
 		const jwt = 'eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ4In0.c2lnbmF0dXJl';
@@ -176,6 +217,67 @@ describe('requests', () => {
 		expect(new URL(calls[0]?.url ?? '').searchParams.get('$top')).toBe('1');
 	});
 
+	it("returns a wiki page's ETag and sends it back as If-Match", async () => {
+		reply(200, { id: 3, path: '/Home', content: '# Home' }, { etag: '"v1"' });
+		const page = await api.wiki.pages.getPageById(ctx(), {
+			project: 'Fabrikam-Fiber',
+			wikiIdentifier: 'Fabrikam-Fiber.wiki',
+			id: 3,
+			includeContent: true,
+		});
+		expect(page).toMatchObject({ id: 3, eTag: '"v1"' });
+		reply(200, { id: 3, path: '/Home' }, { etag: '"v2"' });
+		const edited = await api.wiki.pages.update(ctx(), {
+			project: 'Fabrikam-Fiber',
+			wikiIdentifier: 'Fabrikam-Fiber.wiki',
+			id: 3,
+			ifMatch: '"v1"',
+			content: '# Home, edited',
+		});
+		expect(edited).toMatchObject({ eTag: '"v2"' });
+		expect(calls[1]?.method).toBe('PATCH');
+		expect(calls[1]?.headers.get('if-match')).toBe('"v1"');
+		expect(calls[1]?.headers.get('content-type')).toContain('application/json');
+		expect(JSON.parse(String(calls[1]?.body))).toEqual({
+			content: '# Home, edited',
+		});
+	});
+
+	it('uploads a wiki attachment as base64 text', async () => {
+		reply(201, { name: 'notes.txt', path: '/.attachments/notes.txt' });
+		await api.wiki.attachments.create(ctx(), {
+			project: 'Fabrikam-Fiber',
+			wikiIdentifier: 'Fabrikam-Fiber.wiki',
+			name: 'notes.txt',
+			file: { base64: 'SGVsbG8=', filename: 'notes.txt' },
+		});
+		const sent = calls[0]?.body;
+		const text =
+			typeof sent === 'string'
+				? sent
+				: new TextDecoder().decode(
+						sent instanceof Blob
+							? new Uint8Array(await sent.arrayBuffer())
+							: (sent as Uint8Array),
+					);
+		expect(text).toBe('SGVsbG8=');
+	});
+
+	it("renames a release folder: the route's path is the old one, the body's the new one", async () => {
+		reply(200, { path: '\\Web\\Nightly' });
+		await api.release.folders.update(ctx(), {
+			project: 'Fabrikam-Fiber',
+			path: '\\Web\\Daily',
+			bodyPath: '\\Web\\Nightly',
+		});
+		expect(decodeURIComponent(new URL(calls[0]?.url ?? '').pathname)).toBe(
+			'/fabrikam/Fabrikam-Fiber/_apis/release/folders/\\Web\\Daily',
+		);
+		expect(JSON.parse(String(calls[0]?.body))).toEqual({
+			path: '\\Web\\Nightly',
+		});
+	});
+
 	it('sends a work item as a JSON Patch list', async () => {
 		reply(200, {
 			id: 1,
@@ -208,6 +310,47 @@ describe('requests', () => {
 			.catch((e: unknown) => e as Error);
 		expect(String(error)).toMatch(/Azure DevOps 401/);
 		expect(String(error)).not.toContain(PAT);
+	});
+
+	it('reads the reason from a { count, value: { Message } } error body', async () => {
+		reply(400, {
+			count: 1,
+			value: {
+				Message:
+					'The KeepForever flag has been deprecated in favor of retention leases.',
+			},
+		});
+		const error = await api.build.builds
+			.updateBuild(ctx(), {
+				project: 'Fabrikam-Fiber',
+				buildId: 391,
+				retainedByRelease: true,
+			})
+			.catch((e: unknown) => e as Error);
+		expect(String(error)).toContain(
+			'Azure DevOps 400: The KeepForever flag has been deprecated',
+		);
+	});
+
+	it('asks a download route for the type it documents', async () => {
+		jest.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
+			calls.push({
+				url: String(input),
+				method: init?.method ?? 'GET',
+				headers: new Headers(init?.headers),
+				body: init?.body,
+			});
+			return new Response(new Uint8Array([80, 75, 3, 4]), {
+				status: 200,
+				headers: { 'content-type': 'application/zip' },
+			});
+		});
+		await api.git.blobs.getBlobsZip(ctx(), {
+			project: 'Fabrikam-Fiber',
+			repositoryId: 'fabrikam-web',
+			body: ['7ae0a1b5c3f7a9c0d2b3e4f5a6b7c8d9e0f1a2b3'],
+		});
+		expect(calls[0]?.headers.get('accept')).toBe('application/zip');
 	});
 });
 

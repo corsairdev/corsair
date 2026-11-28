@@ -1,7 +1,7 @@
 ---
 title: "Azure DevOps plugin"
 sidebarTitle: "Overview"
-description: "Azure DevOps Services: repositories, pull requests, work items, builds, pipelines, releases, artifacts, test plans, wikis, users and permissions (1002 operations)."
+description: "Azure DevOps Services: repositories, pull requests, work items, builds, pipelines, releases, artifacts, test plans, wikis, users and permissions (1058 operations)."
 ---
 
 Use **Azure DevOps** through Corsair: one client, typed API calls.
@@ -13,11 +13,14 @@ Create a personal access token in Azure DevOps (User settings &gt; Personal acce
 - **Work items** are created and updated with a JSON Patch list in `body`: `[{ "op": "add", "path": "/fields/System.Title", "value": "..." }]`.
 - **Paging.** List routes that page with a continuation token return `{ items, nextCursor }`; pass `nextCursor` back as `continuationToken`. Others take `$top` and `$skip`.
 - **What costs money or acts.** Queuing builds and running pipelines use pipeline minutes; adding users or raising access levels can add paid licences; completing a pull request merges it; service connections hold credentials. These and every delete are `destructive`.
-- **New organizations.** Creating an organization now asks for an Azure subscription (seen 2026-11-28), and an Azure free account needs a card and a phone number.
+- **Optional segments.** Where Microsoft's route leaves a segment optional, so does the plugin: leave out `project` for an organization-scoped feed or a Git route across projects, `team` for the project's default team, `path` for the area or iteration root (pass `Parent/Child` for a nested node), `timelineId` for a build's main timeline.
+- **New organizations.** Creating an organization now asks for an Azure subscription (seen 2026-11-28), and an Azure free account needs a card and a phone number. A new organization has classic build and release pipelines turned off: classic definitions, task groups and deployment groups answer 400 "classic pipelines are disabled" until an admin turns them on. Creating test plans needs the Basic + Test Plans access level (403 without it).
+- **Records you can't delete.** Test settings answer "in use" to every delete, exploratory test sessions and permissions reports have no delete route, and a team's last dashboard can't be deleted (VS402433).
+- **Not-found as 500.** Some areas (agent clouds, build controllers and templates, security role scopes, hooks, test attachments) answer a missing record with a 500 that says so; reads are retried twice first.
 
 **What you get:**
 
-- 1002 typed API operations
+- 1058 typed API operations
 
 ## Setup
 

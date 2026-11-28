@@ -226,7 +226,7 @@ export function withoutRequestData(
 			.map((text) => ({ text, wholeWord: text.length < WHOLE_WORD_BELOW })),
 		...sentStrings(error.request),
 	].sort((a, b) => b.text.length - a.text.length);
-	const body = scrubSent(withoutEchoedValues(error.body), sent);
+	const body = scrubSent(withoutEchoedValues(unwrapped(error.body)), sent);
 	const message = azuredevopsErrorMessage(error.status, error.statusText, body);
 	return new ApiError(
 		{
@@ -260,7 +260,12 @@ function textOf(value: unknown): string | undefined {
 	if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
 		// `unknown` because the nested error object's fields are narrowed one by one.
 		const inner = value as Record<string, unknown>;
-		return textOf(inner.message) ?? textOf(inner.msg) ?? textOf(inner.detail);
+		return (
+			textOf(inner.message) ??
+			textOf(inner.Message) ??
+			textOf(inner.msg) ??
+			textOf(inner.detail)
+		);
 	}
 	if (Array.isArray(value)) {
 		const parts = value
@@ -307,7 +312,8 @@ export function azuredevopsErrorMessage(
 		textOf(fields.error) ??
 		textOf(fields.detail) ??
 		textOf(fields.errors) ??
-		textOf(fields.details);
+		textOf(fields.details) ??
+		textOf(fields.Message);
 	if (!reason && typeof body === 'string') {
 		const text = body.trim();
 		if (text.length > 0 && !text.startsWith('<')) reason = text;
@@ -478,6 +484,26 @@ export function withoutQuery(url: string): string {
 	return mark === -1 ? url : `${url.slice(0, mark)}?${REDACTED}`;
 }
 
+/**
+ * Some .NET services send an error inside a collection wrapper,
+ * `{ count: 1, value: { Message } }`. The wrapper goes before echoed values
+ * are dropped, or the reason would go with it.
+ */
+// `unknown` because the error body is untrusted provider JSON.
+function unwrapped(body: unknown): unknown {
+	if (typeof body !== 'object' || body === null || Array.isArray(body)) {
+		return body;
+	}
+	const fields = body as Record<string, unknown>;
+	const inner = fields.value;
+	return typeof fields.count === 'number' &&
+		typeof inner === 'object' &&
+		inner !== null &&
+		!Array.isArray(inner)
+		? inner
+		: body;
+}
+
 /** Fields an error body may use to echo back what was sent. */
 const ECHO_KEYS = new Set(['value', 'values', 'input', 'received', 'params']);
 
@@ -566,11 +592,33 @@ export async function makeAzureDevopsHeaderPagedRequest(
 	options: AzureDevopsRequest,
 	header: string,
 ): Promise<AzureDevopsHeaderPage> {
+	if (options.method !== 'GET' || options.body !== undefined) {
+		throw new Error('Azure DevOps header paging is for GET routes only');
+	}
+	return makeAzureDevopsHeaderRequest(ctx, options, header);
+}
+
+/**
+ * A call whose answer is the body plus one response header (an `ETag` that
+ * the next write sends back as `If-Match`). Sent like the header-paged GET
+ * above, with a JSON body when the route takes one.
+ */
+export async function makeAzureDevopsHeaderRequest(
+	ctx: AzureDevopsCallContext,
+	options: AzureDevopsRequest,
+	header: string,
+): Promise<AzureDevopsHeaderPage> {
 	if (!ctx.key) {
 		throw new AuthMissingError('azuredevops', 'api_key');
 	}
-	if (options.method !== 'GET' || options.body !== undefined) {
-		throw new Error('Azure DevOps header paging is for GET routes only');
+	const sent = options.body;
+	if (
+		sent !== undefined &&
+		(sent instanceof Uint8Array ||
+			(typeof Blob !== 'undefined' && sent instanceof Blob) ||
+			(typeof FormData !== 'undefined' && sent instanceof FormData))
+	) {
+		throw new Error('Azure DevOps header calls send JSON bodies only');
 	}
 	const target = await resolveAzureDevopsTarget(ctx, options.host);
 	const base = target.base;
@@ -585,7 +633,7 @@ export async function makeAzureDevopsHeaderPagedRequest(
 		query: { ...options.query, ...target.query },
 	});
 	const requestOptions: ApiRequestOptions = {
-		method: 'GET',
+		method: options.method,
 		url: options.path,
 		path: options.pathParameters,
 		query: options.query,
@@ -596,8 +644,15 @@ export async function makeAzureDevopsHeaderPagedRequest(
 		: AZUREDEVOPS_RATE_LIMIT_CONFIG.maxRetries;
 	for (let attempt = 1; ; attempt++) {
 		const response = await fetch(url, {
-			method: 'GET',
-			headers: { ...config.HEADERS, ...options.headers },
+			method: options.method,
+			headers: {
+				...config.HEADERS,
+				...(sent === undefined
+					? {}
+					: { 'Content-Type': mediaTypeFor(options) ?? 'application/json' }),
+				...options.headers,
+			},
+			...(sent === undefined ? {} : { body: JSON.stringify(sent) }),
 			signal: AbortSignal.timeout(config.TIMEOUT),
 		});
 		const retryAfter = retryAfterMs(response.headers.get('retry-after'));

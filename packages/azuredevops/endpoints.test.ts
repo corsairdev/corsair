@@ -165,10 +165,13 @@ describe('every operation', () => {
 				Record<string, unknown>
 			>;
 			const byWire = new Map(
-				Object.entries(properties).map(([name, schema]) => [
-					(schema['x-corsair-name'] as string | undefined) ?? name,
-					name,
-				]),
+				Object.entries(properties)
+					// A body field may share a path parameter's wire name (a folder's new path).
+					.filter(([, schema]) => schema['x-corsair-in'] === 'path')
+					.map(([name, schema]) => [
+						(schema['x-corsair-name'] as string | undefined) ?? name,
+						name,
+					]),
 			);
 			const route = operation.path.replace(/\{(\w+)\}/g, (_, wire: string) =>
 				encodeURIComponent(String(args[byWire.get(wire) ?? wire])),

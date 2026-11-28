@@ -46,6 +46,8 @@ const OperationSchema = z
 		timeoutMs: z.number().int().positive().optional(),
 		/** A larger upload limit than the plugin's default, where the vendor documents one. */
 		maxUploadBytes: z.number().int().positive().optional(),
+		/** A raw upload the vendor reads as base64 text, not bytes (Azure DevOps wiki attachments). */
+		base64Body: z.literal(true).optional(),
 		/** A route whose 429 means a daily quota is spent: sent once, never retried. */
 		singleAttempt: z.literal(true).optional(),
 		/**
@@ -55,6 +57,14 @@ const OperationSchema = z
 		 */
 		headerCursor: z
 			.object({ header: z.string(), items: z.string(), input: z.string() })
+			.strict()
+			.optional(),
+		/**
+		 * A route whose answer also carries a response header the caller needs
+		 * (a page's `ETag`, sent back as `If-Match`): it comes back as `field`.
+		 */
+		responseHeader: z
+			.object({ header: z.string(), field: z.string() })
 			.strict()
 			.optional(),
 		/** Query values every call sends (an API version the route is documented at). */

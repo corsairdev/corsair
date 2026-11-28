@@ -308,6 +308,8 @@ export const azuredevopsEndpointsNested = {
 	build: {
 		artifacts: {
 			create: op('build.artifacts.create'),
+			getArtifact: op('build.artifacts.getArtifact'),
+			getFile: op('build.artifacts.getFile'),
 			list: op('build.artifacts.list'),
 		},
 		attachments: {
@@ -378,6 +380,10 @@ export const azuredevopsEndpointsNested = {
 			getRetentionLeasesByMinimalRetentionLeases: op(
 				'build.leases.getRetentionLeasesByMinimalRetentionLeases',
 			),
+			getRetentionLeasesByOwnerId: op(
+				'build.leases.getRetentionLeasesByOwnerId',
+			),
+			getRetentionLeasesByUserId: op('build.leases.getRetentionLeasesByUserId'),
 			update: op('build.leases.update'),
 		},
 		metrics: {
@@ -529,6 +535,7 @@ export const azuredevopsEndpointsNested = {
 		agents: {
 			add: op('distributedTask.agents.add'),
 			delete: op('distributedTask.agents.delete'),
+			getAgent: op('distributedTask.agents.getAgent'),
 			getPoolPermission: op('distributedTask.agents.getPoolPermission'),
 			list: op('distributedTask.agents.list'),
 			replaceAgent: op('distributedTask.agents.replaceAgent'),
@@ -583,6 +590,7 @@ export const azuredevopsEndpointsNested = {
 			add: op('distributedTask.pools.add'),
 			delete: op('distributedTask.pools.delete'),
 			get: op('distributedTask.pools.get'),
+			getAgentPools: op('distributedTask.pools.getAgentPools'),
 			getAgentPoolsByIds: op('distributedTask.pools.getAgentPoolsByIds'),
 			update: op('distributedTask.pools.update'),
 		},
@@ -590,6 +598,9 @@ export const azuredevopsEndpointsNested = {
 			add: op('distributedTask.queues.add'),
 			delete: op('distributedTask.queues.delete'),
 			get: op('distributedTask.queues.get'),
+			getAgentQueues: op('distributedTask.queues.getAgentQueues'),
+			getAgentQueuesByIds: op('distributedTask.queues.getAgentQueuesByIds'),
+			getAgentQueuesByNames: op('distributedTask.queues.getAgentQueuesByNames'),
 			getAgentQueuesForPools: op(
 				'distributedTask.queues.getAgentQueuesForPools',
 			),
@@ -616,6 +627,7 @@ export const azuredevopsEndpointsNested = {
 			add: op('distributedTask.variablegroups.add'),
 			delete: op('distributedTask.variablegroups.delete'),
 			get: op('distributedTask.variablegroups.get'),
+			getVariableGroups: op('distributedTask.variablegroups.getVariableGroups'),
 			getVariableGroupsById: op(
 				'distributedTask.variablegroups.getVariableGroupsById',
 			),
@@ -644,9 +656,16 @@ export const azuredevopsEndpointsNested = {
 	favorite: {
 		favorites: {
 			createFavorite: op('favorite.favorites.createFavorite'),
+			createFavoriteOfOwner: op('favorite.favorites.createFavoriteOfOwner'),
 			deleteFavoriteById: op('favorite.favorites.deleteFavoriteById'),
+			deleteFavoriteOfOwnerById: op(
+				'favorite.favorites.deleteFavoriteOfOwnerById',
+			),
+			getFavoriteByArtifact: op('favorite.favorites.getFavoriteByArtifact'),
 			getFavoriteById: op('favorite.favorites.getFavoriteById'),
+			getFavoriteOfOwnerById: op('favorite.favorites.getFavoriteOfOwnerById'),
 			getFavorites: op('favorite.favorites.getFavorites'),
+			getFavoritesOfOwner: op('favorite.favorites.getFavoritesOfOwner'),
 		},
 	},
 	git: {
@@ -666,6 +685,7 @@ export const azuredevopsEndpointsNested = {
 		commits: {
 			get: op('git.commits.get'),
 			getChanges: op('git.commits.getChanges'),
+			getCommits: op('git.commits.getCommits'),
 			getCommitsBatch: op('git.commits.getCommitsBatch'),
 			getPushCommits: op('git.commits.getPushCommits'),
 		},
@@ -685,6 +705,7 @@ export const azuredevopsEndpointsNested = {
 			update: op('git.importRequests.update'),
 		},
 		items: {
+			get: op('git.items.get'),
 			getItemsBatch: op('git.items.getItemsBatch'),
 			list: op('git.items.list'),
 		},
@@ -823,6 +844,7 @@ export const azuredevopsEndpointsNested = {
 				'git.repositories.getRecycleBinRepositories',
 			),
 			getRepository: op('git.repositories.getRepository'),
+			getRepositoryWithParent: op('git.repositories.getRepositoryWithParent'),
 			list: op('git.repositories.list'),
 			restoreRepositoryFromRecycleBin: op(
 				'git.repositories.restoreRepositoryFromRecycleBin',
@@ -835,6 +857,7 @@ export const azuredevopsEndpointsNested = {
 			getRevertForRefName: op('git.reverts.getRevertForRefName'),
 		},
 		stats: {
+			get: op('git.stats.get'),
 			list: op('git.stats.list'),
 		},
 		statuses: {
@@ -1090,6 +1113,7 @@ export const azuredevopsEndpointsNested = {
 	},
 	processadmin: {
 		behaviors: {
+			get: op('processadmin.behaviors.get'),
 			list: op('processadmin.behaviors.list'),
 		},
 		processes: {
@@ -1123,6 +1147,7 @@ export const azuredevopsEndpointsNested = {
 		},
 		groups: {
 			add: op('processes.groups.add'),
+			moveGroupToPage: op('processes.groups.moveGroupToPage'),
 			moveGroupToSection: op('processes.groups.moveGroupToSection'),
 			removeGroup: op('processes.groups.removeGroup'),
 			update: op('processes.groups.update'),
@@ -1239,6 +1264,7 @@ export const azuredevopsEndpointsNested = {
 		releases: {
 			create: op('release.releases.create'),
 			getLogs: op('release.releases.getLogs'),
+			getRelease: op('release.releases.getRelease'),
 			getReleaseEnvironment: op('release.releases.getReleaseEnvironment'),
 			getReleaseRevision: op('release.releases.getReleaseRevision'),
 			getTaskLog: op('release.releases.getTaskLog'),
@@ -1305,6 +1331,7 @@ export const azuredevopsEndpointsNested = {
 	},
 	securityRoles: {
 		roleassignments: {
+			changeInheritance: op('securityRoles.roleassignments.changeInheritance'),
 			list: op('securityRoles.roleassignments.list'),
 			removeRoleAssignment: op(
 				'securityRoles.roleassignments.removeRoleAssignment',
@@ -1323,12 +1350,16 @@ export const azuredevopsEndpointsNested = {
 	},
 	serviceEndpoint: {
 		endpointproxy: {
+			executeServiceEndpointRequest: op(
+				'serviceEndpoint.endpointproxy.executeServiceEndpointRequest',
+			),
 			query: op('serviceEndpoint.endpointproxy.query'),
 		},
 		endpoints: {
 			create: op('serviceEndpoint.endpoints.create'),
 			delete: op('serviceEndpoint.endpoints.delete'),
 			get: op('serviceEndpoint.endpoints.get'),
+			getServiceEndpoints: op('serviceEndpoint.endpoints.getServiceEndpoints'),
 			getServiceEndpointsByNames: op(
 				'serviceEndpoint.endpoints.getServiceEndpointsByNames',
 			),
@@ -1372,6 +1403,9 @@ export const azuredevopsEndpointsNested = {
 			createRequestsRequestIdDebugEntries: op(
 				'symbol.requests.createRequestsRequestIdDebugEntries',
 			),
+			createRequestsRequestNameDebugEntries: op(
+				'symbol.requests.createRequestsRequestNameDebugEntries',
+			),
 			deleteRequestsRequestId: op('symbol.requests.deleteRequestsRequestId'),
 			deleteRequestsRequestName: op(
 				'symbol.requests.deleteRequestsRequestName',
@@ -1393,12 +1427,21 @@ export const azuredevopsEndpointsNested = {
 				'test.attachments.createTestResultAttachment',
 			),
 			createTestRunAttachment: op('test.attachments.createTestRunAttachment'),
+			createTestSubResultAttachment: op(
+				'test.attachments.createTestSubResultAttachment',
+			),
 			getTestResultAttachmentZip: op(
 				'test.attachments.getTestResultAttachmentZip',
 			),
 			getTestResultAttachments: op('test.attachments.getTestResultAttachments'),
 			getTestRunAttachmentZip: op('test.attachments.getTestRunAttachmentZip'),
 			getTestRunAttachments: op('test.attachments.getTestRunAttachments'),
+			getTestSubResultAttachmentZip: op(
+				'test.attachments.getTestSubResultAttachmentZip',
+			),
+			getTestSubResultAttachments: op(
+				'test.attachments.getTestSubResultAttachments',
+			),
 		},
 		codeCoverage: {
 			getBuildCodeCoverage: op('test.codeCoverage.getBuildCodeCoverage'),
@@ -1430,6 +1473,7 @@ export const azuredevopsEndpointsNested = {
 			getTestRunById: op('test.runs.getTestRunById'),
 			getTestRunStatistics: op('test.runs.getTestRunStatistics'),
 			list: op('test.runs.list'),
+			query: op('test.runs.query'),
 			update: op('test.runs.update'),
 		},
 		session: {
@@ -1465,6 +1509,9 @@ export const azuredevopsEndpointsNested = {
 			add: op('testPlan.suiteTestCase.add'),
 			getTestCase: op('testPlan.suiteTestCase.getTestCase'),
 			getTestCaseList: op('testPlan.suiteTestCase.getTestCaseList'),
+			removeTestCasesFromSuite: op(
+				'testPlan.suiteTestCase.removeTestCasesFromSuite',
+			),
 			removeTestCasesListFromSuite: op(
 				'testPlan.suiteTestCase.removeTestCasesListFromSuite',
 			),
@@ -1490,6 +1537,7 @@ export const azuredevopsEndpointsNested = {
 		},
 		testPoint: {
 			getPoints: op('testPlan.testPoint.getPoints'),
+			getPointsList: op('testPlan.testPoint.getPointsList'),
 			update: op('testPlan.testPoint.update'),
 		},
 		testSuiteClone: {
@@ -1518,17 +1566,26 @@ export const azuredevopsEndpointsNested = {
 	},
 	testResults: {
 		attachments: {
+			createTestIterationResultAttachment: op(
+				'testResults.attachments.createTestIterationResultAttachment',
+			),
 			createTestResultAttachment: op(
 				'testResults.attachments.createTestResultAttachment',
 			),
 			createTestRunAttachment: op(
 				'testResults.attachments.createTestRunAttachment',
 			),
+			createTestSubResultAttachment: op(
+				'testResults.attachments.createTestSubResultAttachment',
+			),
 			deleteTestResultAttachment: op(
 				'testResults.attachments.deleteTestResultAttachment',
 			),
 			deleteTestRunAttachment: op(
 				'testResults.attachments.deleteTestRunAttachment',
+			),
+			getTestIterationAttachmentZip: op(
+				'testResults.attachments.getTestIterationAttachmentZip',
 			),
 			getTestResultAttachmentZip: op(
 				'testResults.attachments.getTestResultAttachmentZip',
@@ -1542,12 +1599,19 @@ export const azuredevopsEndpointsNested = {
 			getTestRunAttachments: op(
 				'testResults.attachments.getTestRunAttachments',
 			),
+			getTestSubResultAttachmentZip: op(
+				'testResults.attachments.getTestSubResultAttachmentZip',
+			),
+			getTestSubResultAttachments: op(
+				'testResults.attachments.getTestSubResultAttachments',
+			),
 		},
 		bugs: {
 			list: op('testResults.bugs.list'),
 		},
 		codecoverage: {
 			get: op('testResults.codecoverage.get'),
+			getBuildCodeCoverage: op('testResults.codecoverage.getBuildCodeCoverage'),
 			getTestRunCodeCoverage: op(
 				'testResults.codecoverage.getTestRunCodeCoverage',
 			),
@@ -1638,6 +1702,7 @@ export const azuredevopsEndpointsNested = {
 			delete: op('testResults.runs.delete'),
 			get: op('testResults.runs.get'),
 			list: op('testResults.runs.list'),
+			query: op('testResults.runs.query'),
 			update: op('testResults.runs.update'),
 		},
 		runsummary: {
@@ -1658,11 +1723,15 @@ export const azuredevopsEndpointsNested = {
 		},
 		tags: {
 			getTestTagsForBuild: op('testResults.tags.getTestTagsForBuild'),
+			getTestTagsForRelease: op('testResults.tags.getTestTagsForRelease'),
 			update: op('testResults.tags.update'),
 		},
 		tagsummary: {
 			getTestTagSummaryForBuild: op(
 				'testResults.tagsummary.getTestTagSummaryForBuild',
+			),
+			getTestTagSummaryForRelease: op(
+				'testResults.tagsummary.getTestTagSummaryForRelease',
 			),
 		},
 		testHistory: {
@@ -1676,6 +1745,7 @@ export const azuredevopsEndpointsNested = {
 				'testResults.testattachments.createTestRunLogStoreAttachment',
 			),
 			delete: op('testResults.testattachments.delete'),
+			get: op('testResults.testattachments.get'),
 			list: op('testResults.testattachments.list'),
 		},
 		testfailuretype: {
@@ -1687,6 +1757,7 @@ export const azuredevopsEndpointsNested = {
 			getTestLogsForBuild: op('testResults.testlog.getTestLogsForBuild'),
 			getTestResultLogs: op('testResults.testlog.getTestResultLogs'),
 			getTestRunLogs: op('testResults.testlog.getTestRunLogs'),
+			getTestSubResultLogs: op('testResults.testlog.getTestSubResultLogs'),
 		},
 		testlogstoreendpoint: {
 			getTestLogStoreEndpointDetailsForBuildLog: op(
@@ -1697,6 +1768,9 @@ export const azuredevopsEndpointsNested = {
 			),
 			getTestLogStoreEndpointDetailsForRunLog: op(
 				'testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForRunLog',
+			),
+			getTestLogStoreEndpointDetailsForSubResultLog: op(
+				'testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForSubResultLog',
 			),
 			testLogStoreEndpointDetailsForBuild: op(
 				'testResults.testlogstoreendpoint.testLogStoreEndpointDetailsForBuild',
@@ -1717,6 +1791,9 @@ export const azuredevopsEndpointsNested = {
 			add: op('testResults.workitems.add'),
 			delete: op('testResults.workitems.delete'),
 			list: op('testResults.workitems.list'),
+			queryTestMethodLinkedWorkItems: op(
+				'testResults.workitems.queryTestMethodLinkedWorkItems',
+			),
 			queryTestResultWorkItems: op(
 				'testResults.workitems.queryTestResultWorkItems',
 			),
@@ -1724,7 +1801,9 @@ export const azuredevopsEndpointsNested = {
 	},
 	tfvc: {
 		branches: {
+			get: op('tfvc.branches.get'),
 			getBranchRefs: op('tfvc.branches.getBranchRefs'),
+			getBranches: op('tfvc.branches.getBranches'),
 		},
 		changesets: {
 			create: op('tfvc.changesets.create'),
@@ -1735,6 +1814,7 @@ export const azuredevopsEndpointsNested = {
 			getChangesets: op('tfvc.changesets.getChangesets'),
 		},
 		items: {
+			get: op('tfvc.items.get'),
 			getItemsBatch: op('tfvc.items.getItemsBatch'),
 			list: op('tfvc.items.list'),
 		},
@@ -1747,6 +1827,7 @@ export const azuredevopsEndpointsNested = {
 			get: op('tfvc.shelvesets.get'),
 			getShelvesetChanges: op('tfvc.shelvesets.getShelvesetChanges'),
 			getShelvesetWorkItems: op('tfvc.shelvesets.getShelvesetWorkItems'),
+			list: op('tfvc.shelvesets.list'),
 		},
 	},
 	tokenAdmin: {
@@ -1764,6 +1845,7 @@ export const azuredevopsEndpointsNested = {
 		pats: {
 			create: op('tokens.pats.create'),
 			get: op('tokens.pats.get'),
+			list: op('tokens.pats.list'),
 			revoke: op('tokens.pats.revoke'),
 			update: op('tokens.pats.update'),
 		},
@@ -1816,6 +1898,9 @@ export const azuredevopsEndpointsNested = {
 			createOrUpdate: op('wit.classificationNodes.createOrUpdate'),
 			delete: op('wit.classificationNodes.delete'),
 			get: op('wit.classificationNodes.get'),
+			getClassificationNodes: op(
+				'wit.classificationNodes.getClassificationNodes',
+			),
 			getRootNodes: op('wit.classificationNodes.getRootNodes'),
 			update: op('wit.classificationNodes.update'),
 		},
@@ -1824,10 +1909,13 @@ export const azuredevopsEndpointsNested = {
 		},
 		comments: {
 			addComment: op('wit.comments.addComment'),
+			addWorkItemComment: op('wit.comments.addWorkItemComment'),
 			delete: op('wit.comments.delete'),
 			getComment: op('wit.comments.getComment'),
+			getComments: op('wit.comments.getComments'),
 			getCommentsBatch: op('wit.comments.getCommentsBatch'),
 			updateComment: op('wit.comments.updateComment'),
+			updateWorkItemComment: op('wit.comments.updateWorkItemComment'),
 		},
 		commentsReactions: {
 			create: op('wit.commentsReactions.create'),
@@ -1856,6 +1944,7 @@ export const azuredevopsEndpointsNested = {
 			get: op('wit.queries.get'),
 			getQueriesBatch: op('wit.queries.getQueriesBatch'),
 			list: op('wit.queries.list'),
+			searchQueries: op('wit.queries.searchQueries'),
 			update: op('wit.queries.update'),
 		},
 		recyclebin: {
@@ -1864,6 +1953,7 @@ export const azuredevopsEndpointsNested = {
 			getDeletedWorkItemShallowReferences: op(
 				'wit.recyclebin.getDeletedWorkItemShallowReferences',
 			),
+			getDeletedWorkItems: op('wit.recyclebin.getDeletedWorkItems'),
 			restoreWorkItem: op('wit.recyclebin.restoreWorkItem'),
 		},
 		reportingWorkItemLinks: {
@@ -2473,6 +2563,10 @@ export const azuredevopsEndpointSchemas = {
 		'audit.streams.updateStream',
 	),
 	'build.artifacts.create': azuredevopsSchemaEntry('build.artifacts.create'),
+	'build.artifacts.getArtifact': azuredevopsSchemaEntry(
+		'build.artifacts.getArtifact',
+	),
+	'build.artifacts.getFile': azuredevopsSchemaEntry('build.artifacts.getFile'),
 	'build.artifacts.list': azuredevopsSchemaEntry('build.artifacts.list'),
 	'build.attachments.get': azuredevopsSchemaEntry('build.attachments.get'),
 	'build.attachments.list': azuredevopsSchemaEntry('build.attachments.list'),
@@ -2558,6 +2652,12 @@ export const azuredevopsEndpointSchemas = {
 		azuredevopsSchemaEntry(
 			'build.leases.getRetentionLeasesByMinimalRetentionLeases',
 		),
+	'build.leases.getRetentionLeasesByOwnerId': azuredevopsSchemaEntry(
+		'build.leases.getRetentionLeasesByOwnerId',
+	),
+	'build.leases.getRetentionLeasesByUserId': azuredevopsSchemaEntry(
+		'build.leases.getRetentionLeasesByUserId',
+	),
 	'build.leases.update': azuredevopsSchemaEntry('build.leases.update'),
 	'build.metrics.getDefinitionMetrics': azuredevopsSchemaEntry(
 		'build.metrics.getDefinitionMetrics',
@@ -2751,6 +2851,9 @@ export const azuredevopsEndpointSchemas = {
 	'distributedTask.agents.delete': azuredevopsSchemaEntry(
 		'distributedTask.agents.delete',
 	),
+	'distributedTask.agents.getAgent': azuredevopsSchemaEntry(
+		'distributedTask.agents.getAgent',
+	),
 	'distributedTask.agents.getPoolPermission': azuredevopsSchemaEntry(
 		'distributedTask.agents.getPoolPermission',
 	),
@@ -2847,6 +2950,9 @@ export const azuredevopsEndpointSchemas = {
 	'distributedTask.pools.get': azuredevopsSchemaEntry(
 		'distributedTask.pools.get',
 	),
+	'distributedTask.pools.getAgentPools': azuredevopsSchemaEntry(
+		'distributedTask.pools.getAgentPools',
+	),
 	'distributedTask.pools.getAgentPoolsByIds': azuredevopsSchemaEntry(
 		'distributedTask.pools.getAgentPoolsByIds',
 	),
@@ -2861,6 +2967,15 @@ export const azuredevopsEndpointSchemas = {
 	),
 	'distributedTask.queues.get': azuredevopsSchemaEntry(
 		'distributedTask.queues.get',
+	),
+	'distributedTask.queues.getAgentQueues': azuredevopsSchemaEntry(
+		'distributedTask.queues.getAgentQueues',
+	),
+	'distributedTask.queues.getAgentQueuesByIds': azuredevopsSchemaEntry(
+		'distributedTask.queues.getAgentQueuesByIds',
+	),
+	'distributedTask.queues.getAgentQueuesByNames': azuredevopsSchemaEntry(
+		'distributedTask.queues.getAgentQueuesByNames',
 	),
 	'distributedTask.queues.getAgentQueuesForPools': azuredevopsSchemaEntry(
 		'distributedTask.queues.getAgentQueuesForPools',
@@ -2904,6 +3019,9 @@ export const azuredevopsEndpointSchemas = {
 	'distributedTask.variablegroups.get': azuredevopsSchemaEntry(
 		'distributedTask.variablegroups.get',
 	),
+	'distributedTask.variablegroups.getVariableGroups': azuredevopsSchemaEntry(
+		'distributedTask.variablegroups.getVariableGroups',
+	),
 	'distributedTask.variablegroups.getVariableGroupsById':
 		azuredevopsSchemaEntry(
 			'distributedTask.variablegroups.getVariableGroupsById',
@@ -2937,14 +3055,29 @@ export const azuredevopsEndpointSchemas = {
 	'favorite.favorites.createFavorite': azuredevopsSchemaEntry(
 		'favorite.favorites.createFavorite',
 	),
+	'favorite.favorites.createFavoriteOfOwner': azuredevopsSchemaEntry(
+		'favorite.favorites.createFavoriteOfOwner',
+	),
 	'favorite.favorites.deleteFavoriteById': azuredevopsSchemaEntry(
 		'favorite.favorites.deleteFavoriteById',
+	),
+	'favorite.favorites.deleteFavoriteOfOwnerById': azuredevopsSchemaEntry(
+		'favorite.favorites.deleteFavoriteOfOwnerById',
+	),
+	'favorite.favorites.getFavoriteByArtifact': azuredevopsSchemaEntry(
+		'favorite.favorites.getFavoriteByArtifact',
 	),
 	'favorite.favorites.getFavoriteById': azuredevopsSchemaEntry(
 		'favorite.favorites.getFavoriteById',
 	),
+	'favorite.favorites.getFavoriteOfOwnerById': azuredevopsSchemaEntry(
+		'favorite.favorites.getFavoriteOfOwnerById',
+	),
 	'favorite.favorites.getFavorites': azuredevopsSchemaEntry(
 		'favorite.favorites.getFavorites',
+	),
+	'favorite.favorites.getFavoritesOfOwner': azuredevopsSchemaEntry(
+		'favorite.favorites.getFavoritesOfOwner',
 	),
 	'git.annotatedTags.create': azuredevopsSchemaEntry(
 		'git.annotatedTags.create',
@@ -2961,6 +3094,7 @@ export const azuredevopsEndpointSchemas = {
 	),
 	'git.commits.get': azuredevopsSchemaEntry('git.commits.get'),
 	'git.commits.getChanges': azuredevopsSchemaEntry('git.commits.getChanges'),
+	'git.commits.getCommits': azuredevopsSchemaEntry('git.commits.getCommits'),
 	'git.commits.getCommitsBatch': azuredevopsSchemaEntry(
 		'git.commits.getCommitsBatch',
 	),
@@ -2988,6 +3122,7 @@ export const azuredevopsEndpointSchemas = {
 	'git.importRequests.update': azuredevopsSchemaEntry(
 		'git.importRequests.update',
 	),
+	'git.items.get': azuredevopsSchemaEntry('git.items.get'),
 	'git.items.getItemsBatch': azuredevopsSchemaEntry('git.items.getItemsBatch'),
 	'git.items.list': azuredevopsSchemaEntry('git.items.list'),
 	'git.mergeBases.list': azuredevopsSchemaEntry('git.mergeBases.list'),
@@ -3184,6 +3319,9 @@ export const azuredevopsEndpointSchemas = {
 	'git.repositories.getRepository': azuredevopsSchemaEntry(
 		'git.repositories.getRepository',
 	),
+	'git.repositories.getRepositoryWithParent': azuredevopsSchemaEntry(
+		'git.repositories.getRepositoryWithParent',
+	),
 	'git.repositories.list': azuredevopsSchemaEntry('git.repositories.list'),
 	'git.repositories.restoreRepositoryFromRecycleBin': azuredevopsSchemaEntry(
 		'git.repositories.restoreRepositoryFromRecycleBin',
@@ -3194,6 +3332,7 @@ export const azuredevopsEndpointSchemas = {
 	'git.reverts.getRevertForRefName': azuredevopsSchemaEntry(
 		'git.reverts.getRevertForRefName',
 	),
+	'git.stats.get': azuredevopsSchemaEntry('git.stats.get'),
 	'git.stats.list': azuredevopsSchemaEntry('git.stats.list'),
 	'git.statuses.create': azuredevopsSchemaEntry('git.statuses.create'),
 	'git.statuses.list': azuredevopsSchemaEntry('git.statuses.list'),
@@ -3486,6 +3625,9 @@ export const azuredevopsEndpointSchemas = {
 	'policy.revisions.list': azuredevopsSchemaEntry('policy.revisions.list'),
 	'policy.types.get': azuredevopsSchemaEntry('policy.types.get'),
 	'policy.types.list': azuredevopsSchemaEntry('policy.types.list'),
+	'processadmin.behaviors.get': azuredevopsSchemaEntry(
+		'processadmin.behaviors.get',
+	),
 	'processadmin.behaviors.list': azuredevopsSchemaEntry(
 		'processadmin.behaviors.list',
 	),
@@ -3531,6 +3673,9 @@ export const azuredevopsEndpointSchemas = {
 	),
 	'processes.fields.update': azuredevopsSchemaEntry('processes.fields.update'),
 	'processes.groups.add': azuredevopsSchemaEntry('processes.groups.add'),
+	'processes.groups.moveGroupToPage': azuredevopsSchemaEntry(
+		'processes.groups.moveGroupToPage',
+	),
 	'processes.groups.moveGroupToSection': azuredevopsSchemaEntry(
 		'processes.groups.moveGroupToSection',
 	),
@@ -3672,6 +3817,9 @@ export const azuredevopsEndpointSchemas = {
 	'release.releases.getLogs': azuredevopsSchemaEntry(
 		'release.releases.getLogs',
 	),
+	'release.releases.getRelease': azuredevopsSchemaEntry(
+		'release.releases.getRelease',
+	),
 	'release.releases.getReleaseEnvironment': azuredevopsSchemaEntry(
 		'release.releases.getReleaseEnvironment',
 	),
@@ -3737,6 +3885,9 @@ export const azuredevopsEndpointSchemas = {
 	'security.securityNamespaces.query': azuredevopsSchemaEntry(
 		'security.securityNamespaces.query',
 	),
+	'securityRoles.roleassignments.changeInheritance': azuredevopsSchemaEntry(
+		'securityRoles.roleassignments.changeInheritance',
+	),
 	'securityRoles.roleassignments.list': azuredevopsSchemaEntry(
 		'securityRoles.roleassignments.list',
 	),
@@ -3755,6 +3906,10 @@ export const azuredevopsEndpointSchemas = {
 	'securityRoles.roledefinitions.list': azuredevopsSchemaEntry(
 		'securityRoles.roledefinitions.list',
 	),
+	'serviceEndpoint.endpointproxy.executeServiceEndpointRequest':
+		azuredevopsSchemaEntry(
+			'serviceEndpoint.endpointproxy.executeServiceEndpointRequest',
+		),
 	'serviceEndpoint.endpointproxy.query': azuredevopsSchemaEntry(
 		'serviceEndpoint.endpointproxy.query',
 	),
@@ -3766,6 +3921,9 @@ export const azuredevopsEndpointSchemas = {
 	),
 	'serviceEndpoint.endpoints.get': azuredevopsSchemaEntry(
 		'serviceEndpoint.endpoints.get',
+	),
+	'serviceEndpoint.endpoints.getServiceEndpoints': azuredevopsSchemaEntry(
+		'serviceEndpoint.endpoints.getServiceEndpoints',
 	),
 	'serviceEndpoint.endpoints.getServiceEndpointsByNames':
 		azuredevopsSchemaEntry(
@@ -3802,6 +3960,10 @@ export const azuredevopsEndpointSchemas = {
 	'symbol.requests.createRequestsRequestIdDebugEntries': azuredevopsSchemaEntry(
 		'symbol.requests.createRequestsRequestIdDebugEntries',
 	),
+	'symbol.requests.createRequestsRequestNameDebugEntries':
+		azuredevopsSchemaEntry(
+			'symbol.requests.createRequestsRequestNameDebugEntries',
+		),
 	'symbol.requests.deleteRequestsRequestId': azuredevopsSchemaEntry(
 		'symbol.requests.deleteRequestsRequestId',
 	),
@@ -3827,6 +3989,9 @@ export const azuredevopsEndpointSchemas = {
 	'test.attachments.createTestRunAttachment': azuredevopsSchemaEntry(
 		'test.attachments.createTestRunAttachment',
 	),
+	'test.attachments.createTestSubResultAttachment': azuredevopsSchemaEntry(
+		'test.attachments.createTestSubResultAttachment',
+	),
 	'test.attachments.getTestResultAttachmentZip': azuredevopsSchemaEntry(
 		'test.attachments.getTestResultAttachmentZip',
 	),
@@ -3838,6 +4003,12 @@ export const azuredevopsEndpointSchemas = {
 	),
 	'test.attachments.getTestRunAttachments': azuredevopsSchemaEntry(
 		'test.attachments.getTestRunAttachments',
+	),
+	'test.attachments.getTestSubResultAttachmentZip': azuredevopsSchemaEntry(
+		'test.attachments.getTestSubResultAttachmentZip',
+	),
+	'test.attachments.getTestSubResultAttachments': azuredevopsSchemaEntry(
+		'test.attachments.getTestSubResultAttachments',
 	),
 	'test.codeCoverage.getBuildCodeCoverage': azuredevopsSchemaEntry(
 		'test.codeCoverage.getBuildCodeCoverage',
@@ -3872,6 +4043,7 @@ export const azuredevopsEndpointSchemas = {
 		'test.runs.getTestRunStatistics',
 	),
 	'test.runs.list': azuredevopsSchemaEntry('test.runs.list'),
+	'test.runs.query': azuredevopsSchemaEntry('test.runs.query'),
 	'test.runs.update': azuredevopsSchemaEntry('test.runs.update'),
 	'test.session.create': azuredevopsSchemaEntry('test.session.create'),
 	'test.session.list': azuredevopsSchemaEntry('test.session.list'),
@@ -3909,6 +4081,9 @@ export const azuredevopsEndpointSchemas = {
 	'testPlan.suiteTestCase.getTestCaseList': azuredevopsSchemaEntry(
 		'testPlan.suiteTestCase.getTestCaseList',
 	),
+	'testPlan.suiteTestCase.removeTestCasesFromSuite': azuredevopsSchemaEntry(
+		'testPlan.suiteTestCase.removeTestCasesFromSuite',
+	),
 	'testPlan.suiteTestCase.removeTestCasesListFromSuite': azuredevopsSchemaEntry(
 		'testPlan.suiteTestCase.removeTestCasesListFromSuite',
 	),
@@ -3943,6 +4118,9 @@ export const azuredevopsEndpointSchemas = {
 	),
 	'testPlan.testPoint.getPoints': azuredevopsSchemaEntry(
 		'testPlan.testPoint.getPoints',
+	),
+	'testPlan.testPoint.getPointsList': azuredevopsSchemaEntry(
+		'testPlan.testPoint.getPointsList',
 	),
 	'testPlan.testPoint.update': azuredevopsSchemaEntry(
 		'testPlan.testPoint.update',
@@ -3986,18 +4164,30 @@ export const azuredevopsEndpointSchemas = {
 	'testPlan.variables.update': azuredevopsSchemaEntry(
 		'testPlan.variables.update',
 	),
+	'testResults.attachments.createTestIterationResultAttachment':
+		azuredevopsSchemaEntry(
+			'testResults.attachments.createTestIterationResultAttachment',
+		),
 	'testResults.attachments.createTestResultAttachment': azuredevopsSchemaEntry(
 		'testResults.attachments.createTestResultAttachment',
 	),
 	'testResults.attachments.createTestRunAttachment': azuredevopsSchemaEntry(
 		'testResults.attachments.createTestRunAttachment',
 	),
+	'testResults.attachments.createTestSubResultAttachment':
+		azuredevopsSchemaEntry(
+			'testResults.attachments.createTestSubResultAttachment',
+		),
 	'testResults.attachments.deleteTestResultAttachment': azuredevopsSchemaEntry(
 		'testResults.attachments.deleteTestResultAttachment',
 	),
 	'testResults.attachments.deleteTestRunAttachment': azuredevopsSchemaEntry(
 		'testResults.attachments.deleteTestRunAttachment',
 	),
+	'testResults.attachments.getTestIterationAttachmentZip':
+		azuredevopsSchemaEntry(
+			'testResults.attachments.getTestIterationAttachmentZip',
+		),
 	'testResults.attachments.getTestResultAttachmentZip': azuredevopsSchemaEntry(
 		'testResults.attachments.getTestResultAttachmentZip',
 	),
@@ -4010,9 +4200,19 @@ export const azuredevopsEndpointSchemas = {
 	'testResults.attachments.getTestRunAttachments': azuredevopsSchemaEntry(
 		'testResults.attachments.getTestRunAttachments',
 	),
+	'testResults.attachments.getTestSubResultAttachmentZip':
+		azuredevopsSchemaEntry(
+			'testResults.attachments.getTestSubResultAttachmentZip',
+		),
+	'testResults.attachments.getTestSubResultAttachments': azuredevopsSchemaEntry(
+		'testResults.attachments.getTestSubResultAttachments',
+	),
 	'testResults.bugs.list': azuredevopsSchemaEntry('testResults.bugs.list'),
 	'testResults.codecoverage.get': azuredevopsSchemaEntry(
 		'testResults.codecoverage.get',
+	),
+	'testResults.codecoverage.getBuildCodeCoverage': azuredevopsSchemaEntry(
+		'testResults.codecoverage.getBuildCodeCoverage',
 	),
 	'testResults.codecoverage.getTestRunCodeCoverage': azuredevopsSchemaEntry(
 		'testResults.codecoverage.getTestRunCodeCoverage',
@@ -4108,6 +4308,7 @@ export const azuredevopsEndpointSchemas = {
 	'testResults.runs.delete': azuredevopsSchemaEntry('testResults.runs.delete'),
 	'testResults.runs.get': azuredevopsSchemaEntry('testResults.runs.get'),
 	'testResults.runs.list': azuredevopsSchemaEntry('testResults.runs.list'),
+	'testResults.runs.query': azuredevopsSchemaEntry('testResults.runs.query'),
 	'testResults.runs.update': azuredevopsSchemaEntry('testResults.runs.update'),
 	'testResults.runsummary.get': azuredevopsSchemaEntry(
 		'testResults.runsummary.get',
@@ -4128,9 +4329,15 @@ export const azuredevopsEndpointSchemas = {
 	'testResults.tags.getTestTagsForBuild': azuredevopsSchemaEntry(
 		'testResults.tags.getTestTagsForBuild',
 	),
+	'testResults.tags.getTestTagsForRelease': azuredevopsSchemaEntry(
+		'testResults.tags.getTestTagsForRelease',
+	),
 	'testResults.tags.update': azuredevopsSchemaEntry('testResults.tags.update'),
 	'testResults.tagsummary.getTestTagSummaryForBuild': azuredevopsSchemaEntry(
 		'testResults.tagsummary.getTestTagSummaryForBuild',
+	),
+	'testResults.tagsummary.getTestTagSummaryForRelease': azuredevopsSchemaEntry(
+		'testResults.tagsummary.getTestTagSummaryForRelease',
 	),
 	'testResults.testHistory.query': azuredevopsSchemaEntry(
 		'testResults.testHistory.query',
@@ -4145,6 +4352,9 @@ export const azuredevopsEndpointSchemas = {
 		),
 	'testResults.testattachments.delete': azuredevopsSchemaEntry(
 		'testResults.testattachments.delete',
+	),
+	'testResults.testattachments.get': azuredevopsSchemaEntry(
+		'testResults.testattachments.get',
 	),
 	'testResults.testattachments.list': azuredevopsSchemaEntry(
 		'testResults.testattachments.list',
@@ -4167,6 +4377,9 @@ export const azuredevopsEndpointSchemas = {
 	'testResults.testlog.getTestRunLogs': azuredevopsSchemaEntry(
 		'testResults.testlog.getTestRunLogs',
 	),
+	'testResults.testlog.getTestSubResultLogs': azuredevopsSchemaEntry(
+		'testResults.testlog.getTestSubResultLogs',
+	),
 	'testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForBuildLog':
 		azuredevopsSchemaEntry(
 			'testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForBuildLog',
@@ -4178,6 +4391,10 @@ export const azuredevopsEndpointSchemas = {
 	'testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForRunLog':
 		azuredevopsSchemaEntry(
 			'testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForRunLog',
+		),
+	'testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForSubResultLog':
+		azuredevopsSchemaEntry(
+			'testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForSubResultLog',
 		),
 	'testResults.testlogstoreendpoint.testLogStoreEndpointDetailsForBuild':
 		azuredevopsSchemaEntry(
@@ -4209,11 +4426,19 @@ export const azuredevopsEndpointSchemas = {
 	'testResults.workitems.list': azuredevopsSchemaEntry(
 		'testResults.workitems.list',
 	),
+	'testResults.workitems.queryTestMethodLinkedWorkItems':
+		azuredevopsSchemaEntry(
+			'testResults.workitems.queryTestMethodLinkedWorkItems',
+		),
 	'testResults.workitems.queryTestResultWorkItems': azuredevopsSchemaEntry(
 		'testResults.workitems.queryTestResultWorkItems',
 	),
+	'tfvc.branches.get': azuredevopsSchemaEntry('tfvc.branches.get'),
 	'tfvc.branches.getBranchRefs': azuredevopsSchemaEntry(
 		'tfvc.branches.getBranchRefs',
+	),
+	'tfvc.branches.getBranches': azuredevopsSchemaEntry(
+		'tfvc.branches.getBranches',
 	),
 	'tfvc.changesets.create': azuredevopsSchemaEntry('tfvc.changesets.create'),
 	'tfvc.changesets.get': azuredevopsSchemaEntry('tfvc.changesets.get'),
@@ -4229,6 +4454,7 @@ export const azuredevopsEndpointSchemas = {
 	'tfvc.changesets.getChangesets': azuredevopsSchemaEntry(
 		'tfvc.changesets.getChangesets',
 	),
+	'tfvc.items.get': azuredevopsSchemaEntry('tfvc.items.get'),
 	'tfvc.items.getItemsBatch': azuredevopsSchemaEntry(
 		'tfvc.items.getItemsBatch',
 	),
@@ -4245,6 +4471,7 @@ export const azuredevopsEndpointSchemas = {
 	'tfvc.shelvesets.getShelvesetWorkItems': azuredevopsSchemaEntry(
 		'tfvc.shelvesets.getShelvesetWorkItems',
 	),
+	'tfvc.shelvesets.list': azuredevopsSchemaEntry('tfvc.shelvesets.list'),
 	'tokenAdmin.personalAccessTokens.list': azuredevopsSchemaEntry(
 		'tokenAdmin.personalAccessTokens.list',
 	),
@@ -4256,6 +4483,7 @@ export const azuredevopsEndpointSchemas = {
 	),
 	'tokens.pats.create': azuredevopsSchemaEntry('tokens.pats.create'),
 	'tokens.pats.get': azuredevopsSchemaEntry('tokens.pats.get'),
+	'tokens.pats.list': azuredevopsSchemaEntry('tokens.pats.list'),
 	'tokens.pats.revoke': azuredevopsSchemaEntry('tokens.pats.revoke'),
 	'tokens.pats.update': azuredevopsSchemaEntry('tokens.pats.update'),
 	'wiki.attachments.create': azuredevopsSchemaEntry('wiki.attachments.create'),
@@ -4300,6 +4528,9 @@ export const azuredevopsEndpointSchemas = {
 	'wit.classificationNodes.get': azuredevopsSchemaEntry(
 		'wit.classificationNodes.get',
 	),
+	'wit.classificationNodes.getClassificationNodes': azuredevopsSchemaEntry(
+		'wit.classificationNodes.getClassificationNodes',
+	),
 	'wit.classificationNodes.getRootNodes': azuredevopsSchemaEntry(
 		'wit.classificationNodes.getRootNodes',
 	),
@@ -4310,13 +4541,22 @@ export const azuredevopsEndpointSchemas = {
 		'wit.commentReactionsEngagedUsers.list',
 	),
 	'wit.comments.addComment': azuredevopsSchemaEntry('wit.comments.addComment'),
+	'wit.comments.addWorkItemComment': azuredevopsSchemaEntry(
+		'wit.comments.addWorkItemComment',
+	),
 	'wit.comments.delete': azuredevopsSchemaEntry('wit.comments.delete'),
 	'wit.comments.getComment': azuredevopsSchemaEntry('wit.comments.getComment'),
+	'wit.comments.getComments': azuredevopsSchemaEntry(
+		'wit.comments.getComments',
+	),
 	'wit.comments.getCommentsBatch': azuredevopsSchemaEntry(
 		'wit.comments.getCommentsBatch',
 	),
 	'wit.comments.updateComment': azuredevopsSchemaEntry(
 		'wit.comments.updateComment',
+	),
+	'wit.comments.updateWorkItemComment': azuredevopsSchemaEntry(
+		'wit.comments.updateWorkItemComment',
 	),
 	'wit.commentsReactions.create': azuredevopsSchemaEntry(
 		'wit.commentsReactions.create',
@@ -4348,6 +4588,9 @@ export const azuredevopsEndpointSchemas = {
 		'wit.queries.getQueriesBatch',
 	),
 	'wit.queries.list': azuredevopsSchemaEntry('wit.queries.list'),
+	'wit.queries.searchQueries': azuredevopsSchemaEntry(
+		'wit.queries.searchQueries',
+	),
 	'wit.queries.update': azuredevopsSchemaEntry('wit.queries.update'),
 	'wit.recyclebin.destroyWorkItem': azuredevopsSchemaEntry(
 		'wit.recyclebin.destroyWorkItem',
@@ -4355,6 +4598,9 @@ export const azuredevopsEndpointSchemas = {
 	'wit.recyclebin.get': azuredevopsSchemaEntry('wit.recyclebin.get'),
 	'wit.recyclebin.getDeletedWorkItemShallowReferences': azuredevopsSchemaEntry(
 		'wit.recyclebin.getDeletedWorkItemShallowReferences',
+	),
+	'wit.recyclebin.getDeletedWorkItems': azuredevopsSchemaEntry(
+		'wit.recyclebin.getDeletedWorkItems',
 	),
 	'wit.recyclebin.restoreWorkItem': azuredevopsSchemaEntry(
 		'wit.recyclebin.restoreWorkItem',
@@ -5205,6 +5451,15 @@ export const azuredevopsEndpointMeta = {
 		description:
 			'Associates an artifact with a build. Token scope: vso.build_execute.',
 	},
+	'build.artifacts.getArtifact': {
+		riskLevel: 'read',
+		description:
+			'Gets a specific artifact for a build. Token scope: vso.build.',
+	},
+	'build.artifacts.getFile': {
+		riskLevel: 'read',
+		description: 'Gets a file from the build. Token scope: vso.build.',
+	},
 	'build.artifacts.list': {
 		riskLevel: 'read',
 		description: 'Gets all artifacts for a build. Token scope: vso.build.',
@@ -5407,6 +5662,16 @@ export const azuredevopsEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Returns any leases matching the specified MinimalRetentionLeases. Token scope: vso.build.',
+	},
+	'build.leases.getRetentionLeasesByOwnerId': {
+		riskLevel: 'read',
+		description:
+			'Returns any leases owned by the specified entity, optionally scoped to a single pipeline definition and run. Token scope: vso.build.',
+	},
+	'build.leases.getRetentionLeasesByUserId': {
+		riskLevel: 'read',
+		description:
+			'Returns any leases owned by the specified user, optionally scoped to a single pipeline definition and run. Token scope: vso.build.',
 	},
 	'build.leases.update': {
 		riskLevel: 'write',
@@ -5837,6 +6102,10 @@ export const azuredevopsEndpointMeta = {
 		description:
 			"Delete an agent. You probably don't want to call this endpoint directly. Instead, use the agent configuration script to remove an agent from your organization. Token scope: vso.agentpools_manage. Cannot be undone.",
 	},
+	'distributedTask.agents.getAgent': {
+		riskLevel: 'read',
+		description: 'Get information about an agent. Token scope: vso.agentpools.',
+	},
 	'distributedTask.agents.getPoolPermission': {
 		riskLevel: 'read',
 		description: 'Get Permissions on Pool. Token scope: vso.agentpools.',
@@ -5993,6 +6262,10 @@ export const azuredevopsEndpointMeta = {
 		description:
 			'Get information about an agent pool. Token scope: vso.agentpools.',
 	},
+	'distributedTask.pools.getAgentPools': {
+		riskLevel: 'read',
+		description: 'Get a list of agent pools. Token scope: vso.agentpools.',
+	},
 	'distributedTask.pools.getAgentPoolsByIds': {
 		riskLevel: 'read',
 		description: 'Get a list of agent pools. Token scope: vso.agentpools.',
@@ -6017,6 +6290,20 @@ export const azuredevopsEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Get information about an agent queue. Token scope: vso.agentpools.',
+	},
+	'distributedTask.queues.getAgentQueues': {
+		riskLevel: 'read',
+		description: 'Get a list of agent queues. Token scope: vso.agentpools.',
+	},
+	'distributedTask.queues.getAgentQueuesByIds': {
+		riskLevel: 'read',
+		description:
+			'Get a list of agent queues by their IDs. Token scope: vso.agentpools.',
+	},
+	'distributedTask.queues.getAgentQueuesByNames': {
+		riskLevel: 'read',
+		description:
+			'Get a list of agent queues by their names. Token scope: vso.agentpools.',
 	},
 	'distributedTask.queues.getAgentQueuesForPools': {
 		riskLevel: 'read',
@@ -6087,6 +6374,10 @@ export const azuredevopsEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get a variable group. Token scope: vso.variablegroups_read.',
 	},
+	'distributedTask.variablegroups.getVariableGroups': {
+		riskLevel: 'read',
+		description: 'Get variable groups. Token scope: vso.variablegroups_read.',
+	},
 	'distributedTask.variablegroups.getVariableGroupsById': {
 		riskLevel: 'read',
 		description:
@@ -6138,18 +6429,44 @@ export const azuredevopsEndpointMeta = {
 		description:
 			'Preview API (api-version 7.1-preview.1). Token scope: vso.profile_write.',
 	},
+	'favorite.favorites.createFavoriteOfOwner': {
+		riskLevel: 'write',
+		description:
+			'Preview API (api-version 7.1-preview.1). Token scope: vso.profile_write.',
+	},
 	'favorite.favorites.deleteFavoriteById': {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
 			'Preview API (api-version 7.1-preview.1). Token scope: vso.profile_write. Cannot be undone.',
 	},
+	'favorite.favorites.deleteFavoriteOfOwnerById': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description:
+			'Preview API (api-version 7.1-preview.1). Token scope: vso.profile_write. Cannot be undone.',
+	},
+	'favorite.favorites.getFavoriteByArtifact': {
+		riskLevel: 'read',
+		description:
+			'Preview API (api-version 7.1-preview.1). Token scope: vso.profile.',
+	},
 	'favorite.favorites.getFavoriteById': {
 		riskLevel: 'read',
 		description:
 			'Preview API (api-version 7.1-preview.1). Token scope: vso.profile.',
 	},
+	'favorite.favorites.getFavoriteOfOwnerById': {
+		riskLevel: 'read',
+		description:
+			'Preview API (api-version 7.1-preview.1). Token scope: vso.profile.',
+	},
 	'favorite.favorites.getFavorites': {
+		riskLevel: 'read',
+		description:
+			'Preview API (api-version 7.1-preview.1). Token scope: vso.profile.',
+	},
+	'favorite.favorites.getFavoritesOfOwner': {
 		riskLevel: 'read',
 		description:
 			'Preview API (api-version 7.1-preview.1). Token scope: vso.profile.',
@@ -6197,6 +6514,11 @@ export const azuredevopsEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Retrieve changes for a particular commit. Token scope: vso.code.',
+	},
+	'git.commits.getCommits': {
+		riskLevel: 'read',
+		description:
+			'Retrieve git commits for a project Parameters that use the searchCriteria prefix in their name can be specified without it as query parameters, e.g. searchCriteria.$top -> $top. Token scope: vso.code.',
 	},
 	'git.commits.getCommitsBatch': {
 		riskLevel: 'read',
@@ -6250,6 +6572,11 @@ export const azuredevopsEndpointMeta = {
 		riskLevel: 'write',
 		description:
 			'Retry or abandon a failed import request. There can only be one active import request associated with a repository. Marking a failed import request abandoned makes it inactive. Token scope: vso.code_manage.',
+	},
+	'git.items.get': {
+		riskLevel: 'read',
+		description:
+			"Get Item Metadata and/or Content for a single item. The download parameter is to indicate whether the content should be available as a download or just sent as a stream in the response. Doesn't apply to zipped content, which is always returned as a download. Token scope: vso.code.",
 	},
 	'git.items.getItemsBatch': {
 		riskLevel: 'read',
@@ -6632,6 +6959,10 @@ export const azuredevopsEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Retrieve a git repository. Token scope: vso.code.',
 	},
+	'git.repositories.getRepositoryWithParent': {
+		riskLevel: 'read',
+		description: 'Retrieve a git repository. Token scope: vso.code.',
+	},
 	'git.repositories.list': {
 		riskLevel: 'read',
 		description: 'Retrieve git repositories. Token scope: vso.code.',
@@ -6660,6 +6991,11 @@ export const azuredevopsEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Retrieve information about a revert operation for a specific branch. Token scope: vso.code.',
+	},
+	'git.stats.get': {
+		riskLevel: 'read',
+		description:
+			'Retrieve statistics about a single branch. Token scope: vso.code.',
 	},
 	'git.stats.list': {
 		riskLevel: 'read',
@@ -7272,6 +7608,10 @@ export const azuredevopsEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Retrieve all available policy types. Token scope: vso.code.',
 	},
+	'processadmin.behaviors.get': {
+		riskLevel: 'read',
+		description: 'Returns a behavior for the process. Token scope: vso.work.',
+	},
 	'processadmin.behaviors.list': {
 		riskLevel: 'read',
 		description:
@@ -7365,6 +7705,11 @@ export const azuredevopsEndpointMeta = {
 		riskLevel: 'write',
 		description:
 			'Adds a group to the work item form. Token scope: vso.work_write.',
+	},
+	'processes.groups.moveGroupToPage': {
+		riskLevel: 'write',
+		description:
+			'Moves a group to a different page and section. Token scope: vso.work_write.',
 	},
 	'processes.groups.moveGroupToSection': {
 		riskLevel: 'write',
@@ -7694,6 +8039,10 @@ export const azuredevopsEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get logs for a release Id. Token scope: vso.release.',
 	},
+	'release.releases.getRelease': {
+		riskLevel: 'read',
+		description: 'Get a Release. Token scope: vso.release.',
+	},
 	'release.releases.getReleaseEnvironment': {
 		riskLevel: 'read',
 		description: 'Get a release environment. Token scope: vso.release.',
@@ -7805,6 +8154,11 @@ export const azuredevopsEndpointMeta = {
 		description:
 			'List all security namespaces or just the specified namespace.',
 	},
+	'securityRoles.roleassignments.changeInheritance': {
+		riskLevel: 'write',
+		description:
+			'Preview API (api-version 7.1-preview.1). Token scope: vso.security_manage.',
+	},
 	'securityRoles.roleassignments.list': {
 		riskLevel: 'read',
 		description:
@@ -7835,6 +8189,11 @@ export const azuredevopsEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Preview API (api-version 7.1-preview.1).',
 	},
+	'serviceEndpoint.endpointproxy.executeServiceEndpointRequest': {
+		riskLevel: 'destructive',
+		description:
+			'Proxy for a GET request defined by a service endpoint. Token scope: vso.serviceendpoint_query.',
+	},
 	'serviceEndpoint.endpointproxy.query': {
 		riskLevel: 'read',
 		description:
@@ -7855,6 +8214,10 @@ export const azuredevopsEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Get the service endpoint details. Token scope: vso.serviceendpoint.',
+	},
+	'serviceEndpoint.endpoints.getServiceEndpoints': {
+		riskLevel: 'read',
+		description: 'Get the service endpoints. Token scope: vso.serviceendpoint.',
 	},
 	'serviceEndpoint.endpoints.getServiceEndpointsByNames': {
 		riskLevel: 'read',
@@ -7919,6 +8282,11 @@ export const azuredevopsEndpointMeta = {
 		description:
 			'Create debug entries for a symbol request as specified by its identifier. Token scope: vso.symbols_write.',
 	},
+	'symbol.requests.createRequestsRequestNameDebugEntries': {
+		riskLevel: 'write',
+		description:
+			'Create debug entries for a symbol request as specified by its name. Token scope: vso.symbols_write.',
+	},
 	'symbol.requests.deleteRequestsRequestId': {
 		riskLevel: 'destructive',
 		irreversible: true,
@@ -7964,6 +8332,10 @@ export const azuredevopsEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Attach a file to a test run. Token scope: vso.test_write.',
 	},
+	'test.attachments.createTestSubResultAttachment': {
+		riskLevel: 'write',
+		description: 'Attach a file to a test result. Token scope: vso.test_write.',
+	},
 	'test.attachments.getTestResultAttachmentZip': {
 		riskLevel: 'read',
 		description:
@@ -7983,6 +8355,16 @@ export const azuredevopsEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Get list of test run attachments reference. Token scope: vso.test.',
+	},
+	'test.attachments.getTestSubResultAttachmentZip': {
+		riskLevel: 'read',
+		description:
+			'Download a test sub result attachment. Token scope: vso.test.',
+	},
+	'test.attachments.getTestSubResultAttachments': {
+		riskLevel: 'read',
+		description:
+			'Get list of test sub result attachments. Token scope: vso.test.',
 	},
 	'test.codeCoverage.getBuildCodeCoverage': {
 		riskLevel: 'read',
@@ -8065,6 +8447,11 @@ export const azuredevopsEndpointMeta = {
 	'test.runs.list': {
 		riskLevel: 'read',
 		description: 'Get a list of test runs. Token scope: vso.test.',
+	},
+	'test.runs.query': {
+		riskLevel: 'read',
+		description:
+			'Query Test Runs based on filters. Mandatory fields are minLastUpdatedDate and maxLastUpdatedDate. Token scope: vso.test.',
 	},
 	'test.runs.update': {
 		riskLevel: 'write',
@@ -8155,6 +8542,12 @@ export const azuredevopsEndpointMeta = {
 		description:
 			'Get Test Case List return those test cases which have all the configuration Ids as mentioned in the optional parameter. If configuration Ids is null, it return all the test cases. Token scope: vso.test.',
 	},
+	'testPlan.suiteTestCase.removeTestCasesFromSuite': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description:
+			'Removes test cases from a suite based on the list of test case Ids provided. Token scope: vso.test_write. Cannot be undone.',
+	},
 	'testPlan.suiteTestCase.removeTestCasesListFromSuite': {
 		riskLevel: 'destructive',
 		irreversible: true,
@@ -8215,6 +8608,11 @@ export const azuredevopsEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Get a particular Test Point from a suite. Token scope: vso.test.',
+	},
+	'testPlan.testPoint.getPointsList': {
+		riskLevel: 'read',
+		description:
+			'Get all the points inside a suite based on some filters. Token scope: vso.test.',
 	},
 	'testPlan.testPoint.update': {
 		riskLevel: 'write',
@@ -8289,12 +8687,22 @@ export const azuredevopsEndpointMeta = {
 		description:
 			'Update a test variable by its ID. Token scope: vso.test_write.',
 	},
+	'testResults.attachments.createTestIterationResultAttachment': {
+		riskLevel: 'write',
+		description:
+			'Preview API (api-version 7.1-preview.1). Token scope: vso.test_write.',
+	},
 	'testResults.attachments.createTestResultAttachment': {
 		riskLevel: 'write',
 		description:
 			'Preview API (api-version 7.1-preview.1). Token scope: vso.test_write.',
 	},
 	'testResults.attachments.createTestRunAttachment': {
+		riskLevel: 'write',
+		description:
+			'Preview API (api-version 7.1-preview.1). Token scope: vso.test_write.',
+	},
+	'testResults.attachments.createTestSubResultAttachment': {
 		riskLevel: 'write',
 		description:
 			'Preview API (api-version 7.1-preview.1). Token scope: vso.test_write.',
@@ -8310,6 +8718,11 @@ export const azuredevopsEndpointMeta = {
 		irreversible: true,
 		description:
 			'Preview API (api-version 7.1-preview.1). Token scope: vso.test_write. Cannot be undone.',
+	},
+	'testResults.attachments.getTestIterationAttachmentZip': {
+		riskLevel: 'read',
+		description:
+			'Returns a test iteration attachment. Preview API (api-version 7.1-preview.1). Token scope: vso.test.',
 	},
 	'testResults.attachments.getTestResultAttachmentZip': {
 		riskLevel: 'read',
@@ -8331,12 +8744,27 @@ export const azuredevopsEndpointMeta = {
 		description:
 			'Preview API (api-version 7.1-preview.1). Token scope: vso.test.',
 	},
+	'testResults.attachments.getTestSubResultAttachmentZip': {
+		riskLevel: 'read',
+		description:
+			'Returns a test sub result attachment. Preview API (api-version 7.1-preview.1). Token scope: vso.test.',
+	},
+	'testResults.attachments.getTestSubResultAttachments': {
+		riskLevel: 'read',
+		description:
+			'Returns attachment references for test sub result. Preview API (api-version 7.1-preview.1). Token scope: vso.test.',
+	},
 	'testResults.bugs.list': {
 		riskLevel: 'read',
 		description:
 			'Preview API (api-version 7.1-preview.1). Token scope: vso.test.',
 	},
 	'testResults.codecoverage.get': {
+		riskLevel: 'read',
+		description:
+			'Preview API (api-version 7.1-preview.1). Token scope: vso.test.',
+	},
+	'testResults.codecoverage.getBuildCodeCoverage': {
 		riskLevel: 'read',
 		description:
 			'Preview API (api-version 7.1-preview.1). Token scope: vso.test.',
@@ -8510,6 +8938,11 @@ export const azuredevopsEndpointMeta = {
 		description:
 			'Preview API (api-version 7.1-preview.1). Token scope: vso.test.',
 	},
+	'testResults.runs.query': {
+		riskLevel: 'read',
+		description:
+			'Query Test Runs based on filters. Mandatory fields are minLastUpdatedDate and maxLastUpdatedDate. Preview API (api-version 7.1-preview.1). Token scope: vso.test.',
+	},
 	'testResults.runs.update': {
 		riskLevel: 'write',
 		description:
@@ -8550,12 +8983,22 @@ export const azuredevopsEndpointMeta = {
 		description:
 			'Preview API (api-version 7.1-preview.1). Token scope: vso.test.',
 	},
+	'testResults.tags.getTestTagsForRelease': {
+		riskLevel: 'read',
+		description:
+			'Preview API (api-version 7.1-preview.1). Token scope: vso.test.',
+	},
 	'testResults.tags.update': {
 		riskLevel: 'write',
 		description:
 			'Preview API (api-version 7.1-preview.1). Token scope: vso.test_write.',
 	},
 	'testResults.tagsummary.getTestTagSummaryForBuild': {
+		riskLevel: 'read',
+		description:
+			'Preview API (api-version 7.1-preview.1). Token scope: vso.test.',
+	},
+	'testResults.tagsummary.getTestTagSummaryForRelease': {
 		riskLevel: 'read',
 		description:
 			'Preview API (api-version 7.1-preview.1). Token scope: vso.test.',
@@ -8580,6 +9023,11 @@ export const azuredevopsEndpointMeta = {
 		irreversible: true,
 		description:
 			'Deletes the attachment with the specified filename for the specified runId from the LogStore. Preview API (api-version 7.1-preview.1). Token scope: vso.test_write. Cannot be undone.',
+	},
+	'testResults.testattachments.get': {
+		riskLevel: 'read',
+		description:
+			'Returns the attachment with the specified filename for the specified runId from the LogStore. Preview API (api-version 7.1-preview.1). Token scope: vso.test.',
 	},
 	'testResults.testattachments.list': {
 		riskLevel: 'read',
@@ -8617,6 +9065,11 @@ export const azuredevopsEndpointMeta = {
 		description:
 			'Get list of test run attachments reference. Preview API (api-version 7.1-preview.1). Token scope: vso.test.',
 	},
+	'testResults.testlog.getTestSubResultLogs': {
+		riskLevel: 'read',
+		description:
+			'Get list of test subresult attachments reference. Preview API (api-version 7.1-preview.1). Token scope: vso.test.',
+	},
 	'testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForBuildLog':
 		{
 			riskLevel: 'read',
@@ -8634,6 +9087,12 @@ export const azuredevopsEndpointMeta = {
 		description:
 			'Get SAS Uri of a test run attachment. Preview API (api-version 7.1-preview.1). Token scope: vso.test.',
 	},
+	'testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForSubResultLog':
+		{
+			riskLevel: 'read',
+			description:
+				'Get SAS Uri of a test subresults attachment. Preview API (api-version 7.1-preview.1). Token scope: vso.test.',
+		},
 	'testResults.testlogstoreendpoint.testLogStoreEndpointDetailsForBuild': {
 		riskLevel: 'write',
 		description:
@@ -8681,15 +9140,30 @@ export const azuredevopsEndpointMeta = {
 		description:
 			'Preview API (api-version 7.1-preview.2). Token scope: vso.test.',
 	},
+	'testResults.workitems.queryTestMethodLinkedWorkItems': {
+		riskLevel: 'read',
+		description:
+			'Preview API (api-version 7.1-preview.2). Token scope: vso.test_write.',
+	},
 	'testResults.workitems.queryTestResultWorkItems': {
 		riskLevel: 'read',
 		description:
 			'Query Test Result WorkItems based on filter. Preview API (api-version 7.1-preview.2). Token scope: vso.test.',
 	},
+	'tfvc.branches.get': {
+		riskLevel: 'read',
+		description:
+			'Get a single branch hierarchy at the given path with parents or children as specified. Token scope: vso.code.',
+	},
 	'tfvc.branches.getBranchRefs': {
 		riskLevel: 'read',
 		description:
 			'Get branch hierarchies below the specified scopePath. Token scope: vso.code.',
+	},
+	'tfvc.branches.getBranches': {
+		riskLevel: 'read',
+		description:
+			'Get a collection of branch roots -- first-level children, branches with no parents. Token scope: vso.code.',
 	},
 	'tfvc.changesets.create': {
 		riskLevel: 'write',
@@ -8719,6 +9193,11 @@ export const azuredevopsEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			"Retrieve Tfvc Changesets Note: This is a new version of the GetChangesets API that doesn't expose the unneeded queryParams present in the 1.0 version of the API. Token scope: vso.code.",
+	},
+	'tfvc.items.get': {
+		riskLevel: 'read',
+		description:
+			"Get Item Metadata and/or Content for a single item. The download parameter is to indicate whether the content should be available as a download or just sent as a stream in the response. Doesn't apply to zipped content which is always returned as a download. Token scope: vso.code.",
 	},
 	'tfvc.items.getItemsBatch': {
 		riskLevel: 'read',
@@ -8755,6 +9234,11 @@ export const azuredevopsEndpointMeta = {
 		description:
 			'Get work items associated with a shelveset. Token scope: vso.code.',
 	},
+	'tfvc.shelvesets.list': {
+		riskLevel: 'read',
+		description:
+			'Return a collection of shallow shelveset references. Token scope: vso.code.',
+	},
 	'tokenAdmin.personalAccessTokens.list': {
 		riskLevel: 'read',
 		description:
@@ -8780,6 +9264,11 @@ export const azuredevopsEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Gets a single personal access token (PAT). Personal access tokens: needs an Entra (Microsoft identity) token, not a PAT. Preview API (api-version 7.1-preview.1).',
+	},
+	'tokens.pats.list': {
+		riskLevel: 'read',
+		description:
+			'Gets a paged list of personal access tokens (PATs) created in this organization. Subsequent calls to the API require the same filtering options to be supplied. Personal access tokens: needs an Entra (Microsoft identity) token, not a PAT. Preview API (api-version 7.1-preview.1).',
 	},
 	'tokens.pats.revoke': {
 		riskLevel: 'destructive',
@@ -8910,6 +9399,11 @@ export const azuredevopsEndpointMeta = {
 		description:
 			'Gets the classification node for a given node path. Token scope: vso.work.',
 	},
+	'wit.classificationNodes.getClassificationNodes': {
+		riskLevel: 'read',
+		description:
+			'Gets root classification nodes or list of classification nodes for a given list of nodes ids, for a given project. In case ids parameter is supplied you will get list of classification nodes for those ids. Otherwise you will get root classification nodes for this project. Token scope: vso.work.',
+	},
 	'wit.classificationNodes.getRootNodes': {
 		riskLevel: 'read',
 		description:
@@ -8930,6 +9424,11 @@ export const azuredevopsEndpointMeta = {
 		description:
 			'Add a comment on a work item. Preview API (api-version 7.1-preview.4). Token scope: vso.work_write.',
 	},
+	'wit.comments.addWorkItemComment': {
+		riskLevel: 'write',
+		description:
+			'Add a comment on a work item. Preview API (api-version 7.1-preview.4). Token scope: vso.work_write.',
+	},
 	'wit.comments.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
@@ -8941,12 +9440,22 @@ export const azuredevopsEndpointMeta = {
 		description:
 			'Returns a work item comment. Preview API (api-version 7.1-preview.4). Token scope: vso.work.',
 	},
+	'wit.comments.getComments': {
+		riskLevel: 'read',
+		description:
+			'Returns a list of work item comments, pageable. Preview API (api-version 7.1-preview.4). Token scope: vso.work.',
+	},
 	'wit.comments.getCommentsBatch': {
 		riskLevel: 'read',
 		description:
 			'Returns a list of work item comments by ids. Preview API (api-version 7.1-preview.4). Token scope: vso.work.',
 	},
 	'wit.comments.updateComment': {
+		riskLevel: 'write',
+		description:
+			'Update a comment on a work item. Preview API (api-version 7.1-preview.4). Token scope: vso.work_write.',
+	},
+	'wit.comments.updateWorkItemComment': {
 		riskLevel: 'write',
 		description:
 			'Update a comment on a work item. Preview API (api-version 7.1-preview.4). Token scope: vso.work_write.',
@@ -9031,6 +9540,11 @@ export const azuredevopsEndpointMeta = {
 		description:
 			'Gets the root queries and their children. Token scope: vso.work.',
 	},
+	'wit.queries.searchQueries': {
+		riskLevel: 'read',
+		description:
+			'Searches all queries the user has access to in the current project. Token scope: vso.work.',
+	},
 	'wit.queries.update': {
 		riskLevel: 'write',
 		description:
@@ -9051,6 +9565,11 @@ export const azuredevopsEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Gets a list of the IDs and the URLs of the deleted the work items in the Recycle Bin. Token scope: vso.work.',
+	},
+	'wit.recyclebin.getDeletedWorkItems': {
+		riskLevel: 'read',
+		description:
+			'Gets the work items from the recycle bin, whose IDs have been specified in the parameters. Token scope: vso.work.',
 	},
 	'wit.recyclebin.restoreWorkItem': {
 		riskLevel: 'destructive',

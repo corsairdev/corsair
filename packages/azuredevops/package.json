@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/azuredevops",
   "version": "0.1.0",
-  "description": "Azure DevOps Services: Git repositories, pull requests, Boards work items and queries, builds, pipelines, releases, artifacts feeds, test plans and results, wikis, service connections, agents, users, groups, permissions and organization settings (1002 operations).",
+  "description": "Azure DevOps Services: Git repositories, pull requests, Boards work items and queries, builds, pipelines, releases, artifacts feeds, test plans and results, wikis, service connections, agents, users, groups, permissions and organization settings (1058 operations).",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
