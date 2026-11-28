@@ -19,6 +19,8 @@ const READ_ROUTES = new Set(
 	segmentOperations
 		.filter(
 			(operation) =>
+				// A single-attempt route (a quota-counted call) is never sent again.
+				!operation.singleAttempt &&
 				segmentEndpointMeta[operation.id as keyof typeof segmentEndpointMeta]
 					?.riskLevel === 'read',
 		)

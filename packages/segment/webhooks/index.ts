@@ -15,10 +15,11 @@ import type { SegmentContext } from '../index';
 // hex HMAC-SHA1 of the raw body with that secret
 // (https://www.twilio.com/docs/segment/connections/destinations/catalog/webhooks).
 // The plugin refuses requests without a valid signature, so set the secret.
-// With batching on, the body is a JSON array of events and Segment signs only
-// the first event (its JSON text): those arrive as `events.batch`. That rule
-// comes from the docs; no batched delivery has been checked live yet.
-// There is no timestamp to bound replays: drop repeats by messageId.
+// With batching on, the body is a JSON array of events, and Segment's docs say
+// it signs only the first event. A signature over the first event says nothing
+// about the rest, so `events.batch` takes an array only when the signature
+// covers the whole body; otherwise it is refused (turn batching off).
+// No batched delivery has been checked live yet.
 
 export const SegmentWebhookEventSchema = z.enum([
 	'identify',
@@ -133,15 +134,8 @@ export function verifySegmentSignature(
 	const signature = header(request.headers, 'x-signature')?.trim();
 	if (!signature || !request.rawBody || !secret.trim()) return false;
 	if (!/^[a-f0-9]{40}$/i.test(signature)) return false;
-	const supplied = Buffer.from(signature, 'hex');
-	const signs = (text: string) =>
-		timingSafeEqual(supplied, createHmac('sha1', secret).update(text).digest());
-	if (signs(request.rawBody)) return true;
-	// A batch is signed over its first event's JSON text.
-	const body = parsedBody(request.rawBody);
-	return (
-		Array.isArray(body) && body.length > 0 && signs(JSON.stringify(body[0]))
-	);
+	const expected = createHmac('sha1', secret).update(request.rawBody).digest();
+	return timingSafeEqual(Buffer.from(signature, 'hex'), expected);
 }
 
 function batchWebhook(): CorsairWebhook<
@@ -263,7 +257,7 @@ export const segmentWebhookSchemas = {
 	},
 	'events.batch': {
 		description:
-			'A batched delivery from the Webhooks destination: several events in one request, signed over the first.',
+			'A batched delivery from the Webhooks destination: several events in one request, taken only when the signature covers the whole body.',
 		payload: BatchSchema,
 		response: BatchSchema,
 	},

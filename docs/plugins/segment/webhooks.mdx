@@ -137,7 +137,7 @@ segment({
 
 `events.batch`
 
-A batched delivery from the Webhooks destination: several events in one request, signed over the first.
+A batched delivery from the Webhooks destination: several events in one request, taken only when the signature covers the whole body.
 
 **Payload:** `object[]`
 

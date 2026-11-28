@@ -294,6 +294,12 @@ describe('Tracking API', () => {
 			segmentEndpointsNested.tracking.track(send, { event: 'Opened' } as never),
 		).rejects.toThrow(/userId|anonymousId/);
 		await expect(
+			segmentEndpointsNested.tracking.track(send, {
+				event: 'Opened',
+				userId: '',
+			} as never),
+		).rejects.toThrow();
+		await expect(
 			segmentEndpointsNested.tracking.batch(send, {
 				batch: [{ type: 'track', event: 'Opened' }],
 			} as never),
@@ -525,10 +531,10 @@ describe('webhooks', () => {
 		expect(missing).toMatchObject({ success: false, statusCode: 401 });
 	});
 
-	it('takes a batched delivery signed over its first event', async () => {
+	it('takes a batched delivery only when the signature covers the whole body', async () => {
 		const second = { ...event, messageId: 'ajs-124', type: 'identify' };
 		const batchBody = JSON.stringify([event, second]);
-		const batch = request(batchBody, sign(JSON.stringify(event)));
+		const batch = request(batchBody, sign(batchBody));
 		expect(matchSegmentWebhook(batch)).toBe(true);
 		expect(segmentWebhooksNested.events.track.match(batch)).toBe(false);
 		expect(segmentWebhooksNested.events.batch.match(batch)).toBe(true);
@@ -539,7 +545,8 @@ describe('webhooks', () => {
 		expect(ok).toMatchObject({ success: true, data: [event, second] });
 		const forged = await segmentWebhooksNested.events.batch.handler(
 			webhookCtx,
-			request(batchBody, sign(JSON.stringify(second))),
+			// A signature over the first event alone would vouch for the rest unseen.
+			request(batchBody, sign(JSON.stringify(event))),
 		);
 		expect(forged).toMatchObject({ success: false, statusCode: 401 });
 	});

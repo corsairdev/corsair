@@ -636,7 +636,7 @@ await corsair.segment.api.audiences.create({
 
 `audiences.createPreview`
 
-Create Audience Preview. Previews Audience. In order to successfully call this endpoint, the specified Workspace needs to have the Audience feature enabled. This endpoint also has a rate limit of 700 requests per month per spaceId, which is lower than the default due to access pattern restrictions. Segment allows a limited number of previews a month: a 429 means the quota is spent, so the call is not retried.
+Create Audience Preview. Previews Audience. In order to successfully call this endpoint, the specified Workspace needs to have the Audience feature enabled. This endpoint also has a rate limit of 700 requests per month per spaceId, which is lower than the default due to access pattern restrictions. Segment limits previews per minute and per month, and each attempt counts: the plugin sends it once and does not retry a 429 or a 5xx.
 
 **Risk:** `read`
 

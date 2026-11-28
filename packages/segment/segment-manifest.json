@@ -6292,10 +6292,12 @@
         "properties": {
           "userId": {
             "type": "string",
+            "minLength": 1,
             "description": "Your id for the user. Send userId, anonymousId or both."
           },
           "anonymousId": {
             "type": "string",
+            "minLength": 1,
             "description": "A pseudo-unique id for a user you have not identified yet (a session or device id). Send userId, anonymousId or both."
           },
           "context": {
@@ -6359,10 +6361,12 @@
                     },
                     "userId": {
                       "type": "string",
+                      "minLength": 1,
                       "description": "Your id for the user. Send userId, anonymousId or both."
                     },
                     "anonymousId": {
                       "type": "string",
+                      "minLength": 1,
                       "description": "A pseudo-unique id for a user you have not identified yet (a session or device id). Send userId, anonymousId or both."
                     },
                     "context": {
@@ -6409,10 +6413,12 @@
                     },
                     "userId": {
                       "type": "string",
+                      "minLength": 1,
                       "description": "Your id for the user. Send userId, anonymousId or both."
                     },
                     "anonymousId": {
                       "type": "string",
+                      "minLength": 1,
                       "description": "A pseudo-unique id for a user you have not identified yet (a session or device id). Send userId, anonymousId or both."
                     },
                     "context": {
@@ -6463,10 +6469,12 @@
                     },
                     "userId": {
                       "type": "string",
+                      "minLength": 1,
                       "description": "Your id for the user. Send userId, anonymousId or both."
                     },
                     "anonymousId": {
                       "type": "string",
+                      "minLength": 1,
                       "description": "A pseudo-unique id for a user you have not identified yet (a session or device id). Send userId, anonymousId or both."
                     },
                     "context": {
@@ -6517,10 +6525,12 @@
                     },
                     "userId": {
                       "type": "string",
+                      "minLength": 1,
                       "description": "Your id for the user. Send userId, anonymousId or both."
                     },
                     "anonymousId": {
                       "type": "string",
+                      "minLength": 1,
                       "description": "A pseudo-unique id for a user you have not identified yet (a session or device id). Send userId, anonymousId or both."
                     },
                     "context": {
@@ -6571,10 +6581,12 @@
                     },
                     "userId": {
                       "type": "string",
+                      "minLength": 1,
                       "description": "Your id for the user. Send userId, anonymousId or both."
                     },
                     "anonymousId": {
                       "type": "string",
+                      "minLength": 1,
                       "description": "A pseudo-unique id for a user you have not identified yet (a session or device id). Send userId, anonymousId or both."
                     },
                     "context": {
@@ -6625,10 +6637,12 @@
                     },
                     "userId": {
                       "type": "string",
+                      "minLength": 1,
                       "description": "Your id for the user. Send userId, anonymousId or both."
                     },
                     "anonymousId": {
                       "type": "string",
+                      "minLength": 1,
                       "description": "A pseudo-unique id for a user you have not identified yet (a session or device id). Send userId, anonymousId or both."
                     },
                     "context": {
@@ -6699,10 +6713,12 @@
         "properties": {
           "userId": {
             "type": "string",
+            "minLength": 1,
             "description": "Your id for the user. Send userId, anonymousId or both."
           },
           "anonymousId": {
             "type": "string",
+            "minLength": 1,
             "description": "A pseudo-unique id for a user you have not identified yet (a session or device id). Send userId, anonymousId or both."
           },
           "context": {
@@ -6767,10 +6783,12 @@
         "properties": {
           "userId": {
             "type": "string",
+            "minLength": 1,
             "description": "Your id for the user. Send userId, anonymousId or both."
           },
           "anonymousId": {
             "type": "string",
+            "minLength": 1,
             "description": "A pseudo-unique id for a user you have not identified yet (a session or device id). Send userId, anonymousId or both."
           },
           "context": {
@@ -6830,10 +6848,12 @@
         "properties": {
           "userId": {
             "type": "string",
+            "minLength": 1,
             "description": "Your id for the user. Send userId, anonymousId or both."
           },
           "anonymousId": {
             "type": "string",
+            "minLength": 1,
             "description": "A pseudo-unique id for a user you have not identified yet (a session or device id). Send userId, anonymousId or both."
           },
           "context": {
@@ -6897,10 +6917,12 @@
         "properties": {
           "userId": {
             "type": "string",
+            "minLength": 1,
             "description": "Your id for the user. Send userId, anonymousId or both."
           },
           "anonymousId": {
             "type": "string",
+            "minLength": 1,
             "description": "A pseudo-unique id for a user you have not identified yet (a session or device id). Send userId, anonymousId or both."
           },
           "context": {
@@ -6964,10 +6986,12 @@
         "properties": {
           "userId": {
             "type": "string",
+            "minLength": 1,
             "description": "Your id for the user. Send userId, anonymousId or both."
           },
           "anonymousId": {
             "type": "string",
+            "minLength": 1,
             "description": "A pseudo-unique id for a user you have not identified yet (a session or device id). Send userId, anonymousId or both."
           },
           "context": {

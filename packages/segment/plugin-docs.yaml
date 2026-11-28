@@ -19,7 +19,7 @@ overviewNote: |
   - **Write keys are secrets.** Sources embed their `writeKeys`; `sources.createWriteKey` mints one and `sources.removeWriteKey` cuts off every sender using it.
   - **Paging.** List routes take `pagination: { count, cursor }` (count up to 200 on most) and return `pagination.next`; pass it back as `cursor`. The plugin sends a page size when you pass none.
   - **Versions.** Each operation is pinned to the newest stable version Segment documents for it (v1 on most; v2 for warehouses; alpha or beta where nothing else exists): alpha routes can change.
-  - **Webhooks.** To receive events, add a **Webhooks** destination to a source, point it at your Corsair webhook URL and set a **Shared Secret**. Segment signs each request with an HMAC-SHA1 `X-Signature`, and the plugin checks it against the same secret: store it as the account's webhook signing secret (`webhook_signature`), or pass the `webhookSecret` option. Requests without a valid signature are refused. Batched deliveries (a JSON array) arrive as `events.batch`.
+  - **Webhooks.** To receive events, add a **Webhooks** destination to a source, point it at your Corsair webhook URL and set a **Shared Secret**. Segment signs each request with an HMAC-SHA1 `X-Signature`, and the plugin checks it against the same secret: store it as the account's webhook signing secret (`webhook_signature`), or pass the `webhookSecret` option. Requests without a valid signature are refused. Segment signs only the first event of a batched delivery, so keep batching off in the destination: a batch is accepted (as `events.batch`) only when the signature covers the whole body.
 examples:
   read:
     path: sources.list
