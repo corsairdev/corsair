@@ -1,0 +1,116 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: 'Ragie'
+description: 'Ragie is retrieval-augmented generation as a service. This plugin ingests documents from files, raw text or URLs, searches them with metadata filters and reranking, generates grounded deep-search answers, reads chunks, elements and source files, runs entity extraction, manages partitions, data connections, OAuth authenticators and webhook endpoints, and receives signed webhook events.'
+domain: 'ragie.ai'
+recommendedAuth: 'api_key'
+overviewNote: |
+  Create a key in the Ragie dashboard at secure.ragie.ai (a free developer tier exists). Wire notes before you call:
+
+  - **Document processing is asynchronous.** Every create and update answers at once with status `pending`, then moves through partitioning, chunking and indexing. Poll `documents.get` until `status` is `ready` (usable, including summaries) or `failed`. The document is searchable once it reaches `indexed`.
+  - **`responses.create` bills LLM usage** with the deep-search model. It runs as a job too: poll `responses.get` until `status` is `completed` or `failed`. Plan exhaustion answers HTTP 402, which the plugin never retries.
+  - **`connections.delete` is a POST, not a DELETE.** With `keep_files: false` every document the connector ingested is deleted and cannot be recovered; with `keep_files: true` the documents survive unlinked. Deletion is asynchronous, so files can linger briefly either way.
+  - **`webhookEndpoints.create` returns the signing `secret`.** Store it when you create the endpoint, then give it to the plugin as `webhookSecret` (or the account's webhook signature). Deliveries are `{ type, payload, nonce }` signed with `X-Signature` (hex HMAC-SHA256 of the raw body); the plugin checks it and handles document status, document deleted, entity extracted, connection sync started, progress and finished, connection limit and partition limit events. `nonce` is unique per delivery.
+  - **`connections.createOAuthRedirectUrl`** starts an OAuth connector flow (Google Drive, Notion and similar) and returns a short-lived URL; non-OAuth connectors (S3, GCS, Freshdesk, Zendesk, Intercom, web crawler) are created directly with `connections.create`. With your own OAuth app, register it with `authenticators.create` and connect through `authenticators.createConnection`.
+  - **Partitions.** Reads, deletes and updates take `partition` as a request header (Ragie ignores it in the query); creates take it in the body. Omitted means the `default` partition. `partitions.*` creates, limits and deletes partitions; deleting one deletes every document in it.
+  - **Billing and risk levels.** Every document create and update, `connections.create`, `connections.sync`, `authenticators.createConnection`, `instructions.create` and `responses.create` processes pages or runs a model that the plan bills, so they are marked destructive and the permission check runs first. Plan exhaustion answers 402, which the plugin never retries.
+  - **Entity extraction.** `instructions.create` runs a prompt with a JSON schema over matching documents; read the results with `instructions.listEntities` or `documents.listEntities`, and failures with `instructions.listExtractionLogs`.
+  - **Files.** `documents.getSource` returns the original file and `documents.getChunkContent` a chunk as text, audio, video or image (`media_type`), both as core file output (text inline, other files base64 or a host file id).
+  - **Shapes.** Request and response shapes come from Ragie's Speakeasy SDK (ragie 2.0.0), which is generated from api.ragie.ai/openapi.json. Responses are parsed leniently. Rate limits are undocumented: a 429 is retried three times with backoff, honouring `Retry-After`.
+apiNotes:
+  partitions.delete: 'Deletes the partition and every document in it; it cannot be undone. `async: true` answers at once and deletes in the background.'
+  instructions.create: 'Runs on every matching document (and new ones while active); extraction is billed per page. `scope: chunk` runs once per chunk.'
+  instructions.listExtractionLogs: 'Filter by `document_ids`, `status` (extracted, not_found, error) and `created_after` / `created_before` (ISO 8601).'
+  documents.getSource: 'Returns the original uploaded or fetched file as core file output.'
+  documents.getChunkContent: 'Returns the chunk as a file in `media_type` (text/plain by default; audio/mpeg, video/mp4 or an image type for media chunks). `range` asks for part of an audio or video stream.'
+  authenticators.create: 'Registers your own OAuth app for a provider; the client secret is sent once and never logged.'
+  documents.create: 'Multipart upload; a metadata object is JSON-stringified inside its form field, the way the official SDK sends it. Returns at once with status pending; poll documents.get until ready or failed.'
+  documents.createRaw: 'Returns at once with status pending; poll documents.get until ready or failed.'
+  documents.createFromUrl: 'Returns at once with status pending; poll documents.get until ready or failed.'
+  documents.get: 'The job status read. Status walks pending, partitioning, partitioned, refined, chunked, indexed, summary_indexed, keyword_indexed, then ready or failed; the document is searchable from indexed.'
+  documents.updateFile: 'Replaces the content and reprocesses; poll documents.get until ready or failed.'
+  documents.updateRaw: 'Replaces the content and reprocesses; poll documents.get until ready or failed.'
+  documents.updateFromUrl: 'Replaces the content and reprocesses; poll documents.get until ready or failed.'
+  documents.getContent: 'Returns the default JSON answer with the extracted text. For audio and video media use documents.getChunkContent, which returns files.'
+  documents.getSummary: 'Beta. Unavailable for xls, xlsx, csv and json documents and documents over a million tokens.'
+  retrievals.retrieve: 'A read, and not documented as metered. filter takes the metadata operators $eq, $ne, $gt, $gte, $lt, $lte, $in and $nin.'
+  connections.create: 'The path is singular: POST /connection, while every other connection route is plural. Non-OAuth providers only.'
+  connections.createOAuthRedirectUrl: 'Returns a short-lived OAuth redirect URL; it is an auth artifact, so the operation is a write.'
+  connections.delete: 'A POST to /connections/{id}/delete, not a DELETE method. With keep_files false the documents are deleted irreversibly; deletion runs asynchronously, so files can linger briefly either way.'
+  responses.create: 'Bills LLM usage with the deep-search model. Plan exhaustion answers 402 and is never retried. Poll responses.get until completed or failed.'
+  responses.get: 'The job status read: in_progress, completed or failed.'
+  connections.update: 'Sends partition_strategy and page_limit flat beside metadata and mode, per the saved SDK evidence; that body arrangement is unverified until a live key confirms it.'
+  webhookEndpoints.create: 'The answer carries the signing secret for deliveries to this endpoint, so it is a write, never a read.'
+examples:
+  read:
+    path: retrievals.retrieve
+    title: Search documents for chunks about refunds
+    args:
+      query: what is the refund window
+  write:
+    path: documents.createRaw
+    title: Ingest raw text
+    args:
+      data: The refund window is thirty days from delivery.
+      name: refund policy
+apiExamples:
+  documents.list:
+    call: "{ page_size: 25 }"
+  documents.create:
+    call: "{ file: { url: 'https://example.com/handbook.pdf' }, name: 'handbook.pdf' }"
+  documents.createRaw:
+    call: "{ data: 'The refund window is thirty days.', name: 'refund policy' }"
+  documents.createFromUrl:
+    call: "{ url: 'https://example.com/handbook.pdf' }"
+  documents.get:
+    call: "{ document_id: 'b5331205-e0ee-4bb9-9d01-6d9a01d9e882' }"
+  documents.delete:
+    call: "{ document_id: 'b5331205-e0ee-4bb9-9d01-6d9a01d9e882' }"
+  documents.updateFile:
+    call: "{ document_id: 'b5331205-e0ee-4bb9-9d01-6d9a01d9e882', file: { url: 'https://example.com/handbook-v2.pdf' } }"
+  documents.updateRaw:
+    call: "{ document_id: 'b5331205-e0ee-4bb9-9d01-6d9a01d9e882', data: 'Updated policy text.' }"
+  documents.updateFromUrl:
+    call: "{ document_id: 'b5331205-e0ee-4bb9-9d01-6d9a01d9e882', url: 'https://example.com/handbook-v2.pdf' }"
+  documents.patchMetadata:
+    call: "{ document_id: 'b5331205-e0ee-4bb9-9d01-6d9a01d9e882', metadata: { department: 'support', old_tag: null } }"
+  documents.getChunks:
+    call: "{ document_id: 'b5331205-e0ee-4bb9-9d01-6d9a01d9e882' }"
+  documents.getContent:
+    call: "{ document_id: 'b5331205-e0ee-4bb9-9d01-6d9a01d9e882' }"
+  documents.getSummary:
+    call: "{ document_id: 'b5331205-e0ee-4bb9-9d01-6d9a01d9e882' }"
+  retrievals.retrieve:
+    call: "{ query: 'what is the refund window', top_k: 8, rerank: true }"
+  connections.list:
+    call: '{}'
+  connections.get:
+    call: "{ connection_id: 'f83f5c92-1fae-4a37-8f3e-23914e2b9c1d' }"
+  connections.listSourceTypes: {}
+  connections.create:
+    call: "{ connection: { provider: 'gcs', data: { bucket: 'acme-docs' }, credentials: { service_account_json: '...' } } }"
+  connections.createOAuthRedirectUrl:
+    call: "{ redirect_uri: 'https://app.example.com/oauth/ragie', source_type: 'google_drive' }"
+  connections.update:
+    call: "{ connection_id: 'f83f5c92-1fae-4a37-8f3e-23914e2b9c1d', metadata: { team: 'support' } }"
+  connections.sync:
+    call: "{ connection_id: 'f83f5c92-1fae-4a37-8f3e-23914e2b9c1d' }"
+  connections.delete:
+    call: "{ connection_id: 'f83f5c92-1fae-4a37-8f3e-23914e2b9c1d', keep_files: true }"
+  connections.setEnabled:
+    call: "{ connection_id: 'f83f5c92-1fae-4a37-8f3e-23914e2b9c1d', enabled: false }"
+  connections.setLimits:
+    call: "{ connection_id: 'f83f5c92-1fae-4a37-8f3e-23914e2b9c1d', page_limit: 1000 }"
+  responses.create:
+    call: "{ input: 'What is the refund window?' }"
+  responses.get:
+    call: "{ response_id: 'e613d0b7-4c9a-45ed-b32c-302d7f1c5daf' }"
+  webhookEndpoints.list:
+    call: '{}'
+  webhookEndpoints.create:
+    call: "{ name: 'document status', url: 'https://example.com/hooks/ragie' }"
+  webhookEndpoints.get:
+    call: "{ endpoint_id: '70a542b9-871a-42f4-a4a2-9f03a857e785' }"
+  webhookEndpoints.update:
+    call: "{ endpoint_id: '70a542b9-871a-42f4-a4a2-9f03a857e785', active: false }"
+  webhookEndpoints.delete:
+    call: "{ endpoint_id: '70a542b9-871a-42f4-a4a2-9f03a857e785' }"

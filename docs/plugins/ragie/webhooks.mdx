@@ -1,0 +1,599 @@
+---
+title: "Ragie webhooks"
+sidebarTitle: "Webhooks"
+description: "Ragie incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The Ragie plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/ragie/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `connections`
+  - `limitExceeded` (`connections.limitExceeded`)
+  - `syncFinished` (`connections.syncFinished`)
+  - `syncProgress` (`connections.syncProgress`)
+  - `syncStarted` (`connections.syncStarted`)
+- `documents`
+  - `deleted` (`documents.deleted`)
+  - `statusUpdated` (`documents.statusUpdated`)
+- `entities`
+  - `extracted` (`entities.extracted`)
+- `partitions`
+  - `limitExceeded` (`partitions.limitExceeded`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
+}
+```
+
+## Events
+
+## Connections
+
+### Limit Exceeded
+
+`connections.limitExceeded`
+
+A connection reached its page limit and stopped syncing
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `connection_limit_exceeded` | Yes | — |
+| `payload` | `object` | Yes | — |
+| `nonce` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  connection_id: string,
+  partition?: string | null,
+  connection_metadata?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: connection_limit_exceeded,
+  payload: {
+    connection_id: string,
+    partition?: string | null,
+    connection_metadata?: Record<string, any>
+  },
+  nonce: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ragie({
+    webhookHooks: {
+        connections: {
+            limitExceeded: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Sync Finished
+
+`connections.syncFinished`
+
+A connection sync finished
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `connection_sync_finished` | Yes | — |
+| `payload` | `object` | Yes | — |
+| `nonce` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  connection_id: string,
+  partition?: string | null,
+  connection_metadata?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: connection_sync_finished,
+  payload: {
+    connection_id: string,
+    partition?: string | null,
+    connection_metadata?: Record<string, any>
+  },
+  nonce: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ragie({
+    webhookHooks: {
+        connections: {
+            syncFinished: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Sync Progress
+
+`connections.syncProgress`
+
+A connection sync reports progress (documents created, updated, deleted)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `connection_sync_progress` | Yes | — |
+| `payload` | `object` | Yes | — |
+| `nonce` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  connection_id: string,
+  partition?: string | null,
+  connection_metadata?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: connection_sync_progress,
+  payload: {
+    connection_id: string,
+    partition?: string | null,
+    connection_metadata?: Record<string, any>
+  },
+  nonce: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ragie({
+    webhookHooks: {
+        connections: {
+            syncProgress: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Sync Started
+
+`connections.syncStarted`
+
+A connection began syncing
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `connection_sync_started` | Yes | — |
+| `payload` | `object` | Yes | — |
+| `nonce` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  connection_id: string,
+  partition?: string | null,
+  connection_metadata?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: connection_sync_started,
+  payload: {
+    connection_id: string,
+    partition?: string | null,
+    connection_metadata?: Record<string, any>
+  },
+  nonce: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ragie({
+    webhookHooks: {
+        connections: {
+            syncStarted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Documents
+
+### Deleted
+
+`documents.deleted`
+
+A document was deleted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `document_deleted` | Yes | — |
+| `payload` | `object` | Yes | — |
+| `nonce` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  document_id: string,
+  external_id?: string | null,
+  partition?: string | null,
+  status?: string,
+  metadata?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: document_deleted,
+  payload: {
+    document_id: string,
+    external_id?: string | null,
+    partition?: string | null,
+    status?: string,
+    metadata?: Record<string, any>
+  },
+  nonce: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ragie({
+    webhookHooks: {
+        documents: {
+            deleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Status Updated
+
+`documents.statusUpdated`
+
+A document moved to a new processing status (pending, partitioned, indexed, ready, failed...)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `document_status_updated` | Yes | — |
+| `payload` | `object` | Yes | — |
+| `nonce` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  document_id: string,
+  external_id?: string | null,
+  partition?: string | null,
+  status?: string,
+  metadata?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: document_status_updated,
+  payload: {
+    document_id: string,
+    external_id?: string | null,
+    partition?: string | null,
+    status?: string,
+    metadata?: Record<string, any>
+  },
+  nonce: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ragie({
+    webhookHooks: {
+        documents: {
+            statusUpdated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Entities
+
+### Extracted
+
+`entities.extracted`
+
+An instruction extracted an entity from a document
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `entity_extracted` | Yes | — |
+| `payload` | `object` | Yes | — |
+| `nonce` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  entity_id?: string,
+  document_id?: string,
+  instruction_id?: string,
+  data?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: entity_extracted,
+  payload: {
+    entity_id?: string,
+    document_id?: string,
+    instruction_id?: string,
+    data?: Record<string, any>
+  },
+  nonce: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ragie({
+    webhookHooks: {
+        entities: {
+            extracted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Partitions
+
+### Limit Exceeded
+
+`partitions.limitExceeded`
+
+A partition reached one of its page or media limits
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `partition_limit_exceeded` | Yes | — |
+| `payload` | `object` | Yes | — |
+| `nonce` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  partition: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: partition_limit_exceeded,
+  payload: {
+    partition: string
+  },
+  nonce: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+ragie({
+    webhookHooks: {
+        partitions: {
+            limitExceeded: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

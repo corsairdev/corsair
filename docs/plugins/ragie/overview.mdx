@@ -1,0 +1,150 @@
+---
+title: "Ragie plugin"
+sidebarTitle: "Overview"
+description: "Ragie is retrieval-augmented generation as a service. This plugin ingests documents from files, raw text or URLs, searches them with metadata filters and reranking, generates grounded deep-search answers, reads chunks, elements and source files, runs entity extraction, manages partitions, data connections, OAuth authenticators and webhook endpoints, and receives signed webhook events."
+---
+
+Use **Ragie** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Create a key in the Ragie dashboard at secure.ragie.ai (a free developer tier exists). Wire notes before you call:
+
+- **Document processing is asynchronous.** Every create and update answers at once with status `pending`, then moves through partitioning, chunking and indexing. Poll `documents.get` until `status` is `ready` (usable, including summaries) or `failed`. The document is searchable once it reaches `indexed`.
+- **`responses.create` bills LLM usage** with the deep-search model. It runs as a job too: poll `responses.get` until `status` is `completed` or `failed`. Plan exhaustion answers HTTP 402, which the plugin never retries.
+- **`connections.delete` is a POST, not a DELETE.** With `keep_files: false` every document the connector ingested is deleted and cannot be recovered; with `keep_files: true` the documents survive unlinked. Deletion is asynchronous, so files can linger briefly either way.
+- **`webhookEndpoints.create` returns the signing `secret`.** Store it when you create the endpoint, then give it to the plugin as `webhookSecret` (or the account's webhook signature). Deliveries are `{ type, payload, nonce }` signed with `X-Signature` (hex HMAC-SHA256 of the raw body); the plugin checks it and handles document status, document deleted, entity extracted, connection sync started, progress and finished, connection limit and partition limit events. `nonce` is unique per delivery.
+- **`connections.createOAuthRedirectUrl`** starts an OAuth connector flow (Google Drive, Notion and similar) and returns a short-lived URL; non-OAuth connectors (S3, GCS, Freshdesk, Zendesk, Intercom, web crawler) are created directly with `connections.create`. With your own OAuth app, register it with `authenticators.create` and connect through `authenticators.createConnection`.
+- **Partitions.** Reads, deletes and updates take `partition` as a request header (Ragie ignores it in the query); creates take it in the body. Omitted means the `default` partition. `partitions.*` creates, limits and deletes partitions; deleting one deletes every document in it.
+- **Billing and risk levels.** Every document create and update, `connections.create`, `connections.sync`, `authenticators.createConnection`, `instructions.create` and `responses.create` processes pages or runs a model that the plan bills, so they are marked destructive and the permission check runs first. Plan exhaustion answers 402, which the plugin never retries.
+- **Entity extraction.** `instructions.create` runs a prompt with a JSON schema over matching documents; read the results with `instructions.listEntities` or `documents.listEntities`, and failures with `instructions.listExtractionLogs`.
+- **Files.** `documents.getSource` returns the original file and `documents.getChunkContent` a chunk as text, audio, video or image (`media_type`), both as core file output (text inline, other files base64 or a host file id).
+- **Shapes.** Request and response shapes come from Ragie's Speakeasy SDK (ragie 2.0.0), which is generated from api.ragie.ai/openapi.json. Responses are parsed leniently. Rate limits are undocumented: a 429 is retried three times with backoff, honouring `Retry-After`.
+
+**What you get:**
+
+- 54 typed API operations
+- 8 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/ragie better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/ragie better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/ragie better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/ragie better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { ragie } from '@corsair-dev/ragie';
+
+export const corsair = createCorsair({
+	plugins: [
+		ragie(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Ragie API key before the first call: `pnpm corsair setup --plugin=ragie --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+ragie()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'ragie',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Search documents for chunks about refunds**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.ragie.api.retrievals.retrieve({ query: 'what is the refund window' });
+```
+
+
+**Ingest raw text**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.ragie.api.documents.createRaw({ data: 'The refund window is thirty days from delivery.', name: 'refund policy' });
+```
+
+
+See the full list on the [API](/plugins/ragie/api) page.
+
+## Webhooks
+
+This plugin registers **8** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/ragie/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/ragie/api">
+    Every `ragie.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/ragie/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
