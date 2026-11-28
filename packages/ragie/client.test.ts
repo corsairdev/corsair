@@ -1,10 +1,6 @@
 import util from 'node:util';
-import {
-	describeRagieError,
-	makeRagieRequest,
-	RagieAPIError,
-	segment,
-} from './client';
+import { ApiError } from 'corsair/http';
+import { describeRagieError, makeRagieRequest, segment } from './client';
 import {
 	connection,
 	documentsList,
@@ -40,10 +36,10 @@ function respondEmpty(status = 200) {
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(promise: Promise<unknown>): Promise<RagieAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await promise.catch((e: unknown) => e);
-	expect(error).toBeInstanceOf(RagieAPIError);
-	if (!(error instanceof RagieAPIError)) throw error;
+	expect(error).toBeInstanceOf(ApiError);
+	if (!(error instanceof ApiError)) throw error;
 	return error;
 }
 
@@ -130,9 +126,10 @@ describe('makeRagieRequest', () => {
 			makeRagieRequest(API_KEY, { method: 'GET', path: '/documents' }),
 		);
 		expect(error.status).toBe(401);
-		expect(error.method).toBe('GET');
-		expect(error.message).toBe('Ragie 401: Invalid request token');
-		expect(error.isRateLimit).toBe(false);
+		expect(error.request.method).toBe('GET');
+		expect(describeRagieError(error.status, error.body, '')).toBe(
+			'Ragie 401: Invalid request token',
+		);
 	});
 
 	it('reads FastAPI validation detail from a 422', async () => {
@@ -146,7 +143,9 @@ describe('makeRagieRequest', () => {
 			}),
 		);
 		expect(error.status).toBe(422);
-		expect(error.message).toContain('field required');
+		expect(describeRagieError(error.status, error.body, '')).toContain(
+			'field required',
+		);
 	});
 
 	it('treats a 429 as a rate limit and reads Retry-After', async () => {
@@ -159,23 +158,51 @@ describe('makeRagieRequest', () => {
 				body: { query: 'x' },
 			}),
 		);
-		expect(error.isRateLimit).toBe(true);
+		expect(error.status).toBe(429);
 		expect(error.retryAfter).toBe(2000);
 		// The client never retries on its own; error-handlers.ts decides.
 		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 
-	it('wraps network failures as transport errors', async () => {
+	it('lets a network failure through as thrown', async () => {
 		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
 
-		const error = await failure(
-			makeRagieRequest(API_KEY, { method: 'GET', path: '/documents' }),
+		const error = await makeRagieRequest(API_KEY, {
+			method: 'GET',
+			path: '/documents',
+		}).catch((e: unknown) => e);
+		expect(String(error)).toContain('fetch failed');
+	});
+
+	it('sends partition as a header, never in the query', async () => {
+		respond(documentsList);
+
+		await makeRagieRequest(API_KEY, {
+			method: 'GET',
+			path: '/documents',
+			query: { page_size: 5 },
+			partition: 'acme',
+		});
+
+		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		expect(url).toBe('https://api.ragie.ai/documents?page_size=5');
+		expect(new Headers(init.headers).get('partition')).toBe('acme');
+	});
+
+	it('reads a binary answer as bytes', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(new Uint8Array([37, 80, 68, 70]), {
+				status: 200,
+				headers: { 'Content-Type': 'application/pdf' },
+			}),
 		);
-		expect(error.message).toContain('fetch failed');
-		expect(error.status).toBeUndefined();
-		expect(error.transport).toBe(true);
-		expect(error.method).toBe('GET');
-		expect(error.cause).toBeInstanceOf(TypeError);
+		const result = (await makeRagieRequest(API_KEY, {
+			method: 'GET',
+			path: '/documents/d1/source',
+			responseType: 'binary',
+		})) as { bytes: Uint8Array; contentType: string };
+		expect(Buffer.from(result.bytes).toString()).toBe('%PDF');
+		expect(result.contentType).toBe('application/pdf');
 	});
 
 	it('keeps the API key out of errors', async () => {

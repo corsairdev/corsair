@@ -1,43 +1,43 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { RagieAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { RAGIE_REPLAY_SAFE_POSTS } from './client';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof RagieAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
-function retryAfterOf(error: Error): number | undefined {
-	return error instanceof RagieAPIError ? error.retryAfter : undefined;
+/** Reads and the read-only POST /retrievals may be sent again after a 5xx. */
+function isReplaySafe(error: Error): boolean {
+	if (!(error instanceof ApiError)) return false;
+	return (
+		error.request.method === 'GET' ||
+		(error.request.method === 'POST' &&
+			RAGIE_REPLAY_SAFE_POSTS.has(error.request.url))
+	);
 }
 
-// Statuses from the SDK's per-operation error tables: 400, 401, 402, 404,
-// 422, 429 and 500 all answer the `{ detail }` body. Ragie documents no
-// rate-limit numbers and no idempotency keys, so writes are never replayed
-// on a 5xx or a transport failure.
 export const errorHandlers = {
-	// 402: plan limit reached or payment required. Retrying cannot lift it.
+	// 402: the plan's page or usage limit is spent; retrying cannot help.
 	INSUFFICIENT_BALANCE_ERROR: {
 		match: (error: Error) => statusOf(error) === 402,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 429: "Too many requests". Ragie documents no window and no Retry-After
-	// support (live behavior unverified), so fall back to exponential backoff
-	// and let a real Retry-After header override it.
+	// The client makes one attempt (maxRetries 0 in its rate limit config),
+	// so this handler owns 429 retries. Ragie refuses a rate-limited request
+	// before running it, so a write is safe to resend (R8).
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof RagieAPIError && error.isRateLimit,
+		match: (error: Error) => statusOf(error) === 429,
 		handler: async (error: Error) => ({
 			maxRetries: 3,
-			headersRetryAfterMs: retryAfterOf(error),
+			headersRetryAfterMs:
+				error instanceof ApiError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
-	// 401: a wrong or expired bearer token.
 	AUTH_ERROR: {
 		match: (error: Error) => statusOf(error) === 401,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 400 invalid input, 404 missing id, 422 FastAPI validation (detail as an
-	// array), or an input that failed zod here. A retry sends the same request.
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
 			const status = statusOf(error);
@@ -50,25 +50,10 @@ export const errorHandlers = {
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// A dropped connection never reached Ragie, so a replay-safe call can be
-	// sent again. A write still lands on DEFAULT: the upload may have gone
-	// through.
-	TRANSPORT_ERROR: {
-		match: (error: Error) =>
-			error instanceof RagieAPIError && error.transport && error.replaySafe,
-		handler: async () => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
-	},
-	// Ragie's 500 bodies carry no transient marker, and no write here is
-	// idempotent, so only replay-safe calls are retried. retrievals.retrieve
-	// opts in: it is a single-shot search with no side effect, sent as a POST.
+	// A 5xx is replayed only for reads; a create or update may have landed.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof RagieAPIError &&
-			error.replaySafe &&
-			(error.status ?? 0) >= 500,
+			isReplaySafe(error) && (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
@@ -80,9 +65,6 @@ export const errorHandlers = {
 	},
 } satisfies CorsairErrorHandler;
 
-// Core runs the first handler whose match passes, in key order, so the
-// caller's keys must come before the builtins they replace and DEFAULT must
-// stay last.
 export function mergeErrorHandlers(
 	builtin: CorsairErrorHandler,
 	user: CorsairErrorHandler | undefined,

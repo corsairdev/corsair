@@ -27,7 +27,6 @@ export const retrieve: RagieEndpoints['retrievalsRetrieve'] = (ctx, input) =>
 			path: '/retrievals',
 			// Single-shot search with no side effect, so a 5xx or a dropped
 			// connection may be replayed despite the POST method.
-			replaySafe: true,
 			body: {
 				query,
 				top_k,

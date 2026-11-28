@@ -32,7 +32,8 @@ export const list: RagieEndpoints['documentsList'] = (ctx, input) =>
 		({ filter, partition, cursor, page_size }) => ({
 			method: 'GET',
 			path: '/documents',
-			query: { filter, partition, cursor, page_size },
+			query: { filter, cursor, page_size },
+			partition,
 		}),
 	);
 
@@ -122,9 +123,10 @@ export const get: RagieEndpoints['documentsGet'] = (ctx, input) =>
 			output: Outputs.documentsGet,
 		},
 		input,
-		({ document_id }) => ({
+		({ document_id, partition }) => ({
 			method: 'GET',
 			path: `/documents/${segment(document_id)}`,
+			partition,
 		}),
 		{
 			log: (_parsed, result) => ({
@@ -145,9 +147,10 @@ export const remove: RagieEndpoints['documentsDelete'] = (ctx, input) =>
 			output: Outputs.documentsDelete,
 		},
 		input,
-		({ document_id }) => ({
+		({ document_id, partition }) => ({
 			method: 'DELETE',
 			path: `/documents/${segment(document_id)}`,
+			partition,
 		}),
 		{
 			// A bodyless 200: parse it through the permissive OK schema rather
@@ -175,10 +178,7 @@ export const updateFile: RagieEndpoints['documentsUpdateFile'] = async (
 		() => ({
 			method: 'PUT',
 			path: `/documents/${segment(parsed.document_id)}/file`,
-			query:
-				parsed.partition !== undefined
-					? { partition: parsed.partition }
-					: undefined,
+			partition: parsed.partition,
 			formData: form,
 		}),
 		{
@@ -202,7 +202,7 @@ export const updateRaw: RagieEndpoints['documentsUpdateRaw'] = (ctx, input) =>
 		({ document_id, data, partition }) => ({
 			method: 'PUT',
 			path: `/documents/${segment(document_id)}/raw`,
-			query: partition !== undefined ? { partition } : undefined,
+			partition,
 			body: { data },
 		}),
 	);
@@ -222,7 +222,7 @@ export const updateFromUrl: RagieEndpoints['documentsUpdateFromUrl'] = (
 		({ document_id, url, partition }) => ({
 			method: 'PUT',
 			path: `/documents/${segment(document_id)}/url`,
-			query: partition !== undefined ? { partition } : undefined,
+			partition,
 			body: { url },
 		}),
 	);
@@ -239,9 +239,10 @@ export const patchMetadata: RagieEndpoints['documentsPatchMetadata'] = (
 			output: Outputs.documentsPatchMetadata,
 		},
 		input,
-		({ document_id, metadata }) => ({
+		({ document_id, partition, metadata }) => ({
 			method: 'PATCH',
 			path: `/documents/${segment(document_id)}/metadata`,
+			partition,
 			body: { metadata },
 		}),
 	);
@@ -255,9 +256,10 @@ export const getChunks: RagieEndpoints['documentsGetChunks'] = (ctx, input) =>
 			output: Outputs.documentsGetChunks,
 		},
 		input,
-		({ document_id, cursor, page_size }) => ({
+		({ document_id, partition, cursor, page_size }) => ({
 			method: 'GET',
 			path: `/documents/${segment(document_id)}/chunks`,
+			partition,
 			query: { cursor, page_size },
 		}),
 	);
@@ -271,9 +273,10 @@ export const getContent: RagieEndpoints['documentsGetContent'] = (ctx, input) =>
 			output: Outputs.documentsGetContent,
 		},
 		input,
-		({ document_id }) => ({
+		({ document_id, partition }) => ({
 			method: 'GET',
 			path: `/documents/${segment(document_id)}/content`,
+			partition,
 		}),
 	);
 
@@ -286,8 +289,9 @@ export const getSummary: RagieEndpoints['documentsGetSummary'] = (ctx, input) =>
 			output: Outputs.documentsGetSummary,
 		},
 		input,
-		({ document_id }) => ({
+		({ document_id, partition }) => ({
 			method: 'GET',
 			path: `/documents/${segment(document_id)}/summary`,
+			partition,
 		}),
 	);

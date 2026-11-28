@@ -1,26 +1,28 @@
 ---
 title: "Ragie plugin"
 sidebarTitle: "Overview"
-description: "Ragie is retrieval-augmented generation as a service. This plugin ingests documents from files, raw text or URLs, searches them with metadata filters and reranking, generates grounded deep-search answers, and manages data connections and webhook endpoint registrations."
+description: "Ragie is retrieval-augmented generation as a service. This plugin ingests documents from files, raw text or URLs, searches them with metadata filters and reranking, generates grounded deep-search answers, reads chunks, elements and source files, runs entity extraction, manages partitions, data connections, OAuth authenticators and webhook endpoints, and receives signed webhook events."
 ---
 
-Use **Ragie** through Corsair: one client, typed API calls.
+Use **Ragie** through Corsair: one client, typed API calls, and incoming webhooks.
 
 Create a key in the Ragie dashboard at secure.ragie.ai (a free developer tier exists). Wire notes before you call:
 
 - **Document processing is asynchronous.** Every create and update answers at once with status `pending`, then moves through partitioning, chunking and indexing. Poll `documents.get` until `status` is `ready` (usable, including summaries) or `failed`. The document is searchable once it reaches `indexed`.
 - **`responses.create` bills LLM usage** with the deep-search model. It runs as a job too: poll `responses.get` until `status` is `completed` or `failed`. Plan exhaustion answers HTTP 402, which the plugin never retries.
 - **`connections.delete` is a POST, not a DELETE.** With `keep_files: false` every document the connector ingested is deleted and cannot be recovered; with `keep_files: true` the documents survive unlinked. Deletion is asynchronous, so files can linger briefly either way.
-- **`webhookEndpoints.create` returns the signing `secret`.** Store it when you create the endpoint; treat the operation as a write, never a read. This plugin manages webhook registrations over the API but does not receive deliveries itself.
-- **`connections.createOAuthRedirectUrl`** starts an OAuth connector flow (Google Drive, Notion and similar) and returns a short-lived URL; non-OAuth connectors (S3, GCS, Freshdesk, Zendesk, Intercom, web crawler) are created directly with `connections.create`.
-- **Partitions.** Most operations accept a `partition` parameter; omitted means the `default` partition. A partition is created implicitly by writing a document into it.
-- **Response shapes are SDK-derived and unverified.** api.ragie.ai blocked research probes, so every output schema is built from the official Speakeasy SDK models, not from live answers; field presence and nullability may differ until verified with a key.
-- **Deferred groups.** Partitions, authenticators, entities (beta) and elements (beta) are not wrapped; partition scoping still works through the `partition` parameters the wrapped operations accept.
-- **Not wrapped for shape reasons.** `documents.getSource` answers binary file bytes, and the audio and video `media_type` values of `documents.getContent` stream binary, which the JSON client cannot return; `connections.getStats` has no documented shape in the SDK models. Rate limits are undocumented: a 429 is retried three times with backoff and a `Retry-After` header is honored, but no limit number is verified.
+- **`webhookEndpoints.create` returns the signing `secret`.** Store it when you create the endpoint, then give it to the plugin as `webhookSecret` (or the account's webhook signature). Deliveries are `{ type, payload, nonce }` signed with `X-Signature` (hex HMAC-SHA256 of the raw body); the plugin checks it and handles document status, document deleted, entity extracted, connection sync started, progress and finished, connection limit and partition limit events. `nonce` is unique per delivery.
+- **`connections.createOAuthRedirectUrl`** starts an OAuth connector flow (Google Drive, Notion and similar) and returns a short-lived URL; non-OAuth connectors (S3, GCS, Freshdesk, Zendesk, Intercom, web crawler) are created directly with `connections.create`. With your own OAuth app, register it with `authenticators.create` and connect through `authenticators.createConnection`.
+- **Partitions.** Reads, deletes and updates take `partition` as a request header (Ragie ignores it in the query); creates take it in the body. Omitted means the `default` partition. `partitions.*` creates, limits and deletes partitions; deleting one deletes every document in it.
+- **Billing and risk levels.** Every document create and update, `connections.create`, `connections.sync`, `authenticators.createConnection`, `instructions.create` and `responses.create` processes pages or runs a model that the plan bills, so they are marked destructive and the permission check runs first. Plan exhaustion answers 402, which the plugin never retries.
+- **Entity extraction.** `instructions.create` runs a prompt with a JSON schema over matching documents; read the results with `instructions.listEntities` or `documents.listEntities`, and failures with `instructions.listExtractionLogs`.
+- **Files.** `documents.getSource` returns the original file and `documents.getChunkContent` a chunk as text, audio, video or image (`media_type`), both as core file output (text inline, other files base64 or a host file id).
+- **Shapes.** Request and response shapes come from Ragie's Speakeasy SDK (ragie 2.0.0), which is generated from api.ragie.ai/openapi.json. Responses are parsed leniently. Rate limits are undocumented: a 429 is retried three times with backoff, honouring `Retry-After`.
 
 **What you get:**
 
-- 31 typed API operations
+- 54 typed API operations
+- 8 incoming webhook event types
 
 ## Setup
 
@@ -124,11 +126,20 @@ await tenant.ragie.api.documents.createRaw({ data: 'The refund window is thirty 
 
 See the full list on the [API](/plugins/ragie/api) page.
 
+## Webhooks
+
+This plugin registers **8** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/ragie/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
 ## What's next
 
 <CardGroup cols={2}>
   <Card title="API reference" href="/plugins/ragie/api">
     Every `ragie.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/ragie/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
   </Card>
   <Card title="Connect / OAuth" href="/management/connect">
     createLink, Hub delivery, and tenant connect flows.

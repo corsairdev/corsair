@@ -1,5 +1,5 @@
+import { ApiError } from 'corsair/http';
 import { ZodError } from 'zod';
-import { RagieAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import {
 	paymentRequired,
@@ -27,13 +27,25 @@ function apiError(
 	status: number,
 	// unknown: each case passes one of Ragie's error bodies.
 	body: unknown = {},
-	options: { retryAfter?: number; method?: string } = {},
+	options: { retryAfter?: number; method?: string; url?: string } = {},
 ) {
-	return new RagieAPIError(`Ragie ${status}: failed`, {
-		status,
-		body,
-		...options,
-	});
+	return new ApiError(
+		{
+			method: (options.method ?? 'GET') as 'GET',
+			url: options.url ?? '/documents',
+		},
+		{
+			url: `https://api.ragie.ai${options.url ?? '/documents'}`,
+			ok: false,
+			status,
+			statusText: '',
+			body,
+		},
+		`Ragie ${status}: failed`,
+		options.retryAfter === undefined
+			? undefined
+			: { retryAfter: options.retryAfter },
+	);
 }
 
 describe('Ragie error handlers', () => {
@@ -104,40 +116,15 @@ describe('Ragie error handlers', () => {
 		},
 	);
 
-	it('retries a dropped connection on a read', async () => {
-		const failure = new TypeError('fetch failed');
-		const error = new RagieAPIError('fetch failed', {
-			cause: failure,
-			method: 'GET',
-			transport: true,
-		});
-		expect(classify(error)).toBe('TRANSPORT_ERROR');
-		expect(await strategy(error)).toEqual({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff',
-		});
+	it('replays a 5xx on the read-only POST /retrievals', async () => {
+		const error = apiError(503, {}, { method: 'POST', url: '/retrievals' });
+		expect(classify(error)).toBe('SERVER_ERROR');
 	});
 
-	it('does not replay a write that dropped before an answer', async () => {
-		const failure = new TypeError('fetch failed');
-		const error = new RagieAPIError('fetch failed', {
-			cause: failure,
-			method: 'POST',
-			transport: true,
-		});
-		expect(classify(error)).toBe('DEFAULT');
-		expect(await strategy(error)).toEqual({ maxRetries: 0 });
-	});
-
-	it('does not replay a write that timed out', async () => {
-		const timeout = new Error('The operation timed out');
-		timeout.name = 'TimeoutError';
-		const error = new RagieAPIError(timeout.message, {
-			cause: timeout,
-			method: 'POST',
-			transport: true,
-		});
-		expect(classify(error)).toBe('DEFAULT');
+	it('does not replay a dropped connection (no status, method unknown)', async () => {
+		const dropped = new TypeError('fetch failed');
+		expect(classify(dropped)).toBe('DEFAULT');
+		expect(await strategy(dropped)).toEqual({ maxRetries: 0 });
 	});
 
 	it('falls back to DEFAULT for anything else', async () => {
@@ -176,7 +163,7 @@ describe('mergeErrorHandlers', () => {
 		// The caller's SERVER_ERROR must sit before any builtin that could
 		// match the same error first.
 		expect(names.indexOf('SERVER_ERROR')).toBeLessThan(
-			names.indexOf('TRANSPORT_ERROR'),
+			names.indexOf('RATE_LIMIT_ERROR'),
 		);
 		expect(merged.SERVER_ERROR?.match).toBe(customMatch);
 	});
@@ -196,5 +183,5 @@ describe('mergeErrorHandlers', () => {
 });
 
 function statusIs5xx(error: Error): boolean {
-	return error instanceof RagieAPIError && (error.status ?? 0) >= 500;
+	return error instanceof ApiError && error.status >= 500;
 }

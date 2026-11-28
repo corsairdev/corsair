@@ -8,6 +8,165 @@ description: "API reference for the Ragie plugin in Corsair: every `ragie.api.*`
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
 
+## Authenticators
+
+### create
+
+`authenticators.create`
+
+Register your own OAuth app (client id and secret) for a provider's connections
+
+**Risk:** `write`
+
+```ts
+await corsair.ragie.api.authenticators.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `string` | Yes | OAuth provider: google, atlassian, dropbox, hubspot, microsoft, notion, salesforce or slack |
+| `name` | `string` | Yes | — |
+| `client_id` | `string` | Yes | — |
+| `client_secret` | `string` | Yes | — |
+| `domain` | `string \| null` | No | — |
+| `project_number` | `string \| null` | No | — |
+
+Registers your own OAuth app for a provider; the client secret is sent once and never logged.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `provider` | `string` | Yes | — |
+
+
+
+---
+
+### createConnection
+
+`authenticators.createConnection`
+
+Create a connection through your own OAuth app; it starts syncing and processing pages, which is billed
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ragie.api.authenticators.createConnection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `authenticator_id` | `string` | Yes | The authenticator id |
+| `connection` | `Record<string, any>` | Yes | The provider connection: provider, data and the user's OAuth credentials |
+| `partition_strategy` | `fast \| hi_res \| Record<string, any>` | Yes | fast, hi_res, or a per-media-type mode object |
+| `partition` | `string \| null` | No | — |
+| `page_limit` | `number \| null` | No | — |
+| `config` | `Record<string, any> \| null` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `workflow` | `string \| null` | No | — |
+| `sync_filter` | `Record<string, any>` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### delete
+
+`authenticators.delete`
+
+Delete an OAuth app registration
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ragie.api.authenticators.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `authenticator_id` | `string` | Yes | The authenticator id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`authenticators.list`
+
+List your own OAuth apps registered for connections, paged by cursor
+
+**Risk:** `read`
+
+```ts
+await corsair.ragie.api.authenticators.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | Cursor from the previous page |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `authenticators` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="authenticators full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  provider: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_cursor?: string | null,
+  total_count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Connections
 
 ### create
@@ -16,7 +175,7 @@ description: "API reference for the Ragie plugin in Corsair: every `ragie.api.*`
 
 Create a non-OAuth connector such as S3, GCS, Freshdesk, Zendesk, Intercom or a web crawler, with its settings and credentials
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.ragie.api.connections.create({ connection: { provider: 'gcs', data: { bucket: 'acme-docs' }, credentials: { service_account_json: '...' } } });
@@ -27,7 +186,7 @@ await corsair.ragie.api.connections.create({ connection: { provider: 'gcs', data
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `connection` | `object` | Yes | — |
-| `partition_strategy` | `Record<string, unknown>` | No | How ingested files land in partitions. |
+| `partition_strategy` | `Record<string, any>` | No | How ingested files land in partitions. |
 | `page_limit` | `number \| null` | No | Monthly page cap for this connection. |
 
 The path is singular: POST /connection, while every other connection route is plural. Non-OAuth providers only.
@@ -38,8 +197,8 @@ The path is singular: POST /connection, while every other connection route is pl
 ```ts
 {
   provider: string,
-  data: Record<string, unknown>,
-  credentials?: Record<string, unknown>
+  data: Record<string, any>,
+  credentials?: Record<string, any>
 }
 ```
 </Accordion>
@@ -57,14 +216,14 @@ The path is singular: POST /connection, while every other connection route is pl
 | `metadata` | `Record<string, string \| number \| boolean \| string[]>` | Yes | — |
 | `type` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `source` | `string \| string[] \| Record<string, unknown> \| null` | No | — |
+| `source` | `string \| string[] \| Record<string, any> \| null` | No | — |
 | `enabled` | `boolean` | Yes | — |
 | `disabled_by_system_reason` | `connection_over_total_page_limit \| authentication_failed \| tenant_account_disabled \| null` | Yes | — |
 | `last_synced_at` | `string \| null` | No | — |
 | `syncing` | `boolean \| null` | No | — |
 | `partition` | `string \| null` | No | — |
 | `page_limit` | `number \| null` | Yes | — |
-| `sync_filter` | `Record<string, unknown>` | Yes | — |
+| `sync_filter` | `Record<string, any>` | Yes | — |
 | `disabled_by_system` | `boolean` | Yes | — |
 
 
@@ -164,15 +323,46 @@ await corsair.ragie.api.connections.get({ connection_id: 'f83f5c92-1fae-4a37-8f3
 | `metadata` | `Record<string, string \| number \| boolean \| string[]>` | Yes | — |
 | `type` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `source` | `string \| string[] \| Record<string, unknown> \| null` | No | — |
+| `source` | `string \| string[] \| Record<string, any> \| null` | No | — |
 | `enabled` | `boolean` | Yes | — |
 | `disabled_by_system_reason` | `connection_over_total_page_limit \| authentication_failed \| tenant_account_disabled \| null` | Yes | — |
 | `last_synced_at` | `string \| null` | No | — |
 | `syncing` | `boolean \| null` | No | — |
 | `partition` | `string \| null` | No | — |
 | `page_limit` | `number \| null` | Yes | — |
-| `sync_filter` | `Record<string, unknown>` | Yes | — |
+| `sync_filter` | `Record<string, any>` | Yes | — |
 | `disabled_by_system` | `boolean` | Yes | — |
+
+
+
+---
+
+### getStats
+
+`connections.getStats`
+
+Read a connection's document and page counts
+
+**Risk:** `read`
+
+```ts
+await corsair.ragie.api.connections.getStats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connection_id` | `string` | Yes | The connection id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document_count` | `number` | Yes | — |
+| `page_count` | `number` | Yes | — |
 
 
 
@@ -217,14 +407,14 @@ await corsair.ragie.api.connections.list({});
   metadata: Record<string, string | number | boolean | string[]>,
   type: string,
   name: string,
-  source?: string | string[] | Record<string, unknown> | null,
+  source?: string | string[] | Record<string, any> | null,
   enabled: boolean,
   disabled_by_system_reason: connection_over_total_page_limit | authentication_failed | tenant_account_disabled | null,
   last_synced_at?: string | null,
   syncing?: boolean | null,
   partition?: string | null,
   page_limit: number | null,
-  sync_filter: Record<string, unknown>,
+  sync_filter: Record<string, any>,
   disabled_by_system: boolean
 }[]
 ```
@@ -254,7 +444,7 @@ await corsair.ragie.api.connections.listSourceTypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `source_types` | `Record<string, unknown>[]` | Yes | — |
+| `source_types` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -291,14 +481,14 @@ await corsair.ragie.api.connections.setEnabled({ connection_id: 'f83f5c92-1fae-4
 | `metadata` | `Record<string, string \| number \| boolean \| string[]>` | Yes | — |
 | `type` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `source` | `string \| string[] \| Record<string, unknown> \| null` | No | — |
+| `source` | `string \| string[] \| Record<string, any> \| null` | No | — |
 | `enabled` | `boolean` | Yes | — |
 | `disabled_by_system_reason` | `connection_over_total_page_limit \| authentication_failed \| tenant_account_disabled \| null` | Yes | — |
 | `last_synced_at` | `string \| null` | No | — |
 | `syncing` | `boolean \| null` | No | — |
 | `partition` | `string \| null` | No | — |
 | `page_limit` | `number \| null` | Yes | — |
-| `sync_filter` | `Record<string, unknown>` | Yes | — |
+| `sync_filter` | `Record<string, any>` | Yes | — |
 | `disabled_by_system` | `boolean` | Yes | — |
 
 
@@ -336,14 +526,14 @@ await corsair.ragie.api.connections.setLimits({ connection_id: 'f83f5c92-1fae-4a
 | `metadata` | `Record<string, string \| number \| boolean \| string[]>` | Yes | — |
 | `type` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `source` | `string \| string[] \| Record<string, unknown> \| null` | No | — |
+| `source` | `string \| string[] \| Record<string, any> \| null` | No | — |
 | `enabled` | `boolean` | Yes | — |
 | `disabled_by_system_reason` | `connection_over_total_page_limit \| authentication_failed \| tenant_account_disabled \| null` | Yes | — |
 | `last_synced_at` | `string \| null` | No | — |
 | `syncing` | `boolean \| null` | No | — |
 | `partition` | `string \| null` | No | — |
 | `page_limit` | `number \| null` | Yes | — |
-| `sync_filter` | `Record<string, unknown>` | Yes | — |
+| `sync_filter` | `Record<string, any>` | Yes | — |
 | `disabled_by_system` | `boolean` | Yes | — |
 
 
@@ -356,7 +546,7 @@ await corsair.ragie.api.connections.setLimits({ connection_id: 'f83f5c92-1fae-4a
 
 Schedule a connector to sync as soon as possible; the sync itself runs in the background
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.ragie.api.connections.sync({ connection_id: 'f83f5c92-1fae-4a37-8f3e-23914e2b9c1d' });
@@ -394,8 +584,10 @@ await corsair.ragie.api.connections.update({ connection_id: 'f83f5c92-1fae-4a37-
 | `connection_id` | `string` | Yes | — |
 | `metadata` | `Record<string, string \| number \| boolean \| string[]>` | No | — |
 | `mode` | `string` | No | Sync mode; the reachable sources document no value list, so it is sent unchanged. |
-| `partition_strategy` | `Record<string, unknown>` | No | — |
+| `partition_strategy` | `Record<string, any>` | No | — |
 | `page_limit` | `number \| null` | No | — |
+
+Sends partition_strategy and page_limit flat beside metadata and mode, per the saved SDK evidence; that body arrangement is unverified until a live key confirms it.
 
 
 
@@ -409,14 +601,14 @@ await corsair.ragie.api.connections.update({ connection_id: 'f83f5c92-1fae-4a37-
 | `metadata` | `Record<string, string \| number \| boolean \| string[]>` | Yes | — |
 | `type` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `source` | `string \| string[] \| Record<string, unknown> \| null` | No | — |
+| `source` | `string \| string[] \| Record<string, any> \| null` | No | — |
 | `enabled` | `boolean` | Yes | — |
 | `disabled_by_system_reason` | `connection_over_total_page_limit \| authentication_failed \| tenant_account_disabled \| null` | Yes | — |
 | `last_synced_at` | `string \| null` | No | — |
 | `syncing` | `boolean \| null` | No | — |
 | `partition` | `string \| null` | No | — |
 | `page_limit` | `number \| null` | Yes | — |
-| `sync_filter` | `Record<string, unknown>` | Yes | — |
+| `sync_filter` | `Record<string, any>` | Yes | — |
 | `disabled_by_system` | `boolean` | Yes | — |
 
 
@@ -431,7 +623,7 @@ await corsair.ragie.api.connections.update({ connection_id: 'f83f5c92-1fae-4a37-
 
 Upload a file for ingestion. Processing runs in the background: poll documents.get until status is ready or failed
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.ragie.api.documents.create({ file: { url: 'https://example.com/handbook.pdf' }, name: 'handbook.pdf' });
@@ -494,7 +686,7 @@ string | {
 
 Fetch a URL and ingest its content. Processing runs in the background: poll documents.get until status is ready or failed
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.ragie.api.documents.createFromUrl({ url: 'https://example.com/handbook.pdf' });
@@ -540,7 +732,7 @@ Returns at once with status pending; poll documents.get until ready or failed.
 
 Ingest raw text. Processing runs in the background: poll documents.get until status is ready or failed
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.ragie.api.documents.createRaw({ data: 'The refund window is thirty days.', name: 'refund policy' });
@@ -597,6 +789,7 @@ await corsair.ragie.api.documents.delete({ document_id: 'b5331205-e0ee-4bb9-9d01
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `document_id` | `string` | Yes | The document's `id`. |
+| `partition` | `string` | No | The partition the document is in; omit for the default partition |
 
 
 
@@ -622,6 +815,7 @@ await corsair.ragie.api.documents.get({ document_id: 'b5331205-e0ee-4bb9-9d01-6d
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `document_id` | `string` | Yes | The document's `id`. |
+| `partition` | `string` | No | The partition the document is in; omit for the default partition |
 
 The job status read. Status walks pending, partitioning, partitioned, refined, chunked, indexed, summary_indexed, keyword_indexed, then ready or failed; the document is searchable from indexed.
 
@@ -646,6 +840,74 @@ The job status read. Status walks pending, partitioning, partitioned, refined, c
 
 ---
 
+### getChunk
+
+`documents.getChunk`
+
+Read one chunk of a document: its text, metadata and links
+
+**Risk:** `read`
+
+```ts
+await corsair.ragie.api.documents.getChunk({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document_id` | `string` | Yes | The document id |
+| `chunk_id` | `string` | Yes | The chunk id |
+| `partition` | `string` | No | The partition to read from; omit for the default partition |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `index` | `number` | No | — |
+| `text` | `string` | Yes | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `modality_data` | `Record<string, any> \| null` | No | — |
+
+
+
+---
+
+### getChunkContent
+
+`documents.getChunkContent`
+
+Download one chunk as text, audio, video or image (media_type), returned as a file
+
+**Risk:** `read`
+
+```ts
+await corsair.ragie.api.documents.getChunkContent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document_id` | `string` | Yes | The document id |
+| `chunk_id` | `string` | Yes | The chunk id |
+| `partition` | `string` | No | The partition to read from; omit for the default partition |
+| `media_type` | `text/plain \| audio/mpeg \| video/mp4 \| image/webp \| image/heic \| image/bmp \| image/png \| image/jpeg \| image/tiff` | No | The format to return; defaults to the chunk text |
+| `range` | `string` | No | HTTP Range for audio and video, e.g. bytes=0-1023 |
+
+Returns the chunk as a file in `media_type` (text/plain by default; audio/mpeg, video/mp4 or an image type for media chunks). `range` asks for part of an audio or video stream.
+
+
+
+**Output:** _empty object_
+
+
+---
+
 ### getChunks
 
 `documents.getChunks`
@@ -662,6 +924,7 @@ await corsair.ragie.api.documents.getChunks({ document_id: 'b5331205-e0ee-4bb9-9
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `partition` | `string` | No | The partition the document is in; omit for the default partition |
 | `document_id` | `string` | Yes | — |
 | `cursor` | `string` | No | The next page cursor from a previous response. |
 | `page_size` | `number` | No | Page size; Ragie documents 100 as the maximum. |
@@ -683,8 +946,8 @@ await corsair.ragie.api.documents.getChunks({ document_id: 'b5331205-e0ee-4bb9-9
   id: string,
   index?: number | null,
   text: string,
-  metadata?: Record<string, unknown> | null,
-  links?: Record<string, unknown> | null
+  metadata?: Record<string, any> | null,
+  links?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -711,8 +974,9 @@ await corsair.ragie.api.documents.getContent({ document_id: 'b5331205-e0ee-4bb9-
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `document_id` | `string` | Yes | The document's `id`. |
+| `partition` | `string` | No | The partition the document is in; omit for the default partition |
 
-Returns the default JSON answer with the extracted text. The audio and video media_type values stream binary and are not offered.
+Returns the default JSON answer with the extracted text. For audio and video media use documents.getChunkContent, which returns files.
 
 
 
@@ -736,6 +1000,34 @@ Returns the default JSON answer with the extracted text. The audio and video med
 
 ---
 
+### getSource
+
+`documents.getSource`
+
+Download the original file a document was made from
+
+**Risk:** `read`
+
+```ts
+await corsair.ragie.api.documents.getSource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document_id` | `string` | Yes | The document id |
+| `partition` | `string` | No | The partition to read from; omit for the default partition |
+
+Returns the original uploaded or fetched file as core file output.
+
+
+
+**Output:** _empty object_
+
+
+---
+
 ### getSummary
 
 `documents.getSummary`
@@ -753,6 +1045,7 @@ await corsair.ragie.api.documents.getSummary({ document_id: 'b5331205-e0ee-4bb9-
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `document_id` | `string` | Yes | The document's `id`. |
+| `partition` | `string` | No | The partition the document is in; omit for the default partition |
 
 Beta. Unavailable for xls, xlsx, csv and json documents and documents over a million tokens.
 
@@ -822,6 +1115,128 @@ await corsair.ragie.api.documents.list({ page_size: 25 });
 
 ---
 
+### listElements
+
+`documents.listElements`
+
+List the structural elements Ragie parsed from a document (titles, text, tables, images), paged by cursor
+
+**Risk:** `read`
+
+```ts
+await corsair.ragie.api.documents.listElements({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document_id` | `string` | Yes | The document id |
+| `partition` | `string` | No | The partition to read from; omit for the default partition |
+| `type` | `string[]` | No | Only these element types (text, table, image, title...) |
+| `index_start` | `number` | No | — |
+| `index_end` | `number` | No | — |
+| `cursor` | `string` | No | Cursor from the previous page |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document_elements` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="document_elements full type">
+
+```ts
+{
+  id: string,
+  document_id?: string,
+  type?: string,
+  index?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_cursor?: string | null,
+  total_count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listEntities
+
+`documents.listEntities`
+
+List the entities instructions extracted from one document, paged by cursor
+
+**Risk:** `read`
+
+```ts
+await corsair.ragie.api.documents.listEntities({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document_id` | `string` | Yes | The document id |
+| `partition` | `string` | No | The partition to read from; omit for the default partition |
+| `cursor` | `string` | No | Cursor from the previous page |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entities` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="entities full type">
+
+```ts
+{
+  id: string,
+  created_at?: string,
+  updated_at?: string,
+  instruction_id: string,
+  document_id: string,
+  chunk_id?: string | null,
+  data: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_cursor?: string | null,
+  total_count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ### patchMetadata
 
 `documents.patchMetadata`
@@ -839,6 +1254,7 @@ await corsair.ragie.api.documents.patchMetadata({ document_id: 'b5331205-e0ee-4b
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `document_id` | `string` | Yes | — |
+| `partition` | `string` | No | The partition the document is in; omit for the default partition |
 | `metadata` | `Record<string, string \| number \| boolean \| string[] \| null>` | Yes | Metadata to merge; a null value deletes that key. |
 
 
@@ -868,7 +1284,7 @@ await corsair.ragie.api.documents.patchMetadata({ document_id: 'b5331205-e0ee-4b
 
 Replace a document with a new file. Reprocessing runs in the background: poll documents.get until status is ready or failed
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.ragie.api.documents.updateFile({ document_id: 'b5331205-e0ee-4bb9-9d01-6d9a01d9e882', file: { url: 'https://example.com/handbook-v2.pdf' } });
@@ -928,7 +1344,7 @@ string | {
 
 Replace a document with content fetched from a URL. Reprocessing runs in the background: poll documents.get until status is ready or failed
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.ragie.api.documents.updateFromUrl({ document_id: 'b5331205-e0ee-4bb9-9d01-6d9a01d9e882', url: 'https://example.com/handbook-v2.pdf' });
@@ -971,7 +1387,7 @@ Replaces the content and reprocesses; poll documents.get until ready or failed.
 
 Replace a document with new raw text. Reprocessing runs in the background: poll documents.get until status is ready or failed
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.ragie.api.documents.updateRaw({ document_id: 'b5331205-e0ee-4bb9-9d01-6d9a01d9e882', data: 'Updated policy text.' });
@@ -1008,6 +1424,719 @@ Replaces the content and reprocesses; poll documents.get until ready or failed.
 
 ---
 
+## Elements
+
+### get
+
+`elements.get`
+
+Read one parsed document element
+
+**Risk:** `read`
+
+```ts
+await corsair.ragie.api.elements.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `element_id` | `string` | Yes | The element id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `document_id` | `string` | No | — |
+| `type` | `string` | No | — |
+| `index` | `number` | No | — |
+
+
+
+---
+
+## Instructions
+
+### create
+
+`instructions.create`
+
+Create an entity extraction instruction; it runs on matching documents and their extraction is billed
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ragie.api.instructions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Unique instruction name |
+| `prompt` | `string` | Yes | What to extract |
+| `entity_schema` | `Record<string, any>` | Yes | JSON schema of each extracted entity |
+| `partition` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `scope` | `document \| chunk` | No | Run once per document, or once per chunk |
+| `context_template` | `string` | No | — |
+| `filter` | `Record<string, any>` | No | Metadata filter for which documents it runs on |
+
+Runs on every matching document (and new ones while active); extraction is billed per page. `scope: chunk` runs once per chunk.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `active` | `boolean` | No | — |
+| `scope` | `string` | No | — |
+| `prompt` | `string` | No | — |
+| `context_template` | `string \| null` | No | — |
+| `entity_schema` | `Record<string, any>` | No | — |
+| `filter` | `Record<string, any> \| null` | No | — |
+| `partition` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`instructions.delete`
+
+Delete an instruction and the entities it extracted
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.ragie.api.instructions.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `instruction_id` | `string` | Yes | The instruction id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`instructions.list`
+
+List entity extraction instructions
+
+**Risk:** `read`
+
+```ts
+await corsair.ragie.api.instructions.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `instructions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="instructions full type">
+
+```ts
+{
+  id: string,
+  created_at?: string,
+  updated_at?: string,
+  name: string,
+  active?: boolean,
+  scope?: string,
+  prompt?: string,
+  context_template?: string | null,
+  entity_schema?: Record<string, any>,
+  filter?: Record<string, any> | null,
+  partition?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listEntities
+
+`instructions.listEntities`
+
+List the entities one instruction extracted, paged by cursor
+
+**Risk:** `read`
+
+```ts
+await corsair.ragie.api.instructions.listEntities({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `instruction_id` | `string` | Yes | The instruction id |
+| `partition` | `string` | No | The partition to read from; omit for the default partition |
+| `cursor` | `string` | No | Cursor from the previous page |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entities` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="entities full type">
+
+```ts
+{
+  id: string,
+  created_at?: string,
+  updated_at?: string,
+  instruction_id: string,
+  document_id: string,
+  chunk_id?: string | null,
+  data: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_cursor?: string | null,
+  total_count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listExtractionLogs
+
+`instructions.listExtractionLogs`
+
+List extraction attempts for an instruction with status and reasons, filterable by document, status and date
+
+**Risk:** `read`
+
+```ts
+await corsair.ragie.api.instructions.listExtractionLogs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `instruction_id` | `string` | Yes | The instruction id |
+| `partition` | `string` | No | The partition to read from; omit for the default partition |
+| `document_ids` | `string[]` | No | — |
+| `status` | `extracted \| not_found \| error` | No | — |
+| `created_after` | `string` | No | ISO 8601 datetime |
+| `created_before` | `string` | No | ISO 8601 datetime |
+| `cursor` | `string` | No | Cursor from the previous page |
+| `page_size` | `number` | No | — |
+
+Filter by `document_ids`, `status` (extracted, not_found, error) and `created_after` / `created_before` (ISO 8601).
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `logs` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="logs full type">
+
+```ts
+{
+  id: string,
+  instruction_id?: string,
+  document_id?: string,
+  scope?: string,
+  chunk_index?: number | null,
+  status: string,
+  reason_code?: string | null,
+  reason?: string | null,
+  errors?: string[],
+  page_count?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_cursor?: string | null,
+  total_count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`instructions.update`
+
+Change an instruction's prompt, schema, filter or active flag
+
+**Risk:** `write`
+
+```ts
+await corsair.ragie.api.instructions.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `instruction_id` | `string` | Yes | The instruction id |
+| `name` | `string` | No | — |
+| `prompt` | `string` | No | — |
+| `entity_schema` | `Record<string, any>` | No | — |
+| `active` | `boolean` | No | — |
+| `scope` | `document \| chunk` | No | Run once per document, or once per chunk |
+| `context_template` | `string` | No | — |
+| `filter` | `Record<string, any>` | No | Metadata filter for which documents it runs on |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `active` | `boolean` | No | — |
+| `scope` | `string` | No | — |
+| `prompt` | `string` | No | — |
+| `context_template` | `string \| null` | No | — |
+| `entity_schema` | `Record<string, any>` | No | — |
+| `filter` | `Record<string, any> \| null` | No | — |
+| `partition` | `string \| null` | No | — |
+
+
+
+---
+
+## Partitions
+
+### create
+
+`partitions.create`
+
+Create a partition with optional page and media limits and a metadata schema
+
+**Risk:** `write`
+
+```ts
+await corsair.ragie.api.partitions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Partition name: lowercase letters, numbers, _ and - |
+| `description` | `string \| null` | No | — |
+| `metadata_schema` | `Record<string, any> \| null` | No | JSON schema for document metadata in this partition |
+| `pages_hosted_limit_monthly` | `number \| null` | No | — |
+| `pages_processed_limit_monthly` | `number \| null` | No | — |
+| `pages_hosted_limit_max` | `number \| null` | No | — |
+| `pages_processed_limit_max` | `number \| null` | No | — |
+| `audio_processed_limit_monthly` | `number \| null` | No | — |
+| `audio_processed_limit_max` | `number \| null` | No | — |
+| `video_processed_limit_monthly` | `number \| null` | No | — |
+| `video_processed_limit_max` | `number \| null` | No | — |
+| `media_streamed_limit_monthly` | `number \| null` | No | — |
+| `media_streamed_limit_max` | `number \| null` | No | — |
+| `media_hosted_limit_monthly` | `number \| null` | No | — |
+| `media_hosted_limit_max` | `number \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `is_default` | `boolean` | No | — |
+| `limit_exceeded_at` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `context_aware` | `boolean` | No | — |
+| `metadata_schema` | `Record<string, any> \| null` | No | — |
+| `limits` | `object` | No | — |
+| `stats` | `Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="limits full type">
+
+```ts
+{
+  pages_hosted_limit_monthly?: number | null,
+  pages_processed_limit_monthly?: number | null,
+  pages_hosted_limit_max?: number | null,
+  pages_processed_limit_max?: number | null,
+  audio_processed_limit_monthly?: number | null,
+  audio_processed_limit_max?: number | null,
+  video_processed_limit_monthly?: number | null,
+  video_processed_limit_max?: number | null,
+  media_streamed_limit_monthly?: number | null,
+  media_streamed_limit_max?: number | null,
+  media_hosted_limit_monthly?: number | null,
+  media_hosted_limit_max?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`partitions.delete`
+
+Delete a partition and every document in it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.ragie.api.partitions.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `partition_id` | `string` | Yes | Partition name: lowercase letters, numbers, _ and - |
+| `async` | `boolean` | No | Delete in the background and answer at once |
+
+Deletes the partition and every document in it; it cannot be undone. `async: true` answers at once and deletes in the background.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`partitions.get`
+
+Read a partition with its limits and usage stats
+
+**Risk:** `read`
+
+```ts
+await corsair.ragie.api.partitions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `partition_id` | `string` | Yes | Partition name: lowercase letters, numbers, _ and - |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `is_default` | `boolean` | No | — |
+| `limit_exceeded_at` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `context_aware` | `boolean` | No | — |
+| `metadata_schema` | `Record<string, any> \| null` | No | — |
+| `limits` | `object` | No | — |
+| `stats` | `Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="limits full type">
+
+```ts
+{
+  pages_hosted_limit_monthly?: number | null,
+  pages_processed_limit_monthly?: number | null,
+  pages_hosted_limit_max?: number | null,
+  pages_processed_limit_max?: number | null,
+  audio_processed_limit_monthly?: number | null,
+  audio_processed_limit_max?: number | null,
+  video_processed_limit_monthly?: number | null,
+  video_processed_limit_max?: number | null,
+  media_streamed_limit_monthly?: number | null,
+  media_streamed_limit_max?: number | null,
+  media_hosted_limit_monthly?: number | null,
+  media_hosted_limit_max?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`partitions.list`
+
+List partitions with their limits, paged by cursor
+
+**Risk:** `read`
+
+```ts
+await corsair.ragie.api.partitions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | Cursor from the previous page |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `partitions` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="partitions full type">
+
+```ts
+{
+  name: string,
+  is_default?: boolean,
+  limit_exceeded_at?: string | null,
+  description?: string | null,
+  context_aware?: boolean,
+  metadata_schema?: Record<string, any> | null,
+  limits?: {
+    pages_hosted_limit_monthly?: number | null,
+    pages_processed_limit_monthly?: number | null,
+    pages_hosted_limit_max?: number | null,
+    pages_processed_limit_max?: number | null,
+    audio_processed_limit_monthly?: number | null,
+    audio_processed_limit_max?: number | null,
+    video_processed_limit_monthly?: number | null,
+    video_processed_limit_max?: number | null,
+    media_streamed_limit_monthly?: number | null,
+    media_streamed_limit_max?: number | null,
+    media_hosted_limit_monthly?: number | null,
+    media_hosted_limit_max?: number | null
+  },
+  stats?: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_cursor?: string | null,
+  total_count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setLimits
+
+`partitions.setLimits`
+
+Set a partition's monthly and maximum page and media limits
+
+**Risk:** `write`
+
+```ts
+await corsair.ragie.api.partitions.setLimits({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `partition_id` | `string` | Yes | Partition name: lowercase letters, numbers, _ and - |
+| `pages_hosted_limit_monthly` | `number \| null` | No | — |
+| `pages_processed_limit_monthly` | `number \| null` | No | — |
+| `pages_hosted_limit_max` | `number \| null` | No | — |
+| `pages_processed_limit_max` | `number \| null` | No | — |
+| `audio_processed_limit_monthly` | `number \| null` | No | — |
+| `audio_processed_limit_max` | `number \| null` | No | — |
+| `video_processed_limit_monthly` | `number \| null` | No | — |
+| `video_processed_limit_max` | `number \| null` | No | — |
+| `media_streamed_limit_monthly` | `number \| null` | No | — |
+| `media_streamed_limit_max` | `number \| null` | No | — |
+| `media_hosted_limit_monthly` | `number \| null` | No | — |
+| `media_hosted_limit_max` | `number \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `is_default` | `boolean` | No | — |
+| `limit_exceeded_at` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `context_aware` | `boolean` | No | — |
+| `metadata_schema` | `Record<string, any> \| null` | No | — |
+| `limits` | `object` | No | — |
+| `stats` | `Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="limits full type">
+
+```ts
+{
+  pages_hosted_limit_monthly?: number | null,
+  pages_processed_limit_monthly?: number | null,
+  pages_hosted_limit_max?: number | null,
+  pages_processed_limit_max?: number | null,
+  audio_processed_limit_monthly?: number | null,
+  audio_processed_limit_max?: number | null,
+  video_processed_limit_monthly?: number | null,
+  video_processed_limit_max?: number | null,
+  media_streamed_limit_monthly?: number | null,
+  media_streamed_limit_max?: number | null,
+  media_hosted_limit_monthly?: number | null,
+  media_hosted_limit_max?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`partitions.update`
+
+Change a partition's description, context awareness or metadata schema
+
+**Risk:** `write`
+
+```ts
+await corsair.ragie.api.partitions.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `partition_id` | `string` | Yes | Partition name: lowercase letters, numbers, _ and - |
+| `context_aware` | `boolean \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `metadata_schema` | `Record<string, any> \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `is_default` | `boolean` | No | — |
+| `limit_exceeded_at` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `context_aware` | `boolean` | No | — |
+| `metadata_schema` | `Record<string, any> \| null` | No | — |
+| `limits` | `object` | No | — |
+| `stats` | `Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="limits full type">
+
+```ts
+{
+  pages_hosted_limit_monthly?: number | null,
+  pages_processed_limit_monthly?: number | null,
+  pages_hosted_limit_max?: number | null,
+  pages_processed_limit_max?: number | null,
+  audio_processed_limit_monthly?: number | null,
+  audio_processed_limit_max?: number | null,
+  video_processed_limit_monthly?: number | null,
+  video_processed_limit_max?: number | null,
+  media_streamed_limit_monthly?: number | null,
+  media_streamed_limit_max?: number | null,
+  media_hosted_limit_monthly?: number | null,
+  media_hosted_limit_max?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Responses
 
 ### create
@@ -1016,7 +2145,7 @@ Replaces the content and reprocesses; poll documents.get until ready or failed.
 
 Generate a grounded answer with the deep-search model. Bills LLM usage; poll responses.get until status is completed or failed
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.ragie.api.responses.create({ input: 'What is the refund window?' });
@@ -1041,14 +2170,14 @@ Bills LLM usage with the deep-search model. Plan exhaustion answers 402 and is n
 | `created_at` | `number` | Yes | — |
 | `status` | `in_progress \| completed \| failed` | Yes | — |
 | `error` | `string \| null` | No | — |
-| `incomplete_details` | `unknown \| null` | No | — |
+| `incomplete_details` | `any \| null` | No | — |
 | `instructions` | `string \| null` | No | — |
-| `max_output_tokens` | `unknown \| null` | No | — |
+| `max_output_tokens` | `any \| null` | No | — |
 | `model` | `string \| null` | No | — |
-| `output` | `unknown[]` | Yes | — |
-| `output_parsed` | `unknown \| null` | No | — |
-| `tools` | `unknown[] \| null` | No | — |
-| `reasoning` | `unknown \| null` | No | — |
+| `output` | `any[]` | Yes | — |
+| `output_parsed` | `any \| null` | No | — |
+| `tools` | `any[] \| null` | No | — |
+| `reasoning` | `any \| null` | No | — |
 | `parallel_tool_calls` | `boolean \| null` | No | — |
 | `store` | `boolean \| null` | No | — |
 | `temperature` | `number \| null` | No | — |
@@ -1057,8 +2186,8 @@ Bills LLM usage with the deep-search model. Plan exhaustion answers 402 and is n
 | `top_p` | `number \| null` | No | — |
 | `truncation` | `string \| null` | No | — |
 | `usage` | `object` | Yes | — |
-| `user` | `unknown \| null` | No | — |
-| `metadata` | `Record<string, unknown> \| null` | No | — |
+| `user` | `any \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="usage full type">
@@ -1108,14 +2237,14 @@ The job status read: in_progress, completed or failed.
 | `created_at` | `number` | Yes | — |
 | `status` | `in_progress \| completed \| failed` | Yes | — |
 | `error` | `string \| null` | No | — |
-| `incomplete_details` | `unknown \| null` | No | — |
+| `incomplete_details` | `any \| null` | No | — |
 | `instructions` | `string \| null` | No | — |
-| `max_output_tokens` | `unknown \| null` | No | — |
+| `max_output_tokens` | `any \| null` | No | — |
 | `model` | `string \| null` | No | — |
-| `output` | `unknown[]` | Yes | — |
-| `output_parsed` | `unknown \| null` | No | — |
-| `tools` | `unknown[] \| null` | No | — |
-| `reasoning` | `unknown \| null` | No | — |
+| `output` | `any[]` | Yes | — |
+| `output_parsed` | `any \| null` | No | — |
+| `tools` | `any[] \| null` | No | — |
+| `reasoning` | `any \| null` | No | — |
 | `parallel_tool_calls` | `boolean \| null` | No | — |
 | `store` | `boolean \| null` | No | — |
 | `temperature` | `number \| null` | No | — |
@@ -1124,8 +2253,8 @@ The job status read: in_progress, completed or failed.
 | `top_p` | `number \| null` | No | — |
 | `truncation` | `string \| null` | No | — |
 | `usage` | `object` | Yes | — |
-| `user` | `unknown \| null` | No | — |
-| `metadata` | `Record<string, unknown> \| null` | No | — |
+| `user` | `any \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="usage full type">
@@ -1164,7 +2293,7 @@ await corsair.ragie.api.retrievals.retrieve({ query: 'what is the refund window'
 |------|------|----------|-------------|
 | `query` | `string` | Yes | The text to search for. |
 | `top_k` | `number` | No | Maximum chunks to return. Defaults to 8. |
-| `filter` | `Record<string, unknown>` | No | A metadata filter object using $eq, $ne, $gt, $gte, $lt, $lte, $in or $nin. |
+| `filter` | `Record<string, any>` | No | A metadata filter object using $eq, $ne, $gt, $gte, $lt, $lte, $in or $nin. |
 | `rerank` | `boolean` | No | Rerank chunks for semantic relevancy after retrieval. Slower but sharper. |
 | `max_chunks_per_document` | `number` | No | Beta. Cap per document to widen the set of documents returned. |
 | `partition` | `string` | No | — |
@@ -1189,11 +2318,11 @@ A read, and not documented as metered. filter takes the metadata operators $eq, 
   score: number,
   id: string,
   index: number,
-  metadata?: Record<string, unknown> | null,
+  metadata?: Record<string, any> | null,
   document_id: string,
   document_name: string,
   document_metadata: Record<string, string | number | boolean | string[]>,
-  links?: Record<string, unknown> | null
+  links?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -1221,7 +2350,7 @@ await corsair.ragie.api.webhookEndpoints.create({ name: 'document status', url: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `name` | `string` | No | — |
+| `name` | `string` | Yes | A name for the endpoint (required by Ragie) |
 | `url` | `string` | Yes | Where Ragie POSTs tenant events. |
 | `partition_pattern` | `string` | No | Pattern choosing which partitions a delivery is for; null receives all. |
 

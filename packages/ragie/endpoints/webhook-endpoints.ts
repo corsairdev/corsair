@@ -42,7 +42,7 @@ export const create: RagieEndpoints['webhookEndpointsCreate'] = (ctx, input) =>
 			body: { name, url, partition_pattern },
 		}),
 		{
-			log: (_parsed, result) => ({ endpointId: result.id, url: result.url }),
+			log: (_parsed, result) => ({ endpointId: result.id }),
 		},
 	);
 

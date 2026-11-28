@@ -4,7 +4,7 @@ import type {
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
+import { request } from 'corsair/http';
 
 export const RAGIE_API_BASE = 'https://api.ragie.ai';
 
@@ -26,52 +26,9 @@ const RAGIE_RATE_LIMIT_CONFIG: RateLimitConfig = {
 
 /**
  * Error bodies are `{ detail }` on 400, 401, 402, 404, 429 and 500, and
- * FastAPI's `{ detail: [...] }` on 422. The key travels in the Authorization
- * header, which error messages never print, so the response body is safe to
- * keep on the error.
+ * FastAPI's `{ detail: [...] }` on 422. Core's ApiError passes through
+ * unchanged (PLUGIN_PR_RULES R8); `describeRagieError` reads its body.
  */
-export class RagieAPIError extends Error {
-	readonly status?: number;
-	/** True when a failed call may be sent again; drives 5xx and transport retries. */
-	readonly replaySafe: boolean;
-	/** Milliseconds from a Retry-After header, when Ragie sent one. */
-	readonly retryAfter?: number;
-	/** The HTTP method of the failed request; set on transport failures too. */
-	readonly method?: string;
-	/** True when the request never got an HTTP answer (reset, DNS, abort). */
-	readonly transport: boolean;
-	// unknown: the body is the `{ detail }` envelope, but a proxy can answer
-	// HTML or text.
-	readonly body?: unknown;
-
-	constructor(
-		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			// unknown: same open error body as the field above.
-			body?: unknown;
-			retryAfter?: number;
-			method?: string;
-			transport?: boolean;
-			replaySafe?: boolean;
-		} = {},
-	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
-		this.name = 'RagieAPIError';
-		this.status = options.status;
-		this.replaySafe = options.replaySafe ?? options.method === 'GET';
-		this.body = options.body;
-		this.retryAfter = options.retryAfter;
-		this.method = options.method;
-		this.transport = options.transport ?? false;
-	}
-
-	get isRateLimit(): boolean {
-		return this.status === 429;
-	}
-}
-
 export function describeRagieError(
 	status: number | undefined,
 	// unknown: the body is an untyped error body until asRecord narrows it.
@@ -90,7 +47,10 @@ export function describeRagieError(
 	return status === undefined ? text : `Ragie ${status}: ${text}`;
 }
 
-export type RagieQuery = Record<string, string | number | boolean | undefined>;
+export type RagieQuery = Record<
+	string,
+	string | number | boolean | string[] | undefined
+>;
 
 export type RagieRequest = {
 	method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -101,9 +61,18 @@ export type RagieRequest = {
 	/** Form fields for a multipart upload; strings and Blobs go over as they are, objects as JSON. */
 	// unknown: multipart fields mix binary and JSON-ready values.
 	formData?: Record<string, unknown>;
-	/** A failed call may be sent again. GETs default to true; POST /retrievals opts in. */
-	replaySafe?: boolean;
+	/**
+	 * Ragie reads the partition from a `partition` header on reads, deletes
+	 * and updates (a `partition` query parameter is ignored). Creates take it
+	 * in the body instead.
+	 */
+	partition?: string;
+	/** `binary` returns `{ bytes, contentType }` (document source, chunk media). */
+	responseType?: 'binary';
 };
+
+/** POST routes that only read: a failed call may be sent again. */
+export const RAGIE_REPLAY_SAFE_POSTS = new Set(['/retrievals']);
 
 /** Encodes one path segment. */
 export function segment(value: string | number): string {
@@ -115,7 +84,15 @@ export function segment(value: string | number): string {
 // empty bodies.
 export async function makeRagieRequest(
 	apiKey: string,
-	{ method, path, query, body, formData, replaySafe }: RagieRequest,
+	{
+		method,
+		path,
+		query,
+		body,
+		formData,
+		partition,
+		responseType,
+	}: RagieRequest,
 ): Promise<unknown> {
 	const config: OpenAPIConfig = {
 		BASE: RAGIE_API_BASE,
@@ -123,7 +100,11 @@ export async function makeRagieRequest(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TIMEOUT: RAGIE_TIMEOUT_MS,
-		HEADERS: { Accept: 'application/json', Authorization: `Bearer ${apiKey}` },
+		HEADERS: {
+			Accept: responseType === 'binary' ? '*/*' : 'application/json',
+			Authorization: `Bearer ${apiKey}`,
+			...(partition !== undefined ? { partition } : {}),
+		},
 	};
 
 	const requestOptions: ApiRequestOptions = {
@@ -136,41 +117,10 @@ export async function makeRagieRequest(
 			formData === undefined && body !== undefined
 				? 'application/json'
 				: undefined,
+		...(responseType ? { responseType } : {}),
 	};
 
-	try {
-		return await request<unknown>(config, requestOptions, {
-			rateLimitConfig: RAGIE_RATE_LIMIT_CONFIG,
-		});
-	} catch (error) {
-		if (error instanceof ApiError) {
-			// The cause stays behind: the response body is kept on this error, and
-			// ApiError's own copy adds nothing that the key-hygiene tests have not
-			// pinned (the key rides in a header, which no error field prints).
-			throw new RagieAPIError(
-				describeRagieError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					body: error.body,
-					retryAfter: error.retryAfter,
-					method,
-					replaySafe,
-				},
-			);
-		}
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new RagieAPIError(error.message, {
-				cause: error,
-				method,
-				transport: true,
-				replaySafe,
-			});
-		}
-		throw new RagieAPIError('Unknown Ragie error', {
-			method,
-			transport: true,
-			replaySafe,
-		});
-	}
+	return await request<unknown>(config, requestOptions, {
+		rateLimitConfig: RAGIE_RATE_LIMIT_CONFIG,
+	});
 }

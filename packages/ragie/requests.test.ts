@@ -105,13 +105,14 @@ describe('documents requests', () => {
 		expect(lastRequest()).toMatchObject({
 			method: 'GET',
 			path: '/documents',
+			// Ragie reads the partition from a header; in the query it is ignored.
 			query: {
 				filter: '{"department":"sales"}',
-				partition: 'acme',
 				cursor: 'doc_cursor_1',
 				page_size: '50',
 			},
 		});
+		expect(lastRequest().headers.get('partition')).toBe('acme');
 		expect(result).toEqual(documentsList);
 	});
 
@@ -227,7 +228,8 @@ describe('documents requests', () => {
 		const sent = lastRequest();
 		expect(sent.method).toBe('PUT');
 		expect(sent.path).toBe(`/documents/${readyDocument.id}/file`);
-		expect(sent.query).toEqual({ partition: 'acme' });
+		expect(sent.query).toEqual({});
+		expect(sent.headers.get('partition')).toBe('acme');
 		expect((sent.form as FormData).get('file')).toBeInstanceOf(Blob);
 	});
 

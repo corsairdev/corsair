@@ -271,8 +271,16 @@ const DocumentsUrlCreateInputSchema = z.object({
 	...DocumentCreateParams,
 });
 
+// Ragie reads the partition from a header on document reads, deletes and
+// updates; without it the default partition is searched.
+const PartitionHeader = z
+	.string()
+	.optional()
+	.describe('The partition the document is in; omit for the default partition');
+
 const DocumentIdInputSchema = z.object({
 	document_id: z.string().min(1).describe("The document's `id`."),
+	partition: PartitionHeader,
 });
 
 // `documents.get` is the job status read, so its status is the documented
@@ -309,12 +317,14 @@ const DocumentUpdateUrlInputSchema = z.object({
 
 const DocumentPatchMetadataInputSchema = z.object({
 	document_id: z.string().min(1),
+	partition: PartitionHeader,
 	metadata: z
 		.record(z.string(), PatchMetadataValueSchema)
 		.describe('Metadata to merge; a null value deletes that key.'),
 });
 
 const DocumentChunksInputSchema = z.object({
+	partition: PartitionHeader,
 	document_id: z.string().min(1),
 	...PageParamsSchema,
 });
@@ -537,7 +547,10 @@ const WebhookEndpointsListResponseSchema = z
 	.loose();
 
 const WebhookEndpointsCreateInputSchema = z.object({
-	name: z.string().optional(),
+	name: z
+		.string()
+		.min(1)
+		.describe('A name for the endpoint (required by Ragie)'),
 	url: z.string().url().describe('Where Ragie POSTs tenant events.'),
 	partition_pattern: z
 		.string()

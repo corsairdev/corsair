@@ -4904,7 +4904,8 @@
                 "pages": [
                   "plugins/ragie/overview",
                   "plugins/ragie/api",
-                  "plugins/ragie/database"
+                  "plugins/ragie/database",
+                  "plugins/ragie/webhooks"
                 ]
               },
               {

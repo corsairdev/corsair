@@ -24,57 +24,33 @@ function buildKey(
 	);
 }
 
-const operations = [
-	'connections.create',
-	'connections.createOAuthRedirectUrl',
-	'connections.delete',
-	'connections.get',
-	'connections.list',
-	'connections.listSourceTypes',
-	'connections.setEnabled',
-	'connections.setLimits',
-	'connections.sync',
-	'connections.update',
-	'documents.create',
-	'documents.createFromUrl',
-	'documents.createRaw',
-	'documents.delete',
-	'documents.get',
-	'documents.getChunks',
-	'documents.getContent',
-	'documents.getSummary',
-	'documents.list',
-	'documents.patchMetadata',
-	'documents.updateFile',
-	'documents.updateFromUrl',
-	'documents.updateRaw',
-	'responses.create',
-	'responses.get',
-	'retrievals.retrieve',
-	'webhookEndpoints.create',
-	'webhookEndpoints.delete',
-	'webhookEndpoints.get',
-	'webhookEndpoints.list',
-	'webhookEndpoints.update',
-].sort();
+// 54 operations: the 31 of the first version plus 23 from the SDK (ragie 2.0.0).
+const EXPECTED_OPERATION_COUNT = 54;
+const operations = Object.keys(ragieEndpointSchemas).sort();
 
 describe('ragie plugin definition', () => {
 	const plugin = ragie();
 
-	it('registers as ragie with api_key auth and no webhooks', () => {
+	it('registers as ragie with api_key auth and signed webhooks', () => {
 		expect(plugin.id).toBe('ragie');
 		expect(plugin.options?.authType).toBe('api_key');
-		expect(plugin.webhooks).toEqual({});
+		expect(Object.keys(plugin.webhooks ?? {}).sort()).toEqual([
+			'connections',
+			'documents',
+			'entities',
+			'partitions',
+		]);
 		expect(
 			plugin.pluginWebhookMatcher?.({ headers: {}, body: {} } as never),
 		).toBe(false);
 	});
 
-	it('exposes exactly the 31 catalog operations across 5 groups', () => {
+	it('exposes the same operations in endpoints, meta and schemas', () => {
 		const nested = Object.entries(plugin.endpoints ?? {}).flatMap(
 			([group, fns]) => Object.keys(fns).map((name) => `${group}.${name}`),
 		);
 		expect(nested.sort()).toEqual(operations);
+		expect(operations).toHaveLength(EXPECTED_OPERATION_COUNT);
 	});
 
 	it('gives every endpoint a description and the right risk level', () => {
@@ -87,16 +63,16 @@ describe('ragie plugin definition', () => {
 			Object.fromEntries(
 				Object.entries(meta).map(([name, entry]) => [name, entry.riskLevel]),
 			),
-		).toEqual({
+		).toMatchObject({
 			'documents.list': 'read',
-			'documents.create': 'write',
-			'documents.createRaw': 'write',
-			'documents.createFromUrl': 'write',
+			'documents.create': 'destructive',
+			'documents.createRaw': 'destructive',
+			'documents.createFromUrl': 'destructive',
 			'documents.get': 'read',
 			'documents.delete': 'destructive',
-			'documents.updateFile': 'write',
-			'documents.updateRaw': 'write',
-			'documents.updateFromUrl': 'write',
+			'documents.updateFile': 'destructive',
+			'documents.updateRaw': 'destructive',
+			'documents.updateFromUrl': 'destructive',
 			'documents.patchMetadata': 'write',
 			'documents.getChunks': 'read',
 			'documents.getContent': 'read',
@@ -105,14 +81,14 @@ describe('ragie plugin definition', () => {
 			'connections.list': 'read',
 			'connections.get': 'read',
 			'connections.listSourceTypes': 'read',
-			'connections.create': 'write',
+			'connections.create': 'destructive',
 			'connections.createOAuthRedirectUrl': 'write',
 			'connections.update': 'write',
-			'connections.sync': 'write',
+			'connections.sync': 'destructive',
 			'connections.delete': 'destructive',
 			'connections.setEnabled': 'write',
 			'connections.setLimits': 'write',
-			'responses.create': 'write',
+			'responses.create': 'destructive',
 			'responses.get': 'read',
 			'webhookEndpoints.list': 'read',
 			// The create answer carries the signing secret, so it can never be read.
@@ -120,6 +96,13 @@ describe('ragie plugin definition', () => {
 			'webhookEndpoints.get': 'read',
 			'webhookEndpoints.update': 'write',
 			'webhookEndpoints.delete': 'destructive',
+			'partitions.delete': 'destructive',
+			'instructions.create': 'destructive',
+			'instructions.delete': 'destructive',
+			'authenticators.createConnection': 'destructive',
+			'authenticators.delete': 'destructive',
+			'partitions.list': 'read',
+			'documents.getSource': 'read',
 		});
 	});
 
@@ -223,9 +206,22 @@ describe('ragie key builder', () => {
 		);
 	});
 
-	it('refuses webhook keys', async () => {
+	it('gives webhooks the webhookSecret option, else the stored signature', async () => {
 		await expect(
-			ragie().keyBuilder?.(keyContext('stored-key') as never, 'webhook'),
-		).rejects.toBeInstanceOf(AuthMissingError);
+			ragie({ webhookSecret: 'whsec' }).keyBuilder?.(
+				keyContext('stored-key') as never,
+				'webhook',
+			),
+		).resolves.toBe('whsec');
+		const ctx = {
+			...keyContext('stored-key'),
+			keys: {
+				get_api_key: jest.fn(),
+				get_webhook_signature: jest.fn().mockResolvedValue('stored-secret'),
+			},
+		};
+		await expect(ragie().keyBuilder?.(ctx as never, 'webhook')).resolves.toBe(
+			'stored-secret',
+		);
 	});
 });

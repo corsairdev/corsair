@@ -120,6 +120,11 @@ export const sync: RagieEndpoints['connectionsSync'] = (ctx, input) =>
 			method: 'POST',
 			path: `/connections/${segment(connection_id)}/sync`,
 		}),
+		{
+			// Ragie has accepted the sync by the time it answers; a bodyless 200
+			// is the same success, as for documents.delete.
+			shape: (raw) => raw ?? {},
+		},
 	);
 
 // Deletion is POST /connections/{id}/delete with a keep_files body, not a
@@ -144,6 +149,9 @@ export const remove: RagieEndpoints['connectionsDelete'] = (ctx, input) =>
 				connectionId: connection_id,
 				keepFiles: keep_files,
 			}),
+			// The deletion has started by the time Ragie answers; a bodyless
+			// 200 must not turn it into an error.
+			shape: (raw) => raw ?? {},
 		},
 	);
 
