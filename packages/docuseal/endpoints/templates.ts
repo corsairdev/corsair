@@ -113,21 +113,28 @@ export const createFromHtml: DocuSealEndpoints['templatesCreateFromHtml'] = (
 			folder_name,
 			shared_link,
 			documents,
-		}) => ({
-			method: 'POST',
-			path: '/templates/html',
-			body: {
-				html,
-				html_header,
-				html_footer,
-				name,
-				size,
-				external_id,
-				folder_name,
-				shared_link,
-				documents,
-			},
-		}),
+		}) => {
+			if (!html && !documents?.length) {
+				throw new Error(
+					'templates.createFromHtml needs html or a non-empty documents array',
+				);
+			}
+			return {
+				method: 'POST',
+				path: '/templates/html',
+				body: {
+					html,
+					html_header,
+					html_footer,
+					name,
+					size,
+					external_id,
+					folder_name,
+					shared_link,
+					documents,
+				},
+			};
+		},
 	);
 
 export const createFromPdf: DocuSealEndpoints['templatesCreateFromPdf'] = (

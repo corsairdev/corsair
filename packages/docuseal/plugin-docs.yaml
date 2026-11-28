@@ -93,7 +93,7 @@ apiNotes:
   submissions.create: 'Sends the signature-request emails immediately unless you pass `send_email: false`. Answers a bare array, one submitter per entry.'
   submissions.createFromPdf: 'One-off submissions from uploaded files. May require a paid (Pro) plan.'
   submissions.createFromHtml: 'One-off submissions from HTML documents; no template is saved.'
-  submissions.createFromDocx: 'DOCX `{{...}}` tags are filled from `variables`. May require a paid (Pro) plan.'
+  submissions.createFromDocx: 'In the DOCX, `[[variable_name]]` is replaced from `variables`, and `{{Field Name}}` tags become fillable fields. May require a paid (Pro) plan.'
   submissions.archive: 'DocuSeal archives instead of deleting. Restore an archived submission with `submissions.update` and `archived: false`.'
   submissions.getDocuments: 'Returns URLs of the submission''s documents, signed and final once completed. The URLs act as bearer credentials, so treat the result as sensitive.'
   submitters.list: 'Pages by id cursor: pass `pagination.next` from one page as `after` on the next. Page size is capped at 100; DocuSeal defaults to 10.'

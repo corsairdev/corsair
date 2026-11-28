@@ -121,7 +121,27 @@ const FieldPreferencesSchema = z
 		format: z.string().nullish(),
 		price: z.number().nullish(),
 		currency: z.enum(CURRENCIES).nullish(),
-		mask: z.boolean().nullish(),
+		// The spec takes a boolean or a number of visible characters.
+		mask: z.union([z.boolean(), z.number().int()]).nullish(),
+		reasons: z.array(z.string()).nullish(),
+	})
+	.loose();
+
+// The spec types output preferences as open strings: a font or currency
+// outside the input enums must not fail a read.
+const FieldPreferencesOutputSchema = z
+	.object({
+		font_size: z.number().nullish(),
+		font_type: z.string().nullish(),
+		font: z.string().nullish(),
+		color: z.string().nullish(),
+		background: z.string().nullish(),
+		align: z.string().nullish(),
+		valign: z.string().nullish(),
+		format: z.string().nullish(),
+		price: z.number().nullish(),
+		currency: z.string().nullish(),
+		mask: z.union([z.boolean(), z.number()]).nullish(),
 		reasons: z.array(z.string()).nullish(),
 	})
 	.loose();
@@ -214,7 +234,8 @@ const TemplateDocumentSchema = z
 		id: z.number(),
 		uuid: z.string(),
 		url: z.string(),
-		preview_image_url: z.string(),
+		// null until DocuSeal has rendered the first-page preview.
+		preview_image_url: z.string().nullish(),
 		filename: z.string(),
 	})
 	.loose();
@@ -241,7 +262,7 @@ const FieldSchema = z
 		name: z.string().nullish(),
 		type: z.string(),
 		required: z.boolean().nullish(),
-		preferences: FieldPreferencesSchema.nullish(),
+		preferences: FieldPreferencesOutputSchema.nullish(),
 		areas: z.array(FieldAreaSchema).nullish(),
 	})
 	.loose();
@@ -511,8 +532,9 @@ export type TemplatesArchiveResponse = z.infer<typeof ArchiveResultSchema>;
 const TemplatesCreateFromHtmlInputSchema = z.object({
 	html: z
 		.string()
+		.optional()
 		.describe(
-			'HTML document; text fields use `<span class="text-field">` style tags.',
+			'HTML document with field tags such as `<text-field name="Name" role="Signer"></text-field>` and `<signature-field>`. Required unless `documents` is given.',
 		),
 	html_header: z.string().optional(),
 	html_footer: z.string().optional(),
@@ -527,7 +549,9 @@ const TemplatesCreateFromHtmlInputSchema = z.object({
 	documents: z
 		.array(z.object({ html: z.string(), name: z.string().optional() }))
 		.optional()
-		.describe('Additional documents merged into the same template.'),
+		.describe(
+			'Documents of the template; use instead of `html` for several documents.',
+		),
 });
 
 export type TemplatesCreateFromHtmlInput = z.input<
@@ -827,7 +851,7 @@ export type SubmissionsCreateFromHtmlResponse = z.infer<
 >;
 
 const SubmissionsCreateFromDocxInputSchema = OneoffBaseInputSchema.extend({
-	// unknown: DOCX `{{variable}}` tag values, keyed by tag name.
+	// unknown: values for the DOCX's `[[variable_name]]` placeholders, keyed by name.
 	variables: z.record(z.string(), z.unknown()).optional(),
 	documents: z
 		.array(PdfDocumentInputSchema)
@@ -929,14 +953,16 @@ const SubmittersListInputSchema = z.object({
 	slug: z.string().optional(),
 	completed_after: z
 		.string()
-		.datetime()
 		.optional()
-		.describe('ISO 8601 datetime, e.g. `2024-08-01T12:00:00Z`.'),
+		.describe(
+			'A date-time DocuSeal can parse, e.g. `2024-03-05 9:32:20` or `2024-08-01T12:00:00Z`.',
+		),
 	completed_before: z
 		.string()
-		.datetime()
 		.optional()
-		.describe('ISO 8601 datetime, e.g. `2024-08-01T12:00:00Z`.'),
+		.describe(
+			'A date-time DocuSeal can parse, e.g. `2024-03-05 9:32:20` or `2024-08-01T12:00:00Z`.',
+		),
 	external_id: z.string().optional(),
 	limit: LimitSchema,
 	after: AfterSchema,

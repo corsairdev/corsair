@@ -247,7 +247,7 @@ Sends the signature-request emails immediately unless you pass `send_email: fals
       format?: string | null,
       price?: number | null,
       currency?: USD | EUR | GBP | CAD | AUD | CHF | SEK | null,
-      mask?: boolean | null,
+      mask?: boolean | number | null,
       reasons?: string[] | null
     }
   }[],
@@ -343,7 +343,7 @@ await corsair.docuseal.api.submissions.createFromDocx({ documents: [{ name: 'agr
 | `documents` | `object[]` | Yes | DOCX files with `{{...}}` tags; may require a paid (Pro) plan. |
 | `remove_tags` | `boolean` | No | DocuSeal defaults to true. |
 
-DOCX `{{...}}` tags are filled from `variables`. May require a paid (Pro) plan.
+In the DOCX, `[[variable_name]]` is replaced from `variables`, and `{{Field Name}}` tags become fillable fields. May require a paid (Pro) plan.
 
 <AccordionGroup>
 <Accordion title="submitters full type">
@@ -395,7 +395,7 @@ DOCX `{{...}}` tags are filled from `variables`. May require a paid (Pro) plan.
       format?: string | null,
       price?: number | null,
       currency?: USD | EUR | GBP | CAD | AUD | CHF | SEK | null,
-      mask?: boolean | null,
+      mask?: boolean | number | null,
       reasons?: string[] | null
     }
   }[],
@@ -500,16 +500,16 @@ DOCX `{{...}}` tags are filled from `variables`. May require a paid (Pro) plan.
   required?: boolean | null,
   preferences?: {
     font_size?: number | null,
-    font_type?: bold | italic | bold_italic | null,
-    font?: Times | Helvetica | Courier | null,
+    font_type?: string | null,
+    font?: string | null,
     color?: string | null,
     background?: string | null,
-    align?: left | center | right | null,
-    valign?: top | center | bottom | null,
+    align?: string | null,
+    valign?: string | null,
     format?: string | null,
     price?: number | null,
-    currency?: USD | EUR | GBP | CAD | AUD | CHF | SEK | null,
-    mask?: boolean | null,
+    currency?: string | null,
+    mask?: boolean | number | null,
     reasons?: string[] | null
   } | null,
   areas?: {
@@ -688,7 +688,7 @@ One-off submissions from HTML documents; no template is saved.
       format?: string | null,
       price?: number | null,
       currency?: USD | EUR | GBP | CAD | AUD | CHF | SEK | null,
-      mask?: boolean | null,
+      mask?: boolean | number | null,
       reasons?: string[] | null
     }
   }[],
@@ -796,16 +796,16 @@ One-off submissions from HTML documents; no template is saved.
   required?: boolean | null,
   preferences?: {
     font_size?: number | null,
-    font_type?: bold | italic | bold_italic | null,
-    font?: Times | Helvetica | Courier | null,
+    font_type?: string | null,
+    font?: string | null,
     color?: string | null,
     background?: string | null,
-    align?: left | center | right | null,
-    valign?: top | center | bottom | null,
+    align?: string | null,
+    valign?: string | null,
     format?: string | null,
     price?: number | null,
-    currency?: USD | EUR | GBP | CAD | AUD | CHF | SEK | null,
-    mask?: boolean | null,
+    currency?: string | null,
+    mask?: boolean | number | null,
     reasons?: string[] | null
   } | null,
   areas?: {
@@ -909,7 +909,7 @@ One-off submissions from uploaded files. May require a paid (Pro) plan.
       format?: string | null,
       price?: number | null,
       currency?: USD | EUR | GBP | CAD | AUD | CHF | SEK | null,
-      mask?: boolean | null,
+      mask?: boolean | number | null,
       reasons?: string[] | null
     }
   }[],
@@ -969,7 +969,7 @@ One-off submissions from uploaded files. May require a paid (Pro) plan.
       format?: string | null,
       price?: number | null,
       currency?: USD | EUR | GBP | CAD | AUD | CHF | SEK | null,
-      mask?: boolean | null,
+      mask?: boolean | number | null,
       reasons?: string[] | null
     }
   }[]
@@ -1052,16 +1052,16 @@ One-off submissions from uploaded files. May require a paid (Pro) plan.
   required?: boolean | null,
   preferences?: {
     font_size?: number | null,
-    font_type?: bold | italic | bold_italic | null,
-    font?: Times | Helvetica | Courier | null,
+    font_type?: string | null,
+    font?: string | null,
     color?: string | null,
     background?: string | null,
-    align?: left | center | right | null,
-    valign?: top | center | bottom | null,
+    align?: string | null,
+    valign?: string | null,
     format?: string | null,
     price?: number | null,
-    currency?: USD | EUR | GBP | CAD | AUD | CHF | SEK | null,
-    mask?: boolean | null,
+    currency?: string | null,
+    mask?: boolean | number | null,
     reasons?: string[] | null
   } | null,
   areas?: {
@@ -1584,8 +1584,8 @@ await corsair.docuseal.api.submitters.list({ submission_id: 654321, limit: 20 })
 | `submission_id` | `number` | No | — |
 | `q` | `string` | No | — |
 | `slug` | `string` | No | — |
-| `completed_after` | `string` | No | ISO 8601 datetime, e.g. `2024-08-01T12:00:00Z`. |
-| `completed_before` | `string` | No | ISO 8601 datetime, e.g. `2024-08-01T12:00:00Z`. |
+| `completed_after` | `string` | No | A date-time DocuSeal can parse, e.g. `2024-03-05 9:32:20` or `2024-08-01T12:00:00Z`. |
+| `completed_before` | `string` | No | A date-time DocuSeal can parse, e.g. `2024-03-05 9:32:20` or `2024-08-01T12:00:00Z`. |
 | `external_id` | `string` | No | — |
 | `limit` | `number` | No | Results per page, 1-100. DocuSeal defaults to 10. |
 | `after` | `number` | No | Only records with a larger id. Pass `pagination.next` from the previous page. |
@@ -1735,7 +1735,7 @@ Passing `completed: true` counter-signs the document as this submitter and canno
     format?: string | null,
     price?: number | null,
     currency?: USD | EUR | GBP | CAD | AUD | CHF | SEK | null,
-    mask?: boolean | null,
+    mask?: boolean | number | null,
     reasons?: string[] | null
   }
 }[]
@@ -1901,16 +1901,16 @@ await corsair.docuseal.api.templates.clone({ id: 123456, name: 'Rental agreement
   required?: boolean | null,
   preferences?: {
     font_size?: number | null,
-    font_type?: bold | italic | bold_italic | null,
-    font?: Times | Helvetica | Courier | null,
+    font_type?: string | null,
+    font?: string | null,
     color?: string | null,
     background?: string | null,
-    align?: left | center | right | null,
-    valign?: top | center | bottom | null,
+    align?: string | null,
+    valign?: string | null,
     format?: string | null,
     price?: number | null,
-    currency?: USD | EUR | GBP | CAD | AUD | CHF | SEK | null,
-    mask?: boolean | null,
+    currency?: string | null,
+    mask?: boolean | number | null,
     reasons?: string[] | null
   } | null,
   areas?: {
@@ -1954,7 +1954,7 @@ await corsair.docuseal.api.templates.clone({ id: 123456, name: 'Rental agreement
   id: number,
   uuid: string,
   url: string,
-  preview_image_url: string,
+  preview_image_url?: string | null,
   filename: string
 }[]
 ```
@@ -2031,7 +2031,7 @@ Files travel base64-encoded. DOCX templates may require a paid (Pro) plan.
       format?: string | null,
       price?: number | null,
       currency?: USD | EUR | GBP | CAD | AUD | CHF | SEK | null,
-      mask?: boolean | null,
+      mask?: boolean | number | null,
       reasons?: string[] | null
     }
   }[]
@@ -2088,16 +2088,16 @@ Files travel base64-encoded. DOCX templates may require a paid (Pro) plan.
   required?: boolean | null,
   preferences?: {
     font_size?: number | null,
-    font_type?: bold | italic | bold_italic | null,
-    font?: Times | Helvetica | Courier | null,
+    font_type?: string | null,
+    font?: string | null,
     color?: string | null,
     background?: string | null,
-    align?: left | center | right | null,
-    valign?: top | center | bottom | null,
+    align?: string | null,
+    valign?: string | null,
     format?: string | null,
     price?: number | null,
-    currency?: USD | EUR | GBP | CAD | AUD | CHF | SEK | null,
-    mask?: boolean | null,
+    currency?: string | null,
+    mask?: boolean | number | null,
     reasons?: string[] | null
   } | null,
   areas?: {
@@ -2141,7 +2141,7 @@ Files travel base64-encoded. DOCX templates may require a paid (Pro) plan.
   id: number,
   uuid: string,
   url: string,
-  preview_image_url: string,
+  preview_image_url?: string | null,
   filename: string
 }[]
 ```
@@ -2168,7 +2168,7 @@ await corsair.docuseal.api.templates.createFromHtml({ html: '<p>Sign below</p>',
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `html` | `string` | Yes | HTML document; text fields use `<span class="text-field">` style tags. |
+| `html` | `string` | No | HTML document with field tags such as `<text-field name="Name" role="Signer"></text-field>` and `<signature-field>`. Required unless `documents` is given. |
 | `html_header` | `string` | No | — |
 | `html_footer` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -2176,7 +2176,7 @@ await corsair.docuseal.api.templates.createFromHtml({ html: '<p>Sign below</p>',
 | `external_id` | `string` | No | — |
 | `folder_name` | `string` | No | — |
 | `shared_link` | `boolean` | No | DocuSeal defaults to true. |
-| `documents` | `object[]` | No | Additional documents merged into the same template. |
+| `documents` | `object[]` | No | Documents of the template; use instead of `html` for several documents. |
 
 <AccordionGroup>
 <Accordion title="documents full type">
@@ -2238,16 +2238,16 @@ await corsair.docuseal.api.templates.createFromHtml({ html: '<p>Sign below</p>',
   required?: boolean | null,
   preferences?: {
     font_size?: number | null,
-    font_type?: bold | italic | bold_italic | null,
-    font?: Times | Helvetica | Courier | null,
+    font_type?: string | null,
+    font?: string | null,
     color?: string | null,
     background?: string | null,
-    align?: left | center | right | null,
-    valign?: top | center | bottom | null,
+    align?: string | null,
+    valign?: string | null,
     format?: string | null,
     price?: number | null,
-    currency?: USD | EUR | GBP | CAD | AUD | CHF | SEK | null,
-    mask?: boolean | null,
+    currency?: string | null,
+    mask?: boolean | number | null,
     reasons?: string[] | null
   } | null,
   areas?: {
@@ -2291,7 +2291,7 @@ await corsair.docuseal.api.templates.createFromHtml({ html: '<p>Sign below</p>',
   id: number,
   uuid: string,
   url: string,
-  preview_image_url: string,
+  preview_image_url?: string | null,
   filename: string
 }[]
 ```
@@ -2370,7 +2370,7 @@ Files travel base64-encoded. May require a paid (Pro) plan.
       format?: string | null,
       price?: number | null,
       currency?: USD | EUR | GBP | CAD | AUD | CHF | SEK | null,
-      mask?: boolean | null,
+      mask?: boolean | number | null,
       reasons?: string[] | null
     }
   }[]
@@ -2427,16 +2427,16 @@ Files travel base64-encoded. May require a paid (Pro) plan.
   required?: boolean | null,
   preferences?: {
     font_size?: number | null,
-    font_type?: bold | italic | bold_italic | null,
-    font?: Times | Helvetica | Courier | null,
+    font_type?: string | null,
+    font?: string | null,
     color?: string | null,
     background?: string | null,
-    align?: left | center | right | null,
-    valign?: top | center | bottom | null,
+    align?: string | null,
+    valign?: string | null,
     format?: string | null,
     price?: number | null,
-    currency?: USD | EUR | GBP | CAD | AUD | CHF | SEK | null,
-    mask?: boolean | null,
+    currency?: string | null,
+    mask?: boolean | number | null,
     reasons?: string[] | null
   } | null,
   areas?: {
@@ -2480,7 +2480,7 @@ Files travel base64-encoded. May require a paid (Pro) plan.
   id: number,
   uuid: string,
   url: string,
-  preview_image_url: string,
+  preview_image_url?: string | null,
   filename: string
 }[]
 ```
@@ -2557,16 +2557,16 @@ await corsair.docuseal.api.templates.get({ id: 123456 });
   required?: boolean | null,
   preferences?: {
     font_size?: number | null,
-    font_type?: bold | italic | bold_italic | null,
-    font?: Times | Helvetica | Courier | null,
+    font_type?: string | null,
+    font?: string | null,
     color?: string | null,
     background?: string | null,
-    align?: left | center | right | null,
-    valign?: top | center | bottom | null,
+    align?: string | null,
+    valign?: string | null,
     format?: string | null,
     price?: number | null,
-    currency?: USD | EUR | GBP | CAD | AUD | CHF | SEK | null,
-    mask?: boolean | null,
+    currency?: string | null,
+    mask?: boolean | number | null,
     reasons?: string[] | null
   } | null,
   areas?: {
@@ -2610,7 +2610,7 @@ await corsair.docuseal.api.templates.get({ id: 123456 });
   id: number,
   uuid: string,
   url: string,
-  preview_image_url: string,
+  preview_image_url?: string | null,
   filename: string
 }[]
 ```
@@ -2679,16 +2679,16 @@ Pages by id cursor: pass `pagination.next` from one page as `after` on the next.
     required?: boolean | null,
     preferences?: {
       font_size?: number | null,
-      font_type?: bold | italic | bold_italic | null,
-      font?: Times | Helvetica | Courier | null,
+      font_type?: string | null,
+      font?: string | null,
       color?: string | null,
       background?: string | null,
-      align?: left | center | right | null,
-      valign?: top | center | bottom | null,
+      align?: string | null,
+      valign?: string | null,
       format?: string | null,
       price?: number | null,
-      currency?: USD | EUR | GBP | CAD | AUD | CHF | SEK | null,
-      mask?: boolean | null,
+      currency?: string | null,
+      mask?: boolean | number | null,
       reasons?: string[] | null
     } | null,
     areas?: {
@@ -2724,7 +2724,7 @@ Pages by id cursor: pass `pagination.next` from one page as `after` on the next.
     id: number,
     uuid: string,
     url: string,
-    preview_image_url: string,
+    preview_image_url?: string | null,
     filename: string
   }[]
 }[]
@@ -2820,16 +2820,16 @@ The source templates are kept; the merge produces a new one. May require a paid 
   required?: boolean | null,
   preferences?: {
     font_size?: number | null,
-    font_type?: bold | italic | bold_italic | null,
-    font?: Times | Helvetica | Courier | null,
+    font_type?: string | null,
+    font?: string | null,
     color?: string | null,
     background?: string | null,
-    align?: left | center | right | null,
-    valign?: top | center | bottom | null,
+    align?: string | null,
+    valign?: string | null,
     format?: string | null,
     price?: number | null,
-    currency?: USD | EUR | GBP | CAD | AUD | CHF | SEK | null,
-    mask?: boolean | null,
+    currency?: string | null,
+    mask?: boolean | number | null,
     reasons?: string[] | null
   } | null,
   areas?: {
@@ -2873,7 +2873,7 @@ The source templates are kept; the merge produces a new one. May require a paid 
   id: number,
   uuid: string,
   url: string,
-  preview_image_url: string,
+  preview_image_url?: string | null,
   filename: string
 }[]
 ```
@@ -3006,16 +3006,16 @@ Add, replace or remove documents on an existing template. May require a paid (Pr
   required?: boolean | null,
   preferences?: {
     font_size?: number | null,
-    font_type?: bold | italic | bold_italic | null,
-    font?: Times | Helvetica | Courier | null,
+    font_type?: string | null,
+    font?: string | null,
     color?: string | null,
     background?: string | null,
-    align?: left | center | right | null,
-    valign?: top | center | bottom | null,
+    align?: string | null,
+    valign?: string | null,
     format?: string | null,
     price?: number | null,
-    currency?: USD | EUR | GBP | CAD | AUD | CHF | SEK | null,
-    mask?: boolean | null,
+    currency?: string | null,
+    mask?: boolean | number | null,
     reasons?: string[] | null
   } | null,
   areas?: {
@@ -3059,7 +3059,7 @@ Add, replace or remove documents on an existing template. May require a paid (Pr
   id: number,
   uuid: string,
   url: string,
-  preview_image_url: string,
+  preview_image_url?: string | null,
   filename: string
 }[]
 ```

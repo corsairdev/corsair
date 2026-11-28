@@ -150,11 +150,16 @@ describe('mergeErrorHandlers', () => {
 		expect(names.indexOf('CUSTOM_ERROR')).toBe(0);
 	});
 
-	it('lets a caller DEFAULT override the builtin fallback', () => {
-		const merged = mergeErrorHandlers(builtin, {
-			DEFAULT: { match: () => true, handler: async () => ({ maxRetries: 9 }) },
+	it('lets a caller DEFAULT override the builtin fallback', async () => {
+		const callerDefault = {
+			match: () => true,
+			handler: async () => ({ maxRetries: 9 }),
+		};
+		const merged = mergeErrorHandlers(builtin, { DEFAULT: callerDefault });
+		expect(merged.DEFAULT).toBe(callerDefault);
+		expect(await merged.DEFAULT?.handler(new Error('x'), {} as never)).toEqual({
+			maxRetries: 9,
 		});
-		expect(merged.DEFAULT).toBeDefined();
 	});
 
 	it('does not shadow a builtin the caller did not name', () => {

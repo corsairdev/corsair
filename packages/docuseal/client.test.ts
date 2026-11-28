@@ -41,7 +41,10 @@ async function failure(promise: Promise<unknown>): Promise<ApiError> {
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	// A call no test queued a response for fails here instead of reaching DocuSeal.
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+		throw new Error('unmocked fetch in a unit test');
+	});
 });
 
 afterEach(() => {
@@ -138,6 +141,17 @@ describe('makeDocuSealRequest', () => {
 		expect(error.status).toBe(429);
 		expect(error.retryAfter).toBe(0);
 		expect(fetchMock).toHaveBeenCalledTimes(4);
+	});
+
+	it('never copies a response body without an error string into the message', async () => {
+		respond({ detail: 'signer@example.com was rejected' }, 418);
+
+		const error = await failure(
+			makeDocuSealRequest(CTX, { method: 'GET', path: '/templates' }),
+		);
+		expect(error.status).toBe(418);
+		expect(error.message).not.toContain('signer@example.com');
+		expect(JSON.stringify(error.body)).not.toContain('signer@example.com');
 	});
 
 	it('falls back to the status when the error body is not JSON', async () => {

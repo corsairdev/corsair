@@ -10,13 +10,19 @@ import { templateList } from './test-fixtures';
  */
 async function createClient() {
 	const testDb = createTestDatabase();
-	await createIntegrationAndAccount(testDb.db, 'docuseal', 'default');
-	const corsair = createCorsair({
-		plugins: [docuseal({ key: 'docuseal-test-key' })],
-		database: testDb.db,
-		kek: process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef',
-	});
-	return { corsair, testDb };
+	try {
+		await createIntegrationAndAccount(testDb.db, 'docuseal', 'default');
+		const corsair = createCorsair({
+			plugins: [docuseal({ key: 'docuseal-test-key' })],
+			database: testDb.db,
+			kek: process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef',
+		});
+		return { corsair, testDb };
+	} catch (error) {
+		// The caller never gets the handle, so close the database here.
+		testDb.cleanup();
+		throw error;
+	}
 }
 
 let fetchMock: jest.SpyInstance;
@@ -45,6 +51,8 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+	// A test that failed before its own finally must not leave fake timers on.
+	jest.useRealTimers();
 	jest.restoreAllMocks();
 });
 

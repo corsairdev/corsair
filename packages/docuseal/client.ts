@@ -102,7 +102,13 @@ export function withoutRequestData(error: ApiError): ApiError {
 			// Only DocuSeal's error reason: anything else in the body is dropped.
 			body: reason !== undefined ? { error: reason } : body ? {} : undefined,
 		},
-		describeDocuSealError(error.status, error.body, error.message),
+		// Core's message for an unlisted status embeds the whole response
+		// body, so the fallback is the status text only.
+		describeDocuSealError(
+			error.status,
+			error.body,
+			error.statusText || 'request failed',
+		),
 		{
 			retryAfter: error.retryAfter,
 			rateLimitReset: error.rateLimitReset,

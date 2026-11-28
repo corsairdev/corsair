@@ -216,9 +216,9 @@ describe('input rejections', () => {
 		['Templates.merge empty ids', Templates.merge, { template_ids: [] }],
 		['Templates.get id', Templates.get, { id: 'abc' }],
 		[
-			'Submitters.list datetime',
-			Submitters.list,
-			{ completed_after: 'yesterday' },
+			'Templates.createFromHtml without html or documents',
+			Templates.createFromHtml,
+			{ name: 'empty' },
 		],
 		[
 			'Submissions.createFromPdf no documents',
