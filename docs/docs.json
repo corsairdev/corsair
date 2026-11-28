@@ -2534,7 +2534,8 @@
                 "pages": [
                   "plugins/freshbooks/overview",
                   "plugins/freshbooks/api",
-                  "plugins/freshbooks/database"
+                  "plugins/freshbooks/database",
+                  "plugins/freshbooks/webhooks"
                 ]
               },
               {

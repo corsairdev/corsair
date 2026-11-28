@@ -1,0 +1,2783 @@
+---
+title: "FreshBooks webhooks"
+sidebarTitle: "Webhooks"
+description: "FreshBooks incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The FreshBooks plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/freshbooks/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `bill`
+  - `create` (`bill.create`)
+  - `delete` (`bill.delete`)
+  - `update` (`bill.update`)
+- `billVendor`
+  - `create` (`billVendor.create`)
+  - `delete` (`billVendor.delete`)
+  - `update` (`billVendor.update`)
+- `callback`
+  - `verify` (`callback.verify`)
+- `category`
+  - `create` (`category.create`)
+  - `delete` (`category.delete`)
+  - `update` (`category.update`)
+- `client`
+  - `create` (`client.create`)
+  - `delete` (`client.delete`)
+  - `update` (`client.update`)
+- `creditNote`
+  - `create` (`creditNote.create`)
+  - `delete` (`creditNote.delete`)
+  - `update` (`creditNote.update`)
+- `estimate`
+  - `create` (`estimate.create`)
+  - `delete` (`estimate.delete`)
+  - `sendByEmail` (`estimate.sendByEmail`)
+  - `update` (`estimate.update`)
+- `expense`
+  - `create` (`expense.create`)
+  - `delete` (`expense.delete`)
+  - `update` (`expense.update`)
+- `invoice`
+  - `create` (`invoice.create`)
+  - `delete` (`invoice.delete`)
+  - `sendByEmail` (`invoice.sendByEmail`)
+  - `update` (`invoice.update`)
+- `item`
+  - `create` (`item.create`)
+  - `delete` (`item.delete`)
+  - `update` (`item.update`)
+- `payment`
+  - `create` (`payment.create`)
+  - `delete` (`payment.delete`)
+  - `update` (`payment.update`)
+- `project`
+  - `create` (`project.create`)
+  - `delete` (`project.delete`)
+  - `update` (`project.update`)
+- `recurring`
+  - `create` (`recurring.create`)
+  - `delete` (`recurring.delete`)
+  - `update` (`recurring.update`)
+- `service`
+  - `create` (`service.create`)
+  - `delete` (`service.delete`)
+  - `update` (`service.update`)
+- `tax`
+  - `create` (`tax.create`)
+  - `delete` (`tax.delete`)
+  - `update` (`tax.update`)
+- `timeEntry`
+  - `create` (`timeEntry.create`)
+  - `delete` (`timeEntry.delete`)
+  - `update` (`timeEntry.update`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
+}
+```
+
+## Events
+
+## Bill
+
+### Create
+
+`bill.create`
+
+A bill was created (bill.create). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        bill: {
+            create: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Delete
+
+`bill.delete`
+
+A bill was deleted (bill.delete). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        bill: {
+            delete: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Update
+
+`bill.update`
+
+A bill was updated (bill.update). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        bill: {
+            update: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Bill Vendor
+
+### Create
+
+`billVendor.create`
+
+A bill vendor was created (bill_vendor.create). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        billVendor: {
+            create: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Delete
+
+`billVendor.delete`
+
+A bill vendor was deleted (bill_vendor.delete). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        billVendor: {
+            delete: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Update
+
+`billVendor.update`
+
+A bill vendor was updated (bill_vendor.update). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        billVendor: {
+            update: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Callback
+
+### Verify
+
+`callback.verify`
+
+FreshBooks sent the verification code of a new webhook callback (callback.verify, unsigned). Send `verifier` back with callbacks.verify and keep it as the webhook secret.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+| `verifier` | `string` | Yes | The verification code. Send it back with callbacks.verify; it is also the secret that signs later deliveries, so keep it out of logs. |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string,
+  verifier: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        callback: {
+            verify: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Category
+
+### Create
+
+`category.create`
+
+A category was created (category.create). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        category: {
+            create: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Delete
+
+`category.delete`
+
+A category was deleted (category.delete). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        category: {
+            delete: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Update
+
+`category.update`
+
+A category was updated (category.update). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        category: {
+            update: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Client
+
+### Create
+
+`client.create`
+
+A client was created (client.create). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        client: {
+            create: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Delete
+
+`client.delete`
+
+A client was deleted (client.delete). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        client: {
+            delete: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Update
+
+`client.update`
+
+A client was updated (client.update). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        client: {
+            update: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Credit Note
+
+### Create
+
+`creditNote.create`
+
+A credit note was created (credit_note.create). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        creditNote: {
+            create: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Delete
+
+`creditNote.delete`
+
+A credit note was deleted (credit_note.delete). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        creditNote: {
+            delete: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Update
+
+`creditNote.update`
+
+A credit note was updated (credit_note.update). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        creditNote: {
+            update: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Estimate
+
+### Create
+
+`estimate.create`
+
+A estimate was created (estimate.create). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        estimate: {
+            create: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Delete
+
+`estimate.delete`
+
+A estimate was deleted (estimate.delete). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        estimate: {
+            delete: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Send By Email
+
+`estimate.sendByEmail`
+
+A estimate was sent by email (estimate.sendByEmail). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        estimate: {
+            sendByEmail: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Update
+
+`estimate.update`
+
+A estimate was updated (estimate.update). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        estimate: {
+            update: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Expense
+
+### Create
+
+`expense.create`
+
+A expense was created (expense.create). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        expense: {
+            create: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Delete
+
+`expense.delete`
+
+A expense was deleted (expense.delete). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        expense: {
+            delete: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Update
+
+`expense.update`
+
+A expense was updated (expense.update). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        expense: {
+            update: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Invoice
+
+### Create
+
+`invoice.create`
+
+A invoice was created (invoice.create). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        invoice: {
+            create: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Delete
+
+`invoice.delete`
+
+A invoice was deleted (invoice.delete). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        invoice: {
+            delete: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Send By Email
+
+`invoice.sendByEmail`
+
+A invoice was sent by email (invoice.sendByEmail). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        invoice: {
+            sendByEmail: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Update
+
+`invoice.update`
+
+A invoice was updated (invoice.update). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        invoice: {
+            update: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Item
+
+### Create
+
+`item.create`
+
+A item was created (item.create). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        item: {
+            create: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Delete
+
+`item.delete`
+
+A item was deleted (item.delete). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        item: {
+            delete: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Update
+
+`item.update`
+
+A item was updated (item.update). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        item: {
+            update: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Payment
+
+### Create
+
+`payment.create`
+
+A payment was created (payment.create). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        payment: {
+            create: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Delete
+
+`payment.delete`
+
+A payment was deleted (payment.delete). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        payment: {
+            delete: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Update
+
+`payment.update`
+
+A payment was updated (payment.update). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        payment: {
+            update: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Project
+
+### Create
+
+`project.create`
+
+A project was created (project.create). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        project: {
+            create: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Delete
+
+`project.delete`
+
+A project was deleted (project.delete). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        project: {
+            delete: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Update
+
+`project.update`
+
+A project was updated (project.update). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        project: {
+            update: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Recurring
+
+### Create
+
+`recurring.create`
+
+A recurring invoice profile was created (recurring.create). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        recurring: {
+            create: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Delete
+
+`recurring.delete`
+
+A recurring invoice profile was deleted (recurring.delete). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        recurring: {
+            delete: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Update
+
+`recurring.update`
+
+A recurring invoice profile was updated (recurring.update). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        recurring: {
+            update: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Service
+
+### Create
+
+`service.create`
+
+A service was created (service.create). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        service: {
+            create: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Delete
+
+`service.delete`
+
+A service was deleted (service.delete). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        service: {
+            delete: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Update
+
+`service.update`
+
+A service was updated (service.update). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        service: {
+            update: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Tax
+
+### Create
+
+`tax.create`
+
+A tax was created (tax.create). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        tax: {
+            create: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Delete
+
+`tax.delete`
+
+A tax was deleted (tax.delete). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        tax: {
+            delete: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Update
+
+`tax.update`
+
+A tax was updated (tax.update). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        tax: {
+            update: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Time Entry
+
+### Create
+
+`timeEntry.create`
+
+A time entry was created (time_entry.create). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        timeEntry: {
+            create: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Delete
+
+`timeEntry.delete`
+
+A time entry was deleted (time_entry.delete). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        timeEntry: {
+            delete: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Update
+
+`timeEntry.update`
+
+A time entry was updated (time_entry.update). The body names the object by object_id; read it with the matching get operation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event, like invoice.create. |
+| `object_id` | `string` | Yes | The id of the object the event is about (for callback.verify: the callback id). |
+| `account_id` | `string` | No | The accounting account id (accounting resources). |
+| `business_id` | `string` | No | The business id (projects, time entries, services). |
+| `identity_id` | `string` | No | The FreshBooks user who made the change. |
+| `user_id` | `string` | No | Deprecated (FreshBooks Classic). |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  name: string,
+  object_id: string,
+  account_id?: string,
+  business_id?: string,
+  identity_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+freshbooks({
+    webhookHooks: {
+        timeEntry: {
+            update: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

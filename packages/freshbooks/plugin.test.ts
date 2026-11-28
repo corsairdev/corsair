@@ -1,184 +1,176 @@
 import { AuthMissingError } from 'corsair/core';
-import type { FreshBooksKeyBuilderContext } from './index';
-import { freshBooksEndpointSchemas, freshbooks } from './index';
+import { ApiError } from 'corsair/http';
+import {
+	FRESHBOOKS_OAUTH_AUTH_URL,
+	FRESHBOOKS_OAUTH_TOKEN_URL,
+	freshbooksOAuthScopes,
+} from './auth';
+import { freshbooksOperations } from './endpoints/manifest';
+import { errorHandlers } from './error-handlers';
+import { freshbooks } from './index';
 
-// The key builder only reads authType and keys.
-function keyContext(apiKey: string | null) {
-	return {
-		authType: 'api_key' as const,
-		options: {},
-		tenantId: 'default',
-		keys: { get_api_key: jest.fn().mockResolvedValue(apiKey) },
-	};
+// `unknown` because each case gives the key builder only the context fields it reads.
+type KeyBuilder = (
+	ctx: unknown,
+	source: 'endpoint' | 'webhook',
+) => Promise<string>;
+
+function keyBuilderOf(plugin: ReturnType<typeof freshbooks>): KeyBuilder {
+	// `unknown` because the key builder's real context type is wider than what these cases build.
+	return plugin.keyBuilder as unknown as KeyBuilder;
 }
 
-function buildKey(
-	plugin: ReturnType<typeof freshbooks>,
-	ctx: ReturnType<typeof keyContext>,
-) {
-	// The fake context is not a full KeyBuilderContext.
-	return plugin.keyBuilder?.(
-		ctx as unknown as FreshBooksKeyBuilderContext,
-		'endpoint',
+function apiError(status: number, method = 'GET', url = '/x'): ApiError {
+	return new ApiError(
+		{ method: method as 'GET', url },
+		{
+			url: `https://example.com${url}`,
+			ok: false,
+			status,
+			statusText: 'x',
+			body: {},
+		},
+		`FreshBooks ${status}`,
 	);
 }
 
-const operations = [
-	'clients.create',
-	'clients.delete',
-	'clients.get',
-	'clients.list',
-	'clients.update',
-	'estimates.create',
-	'estimates.delete',
-	'estimates.get',
-	'estimates.list',
-	'estimates.update',
-	'expenses.create',
-	'expenses.delete',
-	'expenses.get',
-	'expenses.list',
-	'expenses.update',
-	'invoices.create',
-	'invoices.delete',
-	'invoices.get',
-	'invoices.list',
-	'invoices.markSent',
-	'invoices.sendEmail',
-	'invoices.update',
-	'projects.create',
-	'projects.delete',
-	'projects.get',
-	'projects.list',
-	'projects.update',
-	'tasks.create',
-	'tasks.delete',
-	'tasks.get',
-	'tasks.list',
-	'tasks.update',
-	'timeEntries.create',
-	'timeEntries.delete',
-	'timeEntries.get',
-	'timeEntries.list',
-	'timeEntries.update',
-	'users.me',
-].sort();
-
-describe('freshbooks plugin definition', () => {
-	const plugin = freshbooks();
-
-	it('registers as freshbooks with api_key auth and no webhooks', () => {
+describe('freshbooks plugin', () => {
+	it('registers every operation with meta and schemas', () => {
+		const plugin = freshbooks();
 		expect(plugin.id).toBe('freshbooks');
-		expect(plugin.options?.authType).toBe('api_key');
-		expect(plugin.webhooks).toEqual({});
-		expect(
-			plugin.pluginWebhookMatcher?.({ headers: {}, body: {} } as never),
-		).toBe(false);
+		const ids = freshbooksOperations.map((o) => o.id).sort();
+		expect(Object.keys(plugin.endpointMeta ?? {}).sort()).toEqual(ids);
+		expect(Object.keys(plugin.endpointSchemas ?? {}).sort()).toEqual(ids);
+		expect(plugin.options?.authType).toBe('oauth_2');
+		expect(plugin.authConfig).toEqual({ oauth_2: {} });
+		expect(plugin.oauthConfig?.authUrl).toBe(FRESHBOOKS_OAUTH_AUTH_URL);
+		expect(plugin.oauthConfig?.tokenUrl).toBe(FRESHBOOKS_OAUTH_TOKEN_URL);
+		expect(plugin.oauthConfig?.scopes).toEqual([
+			freshbooksOAuthScopes.join(' '),
+		]);
 	});
 
-	it('exposes exactly the 38 catalog operations across 8 groups', () => {
-		const nested = Object.entries(plugin.endpoints ?? {}).flatMap(
-			([group, fns]) => Object.keys(fns).map((name) => `${group}.${name}`),
-		);
-		expect(nested.sort()).toEqual(operations);
-	});
-
-	it('gives every endpoint a description and the right risk level', () => {
-		const meta = plugin.endpointMeta ?? {};
-		expect(Object.keys(meta).sort()).toEqual(operations);
-		for (const entry of Object.values(meta)) {
-			expect(entry.description?.length).toBeGreaterThan(10);
-		}
-		const risk = Object.fromEntries(
-			Object.entries(meta).map(([name, entry]) => [name, entry.riskLevel]),
-		);
-		expect(risk['users.me']).toBe('read');
-		expect(risk['clients.list']).toBe('read');
-		expect(risk['clients.create']).toBe('write');
-		expect(risk['invoices.markSent']).toBe('write');
-		expect(risk['invoices.sendEmail']).toBe('write');
-		expect(risk['projects.delete']).toBe('destructive');
-		expect(risk['timeEntries.delete']).toBe('destructive');
-		for (const name of Object.keys(risk)) {
-			if (name.endsWith('.delete')) {
-				expect(risk[name]).toBe('destructive');
-			}
-		}
-	});
-
-	it('marks the outward-facing and soft-delete writes irreversible', () => {
-		const meta = plugin.endpointMeta ?? {};
-		const irreversible = Object.entries(meta)
-			.filter(([, entry]) => entry.irreversible === true)
-			.map(([name]) => name)
-			.sort();
-		expect(irreversible).toEqual(
-			[
-				'clients.delete',
-				'estimates.delete',
-				'expenses.delete',
-				'invoices.delete',
-				'invoices.sendEmail',
-				'projects.delete',
-				'tasks.delete',
-				'timeEntries.delete',
-			].sort(),
-		);
-		expect(meta['invoices.markSent']).not.toHaveProperty('irreversible', true);
-	});
-
-	it('has input and output schemas for every endpoint', () => {
-		expect(Object.keys(freshBooksEndpointSchemas).sort()).toEqual(operations);
-		for (const schemas of Object.values(freshBooksEndpointSchemas)) {
-			expect(typeof schemas.input.safeParse).toBe('function');
-			expect(typeof schemas.output.safeParse).toBe('function');
-		}
-	});
-
-	it('keeps DEFAULT last when caller handlers are merged', () => {
-		const custom = freshbooks({
-			errorHandlers: {
-				QUOTA_ERROR: {
-					match: () => false,
-					handler: async () => ({ maxRetries: 0 }),
-				},
+	it('prefers the key from options', async () => {
+		const plugin = freshbooks({
+			...{
+				accountId: 'LJArJ4',
+				businessId: '77001',
+				businessUuid: '5e9a0c1d-2b3c-4d5e-8f90-a1b2c3d4e5f6',
 			},
+			key: 'fb-access-token-from-options',
 		});
-		const names = Object.keys(custom.errorHandlers ?? {});
-		expect(names.at(-1)).toBe('DEFAULT');
-		expect(names).toContain('QUOTA_ERROR');
-		expect(names).toContain('RATE_LIMIT_ERROR');
+		await expect(keyBuilderOf(plugin)({ keys: {} }, 'endpoint')).resolves.toBe(
+			'fb-access-token-from-options',
+		);
+	});
+
+	it('uses the stored access token while it is fresh', async () => {
+		const plugin = freshbooks({
+			accountId: 'LJArJ4',
+			businessId: '77001',
+			businessUuid: '5e9a0c1d-2b3c-4d5e-8f90-a1b2c3d4e5f6',
+		});
+		await expect(
+			keyBuilderOf(plugin)(
+				{
+					tenantId: 't1',
+					keys: {
+						get_integration_credentials: () =>
+							Promise.resolve({ client_id: 'id', client_secret: 'secret' }),
+						get_access_token: () => Promise.resolve('fb-access-token-stored'),
+						get_expires_at: () =>
+							Promise.resolve(String(Date.now() + 3_600_000)),
+						get_refresh_token: () => Promise.resolve('refresh'),
+					},
+				},
+				'endpoint',
+			),
+		).resolves.toBe('fb-access-token-stored');
+	});
+
+	it('asks for a connection when there is no token to refresh', async () => {
+		const plugin = freshbooks();
+		await expect(
+			keyBuilderOf(plugin)(
+				{
+					tenantId: 't1',
+					keys: {
+						get_integration_credentials: () =>
+							Promise.resolve({ client_id: 'id', client_secret: 'secret' }),
+						get_access_token: () => Promise.resolve(null),
+						get_expires_at: () => Promise.resolve(null),
+						get_refresh_token: () => Promise.resolve(null),
+					},
+				},
+				'endpoint',
+			),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('reads the webhook secret, and answers empty before one is stored', async () => {
+		await expect(
+			keyBuilderOf(freshbooks({ webhookSecret: 'verifier-1' }))(
+				{ keys: {} },
+				'webhook',
+			),
+		).resolves.toBe('verifier-1');
+		await expect(
+			keyBuilderOf(freshbooks())(
+				{
+					keys: {
+						get_webhook_signature: () => Promise.resolve('stored-verifier'),
+					},
+				},
+				'webhook',
+			),
+		).resolves.toBe('stored-verifier');
+		await expect(
+			keyBuilderOf(freshbooks())(
+				{ keys: { get_webhook_signature: () => Promise.resolve(null) } },
+				'webhook',
+			),
+		).resolves.toBe('');
+	});
+
+	it('keeps a caller DEFAULT handler last', () => {
+		const callerDefault = {
+			match: () => true,
+			handler: async () => ({ maxRetries: 5 }),
+		};
+		const plugin = freshbooks({ errorHandlers: { DEFAULT: callerDefault } });
+		const keys = Object.keys(plugin.errorHandlers ?? {});
+		expect(keys[keys.length - 1]).toBe('DEFAULT');
+		expect(plugin.errorHandlers?.DEFAULT).toBe(callerDefault);
 	});
 });
 
-describe('freshbooks key builder', () => {
-	it('prefers an explicit key option', async () => {
-		const ctx = keyContext('stored-token');
-
-		await expect(
-			buildKey(freshbooks({ key: 'option-token' }), ctx),
-		).resolves.toBe('option-token');
-		expect(ctx.keys.get_api_key).not.toHaveBeenCalled();
+describe('error handlers', () => {
+	it('does not retry a 429 again (core already did)', async () => {
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(apiError(429))).toBe(true);
+		await expect(errorHandlers.RATE_LIMIT_ERROR.handler()).resolves.toEqual({
+			maxRetries: 0,
+		});
 	});
 
-	it('reads the stored access token', async () => {
-		await expect(
-			buildKey(freshbooks(), keyContext('stored-token')),
-		).resolves.toBe('stored-token');
+	it('matches auth, not found and validation statuses', () => {
+		expect(errorHandlers.AUTH_ERROR.match(apiError(401))).toBe(true);
+		expect(errorHandlers.AUTH_ERROR.match(apiError(403))).toBe(true);
+		expect(errorHandlers.NOT_FOUND_ERROR.match(apiError(404))).toBe(true);
+		expect(errorHandlers.BAD_REQUEST_ERROR.match(apiError(422))).toBe(true);
+		expect(errorHandlers.SERVER_ERROR.match(apiError(503))).toBe(true);
 	});
 
-	it('throws AuthMissingError when no token is stored', async () => {
+	it('retries a 5xx only for reads', async () => {
 		await expect(
-			buildKey(freshbooks(), keyContext(null)),
-		).rejects.toBeInstanceOf(AuthMissingError);
-	});
-
-	it('refuses webhook keys: deliveries are not handled', async () => {
-		await expect(
-			freshbooks().keyBuilder?.(
-				keyContext('stored-token') as unknown as FreshBooksKeyBuilderContext,
-				'webhook',
-			),
-		).rejects.toBeInstanceOf(AuthMissingError);
+			errorHandlers.SERVER_ERROR.handler(apiError(503, 'GET')),
+		).resolves.toEqual({ maxRetries: 2, retryStrategy: 'exponential_backoff' });
+		const write = freshbooksOperations.find((o) => o.method === 'DELETE');
+		if (write) {
+			await expect(
+				errorHandlers.SERVER_ERROR.handler(
+					apiError(503, write.method, write.path),
+				),
+			).resolves.toEqual({ maxRetries: 0 });
+		}
 	});
 });

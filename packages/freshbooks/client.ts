@@ -1,197 +1,735 @@
-import { asRecord } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import type {
 	ApiRequestOptions,
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
-
-export const FRESHBOOKS_API_BASE = 'https://api.freshbooks.com';
-
-// unknown: the body is an untyped error body until asRecord narrows it.
-function readString(
-	record: Record<string, unknown> | null | undefined,
-	key: string,
-): string | undefined {
-	const value = record?.[key];
-	return typeof value === 'string' && value.length > 0 ? value : undefined;
-}
-
-// unknown: the body is an untyped error body until asRecord narrows it.
-function readNumber(
-	record: Record<string, unknown> | null | undefined,
-	key: string,
-): number | undefined {
-	const value = record?.[key];
-	return typeof value === 'number' ? value : undefined;
-}
-
-/** One entry of the accounting family's `response.errors` array. */
-export type FreshBooksErrorEntry = {
-	errno?: number;
-	message: string;
-};
+import type { FreshBooksAuthOptions, FreshBooksStoredKeys } from './auth';
+import { resolveFreshBooksTarget } from './auth';
 
 /**
- * Builds the error message for a failed call from the body FreshBooks sent.
- * The families differ (see plugin-docs.yaml): accounting wraps errors in
- * `response.errors`, the projects/timetracking and auth families answer with
- * `{ error }` or `{ message }` at the top level.
+ * FreshBooks's HTTP API (https://www.freshbooks.com/api/start). Every route takes the OAuth access token as a bearer token. The API base and the
+ * credential headers come from `resolveFreshBooksTarget` (auth.ts).
  */
-export function describeFreshBooksError(
-	status: number | undefined,
-	// unknown: the body is an untyped error body until asRecord narrows it.
-	body: unknown,
-	fallback: string,
-): string {
-	const record = asRecord(body);
-	const response = asRecord(record?.response);
-	const errors = Array.isArray(response?.errors) ? response?.errors : [];
-	const first = asRecord(errors[0]);
-	const text =
-		readString(first, 'message') ??
-		readString(record, 'error_description') ??
-		readString(record, 'error') ??
-		readString(record, 'message') ??
-		fallback;
-	const errno = readNumber(first, 'errno');
-	const label = [status, errno === undefined ? undefined : `errno ${errno}`]
-		.filter((part) => part !== undefined)
-		.join(' ');
-	return label ? `FreshBooks ${label}: ${text}` : text;
-}
+
+export const FRESHBOOKS_DEFAULT_TIMEOUT_MS = 60_000;
+
+/** Largest file the upload routes send. */
+export const FRESHBOOKS_UPLOAD_MAX_BYTES = 50 * 1024 * 1024;
+
+const NO_DEK_ERROR_PATTERN = /no dek found/i;
 
 /**
- * Reads the accounting family's error entries out of a body, whatever the
- * HTTP status said.
+ * Reads a stored value. `ctx.keys.get_*()` throws, rather than returning
+ * null, when the account has no DEK at all: a valid state for an account that
+ * passes the key in plugin options. Anything else thrown is a real failure
+ * and propagates.
  */
-// unknown: the body is an untyped error body until asRecord narrows it.
-export function readFreshBooksErrors(body: unknown): FreshBooksErrorEntry[] {
-	const record = asRecord(body);
-	const response = asRecord(record?.response);
-	const raw = Array.isArray(response?.errors) ? response?.errors : [];
-	return raw.flatMap((entry) => {
-		const record = asRecord(entry);
-		const message = readString(record, 'message');
-		if (!message) return [];
-		const errno = readNumber(record, 'errno');
-		return [{ message, errno }];
-	});
-}
-
-/**
- * The API key is an OAuth 2 access token that expires after 12 hours and
- * whose refresh token is single-use, so the caller supplies a fresh token
- * when the old one expires. No idempotency-key mechanism exists, so a failed
- * write must never be replayed by the transport; error-handlers.ts decides
- * retries from the method recorded on FreshBooksAPIError.
- */
-const FRESHBOOKS_RATE_LIMIT_CONFIG: RateLimitConfig = {
-	maxRetries: 0,
-	enabled: true,
-	initialRetryDelay: 1000,
-	backoffMultiplier: 2,
-	headerNames: { retryAfter: 'retry-after' },
-};
-
-/**
- * FreshBooks reports failures with `status`, the extracted `errno` where the
- * accounting family sent one, and the HTTP `method`, which error-handlers.ts
- * uses to keep writes off the 5xx replay path. The ApiError cause is not
- * attached: it holds the whole request, whose `Authorization` header carries
- * the access token and which no core redaction covers.
- */
-export class FreshBooksAPIError extends Error {
-	readonly status?: number;
-	readonly errno?: number;
-	/** Milliseconds from a Retry-After header, when FreshBooks sent one. */
-	readonly retryAfter?: number;
-	/** The HTTP method of the failed request, undefined for transport errors. */
-	readonly method?: string;
-
-	constructor(
-		message: string,
-		options: {
-			status?: number;
-			errno?: number;
-			retryAfter?: number;
-			method?: string;
-		} = {},
-	) {
-		super(message);
-		this.name = 'FreshBooksAPIError';
-		this.status = options.status;
-		this.errno = options.errno;
-		this.retryAfter = options.retryAfter;
-		this.method = options.method;
+export async function tryGetStoredKey(
+	getter: () => Promise<string | null | undefined>,
+): Promise<string | undefined> {
+	try {
+		const value = await getter();
+		return value ?? undefined;
+	} catch (error) {
+		if (error instanceof Error && NO_DEK_ERROR_PATTERN.test(error.message)) {
+			return undefined;
+		}
+		throw error;
 	}
 }
 
-export type FreshBooksRequest = {
-	method: 'GET' | 'POST' | 'PUT' | 'DELETE';
-	path: string;
-	/** Bracket keys such as `search[email]` are encoded by the transport. */
-	query?: Record<string, string | number | boolean | undefined>;
-	// unknown: the endpoint's input schema has already validated the body.
-	body?: unknown;
+/** What a call needs from the endpoint context. */
+export type FreshBooksCallContext = {
+	key: string;
+	options: FreshBooksAuthOptions;
+	keys?: FreshBooksStoredKeys;
 };
 
-/** Encodes one path segment. */
-export function segment(value: string | number): string {
-	return encodeURIComponent(String(value));
+/**
+ * Path values are ids and names. Core's default encodeURI keeps `/` and `..`,
+ * so a value like `../keys` would reach a different route than the one whose
+ * permission was checked.
+ */
+export function encodeFreshBooksPathValue(value: string): string {
+	if (value === '' || value === '.' || value === '..') {
+		throw new Error('Invalid FreshBooks path value');
+	}
+	return encodeURIComponent(value);
 }
 
-// unknown: callers parse the body with the endpoint's zod output schema. It is
-// undefined for the bodyless answers, such as the 204 on time entry delete.
-export async function makeFreshBooksRequest(
-	apiKey: string,
-	{ method, path, query, body }: FreshBooksRequest,
-): Promise<unknown> {
-	const config: OpenAPIConfig = {
-		BASE: FRESHBOOKS_API_BASE,
-		VERSION: '1.0.0',
+export type FreshBooksHttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+
+export type FreshBooksRequest = {
+	method: FreshBooksHttpMethod;
+	/** The route with `{name}` placeholders, filled from `pathParameters`. */
+	path: string;
+	pathParameters?: Record<string, string>;
+	// `unknown` because query values are validated scalars or lists.
+	query?: Record<string, unknown>;
+	headers?: Record<string, string>;
+	/** A JSON value, a multipart or URL-encoded form, or raw bytes. */
+	// `unknown` because a JSON body is any validated value (an object or a list).
+	body?: unknown;
+	/** The content type of a raw body. */
+	mediaType?: string;
+	/**
+	 * Path values the operation already encoded itself (a file path whose
+	 * slashes stay): sent as they are, while the route keeps its placeholder,
+	 * so error URLs never show them.
+	 */
+	rawPathValues?: Set<string>;
+	/** The API host this route lives on, where the vendor splits routes across hosts. */
+	host?: string;
+	/** `binary`: the success comes back as `{ bytes, contentType }`. */
+	responseType?: 'binary';
+	timeoutMs?: number;
+	/**
+	 * One attempt only, even on a 429: a route whose 429 means a daily quota
+	 * is spent (R8), where waiting out Retry-After would hold the call for hours.
+	 */
+	singleAttempt?: boolean;
+	/**
+	 * Caller strings that aren't values the transport can see: map keys
+	 * (metadata keys) and file names. Scrubbed from error bodies like the
+	 * values sent.
+	 */
+	sensitive?: string[];
+};
+
+function configFor(
+	base: string,
+	authHeaders: Record<string, string>,
+	timeoutMs?: number,
+	rawPathValues?: Set<string>,
+) {
+	return {
+		BASE: base,
+		VERSION: '1',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		// TOKEN renders as `Authorization: Bearer <token>`; the access token
-		// is the account's key.
-		TOKEN: apiKey,
-		HEADERS: { Accept: 'application/json' },
-	};
+		ENCODE_PATH: (value: string) =>
+			rawPathValues?.has(value) ? value : encodeFreshBooksPathValue(value),
+		TIMEOUT: Math.ceil(timeoutMs ?? FRESHBOOKS_DEFAULT_TIMEOUT_MS),
+		HEADERS: {
+			Accept: 'application/json',
+			...authHeaders,
+		},
+	} satisfies OpenAPIConfig;
+}
 
+/**
+ * Core retries a 429 three times, honouring `Retry-After` (seconds or an
+ * HTTP date), with a backoff of 1, 2 and 4 seconds when the header is missing.
+ */
+export const FRESHBOOKS_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 3,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: {
+		retryAfter: 'retry-after',
+		remaining: 'x-ratelimit-remaining',
+		limit: 'x-ratelimit-limit',
+		resetTime: 'x-ratelimit-reset',
+	},
+};
+
+function mediaTypeFor(options: FreshBooksRequest): string | undefined {
+	if (options.mediaType) return options.mediaType;
+	const body = options.body;
+	if (body === undefined) return undefined;
+	if (typeof FormData !== 'undefined' && body instanceof FormData) {
+		return undefined;
+	}
+	if (
+		typeof URLSearchParams !== 'undefined' &&
+		body instanceof URLSearchParams
+	) {
+		return 'application/x-www-form-urlencoded';
+	}
+	return 'application/json';
+}
+
+/**
+ * Sends one FreshBooks call through core's transport, which retries a 429 three
+ * times (honouring Retry-After) and raises `ApiError` with the status.
+ */
+export async function makeFreshBooksRequest(
+	ctx: FreshBooksCallContext,
+	options: FreshBooksRequest,
+): Promise<unknown> {
+	if (!ctx.key) {
+		throw new AuthMissingError('freshbooks', 'oauth_2');
+	}
+	const target = await resolveFreshBooksTarget(ctx, options.host);
+	const base = target.base;
+	const config = configFor(
+		base,
+		target.headers,
+		options.timeoutMs,
+		options.rawPathValues,
+	);
 	const requestOptions: ApiRequestOptions = {
-		method,
-		url: path,
-		query,
-		body,
-		mediaType: body === undefined ? undefined : 'application/json',
+		method: options.method,
+		url: options.path,
+		path: options.pathParameters,
+		query: { ...options.query, ...target.query },
+		headers: options.headers,
+		body: options.body,
+		mediaType: mediaTypeFor(options),
+		...(options.responseType ? { responseType: options.responseType } : {}),
 	};
-
 	try {
 		return await request<unknown>(config, requestOptions, {
-			rateLimitConfig: FRESHBOOKS_RATE_LIMIT_CONFIG,
+			rateLimitConfig: options.singleAttempt
+				? { ...FRESHBOOKS_RATE_LIMIT_CONFIG, maxRetries: 0 }
+				: FRESHBOOKS_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			// Copy the fields the handlers need and drop the cause: it holds
-			// the request with the Authorization header, and the response body
-			// is re-read through describeFreshBooksError below.
-			const [entry] = readFreshBooksErrors(error.body);
-			throw new FreshBooksAPIError(
-				describeFreshBooksError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					errno: entry?.errno,
-					retryAfter: error.retryAfter,
-					method,
-				},
+			throw withoutRequestData(error, ctx.key, base, [
+				...(options.sensitive ?? []),
+				...target.secrets,
+			]);
+		}
+		throw error;
+	}
+}
+
+const REDACTED = '[REDACTED]';
+
+/** How deep into an error body values are checked; anything deeper is replaced. */
+const MAX_ERROR_DEPTH = 6;
+
+/**
+ * Core keeps the sent body on `ApiError.request`. A FreshBooks body can hold client names, emails and addresses, invoice lines and amounts, and payment details, so the error
+ * is rebuilt without it (and without request headers, which carry the API
+ * key), keeping the status and rate-limit fields the error handlers and
+ * core's retries read. Strings the call sent are also scrubbed from the error
+ * body, in case FreshBooks quotes them back.
+ *
+ * Core also writes a bare status text ("Not Found") for the common statuses,
+ * which hides FreshBooks's reason. The message is rebuilt from the error body.
+ */
+export function withoutRequestData(
+	error: ApiError,
+	key: string | undefined,
+	base: string,
+	sensitive: readonly string[] = [],
+): ApiError {
+	const sent = [
+		...(key ? [{ text: key, wholeWord: false }] : []),
+		...sensitive
+			.filter((text) => text.length >= 2)
+			.map((text) => ({ text, wholeWord: text.length < WHOLE_WORD_BELOW })),
+		...sentStrings(error.request),
+	].sort((a, b) => b.text.length - a.text.length);
+	const body = scrubSent(withoutEchoedValues(unwrapped(error.body)), sent);
+	const message = freshbooksErrorMessage(error.status, error.statusText, body);
+	return new ApiError(
+		{
+			...error.request,
+			body: error.request.body === undefined ? undefined : REDACTED,
+			formData: undefined,
+			headers: undefined,
+			path: redactedValues(error.request.path),
+			query: redactedValues(error.request.query),
+		},
+		{
+			url: routeUrl(error.url, error.request.url, base),
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body,
+		},
+		message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+}
+
+// `unknown` because error bodies are untrusted provider JSON, narrowed below.
+function textOf(value: unknown): string | undefined {
+	if (typeof value === 'string' && value.trim().length > 0) return value.trim();
+	if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+		// `unknown` because the nested error object's fields are narrowed one by one.
+		const inner = value as Record<string, unknown>;
+		return (
+			textOf(inner.message) ??
+			textOf(inner.Message) ??
+			textOf(inner.msg) ??
+			textOf(inner.detail)
+		);
+	}
+	if (Array.isArray(value)) {
+		const parts = value
+			.map((item) => {
+				if (typeof item === 'string') return item;
+				if (typeof item !== 'object' || item === null) return undefined;
+				// `unknown` because a validation entry's fields are narrowed one by one.
+				const entry = item as Record<string, unknown>;
+				const text = textOf(entry.msg) ?? textOf(entry.message);
+				const where = Array.isArray(entry.loc)
+					? entry.loc.filter((part) => part !== 'body').join('.')
+					: typeof entry.path === 'string'
+						? entry.path
+						: Array.isArray(entry.path)
+							? entry.path.join('.')
+							: undefined;
+				return text && where ? `${where}: ${text}` : text;
+			})
+			.filter((part): part is string => typeof part === 'string')
+			.slice(0, 5);
+		return parts.length > 0 ? parts.join('; ') : undefined;
+	}
+	return undefined;
+}
+
+/**
+ * The reason in a FreshBooks error body: `message`, `error` (a string or an object
+ * with a message), `detail` (a string or a list of validation entries) or
+ * `errors`. A bare text body counts unless it is an HTML page.
+ */
+// `unknown` because the body is untrusted provider JSON or text.
+export function freshbooksErrorMessage(
+	status: number,
+	statusText: string,
+	body: unknown,
+): string {
+	let fields =
+		typeof body === 'object' && body !== null && !Array.isArray(body)
+			? // `unknown` because an error body's fields are narrowed one by one below.
+				(body as Record<string, unknown>)
+			: {};
+	// The accounting service: `{ response: { errors: [{ errno, field, message }] } }`.
+	const envelope = fields.response;
+	if (
+		typeof envelope === 'object' &&
+		envelope !== null &&
+		!Array.isArray(envelope)
+	) {
+		fields = envelope as Record<string, unknown>;
+	}
+	const first = Array.isArray(fields.errors) ? fields.errors[0] : undefined;
+	const errno =
+		typeof first === 'object' && first !== null
+			? (first as Record<string, unknown>).errno
+			: undefined;
+	let reason =
+		(typeof first === 'object' && first !== null
+			? textOf((first as Record<string, unknown>).message)
+			: undefined) ??
+		textOf(fields.error_description) ??
+		textOf(fields.message) ??
+		textOf(fields.error) ??
+		textOf(fields.detail) ??
+		textOf(fields.errors) ??
+		textOf(fields.details) ??
+		textOf(fields.Message);
+	if (!reason && typeof body === 'string') {
+		const text = body.trim();
+		if (text.length > 0 && !text.startsWith('<')) reason = text;
+	}
+	const code = typeof errno === 'number' ? ` (errno ${errno})` : '';
+	const text = `FreshBooks ${status}${code}: ${reason || statusText || 'request failed'}`;
+	return text.length > 500 ? `${text.slice(0, 497)}...` : text;
+}
+
+/** Strings shorter than this are matched as whole words only... */
+const WHOLE_WORD_BELOW = 6;
+/**
+ * ...and one-character strings are left alone, unless they sit under a key
+ * like these (a password, a token, a code, a phone number), where every
+ * length counts.
+ */
+const SECRET_KEY =
+	/pass|secret|token|credential|key$|otp|code$|phone|number|email|address|to$|from$/i;
+
+type SentString = { text: string; wholeWord: boolean };
+
+/** Body fields that carry env-file text (`envContents`, a secret file's `contents`). */
+const ENV_TEXT_KEY = /^(envContents|contents)$/;
+
+/** The non-empty lines of env-file text and the value after each `KEY=`. */
+export function envTextParts(text: string): string[] {
+	const parts: string[] = [];
+	for (const raw of text.split(/\r?\n/)) {
+		const line = raw.trim();
+		if (!line || line.startsWith('#')) continue;
+		parts.push(line);
+		const equals = line.indexOf('=');
+		if (equals > 0) {
+			const value = line
+				.slice(equals + 1)
+				.trim()
+				.replace(/^(['"])(.*)\1$/, '$2');
+			if (value) parts.push(value);
+		}
+	}
+	return parts;
+}
+
+/**
+ * Every string this call sent (JSON body, query values, path values), longest
+ * first, so a message that quotes one back loses it while keeping its reason.
+ * Any of them can be user data (a memory, a name), so length doesn't exempt
+ * one; short ones are matched as whole words, so they can't take out letters
+ * or digits inside other words.
+ */
+function sentStrings(request: ApiError['request']): SentString[] {
+	const found = new Map<string, boolean>();
+	// `unknown` because the sent values are any validated JSON.
+	const visit = (value: unknown, depth: number, secret: boolean) => {
+		// Deep enough for any request body a route takes; still bounded.
+		if (depth > 64 || value === undefined || value === null) return;
+		if (typeof value === 'string') {
+			if (value.length >= (secret ? 1 : 2) && !found.has(value)) {
+				found.set(value, value.length < WHOLE_WORD_BELOW);
+			}
+			return;
+		}
+		if (typeof value === 'number' && secret) {
+			const text = String(value);
+			if (!found.has(text)) found.set(text, true);
+			return;
+		}
+		if (Array.isArray(value)) {
+			for (const item of value) visit(item, depth + 1, secret);
+			return;
+		}
+		if (typeof FormData !== 'undefined' && value instanceof FormData) {
+			// Text fields and file names; file contents are never read.
+			value.forEach((entry) => {
+				if (typeof entry === 'string') visit(entry, depth + 1, secret);
+				else if (typeof File !== 'undefined' && entry instanceof File) {
+					visit(entry.name, depth + 1, secret);
+				}
+			});
+			return;
+		}
+		if (value instanceof Uint8Array || value instanceof ArrayBuffer) return;
+		if (typeof value === 'object') {
+			for (const [key, inner] of Object.entries(value)) {
+				visit(inner, depth + 1, secret || SECRET_KEY.test(key));
+				// Env-file text (`KEY=value` lines): an error can quote one value
+				// back, so each line and each value counts as sent on its own.
+				if (ENV_TEXT_KEY.test(key) && typeof inner === 'string') {
+					for (const part of envTextParts(inner)) visit(part, depth + 1, true);
+				}
+			}
+		}
+	};
+	visit(request.body, 0, false);
+	visit(request.query, 0, false);
+	visit(request.path, 0, true);
+	return [...found]
+		.map(([text, wholeWord]) => ({ text, wholeWord }))
+		.sort((a, b) => b.text.length - a.text.length);
+}
+
+function escapeRegExp(text: string): string {
+	return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/** Replaces every sent string inside an error body with [REDACTED]. */
+// `unknown` because the error body is untrusted provider JSON.
+function scrubSent(value: unknown, sent: SentString[], depth = 0): unknown {
+	if (sent.length === 0) return value;
+	if (depth > MAX_ERROR_DEPTH) return REDACTED;
+	if (typeof value === 'string') {
+		let text = value;
+		for (const item of sent) {
+			text = item.wholeWord
+				? text.replace(
+						new RegExp(
+							`(?<![A-Za-z0-9])${escapeRegExp(item.text)}(?![A-Za-z0-9])`,
+							'g',
+						),
+						REDACTED,
+					)
+				: text.split(item.text).join(REDACTED);
+		}
+		return text;
+	}
+	if (Array.isArray(value)) {
+		return value.map((item) => scrubSent(item, sent, depth + 1));
+	}
+	if (typeof value === 'object' && value !== null) {
+		// `unknown` because each field is scrubbed by its own type.
+		const result: Record<string, unknown> = {};
+		for (const [key, inner] of Object.entries(value)) {
+			// A key can be caller data too (a field error keyed by an email).
+			const name = scrubSent(key, sent, depth + 1) as string;
+			result[name === key ? key : `${REDACTED}#${Object.keys(result).length}`] =
+				scrubSent(inner, sent, depth + 1);
+		}
+		return result;
+	}
+	return value;
+}
+
+function redactedValues(
+	// `unknown` because path and query values are validated scalars or lists.
+	values: Record<string, unknown> | undefined,
+): Record<string, string> | undefined {
+	if (values === undefined) return undefined;
+	return Object.fromEntries(Object.keys(values).map((key) => [key, REDACTED]));
+}
+
+/**
+ * The route the call took, without the caller's values:
+ * `<base>/things/abc?limit=5` → `<base>/things/{id}?[REDACTED]`.
+ */
+export function routeUrl(
+	url: string,
+	route: string | undefined,
+	base: string,
+): string {
+	if (typeof route !== 'string' || !route.startsWith('/')) {
+		return withoutQuery(url);
+	}
+	return `${base}${route}${url.includes('?') ? `?${REDACTED}` : ''}`;
+}
+
+/** `https://…/things?query=…` → `https://…/things?[REDACTED]`. */
+export function withoutQuery(url: string): string {
+	const mark = url.indexOf('?');
+	return mark === -1 ? url : `${url.slice(0, mark)}?${REDACTED}`;
+}
+
+/**
+ * Some .NET services send an error inside a collection wrapper,
+ * `{ count: 1, value: { Message } }`. The wrapper goes before echoed values
+ * are dropped, or the reason would go with it.
+ */
+// `unknown` because the error body is untrusted provider JSON.
+function unwrapped(body: unknown): unknown {
+	if (typeof body !== 'object' || body === null || Array.isArray(body)) {
+		return body;
+	}
+	const fields = body as Record<string, unknown>;
+	const inner = fields.value;
+	return typeof fields.count === 'number' &&
+		typeof inner === 'object' &&
+		inner !== null &&
+		!Array.isArray(inner)
+		? inner
+		: body;
+}
+
+/** Fields an error body may use to echo back what was sent. */
+const ECHO_KEYS = new Set(['value', 'values', 'input', 'received', 'params']);
+
+/** Drops fields a validation error may use to echo back what was sent. */
+// `unknown` because the error body is untrusted provider JSON.
+function withoutEchoedValues(body: unknown, depth = 0): unknown {
+	if (typeof body !== 'object' || body === null) return body;
+	if (depth > MAX_ERROR_DEPTH) return REDACTED;
+	if (Array.isArray(body)) {
+		return body.map((item) => withoutEchoedValues(item, depth + 1));
+	}
+	// `unknown` because each field keeps its own type.
+	const result: Record<string, unknown> = {};
+	for (const [key, value] of Object.entries(body)) {
+		if (ECHO_KEYS.has(key)) continue;
+		result[key] = withoutEchoedValues(value, depth + 1);
+	}
+	return result;
+}
+
+/** A page from a route that sends its next-page token in a response header. */
+export type FreshBooksHeaderPage = {
+	// `unknown` because the page body is validated by the operation's output schema.
+	body: unknown;
+	/** The header's value as sent, or null when the response had none. */
+	header: string | null;
+};
+
+/** The longest backoff when a 429 has no Retry-After, as in core. */
+const MAX_RETRY_DELAY_MS = 60_000;
+
+/**
+ * The URL core's `request()` builds for the same options: path values through
+ * the same encoder, lists as repeated keys, maps as `name[key]=value`.
+ */
+export function freshbooksRequestUrl(
+	base: string,
+	options: FreshBooksRequest,
+): string {
+	const path = options.path.replace(/\{([^}]+)\}/g, (match, name: string) => {
+		const value = options.pathParameters?.[name];
+		if (value === undefined) return match;
+		return options.rawPathValues?.has(value)
+			? value
+			: encodeFreshBooksPathValue(value);
+	});
+	const parts: string[] = [];
+	// `unknown` because query values are validated scalars, lists or maps.
+	const add = (key: string, value: unknown) => {
+		if (value === undefined || value === null) return;
+		if (Array.isArray(value)) {
+			for (const item of value) add(key, item);
+		} else if (typeof value === 'object') {
+			for (const [inner, innerValue] of Object.entries(value)) {
+				add(`${key}[${inner}]`, innerValue);
+			}
+		} else {
+			parts.push(
+				`${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`,
 			);
 		}
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			// Transport failure: nothing reached FreshBooks, so `method` is the
-			// caller's intent and reads may be replayed.
-			throw new FreshBooksAPIError(error.message, { method });
+	};
+	for (const [key, value] of Object.entries(options.query ?? {})) {
+		add(key, value);
+	}
+	return `${base}/${path.replace(/^\/+/, '')}${parts.length > 0 ? `?${parts.join('&')}` : ''}`;
+}
+
+function retryAfterMs(value: string | null): number | undefined {
+	if (!value) return undefined;
+	const seconds = Number.parseInt(value, 10);
+	// An explicit wait is kept as sent, as core does; only the fallback is capped.
+	return Number.isNaN(seconds) ? undefined : Math.max(seconds, 0) * 1000;
+}
+
+/**
+ * A GET whose next-page token comes back in a response header (the
+ * `headerCursor` routes, such as a `Next-Cursor` header). Core's `request()` returns the body or
+ * one header, never both, so this sends the call with `fetch` and keeps the
+ * header. Everything else matches `makeFreshBooksRequest`: the same URL, API key
+ * header and timeout, a 429 retried three times (Retry-After in seconds, else
+ * 1, 2 and 4 s), and failures raised as the same scrubbed `ApiError`.
+ */
+export async function makeFreshBooksHeaderPagedRequest(
+	ctx: FreshBooksCallContext,
+	options: FreshBooksRequest,
+	header: string,
+): Promise<FreshBooksHeaderPage> {
+	if (options.method !== 'GET' || options.body !== undefined) {
+		throw new Error('FreshBooks header paging is for GET routes only');
+	}
+	return makeFreshBooksHeaderRequest(ctx, options, header);
+}
+
+/**
+ * A call whose answer is the body plus one response header (an `ETag` that
+ * the next write sends back as `If-Match`). Sent like the header-paged GET
+ * above, with a JSON body when the route takes one.
+ */
+export async function makeFreshBooksHeaderRequest(
+	ctx: FreshBooksCallContext,
+	options: FreshBooksRequest,
+	header: string,
+): Promise<FreshBooksHeaderPage> {
+	if (!ctx.key) {
+		throw new AuthMissingError('freshbooks', 'oauth_2');
+	}
+	const sent = options.body;
+	if (
+		sent !== undefined &&
+		(sent instanceof Uint8Array ||
+			(typeof Blob !== 'undefined' && sent instanceof Blob) ||
+			(typeof FormData !== 'undefined' && sent instanceof FormData))
+	) {
+		throw new Error('FreshBooks header calls send JSON bodies only');
+	}
+	const target = await resolveFreshBooksTarget(ctx, options.host);
+	const base = target.base;
+	const config = configFor(
+		base,
+		target.headers,
+		options.timeoutMs,
+		options.rawPathValues,
+	);
+	const url = freshbooksRequestUrl(base, {
+		...options,
+		query: { ...options.query, ...target.query },
+	});
+	// The sent body is here so an error that quotes it back is scrubbed;
+	// the rebuilt error replaces it with a placeholder.
+	const requestOptions: ApiRequestOptions = {
+		method: options.method,
+		url: options.path,
+		path: options.pathParameters,
+		query: options.query,
+		headers: options.headers,
+		body: sent,
+	};
+	const maxRetries = options.singleAttempt
+		? 0
+		: FRESHBOOKS_RATE_LIMIT_CONFIG.maxRetries;
+	for (let attempt = 1; ; attempt++) {
+		const response = await fetch(url, {
+			method: options.method,
+			headers: {
+				...config.HEADERS,
+				...(sent === undefined
+					? {}
+					: { 'Content-Type': mediaTypeFor(options) ?? 'application/json' }),
+				...options.headers,
+			},
+			...(sent === undefined ? {} : { body: JSON.stringify(sent) }),
+			signal: AbortSignal.timeout(config.TIMEOUT),
+		});
+		const retryAfter = retryAfterMs(response.headers.get('retry-after'));
+		if (response.status === 429 && attempt <= maxRetries) {
+			await response.body?.cancel().catch(() => undefined);
+			await new Promise((done) =>
+				setTimeout(
+					done,
+					retryAfter ??
+						Math.min(
+							FRESHBOOKS_RATE_LIMIT_CONFIG.initialRetryDelay *
+								FRESHBOOKS_RATE_LIMIT_CONFIG.backoffMultiplier ** (attempt - 1),
+							MAX_RETRY_DELAY_MS,
+						),
+				),
+			);
+			continue;
 		}
-		throw new FreshBooksAPIError('Unknown FreshBooks error', { method });
+		const text = await response.text();
+		if (!response.ok) {
+			// `unknown` because an error body is untrusted provider JSON or text.
+			let errorBody: unknown = text.length === 0 ? undefined : text;
+			try {
+				errorBody = JSON.parse(text);
+			} catch {
+				// Not JSON: keep the text.
+			}
+			throw withoutRequestData(
+				new ApiError(
+					requestOptions,
+					{
+						url,
+						ok: false,
+						status: response.status,
+						statusText: response.statusText,
+						body: errorBody,
+					},
+					response.statusText || `HTTP ${response.status}`,
+					retryAfter === undefined ? undefined : { retryAfter },
+				),
+				ctx.key,
+				base,
+				[...(options.sensitive ?? []), ...target.secrets],
+			);
+		}
+		// `unknown` because the page body is validated by the operation's output schema.
+		let body: unknown;
+		if (text.trim().length > 0) {
+			try {
+				body = JSON.parse(text);
+			} catch {
+				// The body itself stays out of the message: it can hold page content.
+				throw new Error('FreshBooks answered with a body that is not JSON');
+			}
+		}
+		return { body, header: response.headers.get(header) };
 	}
 }

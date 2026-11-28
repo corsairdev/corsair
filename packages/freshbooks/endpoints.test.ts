@@ -1,678 +1,467 @@
-import { FreshBooksAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import {
-	Clients,
-	Estimates,
-	Expenses,
-	Invoices,
-	Projects,
-	Tasks,
-	TimeEntries,
-	Users,
-} from './endpoints';
+	freshbooksErrorMessage,
+	makeFreshBooksRequest,
+	withoutRequestData,
+} from './client';
+import { freshbooksEndpointsNested } from './endpoints/catalog';
 import {
-	ACCOUNT_ID,
-	accountNotFound,
-	BUSINESS_ID,
-	clientRecord,
-	estimateRecord,
-	expenseRecord,
-	invoiceRecord,
-	projectResponse,
-	projectsDeleteResponse,
-	projectsListResponse,
-	taskRecord,
-	timeEntriesListResponse,
-	timeEntryResponse,
-	usersMeResponse,
-} from './test-fixtures';
-import {
-	failureOf,
-	installFetchMock,
-	invoke,
-	lastRequest,
-	respondEmpty,
-	respondJson,
-} from './test-support';
+	freshbooksDefinitions,
+	freshbooksOperations,
+} from './endpoints/manifest';
+import { customerMapKeys } from './endpoints/openapi-schema';
+import { queryValue } from './endpoints/operations';
+import type { FreshBooksContext } from './index';
 
-jest.mock('corsair/core', () => ({
-	...jest.requireActual('corsair/core'),
-	logEventFromContext: jest.fn().mockResolvedValue(null),
-}));
+// Every call goes through the real client and core transport; only fetch is fake.
 
-const fetchMock = installFetchMock();
+type Captured = {
+	url: string;
+	method: string;
+	headers: Record<string, string>;
+	// `unknown` because the sent body is a JSON string, a FormData or a Blob.
+	body: unknown;
+};
 
-describe('output parsing per operation', () => {
-	it('users.me surfaces accountId and businessId from the memberships', async () => {
-		respondJson(fetchMock, usersMeResponse);
+let calls: Captured[] = [];
 
-		const result = await invoke(Users.me, {});
-
-		expect(result.accountId).toBe('zDmNq');
-		expect(result.businessId).toBe(77128);
-		expect(result.email).toBe('b@example.com');
-	});
-
-	it('users.me leaves accountId and businessId out when there are no memberships', async () => {
-		respondJson(fetchMock, {
-			response: { id: 712052, business_memberships: [] },
+function reply(
+	status: number,
+	// `unknown` because each case answers its own JSON body.
+	body: unknown,
+	contentType = 'application/json',
+) {
+	jest.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
+		const headers: Record<string, string> = {};
+		new Headers(init?.headers).forEach((value, key) => {
+			headers[key] = value;
 		});
-
-		const result = await invoke(Users.me, {});
-
-		expect(result.accountId).toBeUndefined();
-		expect(result.businessId).toBeUndefined();
-	});
-
-	it('clients.list parses the wrapped page', async () => {
-		respondJson(fetchMock, {
-			response: {
-				result: {
-					clients: [clientRecord],
-					page: 1,
-					pages: 3,
-					per_page: 15,
-					total: 40,
-				},
-			},
+		calls.push({
+			url: String(input),
+			method: init?.method ?? 'GET',
+			headers,
+			body: init?.body,
 		});
-
-		const result = await invoke(Clients.list, { accountId: ACCOUNT_ID });
-
-		expect(result.clients).toHaveLength(1);
-		expect(result.clients[0]).toMatchObject({ id: 238951, fname: 'first1' });
-		expect(result).toMatchObject({
-			page: 1,
-			pages: 3,
-			per_page: 15,
-			total: 40,
+		const payload =
+			body instanceof Uint8Array
+				? body
+				: body === undefined
+					? null
+					: typeof body === 'string' && contentType !== 'application/json'
+						? body
+						: JSON.stringify(body);
+		return new Response(payload, {
+			status,
+			headers: body === undefined ? {} : { 'content-type': contentType },
 		});
 	});
+}
 
-	it('clients.get parses the client', async () => {
-		respondJson(fetchMock, { response: { result: { client: clientRecord } } });
+// jest-yaml-transform turns the yaml into a plain object.
+const docs = require('./plugin-docs.yaml') as {
+	// `unknown` because example args are free-form YAML values.
+	apiExamples: Record<string, { args: Record<string, unknown> }>;
+};
 
-		const result = await invoke(Clients.get, {
-			accountId: ACCOUNT_ID,
-			customerId: 238951,
-		});
+const KEY = 'fb-access-token-test-value';
+/** The plugin options every case runs with (the site the key belongs to). */
+const OPTIONS = {
+	accountId: 'LJArJ4',
+	businessId: '77001',
+	businessUuid: '5e9a0c1d-2b3c-4d5e-8f90-a1b2c3d4e5f6',
+};
+/** Where those options send calls. */
+const BASE = 'https://api.freshbooks.com';
 
-		expect(result.client.organization).toBe('Company 1');
-		expect(result.client.vat_name).toBeNull();
+function ctx(options: Record<string, string> = OPTIONS): FreshBooksContext {
+	return {
+		endpoints: {},
+		$getAccountId: () => Promise.resolve('test-account'),
+		key: KEY,
+		options,
+		keys: { get_api_key: () => Promise.resolve(KEY) },
+		db: {},
+		// `unknown` because a test context fills only the fields the endpoints read.
+	} as unknown as FreshBooksContext;
+}
+
+// `unknown` because the endpoint tree holds functions of many input types.
+type AnyEndpoint = (ctx: FreshBooksContext, input: unknown) => Promise<unknown>;
+
+function endpointFor(id: string): AnyEndpoint {
+	// `unknown` because the walk goes through nested groups of endpoints.
+	let node: unknown = freshbooksEndpointsNested;
+	for (const part of id.split('.')) {
+		node = (node as Record<string, unknown>)[part];
+	}
+	if (typeof node !== 'function') throw new Error(`no endpoint ${id}`);
+	return node as AnyEndpoint;
+}
+
+// `unknown` because the schema is raw JSON Schema from the manifest.
+function resolveSchema(schema: unknown): Record<string, unknown> {
+	let current = schema as Record<string, unknown> | undefined;
+	for (let i = 0; i < 10 && typeof current?.$ref === 'string'; i++) {
+		current = freshbooksDefinitions[current.$ref];
+	}
+	return current ?? {};
+}
+
+beforeEach(() => {
+	calls = [];
+});
+
+afterEach(() => {
+	jest.restoreAllMocks();
+});
+
+describe('every operation', () => {
+	it.each(freshbooksOperations.map((o) => [o.id, o] as const))(
+		'%s sends its documented method, route and auth',
+		async (id, operation) => {
+			const documented = resolveSchema(operation.output);
+			// A union answer (a count or the rows): the mock answers its first shape.
+			const output = Array.isArray(documented.anyOf)
+				? resolveSchema(documented.anyOf[0])
+				: documented;
+			if (operation.response === 'file') {
+				reply(200, new Uint8Array([80, 75, 3, 4]), 'application/octet-stream');
+			} else if (operation.response === 'text') {
+				reply(200, '# profile', 'text/markdown');
+			} else if (operation.response === 'empty') {
+				reply(204, undefined);
+			} else {
+				reply(
+					200,
+					output.type === 'array'
+						? []
+						: output.type === 'string'
+							? 'ok'
+							: output.type === 'integer' || output.type === 'number'
+								? 1
+								: output.type === 'boolean'
+									? true
+									: {},
+				);
+			}
+			const args = docs.apiExamples[id]?.args ?? {};
+			const result = await endpointFor(id)(ctx(), args);
+			expect(calls).toHaveLength(1);
+			if (operation.response === 'empty') {
+				expect(result).toEqual({ success: true });
+			}
+			const url = new URL(String(calls[0]?.url));
+			const base = new URL(operation.host ? BASE : BASE);
+			const properties = (operation.input.properties ?? {}) as Record<
+				string,
+				// `unknown` because property schemas are raw JSON Schema documents.
+				Record<string, unknown>
+			>;
+			const byWire = new Map(
+				Object.entries(properties)
+					// A body field may share a path parameter's wire name (a folder's new path).
+					.filter(([, schema]) => schema['x-corsair-in'] === 'path')
+					.map(([name, schema]) => [
+						(schema['x-corsair-name'] as string | undefined) ?? name,
+						name,
+					]),
+			);
+			// An id the example leaves out comes from the plugin options.
+			const route = operation.path.replace(/\{(\w+)\}/g, (_, wire: string) =>
+				encodeURIComponent(
+					String(
+						args[byWire.get(wire) ?? wire] ??
+							(OPTIONS as Record<string, string>)[wire],
+					),
+				),
+			);
+			expect(url.host).toBe(base.host);
+			expect(decodeURIComponent(url.pathname)).toBe(
+				decodeURIComponent(`${base.pathname.replace(/\/$/, '')}${route}`),
+			);
+			expect(calls[0]?.method).toBe(operation.method);
+			expect(calls[0]?.headers['authorization']).toBe(`Bearer ${KEY}`);
+			if (operation.fixedBody) {
+				// The fixed fields go out laid over the caller's resource fields.
+				const sent = JSON.parse(String(calls[0]?.body ?? '{}'));
+				for (const [key, values] of Object.entries(operation.fixedBody)) {
+					expect(sent[key]).toMatchObject(values);
+				}
+			}
+			if (operation.request === 'json' && !operation.bodyField) {
+				const sent = JSON.parse(String(calls[0]?.body ?? '{}'));
+				// An enveloped body goes as { <key>: [body] }.
+				const body = operation.bodyEnvelope
+					? sent[operation.bodyEnvelope]?.[0]
+					: sent;
+				for (const [name, value] of Object.entries(args)) {
+					const where = properties[name]?.['x-corsair-in'] ?? 'body';
+					const wire =
+						(properties[name]?.['x-corsair-name'] as string | undefined) ??
+						name;
+					if (where === 'body') {
+						// Every body field of the example goes out as sent (plus any fixed fields).
+						const fixed = operation.fixedBody?.[wire];
+						expect([wire, body[wire]]).toEqual([
+							wire,
+							fixed ? { ...(value as object), ...fixed } : value,
+						]);
+					} else {
+						expect(body).not.toHaveProperty(name);
+					}
+				}
+			}
+			if (operation.request === 'json' && operation.bodyField) {
+				const body = JSON.parse(String(calls[0]?.body ?? 'null'));
+				expect(body).toEqual(args[operation.bodyField]);
+			}
+			if (operation.request === 'multipart') {
+				expect(calls[0]?.body).toBeInstanceOf(FormData);
+			}
+			// Every query field of the example reaches the URL.
+			for (const [name, value] of Object.entries(args)) {
+				if (properties[name]?.['x-corsair-in'] !== 'query') continue;
+				// Maps go out as name[key]=value; vendor tests check those.
+				if (
+					typeof value === 'object' &&
+					value !== null &&
+					!Array.isArray(value)
+				)
+					continue;
+				const wire =
+					(properties[name]?.['x-corsair-name'] as string | undefined) ?? name;
+				const join = properties[name]?.['x-corsair-join'] as string | undefined;
+				const sent = queryValue(value, join);
+				expect([wire, url.searchParams.getAll(wire)]).toEqual([
+					wire,
+					(Array.isArray(sent) ? sent : [sent]).map(String),
+				]);
+			}
+		},
+	);
+});
+
+describe('requests', () => {
+	it('encodes path values so they stay one segment', async () => {
+		// A GET whose path field takes free text (no pattern or format).
+		let found: [string, string] | undefined;
+		for (const o of freshbooksOperations) {
+			if (o.method !== 'GET') continue;
+			const free = Object.entries(
+				(o.input.properties ?? {}) as Record<
+					string,
+					// `unknown` because property schemas are raw JSON Schema documents.
+					Record<string, unknown>
+				>,
+			).find(
+				([, schema]) =>
+					schema['x-corsair-in'] === 'path' &&
+					schema.type === 'string' &&
+					!schema.pattern &&
+					!schema.format &&
+					!schema.enum,
+			);
+			if (free) {
+				found = [o.id, free[0]];
+				break;
+			}
+		}
+		if (!found) return;
+		const [id, field] = found;
+		reply(200, {});
+		const args = { ...(docs.apiExamples[id]?.args ?? {}) };
+		args[field] = 'a/../b c';
+		await endpointFor(id)(ctx(), args).catch(() => undefined);
+		expect(calls[0]?.url).toContain('a%2F..%2Fb%20c');
 	});
 
-	it('clients.create returns the created client', async () => {
-		respondJson(fetchMock, { response: { result: { client: clientRecord } } });
-
-		const result = await invoke(Clients.create, {
-			accountId: ACCOUNT_ID,
-			client: { fname: 'first1' },
-		});
-
-		expect(result.client.id).toBe(238951);
-	});
-
-	it('clients.update returns the changed client', async () => {
-		respondJson(fetchMock, { response: { result: { client: clientRecord } } });
-
-		const result = await invoke(Clients.update, {
-			accountId: ACCOUNT_ID,
-			customerId: 238951,
-			client: { organization: 'Company 2' },
-		});
-
-		expect(result.client.email).toBe('email1@freshbooks.com');
-	});
-
-	it('clients.delete returns the client marked deleted', async () => {
-		respondJson(fetchMock, {
-			response: { result: { client: { ...clientRecord, vis_state: 1 } } },
-		});
-
-		const result = await invoke(Clients.remove, {
-			accountId: ACCOUNT_ID,
-			customerId: 238951,
-		});
-
-		expect(result.client.vis_state).toBe(1);
-	});
-
-	it('invoices.list parses the wrapped page', async () => {
-		respondJson(fetchMock, {
-			response: {
-				result: {
-					invoices: [invoiceRecord],
-					page: 1,
-					pages: 1,
-					per_page: 15,
-					total: 1,
-				},
-			},
-		});
-
-		const result = await invoke(Invoices.list, { accountId: ACCOUNT_ID });
-
-		expect(result.invoices[0]).toMatchObject({
-			id: 152429,
-			status: 1,
-			vis_state: 0,
-		});
-		expect(result.invoices[0]?.amount).toEqual({
-			amount: '104.50',
-			code: 'CAD',
-		});
-	});
-
-	it('invoices.get parses the invoice with money objects', async () => {
-		respondJson(fetchMock, {
-			response: { result: { invoice: invoiceRecord } },
-		});
-
-		const result = await invoke(Invoices.get, {
-			accountId: ACCOUNT_ID,
-			invoiceId: 152429,
-		});
-
-		expect(result.invoice.outstanding).toEqual({
-			amount: '104.50',
-			code: 'CAD',
-		});
-	});
-
-	it('invoices.create returns the draft invoice', async () => {
-		respondJson(fetchMock, {
-			response: { result: { invoice: invoiceRecord } },
-		});
-
-		const result = await invoke(Invoices.create, {
-			accountId: ACCOUNT_ID,
-			invoice: { customerid: 960771 },
-		});
-
-		expect(result.invoice.invoice_number).toBe('0000003');
-	});
-
-	it('invoices.update returns the changed invoice', async () => {
-		respondJson(fetchMock, {
-			response: { result: { invoice: invoiceRecord } },
-		});
-
-		const result = await invoke(Invoices.update, {
-			accountId: ACCOUNT_ID,
-			invoiceId: 152429,
-			invoice: { notes: 'Net 30' },
-		});
-
-		expect(result.invoice.id).toBe(152429);
-	});
-
-	it('invoices.markSent returns the invoice with status sent', async () => {
-		respondJson(fetchMock, {
-			response: { result: { invoice: { ...invoiceRecord, status: 2 } } },
-		});
-
-		const result = await invoke(Invoices.markSent, {
-			accountId: ACCOUNT_ID,
-			invoiceId: 152429,
-		});
-
-		expect(result.invoice.status).toBe(2);
-	});
-
-	it('invoices.sendEmail returns the invoice', async () => {
-		respondJson(fetchMock, {
-			response: { result: { invoice: invoiceRecord } },
-		});
-
-		const result = await invoke(Invoices.sendEmail, {
-			accountId: ACCOUNT_ID,
-			invoiceId: 152429,
-			email_recipients: ['client@example.com'],
-		});
-
-		expect(result.invoice.customerid).toBe(960771);
-	});
-
-	it('invoices.delete returns the invoice marked deleted', async () => {
-		respondJson(fetchMock, {
-			response: { result: { invoice: { ...invoiceRecord, vis_state: 1 } } },
-		});
-
-		const result = await invoke(Invoices.remove, {
-			accountId: ACCOUNT_ID,
-			invoiceId: 152429,
-		});
-
-		expect(result.invoice.vis_state).toBe(1);
-	});
-
-	it('estimates.list parses the wrapped page', async () => {
-		respondJson(fetchMock, {
-			response: {
-				result: {
-					estimates: [estimateRecord],
-					page: 1,
-					pages: 1,
-					per_page: 15,
-					total: 1,
-				},
-			},
-		});
-
-		const result = await invoke(Estimates.list, { accountId: ACCOUNT_ID });
-
-		expect(result.estimates[0]).toMatchObject({ id: 152430, status: 1 });
-	});
-
-	it('estimates.get parses the estimate', async () => {
-		respondJson(fetchMock, {
-			response: { result: { estimate: estimateRecord } },
-		});
-
-		const result = await invoke(Estimates.get, {
-			accountId: ACCOUNT_ID,
-			estimateId: 152430,
-		});
-
-		expect(result.estimate.estimate_number).toBe('0000002');
-	});
-
-	it('estimates.create returns the draft estimate', async () => {
-		respondJson(fetchMock, {
-			response: { result: { estimate: estimateRecord } },
-		});
-
-		const result = await invoke(Estimates.create, {
-			accountId: ACCOUNT_ID,
-			estimate: { customerid: 960771 },
-		});
-
-		expect(result.estimate.id).toBe(152430);
-	});
-
-	it('estimates.update returns the changed estimate', async () => {
-		respondJson(fetchMock, {
-			response: { result: { estimate: estimateRecord } },
-		});
-
-		const result = await invoke(Estimates.update, {
-			accountId: ACCOUNT_ID,
-			estimateId: 152430,
-			estimate: { terms: 'Net 15' },
-		});
-
-		expect(result.estimate.ui_status).toBe('sent');
-	});
-
-	it('estimates.delete returns the estimate marked deleted', async () => {
-		respondJson(fetchMock, {
-			response: { result: { estimate: { ...estimateRecord, vis_state: 1 } } },
-		});
-
-		const result = await invoke(Estimates.remove, {
-			accountId: ACCOUNT_ID,
-			estimateId: 152430,
-		});
-
-		expect(result.estimate.vis_state).toBe(1);
-	});
-
-	it('expenses.list parses the wrapped page', async () => {
-		respondJson(fetchMock, {
-			response: {
-				result: {
-					expenses: [expenseRecord],
-					page: 1,
-					pages: 1,
-					per_page: 15,
-					total: 1,
-				},
-			},
-		});
-
-		const result = await invoke(Expenses.list, { accountId: ACCOUNT_ID });
-
-		expect(result.expenses[0]).toMatchObject({
-			id: 123456,
-			categoryid: 50104404,
-		});
-	});
-
-	it('expenses.get parses the expense', async () => {
-		respondJson(fetchMock, {
-			response: { result: { expense: expenseRecord } },
-		});
-
-		const result = await invoke(Expenses.get, {
-			accountId: ACCOUNT_ID,
-			expenseId: 123456,
-		});
-
-		expect(result.expense.amount).toEqual({ amount: '39.991', code: 'USD' });
-	});
-
-	it('expenses.create returns the recorded expense', async () => {
-		respondJson(fetchMock, {
-			response: { result: { expense: expenseRecord } },
-		});
-
-		const result = await invoke(Expenses.create, {
-			accountId: ACCOUNT_ID,
-			expense: { amount: { amount: '39.99' }, categoryid: 50104404 },
-		});
-
-		expect(result.expense.vendor).toBe('Internet Co.');
-	});
-
-	it('expenses.update returns the changed expense', async () => {
-		respondJson(fetchMock, {
-			response: { result: { expense: expenseRecord } },
-		});
-
-		const result = await invoke(Expenses.update, {
-			accountId: ACCOUNT_ID,
-			expenseId: 123456,
-			expense: { vendor: 'Other Co.' },
-		});
-
-		expect(result.expense.id).toBe(123456);
-	});
-
-	it('expenses.delete returns the expense marked deleted', async () => {
-		respondJson(fetchMock, {
-			response: { result: { expense: { ...expenseRecord, vis_state: 1 } } },
-		});
-
-		const result = await invoke(Expenses.remove, {
-			accountId: ACCOUNT_ID,
-			expenseId: 123456,
-		});
-
-		expect(result.expense.vis_state).toBe(1);
-	});
-
-	it('tasks.list parses the wrapped page', async () => {
-		respondJson(fetchMock, {
-			response: {
-				result: {
-					tasks: [taskRecord],
-					page: 1,
-					pages: 1,
-					per_page: 15,
-					total: 1,
-				},
-			},
-		});
-
-		const result = await invoke(Tasks.list, { accountId: ACCOUNT_ID });
-
-		expect(result.tasks[0]).toMatchObject({ id: 159361, billable: true });
-	});
-
-	it('tasks.get parses the task with its rate', async () => {
-		respondJson(fetchMock, { response: { result: { task: taskRecord } } });
-
-		const result = await invoke(Tasks.get, {
-			accountId: ACCOUNT_ID,
-			taskId: 159361,
-		});
-
-		expect(result.task.rate).toEqual({ amount: '100.00', code: 'CAD' });
-	});
-
-	it('tasks.create returns the created task', async () => {
-		respondJson(fetchMock, { response: { result: { task: taskRecord } } });
-
-		const result = await invoke(Tasks.create, {
-			accountId: ACCOUNT_ID,
-			task: { name: 'Piloting' },
-		});
-
-		expect(result.task.taskid).toBe(159361);
-	});
-
-	it('tasks.update returns the changed task', async () => {
-		respondJson(fetchMock, { response: { result: { task: taskRecord } } });
-
-		const result = await invoke(Tasks.update, {
-			accountId: ACCOUNT_ID,
-			taskId: 159361,
-			task: { billable: false },
-		});
-
-		expect(result.task.name).toBe('Piloting');
-	});
-
-	it('tasks.delete returns the task marked deleted', async () => {
-		respondJson(fetchMock, {
-			response: { result: { task: { ...taskRecord, vis_state: 1 } } },
-		});
-
-		const result = await invoke(Tasks.remove, {
-			accountId: ACCOUNT_ID,
-			taskId: 159361,
-		});
-
-		expect(result.task.vis_state).toBe(1);
-	});
-
-	it('projects.list parses the bare page with meta', async () => {
-		respondJson(fetchMock, projectsListResponse);
-
-		const result = await invoke(Projects.list, { businessId: BUSINESS_ID });
-
-		expect(result.projects).toHaveLength(1);
-		expect(result.projects[0]).toMatchObject({
-			id: 779803,
-			project_type: 'fixed_price',
-		});
-		expect(result.meta).toMatchObject({ page: 0, pages: 1, total: 7 });
-	});
-
-	it('projects.get parses the bare project', async () => {
-		respondJson(fetchMock, projectResponse);
-
-		const result = await invoke(Projects.get, {
-			businessId: BUSINESS_ID,
-			projectId: 779803,
-		});
-
-		expect(result.project.services).toHaveLength(1);
-		expect(result.project.group).toMatchObject({ id: 439081 });
-	});
-
-	it('projects.create returns the created project', async () => {
-		respondJson(fetchMock, projectResponse);
-
-		const result = await invoke(Projects.create, {
-			businessId: BUSINESS_ID,
-			project: { title: 'My Cool Project', project_type: 'fixed_price' },
-		});
-
-		expect(result.project.fixed_price).toBe('500');
-	});
-
-	it('projects.update returns the changed project', async () => {
-		respondJson(fetchMock, projectResponse);
-
-		const result = await invoke(Projects.update, {
-			businessId: BUSINESS_ID,
-			projectId: 779803,
-			project: { title: 'Renamed' },
-		});
-
-		expect(result.project.id).toBe(779803);
-	});
-
-	it('projects.delete reports success from the empty response wrapper', async () => {
-		respondJson(fetchMock, projectsDeleteResponse);
-
-		const result = await invoke(Projects.remove, {
-			businessId: BUSINESS_ID,
-			projectId: 779803,
-		});
-
-		expect(result).toEqual({ success: true, projectId: 779803 });
-	});
-
-	it('timeEntries.list parses the bare page with the logged totals', async () => {
-		respondJson(fetchMock, timeEntriesListResponse);
-
-		const result = await invoke(TimeEntries.list, { businessId: BUSINESS_ID });
-
-		expect(result.time_entries).toHaveLength(1);
-		expect(result.time_entries[0]).toMatchObject({ id: 5095, duration: 30 });
-		expect(result.meta).toMatchObject({ page: 1, total_logged: 30 });
-	});
-
-	it('timeEntries.get parses the bare entry', async () => {
-		respondJson(fetchMock, timeEntryResponse);
-
-		const result = await invoke(TimeEntries.get, {
-			businessId: BUSINESS_ID,
-			timeEntryId: 5095,
-		});
-
-		expect(result.time_entry.started_at).toBe('2016-08-16T18:03:28Z');
-		expect(result.time_entry.timer).toEqual({ id: 2936, is_running: false });
-	});
-
-	it('timeEntries.create returns the created entry', async () => {
-		respondJson(fetchMock, timeEntryResponse);
-
-		const result = await invoke(TimeEntries.create, {
-			businessId: BUSINESS_ID,
-			time_entry: {
-				is_logged: true,
-				duration: 7200,
-				started_at: '2016-08-16T20:00:00Z',
-			},
-		});
-
-		expect(result.time_entry.id).toBe(5095);
-	});
-
-	it('timeEntries.update returns the changed entry', async () => {
-		respondJson(fetchMock, timeEntryResponse);
-
-		const result = await invoke(TimeEntries.update, {
-			businessId: BUSINESS_ID,
-			timeEntryId: 5095,
-			time_entry: { note: 'Updated' },
-		});
-
-		expect(result.time_entry.project_id).toBe(153125);
-	});
-
-	it('timeEntries.delete reports success from an empty 204', async () => {
-		respondEmpty(fetchMock, 204);
-
-		const result = await invoke(TimeEntries.remove, {
-			businessId: BUSINESS_ID,
-			timeEntryId: 5095,
-		});
-
-		expect(result).toEqual({ success: true, timeEntryId: 5095 });
+	it('rejects bad input before sending anything', async () => {
+		const operation = freshbooksOperations.find(
+			(o) => (o.input.required as string[] | undefined)?.length,
+		);
+		if (!operation) return;
+		reply(200, {});
+		await expect(endpointFor(operation.id)(ctx(), {})).rejects.toThrow(
+			/Invalid input/,
+		);
+		expect(calls).toHaveLength(0);
 	});
 });
 
-describe('rejections', () => {
-	it('fails an accounting call whose body lost the response wrapper', async () => {
-		respondJson(fetchMock, { result: { clients: [] } });
-
-		await expect(
-			invoke(Clients.list, { accountId: ACCOUNT_ID }),
-		).rejects.toBeInstanceOf(FreshBooksAPIError);
-	});
-
-	it('fails a page whose resource array is missing', async () => {
-		respondJson(fetchMock, { response: { result: { page: 1 } } });
-
-		await expect(
-			invoke(Invoices.list, { accountId: ACCOUNT_ID }),
-		).rejects.toThrow(/invoices/);
-	});
-
-	it('fails a client whose id came back as text', async () => {
-		respondJson(fetchMock, {
-			response: { result: { client: { ...clientRecord, id: '238951' } } },
-		});
-
-		await expect(
-			invoke(Clients.get, { accountId: ACCOUNT_ID, customerId: 238951 }),
-		).rejects.toThrow(/id/);
-	});
-
-	it('surfaces the errno of an error envelope sent on a 200', async () => {
-		respondJson(fetchMock, accountNotFound, 200);
-
-		const error = await failureOf(
-			invoke(Clients.list, { accountId: ACCOUNT_ID }),
+describe('responses', () => {
+	it('refuses a JSON route that answers something other than JSON', async () => {
+		const operation = freshbooksOperations.find(
+			(o) => o.response === 'json' && o.emptyOk,
 		);
-
-		expect(error).toBeInstanceOf(FreshBooksAPIError);
-		if (!(error instanceof FreshBooksAPIError)) throw error;
-		expect(error.errno).toBe(404);
-		expect(error.message).toContain('Account not found');
-		expect(lastRequest(fetchMock).method).toBe('GET');
-	});
-
-	it('rejects per_page above the silent cap before sending', async () => {
+		if (!operation) return;
+		reply(200, '<html>proxy</html>', 'text/html');
 		await expect(
-			// never: the whole point is an input the schema must reject.
-			invoke(Clients.list, {
-				accountId: ACCOUNT_ID,
-				per_page: 101,
-			} as never),
-		).rejects.toThrow();
-		expect(fetchMock).not.toHaveBeenCalled();
+			endpointFor(operation.id)(
+				ctx(),
+				docs.apiExamples[operation.id]?.args ?? {},
+			),
+		).rejects.toThrow(/not JSON/);
 	});
 
-	it('rejects a non-numeric businessId before sending', async () => {
-		await expect(
-			// never: the probe showed a string id hits a generic 404, so the
-			// schema must refuse it.
-			invoke(Projects.list, { businessId: 'FAKEBIZ' } as never),
-		).rejects.toThrow();
-		expect(fetchMock).not.toHaveBeenCalled();
-	});
-
-	it('rejects a projects.create without a project_type before sending', async () => {
-		await expect(
-			// never: the create schema requires project_type; this input is the
-			// rejection case.
-			invoke(Projects.create, {
-				businessId: BUSINESS_ID,
-				project: { title: 'No type' },
-			} as never),
-		).rejects.toThrow();
-		expect(fetchMock).not.toHaveBeenCalled();
-	});
-
-	it('rejects a 401 projects answer whose error field carries the text', async () => {
-		respondJson(
-			fetchMock,
-			{ error: 'Authentication is required to complete this request.' },
-			401,
+	it('refuses an object route that answers a list', async () => {
+		const operation = freshbooksOperations.find(
+			(o) =>
+				o.response === 'json' &&
+				!o.emptyOk &&
+				resolveSchema(o.output).type === 'object',
 		);
+		if (!operation) return;
+		reply(200, [1, 2]);
+		await expect(
+			endpointFor(operation.id)(
+				ctx(),
+				docs.apiExamples[operation.id]?.args ?? {},
+			),
+		).rejects.toThrow(/did not match its documented schema/);
+	});
+});
 
-		const error = await failureOf(
-			invoke(Projects.list, { businessId: BUSINESS_ID }),
-		);
-
-		expect(error).toBeInstanceOf(FreshBooksAPIError);
-		if (!(error instanceof FreshBooksAPIError)) throw error;
-		expect(error.status).toBe(401);
-		expect(error.message).toContain('Authentication is required');
+describe('errors', () => {
+	it('keeps the status and reason and drops the request data', async () => {
+		const operation = freshbooksOperations.find((o) => o.request === 'json');
+		if (!operation) return;
+		reply(400, { message: 'bad thing', input: 'echoed secret' });
+		const error = await endpointFor(operation.id)(
+			ctx(),
+			docs.apiExamples[operation.id]?.args ?? {},
+		).catch((e: unknown) => e);
+		expect(error).toBeInstanceOf(ApiError);
+		const api = error as ApiError;
+		expect(api.status).toBe(400);
+		expect(api.message).toBe('FreshBooks 400: bad thing');
+		expect(JSON.stringify(api.body)).not.toContain('echoed secret');
+		expect(api.request.headers).toBeUndefined();
+		expect(JSON.stringify(api.request)).not.toContain(KEY);
 	});
 
-	it('fails a timeEntries.delete that answered with a body', async () => {
-		respondJson(fetchMock, { time_entry: { id: 5095 } }, 200);
+	it('scrubs sent strings and the key from the error body', () => {
+		const error = new ApiError(
+			{
+				method: 'POST',
+				url: '/things/{id}',
+				path: { id: 'thing-42' },
+				body: { content: 'my private memory about Ada' },
+			},
+			{
+				url: `${BASE}/things/thing-42`,
+				ok: false,
+				status: 422,
+				statusText: 'Unprocessable',
+				body: {
+					detail: `bad content my private memory about Ada for thing-42 with ${KEY}`,
+				},
+			},
+			'x',
+		);
+		const clean = withoutRequestData(error, KEY, BASE);
+		const text = JSON.stringify(clean.body);
+		expect(text).not.toContain('my private memory');
+		expect(text).not.toContain('thing-42');
+		expect(text).not.toContain(KEY);
+		expect(clean.url).toBe(`${BASE}/things/{id}`);
+		expect(clean.status).toBe(422);
+	});
 
-		await expect(
-			invoke(TimeEntries.remove, {
-				businessId: BUSINESS_ID,
-				timeEntryId: 5095,
+	it('scrubs file names and map keys the caller chose', () => {
+		const form = new FormData();
+		form.append('note', 'quarterly plan');
+		form.append(
+			'file',
+			new File([new Uint8Array([1])], 'alice@example.test.pdf'),
+		);
+		const error = new ApiError(
+			{ method: 'POST', url: '/upload', formData: undefined, body: form },
+			{
+				url: `${BASE}/upload`,
+				ok: false,
+				status: 400,
+				statusText: 'Bad',
+				body: {
+					message:
+						'alice@example.test.pdf rejected; key bob@example.test unknown; quarterly plan',
+				},
+			},
+			'x',
+		);
+		const clean = withoutRequestData(error, KEY, BASE, ['bob@example.test']);
+		expect(clean.message).not.toContain('alice@example.test');
+		expect(clean.message).not.toContain('bob@example.test');
+		expect(clean.message).not.toContain('quarterly plan');
+	});
+
+	it('finds the keys a caller chose inside map fields', () => {
+		const schema = {
+			type: 'object',
+			properties: {
+				name: { type: 'string' },
+				metadata: { type: 'object', additionalProperties: { type: 'string' } },
+			},
+		};
+		expect(
+			customerMapKeys(schema, {
+				name: 'x',
+				metadata: { 'carol@example.test': 'y' },
 			}),
-		).rejects.toBeInstanceOf(FreshBooksAPIError);
+		).toEqual(['carol@example.test']);
+	});
+
+	it('sends a single-attempt request once, even on a 429', async () => {
+		reply(429, { message: 'daily limit reached' });
+		const error = await makeFreshBooksRequest(
+			{ key: KEY, options: OPTIONS },
+			{ method: 'GET', path: '/single-attempt', singleAttempt: true },
+		).catch((e: unknown) => e);
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(429);
+		expect(calls).toHaveLength(1);
+	});
+
+	it('marks every single-attempt route in the manifest', async () => {
+		const operation = freshbooksOperations.find((o) => o.singleAttempt);
+		if (!operation) return;
+		reply(429, { message: 'daily limit reached' });
+		const error = await endpointFor(operation.id)(
+			ctx(),
+			docs.apiExamples[operation.id]?.args ?? {},
+		).catch((e: unknown) => e);
+		expect((error as ApiError).status).toBe(429);
+		expect(calls).toHaveLength(1);
+	});
+
+	it('refuses an HTML page on a text route', async () => {
+		const operation = freshbooksOperations.find((o) => o.response === 'text');
+		if (!operation) return;
+		reply(200, '<html>login</html>', 'text/html');
+		await expect(
+			endpointFor(operation.id)(
+				ctx(),
+				docs.apiExamples[operation.id]?.args ?? {},
+			),
+		).rejects.toThrow(/not text/);
+	});
+
+	it('reads the common error body shapes', () => {
+		expect(freshbooksErrorMessage(404, 'Not Found', { message: 'gone' })).toBe(
+			'FreshBooks 404: gone',
+		);
+		expect(freshbooksErrorMessage(400, 'Bad', { error: 'nope' })).toBe(
+			'FreshBooks 400: nope',
+		);
+		expect(
+			freshbooksErrorMessage(400, 'Bad', { error: { message: 'nested' } }),
+		).toBe('FreshBooks 400: nested');
+		expect(
+			freshbooksErrorMessage(422, 'Bad', {
+				detail: [{ loc: ['body', 'name'], msg: 'field required' }],
+			}),
+		).toBe('FreshBooks 422: name: field required');
+		expect(freshbooksErrorMessage(502, 'Bad Gateway', '<html></html>')).toBe(
+			'FreshBooks 502: Bad Gateway',
+		);
 	});
 });

@@ -1,20 +1,11 @@
-import * as Clients from './clients';
-import * as Estimates from './estimates';
-import * as Expenses from './expenses';
-import * as Invoices from './invoices';
-import * as Projects from './projects';
-import * as Tasks from './tasks';
-import * as TimeEntries from './time-entries';
-import * as Users from './users';
-
 export {
-	Clients,
-	Estimates,
-	Expenses,
-	Invoices,
-	Projects,
-	Tasks,
-	TimeEntries,
-	Users,
-};
-export * from './types';
+	freshbooksEndpointMeta,
+	freshbooksEndpointSchemas,
+	freshbooksEndpointsNested,
+} from './catalog';
+export {
+	getFreshBooksInputSchema,
+	getFreshBooksOutputSchema,
+} from './openapi-schema';
+export { FRESHBOOKS_OPERATION_IDS } from './operation-types';
+export { createFreshBooksOperation } from './operations';

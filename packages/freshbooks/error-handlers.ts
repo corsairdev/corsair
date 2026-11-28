@@ -1,96 +1,102 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { FreshBooksAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { freshbooksEndpointMeta } from './endpoints/catalog';
+import { freshbooksOperations } from './endpoints/manifest';
 
-function asFreshBooksError(error: Error): FreshBooksAPIError | undefined {
-	return error instanceof FreshBooksAPIError ? error : undefined;
+// The accounting service answers errors as `{ response: { errors: [{ errno, field, message }] } }`, sometimes under a 200; the other services answer `{ error, message }` with a 4xx.
+// The status is the signal; the message text is a fallback for an error that
+// lost it.
+function text(error: Error): string {
+	return error.message.toLowerCase();
 }
 
-function statusOf(error: Error): number | undefined {
-	return asFreshBooksError(error)?.status;
+function status(error: Error): number | undefined {
+	return error instanceof ApiError ? error.status : undefined;
 }
 
-function methodOf(error: Error): string | undefined {
-	return asFreshBooksError(error)?.method;
+/** Routes that only read, whatever their method (a search sent as POST). */
+const READ_ROUTES = new Set(
+	freshbooksOperations
+		.filter(
+			(operation) =>
+				freshbooksEndpointMeta[
+					operation.id as keyof typeof freshbooksEndpointMeta
+				]?.riskLevel === 'read',
+		)
+		.map((operation) => `${operation.method} ${operation.path}`),
+);
+
+function isRead(error: Error): boolean {
+	if (!(error instanceof ApiError)) return false;
+	const method = error.request?.method;
+	if (method === 'GET') return true;
+	return READ_ROUTES.has(`${method} ${error.request?.url}`);
 }
 
-// Rate limiting: FreshBooks documents no numbers and no Retry-After contract
-// (freshbooks.com/api/limits), only that too many calls in a short period get
-// limited. Retry with the documented-less default backoff and let a real
-// Retry-After header override the delay.
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => statusOf(error) === 429,
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs: asFreshBooksError(error)?.retryAfter,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
-	},
-	// 409 is the one documented retry case: creating invoices concurrently
-	// without invoice_number can collide on the generated number, and the docs
-	// say retrying succeeds. The failed create left nothing behind to duplicate.
-	CONFLICT_ERROR: {
-		match: (error: Error) => statusOf(error) === 409,
-		handler: async () => ({
-			maxRetries: 3,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
-	},
-	// 401 on any family: the access token is missing or expired (tokens last
-	// 12 hours). A new token needs a fresh OAuth round-trip, not a retry.
-	AUTH_ERROR: {
-		match: (error: Error) => statusOf(error) === 401,
-		handler: async () => ({ maxRetries: 0 }),
-	},
-	PERMISSION_ERROR: {
-		match: (error: Error) => statusOf(error) === 403,
-		handler: async () => ({ maxRetries: 0 }),
-	},
-	// 400 invalid input and 404 unknown account or record (the accounting
-	// family answers a wrong accountId with 404 "Account not found"). The same
-	// request would fail the same way again.
-	VALIDATION_ERROR: {
 		match: (error: Error) => {
-			const status = statusOf(error);
-			return error.name === 'ZodError' || status === 400 || status === 404;
+			const code = status(error);
+			if (code !== undefined) return code === 429;
+			const msg = text(error);
+			return msg.includes('too many requests') || msg.includes('rate limit');
+		},
+		// Core's request() has already retried this 429 (three times, honouring
+		// Retry-After) before it reaches a handler. Retrying the endpoint again
+		// would multiply the attempts.
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	AUTH_ERROR: {
+		match: (error: Error) => {
+			const code = status(error);
+			if (code !== undefined) return code === 401 || code === 403;
+			const msg = text(error);
+			return msg.includes('unauthorized') || msg.includes('forbidden');
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// FreshBooks does not document 5xx behavior. Only reads are replayed: a
-	// failed write may have gone through, and FreshBooks has no idempotency
-	// keys. method is undefined only when the request never left (transport
-	// failure), which is safe to replay for a read.
+	NOT_FOUND_ERROR: {
+		match: (error: Error) => {
+			const code = status(error);
+			if (code !== undefined) return code === 404;
+			return text(error).includes('not found');
+		},
+		// A record that was deleted: retrying won't bring it back.
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	BAD_REQUEST_ERROR: {
+		match: (error: Error) => {
+			const code = status(error);
+			if (code !== undefined)
+				return (
+					code === 400 ||
+					code === 402 ||
+					code === 405 ||
+					code === 406 ||
+					code === 409 ||
+					code === 413 ||
+					code === 415 ||
+					code === 422
+				);
+			const msg = text(error);
+			return msg.includes('bad request') || msg.includes('invalid input');
+		},
+		handler: async () => ({ maxRetries: 0 }),
+	},
 	SERVER_ERROR: {
-		match: (error: Error) =>
-			methodOf(error) === 'GET' &&
-			((statusOf(error) ?? 0) >= 500 || statusOf(error) === undefined),
-		handler: async () => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		match: (error: Error) => {
+			const code = status(error);
+			return code !== undefined && code >= 500;
+		},
+		// Only reads are retried: a write may already have happened, and
+		// FreshBooks documents no idempotency keys.
+		handler: async (error: Error) =>
+			isRead(error)
+				? { maxRetries: 2, retryStrategy: 'exponential_backoff' as const }
+				: { maxRetries: 0 },
 	},
 	DEFAULT: {
 		match: () => true,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 } satisfies CorsairErrorHandler;
-
-// Handlers match in key order and DEFAULT matches everything, so it stays
-// last even when the caller adds or overrides handlers.
-export function mergeErrorHandlers(
-	builtin: CorsairErrorHandler,
-	user: CorsairErrorHandler | undefined,
-): CorsairErrorHandler {
-	if (!user) return builtin;
-	const { DEFAULT: builtinDefault, ...builtinRest } = builtin;
-	const { DEFAULT: userDefault, ...userRest } = user;
-	const fallback = userDefault ?? builtinDefault;
-	// Caller keys keep their positions first: core takes the first matching
-	// key in order, so a caller handler for a status no builtin covers would
-	// never run if builtin keys came first.
-	const merged: CorsairErrorHandler = { ...userRest };
-	for (const [name, entry] of Object.entries(builtinRest)) {
-		if (!(name in merged)) merged[name] = entry;
-	}
-	return fallback ? { ...merged, DEFAULT: fallback } : merged;
-}

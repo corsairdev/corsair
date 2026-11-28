@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/freshbooks",
   "version": "0.1.0",
-  "description": "FreshBooks plugin for Corsair: clients, invoices, estimates, expenses, projects, tasks, time entries and the authenticated user, via the FreshBooks API. FreshBooks sends webhook callbacks, but this plugin does not handle inbound deliveries.",
+  "description": "FreshBooks accounting: clients, invoices, estimates, payments, expenses, bills, items, taxes, projects, time tracking, team, reports, the ledger and webhook callbacks (191 operations), plus signed webhooks.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -35,7 +35,11 @@
   "keywords": [
     "corsair",
     "freshbooks",
-    "plugin"
+    "plugin",
+    "accounting",
+    "invoicing",
+    "time-tracking",
+    "bookkeeping"
   ],
   "author": "Corsair (https://corsair.dev)",
   "license": "Apache-2.0",
