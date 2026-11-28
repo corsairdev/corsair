@@ -483,6 +483,31 @@ describe('errors', () => {
 		expect(JSON.stringify(api.request)).not.toContain(KEY);
 	});
 
+	it("scrubs form values and deep metadata from a real call's error", async () => {
+		let deep: Record<string, unknown> = {
+			'deep-key@example.test': 'deep value 42',
+		};
+		for (let i = 0; i < 70; i++) deep = { [`level${i}`]: deep };
+		reply(400, {
+			message:
+				'bad ada@example.test, deep-key@example.test, deep value 42, top secret note',
+			api_error_code: 'param_wrong_value',
+		});
+		const error = await endpointFor('customers.create')(ctx(), {
+			email: 'ada@example.test',
+			meta_data: { note: 'top secret note', nested: deep },
+		}).catch((e: unknown) => e);
+		expect(error).toBeInstanceOf(ApiError);
+		const text = `${(error as ApiError).message} ${JSON.stringify((error as ApiError).body)}`;
+		for (const sent of [
+			'ada@example.test',
+			'deep-key@example.test',
+			'deep value 42',
+			'top secret note',
+		])
+			expect(text).not.toContain(sent);
+	});
+
 	it('scrubs values sent in a form body', () => {
 		const error = new ApiError(
 			{

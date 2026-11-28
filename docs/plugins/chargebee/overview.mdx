@@ -8,7 +8,7 @@ Use **Chargebee** through Corsair: one client, typed API calls.
 
 Connect with a Chargebee API key and your site name (the part before `.chargebee.com`; a test site's name ends in `-test`). Test and live sites have separate keys. Things to know before you write:
 
-- **Product Catalog.** Sites made since 2021 use Product Catalog 2.0: items, item prices and `customers.createSubscriptionForItems`. Older sites use 1.0: plans, addons and the routes marked "Product Catalog 1.0 sites only". A route from the other catalog answers 400.
+- **Product Catalog.** Sites made since 2021 use Product Catalog 2.0: items, item prices and `customers.createSubscriptionForItems`. Older sites use 1.0: plans, addons and the routes marked "Product Catalog 1.0 sites only". A route from the other catalog answers 400 `configuration_incompatible`, unless Chargebee has turned on catalog coexistence for the site.
 - **Money moves.** Creating or updating a subscription, invoicing, collecting payment, charging, refunding and voiding are `destructive`: on a live site they charge real cards. Estimates (`estimates.*`, `*Estimate`) compute the same numbers without changing anything.
 - **Lists** take `limit` (up to 100) and `offset`; pass the response's `next_offset` back as `offset`. Filters use Chargebee's operators: `status: { is: 'active' }`, `created_at: { after: 1700000000 }`.
 - **Nested fields** follow the API reference: `billing_address: { city }`, `subscription_items: { item_price_id: ['plan-USD-monthly'], quantity: [1] }` (one list per field, index by index). The plugin sends them in Chargebee's bracket form. `meta_data` is a JSON object.

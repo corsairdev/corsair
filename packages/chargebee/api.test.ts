@@ -509,7 +509,9 @@ describeIfKey('chargebee live', () => {
 			type: 'switch',
 			status: 'draft',
 		});
-		later('feature', () => op('features.delete')({ featureId: ids.feature }));
+		// A site that refuses features (an expected error) made nothing to delete.
+		if (!steps.at(-1)?.expected)
+			later('feature', () => op('features.delete')({ featureId: ids.feature }));
 		await once('features.get', { featureId: ids.feature });
 		await once('features.update', {
 			featureId: ids.feature,

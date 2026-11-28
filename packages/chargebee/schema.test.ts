@@ -105,7 +105,7 @@ describe('schemas', () => {
 	it('requires path parameters and refuses unknown keys on body-less routes', () => {
 		// A route whose only required fields are plain-string path values.
 		const operation = chargebeeOperations.find((o) => {
-			if (o.request !== 'none' || !/\{\w+\}/.test(o.path)) return false;
+			if (o.request !== 'none' || !/\{[\w-]+\}/.test(o.path)) return false;
 			const properties = (o.input.properties ?? {}) as Record<
 				string,
 				Record<string, unknown>
@@ -121,6 +121,7 @@ describe('schemas', () => {
 				);
 			});
 		});
+		expect(operation).toBeDefined();
 		if (!operation) return;
 		const schema = getChargebeeInputSchema(operation.id);
 		const valid = Object.fromEntries(

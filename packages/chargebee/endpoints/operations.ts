@@ -375,6 +375,39 @@ export function chargebeeForm(
 }
 
 /**
+ * The strings a form body carries: every field value, plus every key and
+ * leaf value inside free-form JSON fields, at any depth (walked with a stack,
+ * so deep metadata can't run out of call stack).
+ */
+export function formSecrets(
+	form: URLSearchParams,
+	body: Record<string, unknown>,
+	freeForm: ReadonlySet<string>,
+): string[] {
+	const out = new Set<string>();
+	form.forEach((value) => {
+		if (value.length >= 2) out.add(value);
+	});
+	// `unknown` because free-form fields hold any JSON.
+	const stack: unknown[] = [...freeForm].map((name) => body[name]);
+	while (stack.length > 0) {
+		const value = stack.pop();
+		if (typeof value === 'string' || typeof value === 'number') {
+			const text = String(value);
+			if (text.length >= 2) out.add(text);
+		} else if (Array.isArray(value)) {
+			stack.push(...value);
+		} else if (value && typeof value === 'object') {
+			for (const [key, inner] of Object.entries(value)) {
+				if (key.length >= 2) out.add(key);
+				stack.push(inner);
+			}
+		}
+	}
+	return [...out];
+}
+
+/**
  * Body fields documented as an object with no fields of its own (`meta_data`,
  * `additional_information`): Chargebee takes them as one JSON string.
  */
@@ -549,11 +582,17 @@ export function createChargebeeOperation<Id extends ChargebeeOperationId>(
 		} else if (operation.request === 'multipart') {
 			request.body = await buildForm(operation, valid, wire);
 		} else if (operation.request === 'form') {
-			request.body = chargebeeForm(
-				body,
-				freeFormFields(operation.input),
-			).toString();
+			const freeForm = freeFormFields(operation.input);
+			const form = chargebeeForm(body, freeForm);
+			request.body = form.toString();
 			request.mediaType = 'application/x-www-form-urlencoded';
+			// The body goes out as one encoded string, so each value (and each
+			// key and value inside a free-form JSON field) is listed for the
+			// error scrubber on its own.
+			request.sensitive = [
+				...(request.sensitive ?? []),
+				...formSecrets(form, body, freeForm),
+			];
 		} else if (operation.request === 'binary') {
 			const resolved = await bytesOf(rawBody, operation.maxUploadBytes);
 			request.body = resolved.file;
