@@ -97,6 +97,7 @@ export const BaseProviders = [
 	'blazemeter',
 	'blocknative',
 	'bluesky',
+	'boat',
 	'boldsign',
 	'boloforms',
 	'boltiot',
@@ -917,6 +918,7 @@ export const ProviderDisplayNames = {
 	blazemeter: 'BlazeMeter',
 	blocknative: 'Blocknative',
 	bluesky: 'Bluesky',
+	boat: 'Boat',
 	boldsign: 'Boldsign',
 	boloforms: 'Boloforms',
 	boltiot: 'Bolt IoT',
@@ -1744,6 +1746,7 @@ export type AllProviders =
 	| 'blazemeter'
 	| 'blocknative'
 	| 'bluesky'
+	| 'boat'
 	| 'boldsign'
 	| 'boloforms'
 	| 'boltiot'

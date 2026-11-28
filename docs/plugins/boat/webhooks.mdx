@@ -1,0 +1,510 @@
+---
+title: "Boat webhooks"
+sidebarTitle: "Webhooks"
+description: "Boat incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The Boat plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/boat/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `sandboxes`
+  - `archived` (`sandboxes.archived`)
+  - `degraded` (`sandboxes.degraded`)
+  - `error` (`sandboxes.error`)
+  - `hydrated` (`sandboxes.hydrated`)
+  - `ready` (`sandboxes.ready`)
+  - `recovered` (`sandboxes.recovered`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
+}
+```
+
+## Events
+
+## Sandboxes
+
+### Archived
+
+`sandboxes.archived`
+
+A sandbox stopped; the API reports a stopped sandbox as archived (sandbox.archived).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id (evt_ + 32 hex), the same as X-Ascii-Delivery: use it to drop repeats. |
+| `type` | `sandbox.archived` | Yes | — |
+| `createdAt` | `string` | Yes | ISO 8601 time Boat created the event. |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sandbox: {
+    id: string,
+    name?: string | null
+  },
+  previousState?: string | null,
+  state?: string | null,
+  reason?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: sandbox.archived,
+  createdAt: string,
+  data: {
+    sandbox: {
+      id: string,
+      name?: string | null
+    },
+    previousState?: string | null,
+    state?: string | null,
+    reason?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+boat({
+    webhookHooks: {
+        sandboxes: {
+            archived: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Degraded
+
+`sandboxes.degraded`
+
+The machine is alive but Boat cannot fully reach it; data.reason says why (sandbox.degraded).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id (evt_ + 32 hex), the same as X-Ascii-Delivery: use it to drop repeats. |
+| `type` | `sandbox.degraded` | Yes | — |
+| `createdAt` | `string` | Yes | ISO 8601 time Boat created the event. |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sandbox: {
+    id: string,
+    name?: string | null
+  },
+  previousState?: string | null,
+  state?: string | null,
+  reason?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: sandbox.degraded,
+  createdAt: string,
+  data: {
+    sandbox: {
+      id: string,
+      name?: string | null
+    },
+    previousState?: string | null,
+    state?: string | null,
+    reason?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+boat({
+    webhookHooks: {
+        sandboxes: {
+            degraded: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Error
+
+`sandboxes.error`
+
+A sandbox entered the error state (sandbox.error).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id (evt_ + 32 hex), the same as X-Ascii-Delivery: use it to drop repeats. |
+| `type` | `sandbox.error` | Yes | — |
+| `createdAt` | `string` | Yes | ISO 8601 time Boat created the event. |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sandbox: {
+    id: string,
+    name?: string | null
+  },
+  previousState?: string | null,
+  state?: string | null,
+  reason?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: sandbox.error,
+  createdAt: string,
+  data: {
+    sandbox: {
+      id: string,
+      name?: string | null
+    },
+    previousState?: string | null,
+    state?: string | null,
+    reason?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+boat({
+    webhookHooks: {
+        sandboxes: {
+            error: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Hydrated
+
+`sandboxes.hydrated`
+
+A restored sandbox finished copying its disk and Docker volumes into place, after sandbox.ready (sandbox.hydrated).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id (evt_ + 32 hex), the same as X-Ascii-Delivery: use it to drop repeats. |
+| `type` | `sandbox.hydrated` | Yes | — |
+| `createdAt` | `string` | Yes | ISO 8601 time Boat created the event. |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sandbox: {
+    id: string,
+    name?: string | null
+  },
+  previousState?: string | null,
+  state?: string | null,
+  reason?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: sandbox.hydrated,
+  createdAt: string,
+  data: {
+    sandbox: {
+      id: string,
+      name?: string | null
+    },
+    previousState?: string | null,
+    state?: string | null,
+    reason?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+boat({
+    webhookHooks: {
+        sandboxes: {
+            hydrated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Ready
+
+`sandboxes.ready`
+
+A sandbox became usable (ready, idle or running) after it was not, including after an error (sandbox.ready).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id (evt_ + 32 hex), the same as X-Ascii-Delivery: use it to drop repeats. |
+| `type` | `sandbox.ready` | Yes | — |
+| `createdAt` | `string` | Yes | ISO 8601 time Boat created the event. |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sandbox: {
+    id: string,
+    name?: string | null
+  },
+  previousState?: string | null,
+  state?: string | null,
+  reason?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: sandbox.ready,
+  createdAt: string,
+  data: {
+    sandbox: {
+      id: string,
+      name?: string | null
+    },
+    previousState?: string | null,
+    state?: string | null,
+    reason?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+boat({
+    webhookHooks: {
+        sandboxes: {
+            ready: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Recovered
+
+`sandboxes.recovered`
+
+A degraded sandbox is fully reachable again (sandbox.recovered).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id (evt_ + 32 hex), the same as X-Ascii-Delivery: use it to drop repeats. |
+| `type` | `sandbox.recovered` | Yes | — |
+| `createdAt` | `string` | Yes | ISO 8601 time Boat created the event. |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sandbox: {
+    id: string,
+    name?: string | null
+  },
+  previousState?: string | null,
+  state?: string | null,
+  reason?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: sandbox.recovered,
+  createdAt: string,
+  data: {
+    sandbox: {
+      id: string,
+      name?: string | null
+    },
+    previousState?: string | null,
+    state?: string | null,
+    reason?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+boat({
+    webhookHooks: {
+        sandboxes: {
+            recovered: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
