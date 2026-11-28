@@ -1,4 +1,4 @@
-import type { NtfyContext, NtfyEndpoints } from '..';
+import type { NtfyEndpoints } from '..';
 import { parseNtfyNdjson } from '../client';
 import { call } from './call';
 import {
@@ -11,6 +11,14 @@ import {
 // both are schema-pinned to URL-safe characters ([-_A-Za-z0-9] plus the poll
 // comma list), so no percent-encoding is needed.
 
+const PRIORITY_NUMBERS = {
+	min: 1,
+	low: 2,
+	default: 3,
+	high: 4,
+	urgent: 5,
+} as const;
+
 function publishBody(parsed: {
 	topic: string;
 	message?: string;
@@ -22,18 +30,37 @@ function publishBody(parsed: {
 	actions?: unknown[];
 	delay?: string;
 	sequenceId?: string;
+	icon?: string;
+	attach?: string;
+	filename?: string;
+	email?: string;
+	call?: string;
+	cache?: boolean;
+	firebase?: boolean;
 }): Record<string, unknown> {
 	return {
 		topic: parsed.topic,
 		message: parsed.message,
 		title: parsed.title,
-		priority: parsed.priority,
+		// The JSON publish body takes priority as an int only.
+		priority:
+			typeof parsed.priority === 'string'
+				? PRIORITY_NUMBERS[parsed.priority]
+				: parsed.priority,
 		tags: parsed.tags,
 		click: parsed.click,
 		markdown: parsed.markdown,
 		actions: parsed.actions,
 		delay: parsed.delay,
 		sequence_id: parsed.sequenceId,
+		icon: parsed.icon,
+		attach: parsed.attach,
+		filename: parsed.filename,
+		email: parsed.email,
+		call: parsed.call,
+		// The server reads these as strings and treats anything but "no" as on.
+		cache: parsed.cache === false ? 'no' : undefined,
+		firebase: parsed.firebase === false ? 'no' : undefined,
 	};
 }
 

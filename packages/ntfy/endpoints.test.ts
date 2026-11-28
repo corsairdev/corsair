@@ -200,6 +200,6 @@ describe('rejections', () => {
 
 		await expect(
 			invoke(Messages.send, { topic: 't', message: 'x' }),
-		).rejects.toThrow(/ntfy 40101|page not found|404/);
+		).rejects.toMatchObject({ status: 404, body: notFound });
 	});
 });

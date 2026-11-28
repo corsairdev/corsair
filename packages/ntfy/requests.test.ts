@@ -126,7 +126,8 @@ describe('messages.send', () => {
 		const sent = lastRequest();
 		expect(sent.body).toMatchObject({
 			topic: 'mytopic',
-			priority: 'urgent',
+			// The JSON body takes an int: names are mapped (urgent = 5).
+			priority: 5,
 			markdown: true,
 			delay: '30min',
 			sequence_id: 'seq-1',

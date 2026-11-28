@@ -1,5 +1,5 @@
+import { ApiError } from 'corsair/http';
 import { ZodError } from 'zod';
-import { NtfyAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import {
 	bandwidthExceeded,
@@ -30,41 +30,56 @@ function apiError(
 	body: unknown = {},
 	options: { retryAfter?: number; method?: string } = {},
 ) {
-	const code = (body as { code?: number }).code;
-	return new NtfyAPIError(`ntfy ${status}: failed`, {
-		status,
-		ntfyCode: typeof code === 'number' ? code : undefined,
-		...options,
-	});
+	return new ApiError(
+		{ method: (options.method ?? 'GET') as 'GET', url: '/mytopic/json' },
+		{
+			url: 'https://ntfy.sh/mytopic/json',
+			ok: false,
+			status,
+			statusText: '',
+			body,
+		},
+		`ntfy ${status}: failed`,
+		options.retryAfter === undefined
+			? undefined
+			: { retryAfter: options.retryAfter },
+	);
 }
 
 describe('ntfy error handlers', () => {
-	it('retries a 429 by status with backoff', async () => {
-		const error = apiError(429);
-		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
-		expect(await strategy(error)).toEqual({
-			maxRetries: 3,
-			headersRetryAfterMs: undefined,
-			retryStrategy: 'exponential_backoff',
+	it('retries a burst-limit 429 (42901 or no code) with backoff', async () => {
+		for (const error of [
+			apiError(429),
+			apiError(429, { code: 42901, http: 429, error: 'limit reached' }),
+		]) {
+			expect(classify(error)).toBe('RATE_LIMIT_ERROR');
+			expect(await strategy(error)).toEqual({
+				maxRetries: 2,
+				headersRetryAfterMs: undefined,
+				retryStrategy: 'exponential_backoff',
+			});
+		}
+	});
+
+	it.each([42902, 42905, 42908, 42910])(
+		'never retries a spent daily quota (%i)',
+		async (code) => {
+			const error = apiError(429, { code, http: 429, error: 'limit' });
+			expect(classify(error)).toBe('RATE_LIMIT_ERROR');
+			expect(await strategy(error)).toEqual({ maxRetries: 0 });
+		},
+	);
+
+	it('treats the bandwidth fixture as a quota', async () => {
+		expect(await strategy(apiError(429, bandwidthExceeded))).toEqual({
+			maxRetries: 0,
 		});
-	});
-
-	it('retries a bandwidth-exceeded poll by its 42905 body code', async () => {
-		const error = apiError(429, bandwidthExceeded);
-		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
-		expect(error.isRateLimit).toBe(true);
-	});
-
-	it('matches a 42905 body code on the error getter at any status', () => {
-		const error = new NtfyAPIError('bandwidth', { ntfyCode: 42905 });
-		expect(error.isRateLimit).toBe(true);
-		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
 	});
 
 	it('honours Retry-After when ntfy sends one', async () => {
 		const error = apiError(429, {}, { retryAfter: 2000 });
 		expect(await strategy(error)).toEqual({
-			maxRetries: 3,
+			maxRetries: 2,
 			headersRetryAfterMs: 2000,
 			retryStrategy: 'exponential_backoff',
 		});
@@ -118,34 +133,10 @@ describe('ntfy error handlers', () => {
 		},
 	);
 
-	it('retries a read whose connection dropped before reaching ntfy', async () => {
-		const dropped = new NtfyAPIError('fetch failed', {
-			cause: new Error('socket hang up'),
-			method: 'GET',
-		});
-		expect(classify(dropped)).toBe('TRANSPORT_ERROR');
-		expect(await strategy(dropped)).toEqual({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff',
-		});
-	});
-
-	it('does not replay a write whose connection dropped', async () => {
-		const dropped = new NtfyAPIError('fetch failed', {
-			cause: new Error('socket hang up'),
-			method: 'POST',
-		});
+	it('does not replay a dropped connection (no status, method unknown)', async () => {
+		const dropped = new TypeError('fetch failed');
 		expect(classify(dropped)).toBe('DEFAULT');
-	});
-
-	it('does not replay a write that timed out', async () => {
-		const timeout = new Error('The operation timed out');
-		const error = new NtfyAPIError(timeout.message, {
-			cause: timeout,
-			method: 'POST',
-		});
-		expect(classify(error)).toBe('DEFAULT');
-		expect(await strategy(error)).toEqual({ maxRetries: 0 });
+		expect(await strategy(dropped)).toEqual({ maxRetries: 0 });
 	});
 
 	it('falls back to DEFAULT for anything else', async () => {
@@ -187,7 +178,7 @@ describe('mergeErrorHandlers', () => {
 	it('gives a caller override precedence by value', () => {
 		const retryHandler = {
 			match: (error: Error) =>
-				error instanceof NtfyAPIError && error.isRateLimit,
+				error instanceof ApiError && error.status === 429,
 			handler: async () => ({ maxRetries: 7 }),
 		};
 		const merged = mergeErrorHandlers(builtin, {

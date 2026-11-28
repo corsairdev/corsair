@@ -3,6 +3,9 @@ import { z } from 'zod';
 // https://docs.ntfy.sh/publish/#limitations - topic names are [-_A-Za-z0-9]{1,64}.
 const TOPIC_PATTERN = /^[-_A-Za-z0-9]{1,64}$/;
 // A poll can target several topics as a comma list (up to 150 on ntfy.sh).
+// Sequence ids share the topic charset; they are interpolated into the
+// clear and delete paths, so anything else is refused before the request.
+const SEQUENCE_ID_PATTERN = /^[-_A-Za-z0-9]{1,64}$/;
 const TOPIC_LIST_PATTERN = /^[-_A-Za-z0-9]{1,64}(,[-_A-Za-z0-9]{1,64})*$/;
 
 const PrioritySchema = z.union([
@@ -61,15 +64,47 @@ const PublishInputShape = {
 		.describe(
 			'Delayed delivery, e.g. "30min" or "9am"; ntfy.sh accepts 10s to 3d. Cancel before delivery with messages.delete',
 		),
+	icon: z
+		.string()
+		.optional()
+		.describe('URL of a JPEG or PNG shown as the notification icon'),
+	attach: z
+		.string()
+		.optional()
+		.describe('URL of a file to attach (the server does not download it)'),
+	filename: z.string().optional().describe('File name for the `attach` URL'),
+	email: z
+		.string()
+		.optional()
+		.describe(
+			'Also email the notification to this address (the server must have email sending configured; counts against the daily email limit)',
+		),
+	call: z
+		.string()
+		.optional()
+		.describe(
+			'Also phone this verified number (or "yes" for the first one) and read the message out; needs a tier with calls',
+		),
+	cache: z
+		.boolean()
+		.optional()
+		.describe('false: deliver to current subscribers only, do not cache'),
+	firebase: z
+		.boolean()
+		.optional()
+		.describe(
+			'false: do not forward to Firebase (Android app without instant delivery)',
+		),
 };
 
 const MessagesSendInputSchema = z.object({
 	...PublishInputShape,
 	sequenceId: z
 		.string()
+		.regex(SEQUENCE_ID_PATTERN)
 		.optional()
 		.describe(
-			'Optional sequence id; publishing again with the same id updates (replaces) the message on subscribers',
+			'Optional sequence id, [-_A-Za-z0-9]{1,64}; publishing again with the same id updates (replaces) the message on subscribers',
 		),
 });
 
@@ -77,6 +112,7 @@ const MessagesUpdateInputSchema = z.object({
 	...PublishInputShape,
 	sequenceId: z
 		.string()
+		.regex(SEQUENCE_ID_PATTERN)
 		.describe(
 			'Sequence id of the message to update; the server keeps both versions and notifies again',
 		),
@@ -114,12 +150,18 @@ const MessagesPollInputSchema = z.object({
 
 const MessagesClearInputSchema = z.object({
 	topic: z.string().regex(TOPIC_PATTERN).describe('Topic name'),
-	sequenceId: z.string().describe('Sequence id of the message to mark as read'),
+	sequenceId: z
+		.string()
+		.regex(SEQUENCE_ID_PATTERN)
+		.describe('Sequence id of the message to mark as read'),
 });
 
 const MessagesDeleteInputSchema = z.object({
 	topic: z.string().regex(TOPIC_PATTERN).describe('Topic name'),
-	sequenceId: z.string().describe('Sequence id of the message to delete'),
+	sequenceId: z
+		.string()
+		.regex(SEQUENCE_ID_PATTERN)
+		.describe('Sequence id of the message to delete'),
 });
 
 // One consumed message. expires is absent with Cache: no; every other
@@ -141,6 +183,8 @@ const MessageOutputSchema = z
 		priority: z.number().int().min(1).max(5).nullish(),
 		tags: z.array(z.string()).nullish(),
 		click: z.string().nullish(),
+		icon: z.string().nullish(),
+		content_type: z.string().nullish(),
 		actions: z.array(ActionSchema).nullish(),
 		attachment: z
 			.object({

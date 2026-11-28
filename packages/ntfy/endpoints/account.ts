@@ -1,4 +1,4 @@
-import type { NtfyContext, NtfyEndpoints } from '..';
+import type { NtfyEndpoints } from '..';
 import { call } from './call';
 import {
 	NtfyEndpointInputSchemas as Inputs,
@@ -20,7 +20,6 @@ export const usage: NtfyEndpoints['accountUsage'] = (ctx, input) =>
 		}),
 		{
 			log: (_, result) => ({
-				username: result.username,
 				role: result.role,
 				messagesUsed: result.stats.messages ?? 0,
 				messagesRemaining: result.stats.messages_remaining ?? 0,

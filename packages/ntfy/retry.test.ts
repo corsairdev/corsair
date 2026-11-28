@@ -1,6 +1,5 @@
 import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
-import { NtfyAPIError } from './client';
 import { ntfy } from './index';
 import { publishedMessage } from './test-fixtures';
 
@@ -59,7 +58,7 @@ describe('retries through createCorsair', () => {
 	it('retries a rate-limited publish after Retry-After', async () => {
 		const { corsair, testDb } = await createClient();
 		try {
-			respond({ code: 42905, http: 429, error: 'limit' }, 429, {
+			respond({ code: 42901, http: 429, error: 'limit' }, 429, {
 				'Retry-After': '1',
 			});
 			respond(publishedMessage);
@@ -76,14 +75,14 @@ describe('retries through createCorsair', () => {
 	it('gives up after the builtin retry budget', async () => {
 		const { corsair, testDb } = await createClient();
 		try {
-			for (let i = 0; i < 4; i += 1) {
-				respond({ code: 429, http: 429, error: 'limit' }, 429);
+			for (let i = 0; i < 3; i += 1) {
+				respond({ code: 42901, http: 429, error: 'limit' }, 429);
 			}
 
 			await expect(
 				corsair.ntfy.api.messages.poll({ topic: 't' }),
 			).rejects.toMatchObject({ status: 429 });
-			expect(fetchMock).toHaveBeenCalledTimes(4);
+			expect(fetchMock).toHaveBeenCalledTimes(3);
 		} finally {
 			testDb.cleanup();
 		}
@@ -110,25 +109,38 @@ describe('retries through createCorsair', () => {
 		}
 	});
 
-	it('retries a read whose connection dropped, but not a write', async () => {
+	it('never retries a spent daily message quota', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			respond(
+				{ code: 42908, http: 429, error: 'daily message quota reached' },
+				429,
+			);
+			await expect(
+				corsair.ntfy.api.messages.send({ topic: 't', message: 'm' }),
+			).rejects.toMatchObject({ status: 429 });
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('does not replay a dropped connection, read or write', async () => {
 		const { corsair, testDb } = await createClient();
 		const dropped = () => {
 			throw new Error('fetch failed');
 		};
 		try {
-			fetchMock.mockImplementationOnce(dropped).mockImplementationOnce(dropped);
-			respond({ healthy: true, role: 'active' });
-
-			const result = await corsair.ntfy.api.server.health({});
-
-			expect(result).toEqual({ healthy: true, role: 'active' });
-			expect(fetchMock).toHaveBeenCalledTimes(3);
+			fetchMock.mockImplementationOnce(dropped);
+			await expect(corsair.ntfy.api.server.health({})).rejects.toThrow(
+				'fetch failed',
+			);
 
 			fetchMock.mockImplementationOnce(dropped);
 			await expect(
 				corsair.ntfy.api.messages.send({ topic: 't', message: 'm' }),
-			).rejects.toBeInstanceOf(NtfyAPIError);
-			expect(fetchMock).toHaveBeenCalledTimes(4);
+			).rejects.toThrow('fetch failed');
+			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
 			testDb.cleanup();
 		}
@@ -138,7 +150,7 @@ describe('retries through createCorsair', () => {
 		jest.useFakeTimers();
 		const { corsair, testDb } = await createClient();
 		try {
-			respond({ code: 429, http: 429, error: 'limit' }, 429);
+			respond({ code: 42901, http: 429, error: 'limit' }, 429);
 			respond({ healthy: true, role: 'active' });
 
 			const pending = corsair.ntfy.api.server.health({});

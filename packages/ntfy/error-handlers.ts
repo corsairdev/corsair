@@ -1,74 +1,77 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { NtfyAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { ntfyErrorCode } from './client';
+
+function statusOf(error: Error): number | undefined {
+	return error instanceof ApiError ? error.status : undefined;
+}
+
+const BURST_LIMIT_CODES = new Set([42901, 42906, 42911]);
+
+/** A 429 that clears within seconds, as opposed to a spent daily quota. */
+export function isNtfyBurstLimit(error: Error): boolean {
+	if (statusOf(error) !== 429) return false;
+	const code = ntfyErrorCode(error);
+	return code === undefined || BURST_LIMIT_CODES.has(code);
+}
+
+function isRead(error: Error): boolean {
+	return error instanceof ApiError && error.request.method === 'GET';
+}
 
 // Status codes: https://docs.ntfy.sh/publish/#limitations and the error
-// envelope { code, http, error }; observed codes in the research probes:
+// envelope { code, http, error, link }, read from core's ApiError body:
 // 40007 invalid parameter, 40101 unauthorized, 40301 forbidden, 40401
-// page not found, 42905 bandwidth (docs-only).
+// page not found, 42901-42910 rate limits (42905 = attachment bandwidth).
 export const errorHandlers = {
-	// Both the 429 status (headers rate limit, messages/day) and the
-	// bandwidth-exceeded poll (body code 42905) retry, honoring Retry-After
-	// when the response carries one.
+	// The client makes one attempt (rate limit config maxRetries 0), so this
+	// handler owns 429 retries. A burst limit (42901 requests, 42906 account
+	// actions, 42911 new topics, or a 429 without a code) clears within
+	// seconds and is retried, honouring Retry-After; the server refused the
+	// request before running it, so a write is safe to resend. A daily quota
+	// (messages 42908, emails 42902, calls 42910, bandwidth 42905, ...) is
+	// spent until the reset, so it is never retried (R8).
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => error instanceof NtfyAPIError && error.isRateLimit,
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs:
-				error instanceof NtfyAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		match: (error: Error) => statusOf(error) === 429,
+		handler: async (error: Error) =>
+			isNtfyBurstLimit(error)
+				? {
+						maxRetries: 2,
+						headersRetryAfterMs:
+							error instanceof ApiError ? error.retryAfter : undefined,
+						retryStrategy: 'exponential_backoff' as const,
+					}
+				: { maxRetries: 0 },
 	},
-	// 401 / 40101: a wrong or expired token. ntfy.sh validates any Bearer
-	// header, even on public topics.
+	// 401 / 40101: a wrong or expired token. ntfy.sh validates any
+	// Authorization header, even on public topics.
 	AUTH_ERROR: {
 		match: (error: Error) =>
-			error instanceof NtfyAPIError &&
-			(error.status === 401 || error.ntfyCode === 40101),
+			statusOf(error) === 401 || ntfyErrorCode(error) === 40101,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 403 / 40301: a read-only or reserved topic (e.g. ntfy.sh `stats`,
-	// `announcements`).
+	// 403 / 40301: a read-only or reserved topic, or an admin-only route.
 	PERMISSION_ERROR: {
 		match: (error: Error) =>
-			error instanceof NtfyAPIError &&
-			(error.status === 403 || error.ntfyCode === 40301),
+			statusOf(error) === 403 || ntfyErrorCode(error) === 40301,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 400 (40007 invalid parameter) and 404 (40401, also what an invalid
-	// topic name routes to). A retry sends the same request.
+	// 400 (40007 invalid parameter), 404 (40401, also what an invalid
+	// topic name routes to) and 409 (user or tier exists). A retry sends the
+	// same request.
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
 			if (error.name === 'ZodError') return true;
-			return (
-				error instanceof NtfyAPIError &&
-				(error.status === 400 ||
-					error.status === 404 ||
-					error.ntfyCode === 40007 ||
-					error.ntfyCode === 40401)
-			);
+			const status = statusOf(error);
+			return status === 400 || status === 404 || status === 409;
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// A dropped connection (reset, DNS, abort) never reached the server, so
-	// replaying a read is safe. A write with a transport failure stays on
-	// DEFAULT: a retried publish can duplicate a notification.
-	TRANSPORT_ERROR: {
-		match: (error: Error) =>
-			error instanceof NtfyAPIError &&
-			error.method === 'GET' &&
-			error.cause instanceof Error,
-		handler: async () => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
-	},
-	// A 5xx is only replayed for reads. Publish, update, clear and delete are
-	// not idempotent: a retry after a timeout can duplicate a notification.
+	// A 5xx is only replayed for reads. Publish, update, clear, delete and
+	// the account writes are not idempotent: a retry after a timeout can
+	// duplicate a notification.
 	SERVER_ERROR: {
-		match: (error: Error) =>
-			error instanceof NtfyAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+		match: (error: Error) => isRead(error) && (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

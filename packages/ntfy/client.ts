@@ -8,16 +8,27 @@ import { ApiError, request } from 'corsair/http';
 
 export const NTFY_API_BASE = 'https://ntfy.sh';
 
-// A garbage Bearer token makes even public-topic calls fail with 401 40101,
-// so the plugin sends the real key on every call and never a placeholder.
 export type NtfyQuery = Record<string, string | number | boolean | undefined>;
 
 export type NtfyRequest = {
-	method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+	method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 	path: string;
 	query?: NtfyQuery;
+	/** Extra headers: publish headers on a file upload, X-Token on token delete. */
+	headers?: Record<string, string | undefined>;
 	// unknown: the endpoint's input schema has already validated the body.
 	body?: unknown;
+	/** Sent as-is with this media type instead of JSON (a file upload). */
+	rawMediaType?: string;
+	/** `binary` returns `{ bytes, contentType }` (attachment downloads). */
+	responseType?: 'binary';
+};
+
+/** Where a call goes and with what credential. */
+export type NtfyTarget = {
+	baseUrl: string;
+	/** A `tk_` access token, or `username:password` for HTTP Basic. Empty: anonymous. */
+	key: string;
 };
 
 // error-handlers.ts owns retries, so the client makes one attempt and only
@@ -30,75 +41,73 @@ const NTFY_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	headerNames: { retryAfter: 'retry-after' },
 };
 
-// unknown: the error body is untyped until asRecord narrows it; ntfy error
-// bodies are { code, http, error, link }.
-function readNtfyCode(body: unknown): number | undefined {
+/** `https://ntfy.example.com/` -> `https://ntfy.example.com`; refuses non-http(s). */
+export function normalizeNtfyBaseUrl(value: string): string {
+	const url = new URL(value.trim());
+	if (url.protocol !== 'https:' && url.protocol !== 'http:') {
+		throw new Error(`ntfy server URL must be http(s), got ${url.protocol}`);
+	}
+	return url.toString().replace(/\/+$/, '');
+}
+
+/**
+ * The Authorization header for a credential: a `tk_` token (or any token
+ * without a colon) as Bearer, `username:password` as Basic. An absent key
+ * sends no header: ntfy answers anonymous calls on open topics, but a bad
+ * header is a 401 even there.
+ */
+export function ntfyAuthorization(key: string): string | undefined {
+	if (!key) return undefined;
+	if (!key.startsWith('tk_') && key.includes(':')) {
+		return `Basic ${Buffer.from(key).toString('base64')}`;
+	}
+	return `Bearer ${key}`;
+}
+
+/** The numeric ntfy code (e.g. 42905, 40101) from an ApiError body `{ code, http, error, link }`. */
+export function ntfyErrorCode(error: unknown): number | undefined {
+	if (!(error instanceof ApiError)) return undefined;
+	let body: unknown = error.body;
+	if (typeof body === 'string') {
+		try {
+			body = JSON.parse(body);
+		} catch {
+			return undefined;
+		}
+	}
 	const code = asRecord(body)?.code;
 	return typeof code === 'number' ? code : undefined;
 }
 
-/**
- * ntfy error bodies carry a numeric ntfy code beside the HTTP status
- * ({ code: 42905, http: 429, error: "..." }), which the error handlers match
- * on. The request body and the ApiError cause are not copied: the key travels
- * in a header, but the body can echo caller content.
- */
-export class NtfyAPIError extends Error {
-	readonly status?: number;
-	readonly ntfyCode?: number;
-	readonly retryAfter?: number;
-	readonly method?: string;
-
-	constructor(
-		message: string,
-		options: {
-			status?: number;
-			ntfyCode?: number;
-			retryAfter?: number;
-			method?: string;
-			// Retained only for transport errors, which never held a body.
-			cause?: Error;
-		} = {},
-	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
-		this.name = 'NtfyAPIError';
-		this.status = options.status;
-		this.ntfyCode = options.ntfyCode;
-		this.retryAfter = options.retryAfter;
-		this.method = options.method;
-	}
-
-	/** A 429 by status, or the bandwidth-exceeded poll code by body. */
-	get isRateLimit(): boolean {
-		return this.status === 429 || this.ntfyCode === 42905;
-	}
-}
-
-// unknown: see readNtfyCode; a proxy can also answer HTML or text.
-function describeNtfyError(
-	status: number | undefined,
-	body: unknown,
-	fallback: string,
-): string {
-	const text = asRecord(body)?.error;
-	const message = typeof text === 'string' && text.length > 0 ? text : fallback;
-	return status === undefined ? message : `ntfy ${status}: ${message}`;
-}
-
 // unknown: callers parse the body with the endpoint's zod output schema; a
-// poll returns NDJSON text and an empty body is undefined or ''.
+// poll returns NDJSON text, a file download `{ bytes, contentType }`, and an
+// empty body is undefined or ''. Core's ApiError passes through unchanged.
 export async function makeNtfyRequest(
-	apiKey: string,
-	{ method, path, query, body }: NtfyRequest,
+	target: NtfyTarget,
+	{
+		method,
+		path,
+		query,
+		headers,
+		body,
+		rawMediaType,
+		responseType,
+	}: NtfyRequest,
 ): Promise<unknown> {
+	const authorization = ntfyAuthorization(target.key);
+	const extraHeaders: Record<string, string> = {};
+	for (const [name, value] of Object.entries(headers ?? {})) {
+		if (value !== undefined && value !== '') extraHeaders[name] = value;
+	}
 	const config: OpenAPIConfig = {
-		BASE: NTFY_API_BASE,
+		BASE: target.baseUrl,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		HEADERS: {
-			Accept: 'application/json',
-			Authorization: `Bearer ${apiKey}`,
+			Accept: responseType === 'binary' ? '*/*' : 'application/json',
+			...(authorization ? { Authorization: authorization } : {}),
+			...extraHeaders,
 		},
 	};
 
@@ -107,33 +116,14 @@ export async function makeNtfyRequest(
 		url: path,
 		query,
 		body,
-		mediaType: body === undefined ? undefined : 'application/json',
+		mediaType:
+			body === undefined ? undefined : (rawMediaType ?? 'application/json'),
+		...(responseType ? { responseType } : {}),
 	};
 
-	try {
-		// unknown: a poll returns NDJSON text, a publish a JSON object; the
-		// endpoint's output schema parses whichever comes back.
-		return await request<unknown>(config, requestOptions, {
-			rateLimitConfig: NTFY_RATE_LIMIT_CONFIG,
-		});
-	} catch (error) {
-		if (error instanceof ApiError) {
-			throw new NtfyAPIError(
-				describeNtfyError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					ntfyCode: readNtfyCode(error.body),
-					retryAfter: error.retryAfter,
-					method,
-				},
-			);
-		}
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new NtfyAPIError(error.message, { cause: error, method });
-		}
-		throw new NtfyAPIError('Unknown ntfy error', { method });
-	}
+	return await request<unknown>(config, requestOptions, {
+		rateLimitConfig: NTFY_RATE_LIMIT_CONFIG,
+	});
 }
 
 /**
@@ -143,7 +133,11 @@ export async function makeNtfyRequest(
  */
 // unknown: raw is the response body the client returned, a string or not.
 export function parseNtfyNdjson(raw: unknown): unknown[] {
-	if (typeof raw !== 'string') return [];
+	// An unknown or empty topic answers 200 with no body.
+	if (raw === undefined || raw === null || raw === '') return [];
+	if (typeof raw !== 'string') {
+		throw new Error(`ntfy poll answered ${typeof raw} instead of NDJSON text`);
+	}
 	const lines = raw.split('\n');
 	// unknown: rows are revalidated by the endpoint's output schema.
 	const messages: unknown[] = [];

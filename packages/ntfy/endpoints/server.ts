@@ -1,4 +1,4 @@
-import type { NtfyContext, NtfyEndpoints } from '..';
+import type { NtfyEndpoints } from '..';
 import { call } from './call';
 import {
 	NtfyEndpointInputSchemas as Inputs,

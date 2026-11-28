@@ -23,16 +23,9 @@ function buildKey(
 	);
 }
 
-const operations = [
-	'account.usage',
-	'messages.clear',
-	'messages.delete',
-	'messages.poll',
-	'messages.send',
-	'messages.update',
-	'server.health',
-	'server.stats',
-];
+// 59 operations from the ntfy server routes (v2.38.3).
+const EXPECTED_OPERATION_COUNT = 59;
+const operations = Object.keys(ntfyEndpointSchemas).sort();
 
 describe('ntfy plugin definition', () => {
 	const plugin = ntfy();
@@ -46,11 +39,12 @@ describe('ntfy plugin definition', () => {
 		).toBe(false);
 	});
 
-	it('exposes exactly the eight catalog operations', () => {
+	it('exposes the same operations in endpoints, meta and schemas', () => {
 		const nested = Object.entries(plugin.endpoints ?? {}).flatMap(
 			([group, fns]) => Object.keys(fns).map((name) => `${group}.${name}`),
 		);
 		expect(nested.sort()).toEqual(operations);
+		expect(operations).toHaveLength(EXPECTED_OPERATION_COUNT);
 	});
 
 	it('gives every endpoint a description and the right risk level', () => {
@@ -66,16 +60,36 @@ describe('ntfy plugin definition', () => {
 					[entry.riskLevel, entry.irreversible === true],
 				]),
 			),
-		).toEqual({
-			'messages.send': ['write', true],
+		).toMatchObject({
+			'messages.send': ['destructive', true],
+			'messages.sendFile': ['destructive', true],
 			'messages.poll': ['read', false],
-			'messages.update': ['write', false],
+			'messages.update': ['destructive', false],
 			'messages.clear': ['write', false],
 			'messages.delete': ['destructive', true],
 			'account.usage': ['read', false],
+			'account.delete': ['destructive', true],
+			'tokens.delete': ['destructive', true],
+			'phoneNumbers.sendVerification': ['destructive', false],
+			'emails.add': ['destructive', false],
+			'billing.createSubscription': ['destructive', false],
+			'billing.cancelSubscription': ['destructive', true],
+			'users.delete': ['destructive', true],
+			'users.list': ['read', false],
+			'tiers.delete': ['destructive', true],
 			'server.health': ['read', false],
 			'server.stats': ['read', false],
 		});
+		// Every op that sends, spends or deletes is destructive. Removing a
+		// synced subscription only edits a preference and stays a write.
+		for (const name of operations) {
+			if (
+				name !== 'subscriptions.delete' &&
+				/\.(delete|send|sendFile|resetAccess|deleteToken)$/.test(name)
+			) {
+				expect(meta[name as keyof typeof meta]?.riskLevel).toBe('destructive');
+			}
+		}
 	});
 
 	it('has input and output schemas for every endpoint', () => {

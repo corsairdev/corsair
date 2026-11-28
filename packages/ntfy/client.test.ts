@@ -1,8 +1,16 @@
 import { inspect } from 'node:util';
-import { makeNtfyRequest, NtfyAPIError, parseNtfyNdjson } from './client';
+import { ApiError } from 'corsair/http';
+import {
+	makeNtfyRequest,
+	normalizeNtfyBaseUrl,
+	ntfyAuthorization,
+	ntfyErrorCode,
+	parseNtfyNdjson,
+} from './client';
 import { pollNdjson, publishedMessage, unauthorized } from './test-fixtures';
 
 const API_KEY = 'tk_0123456789abcdefghij0123456789';
+const TARGET = { baseUrl: 'https://ntfy.sh', key: API_KEY };
 
 let fetchMock: jest.SpyInstance;
 
@@ -27,10 +35,10 @@ function respond(
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(promise: Promise<unknown>): Promise<NtfyAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await promise.catch((caught: unknown) => caught);
-	expect(error).toBeInstanceOf(NtfyAPIError);
-	if (!(error instanceof NtfyAPIError)) throw error;
+	expect(error).toBeInstanceOf(ApiError);
+	if (!(error instanceof ApiError)) throw error;
 	return error;
 }
 
@@ -46,7 +54,7 @@ describe('makeNtfyRequest', () => {
 	it('sends the token as a Bearer header on every call', async () => {
 		respond(publishedMessage, 200);
 
-		const result = await makeNtfyRequest(API_KEY, {
+		const result = await makeNtfyRequest(TARGET, {
 			method: 'POST',
 			path: '/',
 			body: { topic: 'mytopic' },
@@ -63,7 +71,7 @@ describe('makeNtfyRequest', () => {
 	it('POSTs a JSON body with a JSON content type', async () => {
 		respond(publishedMessage, 200);
 
-		await makeNtfyRequest(API_KEY, {
+		await makeNtfyRequest(TARGET, {
 			method: 'POST',
 			path: '/',
 			body: { topic: 'mytopic', message: 'hi' },
@@ -82,7 +90,7 @@ describe('makeNtfyRequest', () => {
 	it('returns an NDJSON poll body as raw text', async () => {
 		respond(pollNdjson, 200);
 
-		const result = await makeNtfyRequest(API_KEY, {
+		const result = await makeNtfyRequest(TARGET, {
 			method: 'GET',
 			path: '/mytopic/json',
 			query: { poll: 1 },
@@ -91,78 +99,55 @@ describe('makeNtfyRequest', () => {
 		expect(result).toBe(pollNdjson);
 	});
 
-	it('reads the ntfy code and message from an error body', async () => {
+	it('lets core ApiError through with the ntfy code in its body', async () => {
 		respond(unauthorized, 401);
 
 		const error = await failure(
-			makeNtfyRequest(API_KEY, {
+			makeNtfyRequest(TARGET, {
 				method: 'POST',
 				path: '/mytopic',
 				body: { topic: 'mytopic' },
 			}),
 		);
 		expect(error.status).toBe(401);
-		expect(error.ntfyCode).toBe(40101);
-		expect(error.method).toBe('POST');
-		expect(error.isRateLimit).toBe(false);
-		expect(error.message).toBe('ntfy 401: unauthorized');
+		expect(ntfyErrorCode(error)).toBe(40101);
+		expect(error.request.method).toBe('POST');
 	});
 
-	it('treats a 429 as a rate limit and reads Retry-After', async () => {
-		respond({ code: 42905, http: 429, error: 'limit exceeded' }, 429, {
+	it('reads Retry-After into the ApiError on a 429, one attempt only', async () => {
+		respond({ code: 42901, http: 429, error: 'limit reached' }, 429, {
 			'Retry-After': '2',
 		});
 
 		const error = await failure(
-			makeNtfyRequest(API_KEY, {
+			makeNtfyRequest(TARGET, {
 				method: 'GET',
 				path: '/mytopic/json',
 				query: { poll: 1 },
 			}),
 		);
-		expect(error.isRateLimit).toBe(true);
+		expect(error.status).toBe(429);
 		expect(error.retryAfter).toBe(2000);
-		expect(error.ntfyCode).toBe(42905);
+		expect(ntfyErrorCode(error)).toBe(42901);
 		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 
-	it('treats a 429 without a Retry-After header as a rate limit', async () => {
-		respond(
-			{ code: 42905, http: 429, error: 'daily bandwidth limit exceeded' },
-			429,
-		);
-
-		const error = await failure(
-			makeNtfyRequest(API_KEY, {
-				method: 'GET',
-				path: '/mytopic/json',
-			}),
-		);
-		expect(error.isRateLimit).toBe(true);
-		expect(error.retryAfter).toBeUndefined();
-	});
-
-	it('wraps network failures and keeps the method', async () => {
+	it('lets a network failure through as thrown', async () => {
 		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
 
-		const error = await failure(
-			makeNtfyRequest(API_KEY, {
-				method: 'GET',
-				path: '/v1/health',
-			}),
-		);
-		expect(error.message).toContain('fetch failed');
-		expect(error.status).toBeUndefined();
-		expect(error.ntfyCode).toBeUndefined();
-		expect(error.method).toBe('GET');
-		expect(error.cause).toBeInstanceOf(TypeError);
+		const error = await makeNtfyRequest(TARGET, {
+			method: 'GET',
+			path: '/v1/health',
+		}).catch((caught: unknown) => caught);
+		expect(String(error)).toContain('fetch failed');
+		expect(ntfyErrorCode(error)).toBeUndefined();
 	});
 
 	it('keeps the API key out of errors', async () => {
 		respond(unauthorized, 401);
 
 		const error = await failure(
-			makeNtfyRequest(API_KEY, {
+			makeNtfyRequest(TARGET, {
 				method: 'POST',
 				path: '/',
 				body: { topic: 'mytopic' },
@@ -171,6 +156,90 @@ describe('makeNtfyRequest', () => {
 		expect(error.message).not.toContain(API_KEY);
 		expect(JSON.stringify(error)).not.toContain(API_KEY);
 		expect(inspect(error)).not.toContain(API_KEY);
+	});
+
+	it('goes to a self-hosted server and sends Basic for username:password', async () => {
+		respond({ healthy: true }, 200);
+
+		await makeNtfyRequest(
+			{ baseUrl: 'https://ntfy.example.com', key: 'phil:secret' },
+			{ method: 'GET', path: '/v1/health' },
+		);
+
+		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		expect(url).toBe('https://ntfy.example.com/v1/health');
+		expect(new Headers(init.headers).get('authorization')).toBe(
+			`Basic ${Buffer.from('phil:secret').toString('base64')}`,
+		);
+	});
+
+	it('sends no Authorization header without a key', async () => {
+		respond({ healthy: true }, 200);
+
+		await makeNtfyRequest(
+			{ baseUrl: 'https://ntfy.sh', key: '' },
+			{ method: 'GET', path: '/v1/health' },
+		);
+
+		const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		expect(new Headers(init.headers).has('authorization')).toBe(false);
+	});
+
+	it('sends extra headers and skips empty ones', async () => {
+		respond({ success: true }, 200);
+
+		await makeNtfyRequest(TARGET, {
+			method: 'DELETE',
+			path: '/v1/account/token',
+			headers: { 'X-Token': 'tk_other', 'X-Empty': undefined },
+		});
+
+		const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		const headers = new Headers(init.headers);
+		expect(headers.get('x-token')).toBe('tk_other');
+		expect(headers.has('x-empty')).toBe(false);
+	});
+
+	it('uploads a raw body and reads a binary answer', async () => {
+		respond(publishedMessage, 200);
+		await makeNtfyRequest(TARGET, {
+			method: 'PUT',
+			path: '/mytopic',
+			body: new Blob(['hello'], { type: 'text/plain' }),
+			rawMediaType: 'text/plain',
+			headers: { 'X-Filename': 'hello.txt' },
+		});
+		const [, put] = fetchMock.mock.calls[0] as [string, RequestInit];
+		expect(put.body).toBeInstanceOf(Blob);
+		expect(new Headers(put.headers).get('x-filename')).toBe('hello.txt');
+
+		fetchMock.mockResolvedValueOnce(
+			new Response(new Uint8Array([1, 2, 3]), {
+				status: 200,
+				headers: { 'Content-Type': 'application/octet-stream' },
+			}),
+		);
+		const file = (await makeNtfyRequest(TARGET, {
+			method: 'GET',
+			path: '/file/abc',
+			responseType: 'binary',
+		})) as { bytes: Uint8Array };
+		expect(Array.from(file.bytes)).toEqual([1, 2, 3]);
+	});
+});
+
+describe('ntfyAuthorization and normalizeNtfyBaseUrl', () => {
+	it('uses Bearer for tokens, even a tk_ token with a colon', () => {
+		expect(ntfyAuthorization('tk_abc')).toBe('Bearer tk_abc');
+		expect(ntfyAuthorization('tk_a:b')).toBe('Bearer tk_a:b');
+		expect(ntfyAuthorization('')).toBeUndefined();
+	});
+
+	it('trims a trailing slash and refuses non-http schemes', () => {
+		expect(normalizeNtfyBaseUrl('https://ntfy.example.com/')).toBe(
+			'https://ntfy.example.com',
+		);
+		expect(() => normalizeNtfyBaseUrl('file:///etc/passwd')).toThrow();
 	});
 });
 
@@ -201,6 +270,7 @@ describe('parseNtfyNdjson', () => {
 
 	it('returns an empty list for a non-string body', () => {
 		expect(parseNtfyNdjson(undefined)).toEqual([]);
-		expect(parseNtfyNdjson(123)).toEqual([]);
+		expect(() => parseNtfyNdjson(123)).toThrow();
+		expect(parseNtfyNdjson(undefined)).toEqual([]);
 	});
 });

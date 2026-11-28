@@ -1,24 +1,23 @@
 ---
 title: "ntfy plugin"
 sidebarTitle: "Overview"
-description: "Push notifications with ntfy - publish messages to topics, poll cached messages, update and clear message sequences, delete scheduled or delivered messages, and read account usage and server stats."
+description: "Push notifications with ntfy on ntfy.sh or a self-hosted server - publish messages and file attachments to topics, poll cached messages, update, clear and delete message sequences, manage the account (tokens, synced subscriptions, topic reservations, phone numbers, emails, settings, billing, web push), and administer users, topic access and tiers."
 ---
 
 Use **ntfy** through Corsair: one client, typed API calls.
 
-Create an access token at https://ntfy.sh/account under Manage access tokens, then Create access token. The token starts with `tk_` and is shown once. Corsair authenticates every call, and ntfy.sh rejects any bad Authorization header with 401 even on public topics, so a token is required even to read public ones. Things to know before you send:
+Create an access token at https://ntfy.sh/account (or `<your server>/account`) under Manage access tokens. The token starts with `tk_` and is shown once. The key can also be `username:password`, which is sent as HTTP Basic. A self-hosted server is set with the account's `base_url` (or the `serverUrl` plugin option); leave it empty for ntfy.sh. A bad Authorization header is a 401 even on public topics, so check the key before anything else. Things to know before you send:
 
-- **Real pushes.** `messages.send` delivers a real push notification to every subscriber of the topic. On ntfy.sh a visitor can send 250 messages per rolling 24 hours and has a 60-request burst limit; the plugin retries 429s with backoff, honoring Retry-After.
-- **Sends cannot be undone.** `messages.send` and `messages.update` both notify subscribers; neither can be recalled. Failed sends are never replayed automatically, because a retry after a timeout can duplicate a notification.
-- **Sequences.** Publishing with `sequenceId` gives the message a stable id: publishing again with the same id updates it (the server keeps both versions), `messages.clear` marks it read and dismissed, and `messages.delete` deletes it and cancels a scheduled delivery before it goes out.
-- **Polling, not webhooks.** ntfy has no inbound webhooks here: `messages.poll` reads the topic cache as NDJSON and returns the messages with `event: "message"`. An unknown topic polls to an empty list, not an error. Use `since` (a duration like `10min`, unix seconds, a message id, `all` or `latest`) as the cursor, and `scheduled: true` to list undelivered scheduled messages.
-- **Priorities and actions.** `priority` takes 1-5 or min|low|default|high|urgent; responses always use ints and omit the field at default. `actions` takes up to 3 buttons of type view, http, broadcast or copy; the server assigns each an id. http actions default to POST.
-- **Delays.** `delay` takes a duration or time like `30min` or `9am`; ntfy.sh accepts 10 seconds to 3 days. The message sits undelivered until its time; its `time` field is the future delivery time.
-- **Account view.** `account.usage` reads your tier limits and used/remaining counters with the daily reset time. `server.health` and `server.stats` read server-wide values and need no special rights.
+- **Real pushes.** `messages.send`, `messages.sendFile` and `messages.update` deliver real push notifications to every subscriber of the topic and are marked destructive. `email` and `call` on a send also email or phone someone. On ntfy.sh a visitor can send 250 messages per rolling 24 hours. Failed sends are never replayed after a 5xx or a dropped connection, because a retry can duplicate a notification. A burst-limit 429 (42901, 42906, 42911) is retried twice; a spent daily quota (messages, emails, calls, bandwidth) never is.
+- **Sequences.** Publishing with `sequenceId` (`[-_A-Za-z0-9]{1,64}`) gives the message a stable id: publishing again with the same id updates it (the server keeps both versions), `messages.clear` marks it read and dismissed, and `messages.delete` tells subscribers to remove it. A scheduled message that has not gone out yet is cancelled and removed from the server; a delivered one stays in the cache with a delete event after it, and clients that support it remove the notification.
+- **Polling, not webhooks.** ntfy sends no webhooks: `messages.poll` reads the topic cache as NDJSON and returns the messages with `event: "message"`. An unknown topic polls to an empty list, not an error. Use `since` (a duration like `10min`, unix seconds, a message id, `all` or `latest`) as the cursor, and `scheduled: true` to list undelivered scheduled messages.
+- **Priorities and actions.** `priority` takes 1-5 or min|low|default|high|urgent; names are sent as their number, since the JSON publish takes an int only. `actions` takes up to 3 buttons of type view, http, broadcast or copy.
+- **Attachments.** `messages.sendFile` uploads a file (base64 in, PUT body out) and the message carries `attachment.url`; `files.download` fetches it by the id at the end of that URL. `attach` on `messages.send` links an external URL instead.
+- **Account and admin routes.** `account.*`, `tokens.*`, `subscriptions.*`, `reservations.*`, `phoneNumbers.*`, `emails.*`, `billing.*` and `webPush.*` act on the signed-in user. `users.*` and `tiers.*` need an admin. Routes for a feature the server has turned off (email, calls, payments, web push, signup) answer 400 or 404.
 
 **What you get:**
 
-- 8 typed API operations
+- 59 typed API operations
 
 ## Setup
 

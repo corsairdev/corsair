@@ -10,6 +10,236 @@ description: "API reference for the ntfy plugin in Corsair: every `ntfy.api.*` o
 
 ## Account
 
+### changePassword
+
+`account.changePassword`
+
+Change the signed-in account password; the old one stops working
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ntfy.api.account.changePassword({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `password` | `string` | Yes | The current password |
+| `newPassword` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### create
+
+`account.create`
+
+Sign up a new user on a server with signup enabled (anonymous call)
+
+**Risk:** `write`
+
+```ts
+await corsair.ntfy.api.account.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+| `password` | `string` | Yes | — |
+| `email` | `string` | No | Optional; with email configured on the server a verification link is sent |
+
+Signup must be enabled on the server; call it without a key.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### delete
+
+`account.delete`
+
+Delete the signed-in account, its tokens and reservations, confirmed with the current password
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.ntfy.api.account.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `password` | `string` | Yes | The current password, as confirmation |
+
+Confirmed with the current password. The server marks the account for removal, so it can stay listed (and keep its tier) for a while.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### login
+
+`account.login`
+
+Sign in with username:password and get a new session token
+
+**Risk:** `write`
+
+```ts
+await corsair.ntfy.api.account.login({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | Yes | — |
+| `username` | `string` | Yes | — |
+
+
+
+---
+
+### requestPasswordReset
+
+`account.requestPasswordReset`
+
+Email a password reset link to the account (server needs email sending)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ntfy.api.account.requestPasswordReset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | Username or email address |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### resetPassword
+
+`account.resetPassword`
+
+Set a new password with the token from a reset link
+
+**Risk:** `write`
+
+```ts
+await corsair.ntfy.api.account.resetPassword({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | Yes | The token from the reset link |
+| `password` | `string` | Yes | The new password |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### updateSettings
+
+`account.updateSettings`
+
+Change account preferences: language, date/time format and notification sound, minimum priority, auto-delete
+
+**Risk:** `write`
+
+```ts
+await corsair.ntfy.api.account.updateSettings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `language` | `string` | No | — |
+| `dateFormat` | `string` | No | — |
+| `timeFormat` | `string` | No | — |
+| `notification` | `object` | No | sound, min_priority (1-5) and delete_after (seconds) |
+
+<AccordionGroup>
+<Accordion title="notification full type">
+
+```ts
+{
+  sound?: string,
+  min_priority?: number,
+  delete_after?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
 ### usage
 
 `account.usage`
@@ -79,6 +309,367 @@ Anonymous callers get an IP-based view; with a token it is the account tier. No 
 
 ---
 
+## Billing
+
+### cancelSubscription
+
+`billing.cancelSubscription`
+
+Cancel the paid subscription at the end of the period
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.ntfy.api.billing.cancelSubscription({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### createPortalSession
+
+`billing.createPortalSession`
+
+Get a Stripe billing portal URL for the account
+
+**Risk:** `write`
+
+```ts
+await corsair.ntfy.api.billing.createPortalSession({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `redirect_url` | `string` | Yes | — |
+
+
+
+---
+
+### createSubscription
+
+`billing.createSubscription`
+
+Start a paid subscription; returns a Stripe checkout URL
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ntfy.api.billing.createSubscription({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tier` | `string` | Yes | Tier code from billing.tiers |
+| `interval` | `month \| year` | Yes | — |
+
+Returns a Stripe checkout URL to open; nothing is charged until checkout is completed.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `redirect_url` | `string` | Yes | — |
+
+
+
+---
+
+### tiers
+
+`billing.tiers`
+
+List the paid tiers with their prices and limits, plus the free tier (servers with payments only)
+
+**Risk:** `read`
+
+```ts
+await corsair.ntfy.api.billing.tiers({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tiers` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tiers full type">
+
+```ts
+{
+  code?: string,
+  name?: string,
+  prices?: {
+    month: number,
+    year: number
+  } | null,
+  limits?: {
+    basis?: string,
+    messages?: number,
+    messages_expiry_duration?: number,
+    emails?: number,
+    calls?: number,
+    reservations?: number,
+    attachment_total_size?: number,
+    attachment_file_size?: number,
+    attachment_expiry_duration?: number,
+    attachment_bandwidth?: number
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateSubscription
+
+`billing.updateSubscription`
+
+Switch the paid subscription to another tier or interval (charges or prorates)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ntfy.api.billing.updateSubscription({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tier` | `string` | Yes | Tier code from billing.tiers |
+| `interval` | `month \| year` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Emails
+
+### add
+
+`emails.add`
+
+Add an email address to the account and send it a verification link
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ntfy.api.emails.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### delete
+
+`emails.delete`
+
+Remove an email address from the account
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ntfy.api.emails.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### resendVerification
+
+`emails.resendVerification`
+
+Send the verification link for a pending email address again
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ntfy.api.emails.resendVerification({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### setPrimary
+
+`emails.setPrimary`
+
+Make a verified email address the primary one
+
+**Risk:** `write`
+
+```ts
+await corsair.ntfy.api.emails.setPrimary({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### verify
+
+`emails.verify`
+
+Confirm an email address with the token from its verification link
+
+**Risk:** `write`
+
+```ts
+await corsair.ntfy.api.emails.verify({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | Yes | The token from the verification link |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Files
+
+### download
+
+`files.download`
+
+Download a message attachment stored on the server (/file/&#123;id&#125;) and return the file
+
+**Risk:** `read`
+
+```ts
+await corsair.ntfy.api.files.download({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Attachment id from a message `attachment.url` (/file/&lt;id&gt;, an extension is allowed) |
+
+Takes the id at the end of `attachment.url` (/file/&lt;id&gt;) and returns the file: text as `text`, other files as base64.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The file, base64-encoded. Missing when the file came back as text or contentOmitted is set. |
+| `text` | `string` | No | The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8. |
+| `contentType` | `string` | Yes | Media type of the file, for example application/pdf. |
+| `byteLength` | `number` | Yes | Size of the file in bytes. |
+| `filename` | `string` | No | The file name, when known. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
+| `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
+
+
+
+---
+
 ## Messages
 
 ### clear
@@ -138,7 +729,7 @@ await corsair.ntfy.api.messages.delete({ topic: 'mytopic', sequenceId: 'disk-ale
 | `topic` | `string` | Yes | Topic name |
 | `sequenceId` | `string` | Yes | Sequence id of the message to delete |
 
-Sends a `message_delete` event and removes the cache entry; it also cancels a scheduled message before delivery. Republishing the same `sequenceId` revives the sequence.
+Sends a `message_delete` event. A scheduled message that has not gone out is cancelled and removed from the server; a delivered one stays cached with the delete event after it, and clients that support it remove the notification. Republishing the same `sequenceId` revives the sequence.
 
 
 
@@ -208,6 +799,8 @@ Reads the server-side cache (12h on ntfy.sh, 10 MB replay cap per topic). Poll f
   priority?: number | null,
   tags?: string[] | null,
   click?: string | null,
+  icon?: string | null,
+  content_type?: string | null,
   actions?: {
     action: view | broadcast | http | copy,
     label: string,
@@ -242,7 +835,7 @@ Reads the server-side cache (12h on ntfy.sh, 10 MB replay cap per topic). Poll f
 
 Publish a notification to a topic; every subscriber gets a push, so the send cannot be undone
 
-**Risk:** `write` · **Irreversible**
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.ntfy.api.messages.send({ topic: 'mytopic', message: 'Disk space is low at 5.1 GB', title: 'Low disk space alert', priority: 4, tags: ['warning', 'cd'] });
@@ -261,9 +854,16 @@ await corsair.ntfy.api.messages.send({ topic: 'mytopic', message: 'Disk space is
 | `markdown` | `boolean` | No | Render the message as markdown |
 | `actions` | `object[]` | No | Up to 3 action buttons |
 | `delay` | `string` | No | Delayed delivery, e.g. "30min" or "9am"; ntfy.sh accepts 10s to 3d. Cancel before delivery with messages.delete |
-| `sequenceId` | `string` | No | Optional sequence id; publishing again with the same id updates (replaces) the message on subscribers |
+| `icon` | `string` | No | URL of a JPEG or PNG shown as the notification icon |
+| `attach` | `string` | No | URL of a file to attach (the server does not download it) |
+| `filename` | `string` | No | File name for the `attach` URL |
+| `email` | `string` | No | Also email the notification to this address (the server must have email sending configured; counts against the daily email limit) |
+| `call` | `string` | No | Also phone this verified number (or "yes" for the first one) and read the message out; needs a tier with calls |
+| `cache` | `boolean` | No | false: deliver to current subscribers only, do not cache |
+| `firebase` | `boolean` | No | false: do not forward to Firebase (Android app without instant delivery) |
+| `sequenceId` | `string` | No | Optional sequence id, [-_A-Za-z0-9]&#123;1,64&#125;; publishing again with the same id updates (replaces) the message on subscribers |
 
-Publishes as JSON to the server root. `message` defaults to 'triggered' server-side. `delay` accepts 10s to 3d on ntfy.sh; self-hosted servers may differ.
+Publishes as JSON to the server root. `email` and `call` also email or phone someone (servers with those features). `message` defaults to 'triggered' server-side. `delay` accepts 10s to 3d on ntfy.sh; self-hosted servers may differ.
 
 <AccordionGroup>
 <Accordion title="actions full type">
@@ -302,6 +902,98 @@ Publishes as JSON to the server root. `message` defaults to 'triggered' server-s
 | `priority` | `number \| null` | No | — |
 | `tags` | `string[] \| null` | No | — |
 | `click` | `string \| null` | No | — |
+| `icon` | `string \| null` | No | — |
+| `content_type` | `string \| null` | No | — |
+| `actions` | `object[] \| null` | No | — |
+| `attachment` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="actions full type">
+
+```ts
+{
+  action: view | broadcast | http | copy,
+  label: string,
+  url?: string,
+  clear?: boolean,
+  method?: string,
+  headers?: Record<string, string>,
+  body?: string,
+  intent?: string,
+  extras?: Record<string, string>,
+  value?: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="attachment full type">
+
+```ts
+{
+  name: string,
+  url: string,
+  type?: string | null,
+  size?: number | null,
+  expires?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sendFile
+
+`messages.sendFile`
+
+Upload a file as a message attachment (PUT /&#123;topic&#125;); every subscriber gets a push, so the send cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.ntfy.api.messages.sendFile({ topic: 'mytopic', filename: 'report.txt', contentBase64: 'aGVsbG8K', message: 'Nightly report' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `topic` | `string` | Yes | Topic name, [-_A-Za-z0-9]&#123;1,64&#125; |
+| `contentBase64` | `string` | Yes | The file, base64-encoded. It becomes the message attachment. |
+| `filename` | `string` | Yes | Attachment file name shown to subscribers |
+| `contentType` | `string` | No | Media type of the file; defaults to application/octet-stream |
+| `message` | `string` | No | Notification body |
+| `title` | `string` | No | Notification title |
+| `priority` | `number \| min \| low \| default \| high \| urgent` | No | — |
+| `tags` | `string[]` | No | — |
+| `click` | `string` | No | — |
+| `icon` | `string` | No | — |
+| `delay` | `string` | No | — |
+| `sequenceId` | `string` | No | — |
+
+Uploads the file as the request body (PUT /&#123;topic&#125;) with the other options as X- headers. The answer carries `attachment` with its name, size, type, expiry and URL. The server needs an attachment cache; ntfy.sh limits files by tier.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `time` | `number` | Yes | Unix seconds |
+| `expires` | `number \| null` | No | Unix seconds the cache entry expires |
+| `event` | `message` | Yes | — |
+| `topic` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+| `sequence_id` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `priority` | `number \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `click` | `string \| null` | No | — |
+| `icon` | `string \| null` | No | — |
+| `content_type` | `string \| null` | No | — |
 | `actions` | `object[] \| null` | No | — |
 | `attachment` | `object \| null` | No | — |
 
@@ -348,7 +1040,7 @@ Publishes as JSON to the server root. `message` defaults to 'triggered' server-s
 
 Publish a new version of a message under an existing sequence id; the server keeps both versions and notifies again
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.ntfy.api.messages.update({ topic: 'mytopic', message: 'Disk space is low at 4.9 GB', sequenceId: 'disk-alert' });
@@ -367,6 +1059,13 @@ await corsair.ntfy.api.messages.update({ topic: 'mytopic', message: 'Disk space 
 | `markdown` | `boolean` | No | Render the message as markdown |
 | `actions` | `object[]` | No | Up to 3 action buttons |
 | `delay` | `string` | No | Delayed delivery, e.g. "30min" or "9am"; ntfy.sh accepts 10s to 3d. Cancel before delivery with messages.delete |
+| `icon` | `string` | No | URL of a JPEG or PNG shown as the notification icon |
+| `attach` | `string` | No | URL of a file to attach (the server does not download it) |
+| `filename` | `string` | No | File name for the `attach` URL |
+| `email` | `string` | No | Also email the notification to this address (the server must have email sending configured; counts against the daily email limit) |
+| `call` | `string` | No | Also phone this verified number (or "yes" for the first one) and read the message out; needs a tier with calls |
+| `cache` | `boolean` | No | false: deliver to current subscribers only, do not cache |
+| `firebase` | `boolean` | No | false: do not forward to Firebase (Android app without instant delivery) |
 | `sequenceId` | `string` | Yes | Sequence id of the message to update; the server keeps both versions and notifies again |
 
 Publishes with `sequence_id` set. The server keeps both versions and every subscriber is notified again.
@@ -408,6 +1107,8 @@ Publishes with `sequence_id` set. The server keeps both versions and every subsc
 | `priority` | `number \| null` | No | — |
 | `tags` | `string[] \| null` | No | — |
 | `click` | `string \| null` | No | — |
+| `icon` | `string \| null` | No | — |
+| `content_type` | `string \| null` | No | — |
 | `actions` | `object[] \| null` | No | — |
 | `attachment` | `object \| null` | No | — |
 
@@ -448,7 +1149,204 @@ Publishes with `sequence_id` set. The server keeps both versions and every subsc
 
 ---
 
+## Phone Numbers
+
+### add
+
+`phoneNumbers.add`
+
+Add a phone number to the account with the code it received
+
+**Risk:** `write`
+
+```ts
+await corsair.ntfy.api.phoneNumbers.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number` | `string` | Yes | E.164 phone number, e.g. +12223334444 |
+| `code` | `string` | Yes | The code the verification sent |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### delete
+
+`phoneNumbers.delete`
+
+Remove a verified phone number from the account
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ntfy.api.phoneNumbers.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number` | `string` | Yes | E.164 phone number, e.g. +12223334444 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### sendVerification
+
+`phoneNumbers.sendVerification`
+
+Send a verification code to a phone number by SMS or call (needs a tier with calls)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ntfy.api.phoneNumbers.sendVerification({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number` | `string` | Yes | E.164 phone number, e.g. +12223334444 |
+| `channel` | `sms \| call` | Yes | How the code is delivered |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Reservations
+
+### add
+
+`reservations.add`
+
+Reserve a topic for the account and set what everyone else may do on it
+
+**Risk:** `write`
+
+```ts
+await corsair.ntfy.api.reservations.add({ topic: 'mytopic', everyone: 'deny-all' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `topic` | `string` | Yes | Topic name, [-_A-Za-z0-9]&#123;1,64&#125; |
+| `everyone` | `read-write \| read-only \| write-only \| deny-all` | Yes | What everyone else may do on the reserved topic |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### delete
+
+`reservations.delete`
+
+Release a reserved topic, optionally deleting its cached messages
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ntfy.api.reservations.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `topic` | `string` | Yes | Topic name, [-_A-Za-z0-9]&#123;1,64&#125; |
+| `deleteMessages` | `boolean` | No | Also delete the topic's cached messages and attachments |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
 ## Server
+
+### config
+
+`server.config`
+
+Read the server feature flags: login, signup, payments, calls, emails, reservations, web push
+
+**Risk:** `read`
+
+```ts
+await corsair.ntfy.api.server.config({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `base_url` | `string` | No | — |
+| `app_root` | `string` | No | — |
+| `enable_login` | `boolean` | No | — |
+| `require_login` | `boolean` | No | — |
+| `enable_signup` | `boolean` | No | — |
+| `enable_payments` | `boolean` | No | — |
+| `enable_calls` | `boolean` | No | — |
+| `enable_emails` | `boolean` | No | — |
+| `enable_reset_password` | `boolean` | No | — |
+| `enable_reservations` | `boolean` | No | — |
+| `enable_web_push` | `boolean` | No | — |
+| `billing_contact` | `string` | No | — |
+| `web_push_public_key` | `string` | No | — |
+| `disallowed_topics` | `string[] \| null` | No | — |
+| `config_hash` | `string` | No | — |
+
+
+
+---
 
 ### health
 
@@ -478,6 +1376,58 @@ No special rights needed, but corsair still sends the token.
 
 ---
 
+### metrics
+
+`server.metrics`
+
+Read Prometheus metrics as text (servers with metrics enabled)
+
+**Risk:** `read`
+
+```ts
+await corsair.ntfy.api.server.metrics({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | Prometheus text exposition format |
+
+
+
+---
+
+### ready
+
+`server.ready`
+
+Read whether the server is ready for traffic (load balancer check)
+
+**Risk:** `read`
+
+```ts
+await corsair.ntfy.api.server.ready({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ready` | `boolean` | Yes | — |
+| `role` | `string` | No | — |
+| `draining` | `boolean` | No | — |
+
+
+
+---
+
 ### stats
 
 `server.stats`
@@ -501,6 +1451,866 @@ Server-wide totals, not per-account.
 |------|------|----------|-------------|
 | `messages` | `number` | Yes | — |
 | `messages_rate` | `number` | Yes | — |
+
+
+
+---
+
+### version
+
+`server.version`
+
+Read the server version, commit and build date
+
+**Risk:** `read`
+
+```ts
+await corsair.ntfy.api.server.version({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `version` | `string` | Yes | — |
+| `commit` | `string` | No | — |
+| `date` | `string` | No | — |
+
+
+
+---
+
+## Subscriptions
+
+### add
+
+`subscriptions.add`
+
+Add a topic subscription to the account (synced to the web app and phone apps)
+
+**Risk:** `write`
+
+```ts
+await corsair.ntfy.api.subscriptions.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `baseUrl` | `string` | Yes | Server the subscription belongs to, e.g. https://ntfy.sh |
+| `topic` | `string` | Yes | Topic name, [-_A-Za-z0-9]&#123;1,64&#125; |
+| `displayName` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `base_url` | `string` | Yes | — |
+| `topic` | `string` | Yes | — |
+| `display_name` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`subscriptions.delete`
+
+Remove a synced topic subscription from the account
+
+**Risk:** `write`
+
+```ts
+await corsair.ntfy.api.subscriptions.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `baseUrl` | `string` | Yes | — |
+| `topic` | `string` | Yes | Topic name, [-_A-Za-z0-9]&#123;1,64&#125; |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### update
+
+`subscriptions.update`
+
+Change a synced subscription's display name
+
+**Risk:** `write`
+
+```ts
+await corsair.ntfy.api.subscriptions.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `baseUrl` | `string` | Yes | Server the subscription belongs to, e.g. https://ntfy.sh |
+| `topic` | `string` | Yes | Topic name, [-_A-Za-z0-9]&#123;1,64&#125; |
+| `displayName` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `base_url` | `string` | Yes | — |
+| `topic` | `string` | Yes | — |
+| `display_name` | `string \| null` | No | — |
+
+
+
+---
+
+## Tiers
+
+### create
+
+`tiers.create`
+
+Admin: create a tier with message, email, call, reservation and attachment limits
+
+**Risk:** `write`
+
+```ts
+await corsair.ntfy.api.tiers.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | Tier code, e.g. pro |
+| `name` | `string` | Yes | — |
+| `messages_limit` | `number` | No | Messages per day |
+| `messages_expiry_duration` | `number` | No | Seconds messages stay cached |
+| `emails_limit` | `number` | No | — |
+| `calls_limit` | `number` | No | — |
+| `reservations_limit` | `number` | No | — |
+| `attachment_file_size_limit` | `number` | No | Bytes |
+| `attachment_total_size_limit` | `number` | No | Bytes |
+| `attachment_expiry_duration` | `number` | No | Seconds |
+| `attachment_bandwidth_limit` | `number` | No | Bytes per day |
+| `stripe_monthly_price_id` | `string` | No | — |
+| `stripe_yearly_price_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### delete
+
+`tiers.delete`
+
+Admin: delete a tier that no user is on
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.ntfy.api.tiers.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### list
+
+`tiers.list`
+
+Admin: list tiers with their limits and user counts
+
+**Risk:** `read`
+
+```ts
+await corsair.ntfy.api.tiers.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tiers` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tiers full type">
+
+```ts
+{
+  code: string,
+  name: string,
+  messages_limit?: number,
+  messages_expiry_duration?: number,
+  emails_limit?: number,
+  calls_limit?: number,
+  reservations_limit?: number,
+  attachment_file_size_limit?: number,
+  attachment_total_size_limit?: number,
+  attachment_expiry_duration?: number,
+  attachment_bandwidth_limit?: number,
+  stripe_monthly_price_id?: string,
+  stripe_yearly_price_id?: string,
+  id?: string,
+  users?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tiers.update`
+
+Admin: change a tier's limits
+
+**Risk:** `write`
+
+```ts
+await corsair.ntfy.api.tiers.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | Tier code, e.g. pro |
+| `name` | `string` | Yes | — |
+| `messages_limit` | `number` | No | Messages per day |
+| `messages_expiry_duration` | `number` | No | Seconds messages stay cached |
+| `emails_limit` | `number` | No | — |
+| `calls_limit` | `number` | No | — |
+| `reservations_limit` | `number` | No | — |
+| `attachment_file_size_limit` | `number` | No | Bytes |
+| `attachment_total_size_limit` | `number` | No | Bytes |
+| `attachment_expiry_duration` | `number` | No | Seconds |
+| `attachment_bandwidth_limit` | `number` | No | Bytes per day |
+| `stripe_monthly_price_id` | `string` | No | — |
+| `stripe_yearly_price_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Tokens
+
+### create
+
+`tokens.create`
+
+Create an access token for the signed-in account (returned once, tk_...)
+
+**Risk:** `write`
+
+```ts
+await corsair.ntfy.api.tokens.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `label` | `string` | No | — |
+| `expires` | `number` | No | Unix seconds the token expires; omit or 0 for never |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | Yes | — |
+| `label` | `string` | No | — |
+| `last_access` | `number` | No | — |
+| `last_origin` | `string` | No | — |
+| `expires` | `number` | No | — |
+| `provisioned` | `boolean` | No | — |
+
+
+
+---
+
+### delete
+
+`tokens.delete`
+
+Revoke an access token (the given one, or the one making the call)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.ntfy.api.tokens.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | No | The token to delete; omit to delete the token this call is made with |
+
+Without `token`, revokes the token the call is made with.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### update
+
+`tokens.update`
+
+Change an access token's label or expiry
+
+**Risk:** `write`
+
+```ts
+await corsair.ntfy.api.tokens.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | Yes | The token to change (tk_...) |
+| `label` | `string` | No | — |
+| `expires` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | Yes | — |
+| `label` | `string` | No | — |
+| `last_access` | `number` | No | — |
+| `last_origin` | `string` | No | — |
+| `expires` | `number` | No | — |
+| `provisioned` | `boolean` | No | — |
+
+
+
+---
+
+## Topics
+
+### checkAuth
+
+`topics.checkAuth`
+
+Check that the credential may read the topic(s); 200 with success true, 401/403 otherwise
+
+**Risk:** `read`
+
+```ts
+await corsair.ntfy.api.topics.checkAuth({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `topic` | `string` | Yes | Topic name, or a comma-separated list of topics |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Users
+
+### create
+
+`users.create`
+
+Admin: create a user with a password or bcrypt hash and an optional tier
+
+**Risk:** `write`
+
+```ts
+await corsair.ntfy.api.users.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+| `password` | `string` | No | — |
+| `hash` | `string` | No | A bcrypt hash instead of a password |
+| `tier` | `string` | No | Tier code |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### createToken
+
+`users.createToken`
+
+Admin: create an access token for a user (returned once)
+
+**Risk:** `write`
+
+```ts
+await corsair.ntfy.api.users.createToken({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+| `label` | `string` | No | — |
+| `expires` | `number` | No | Unix seconds; omit or 0 for never |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+| `token` | `string` | Yes | — |
+| `label` | `string` | No | — |
+| `expires` | `number` | No | — |
+| `last_access` | `number` | No | — |
+| `last_origin` | `string` | No | — |
+| `provisioned` | `boolean` | No | — |
+
+
+
+---
+
+### delete
+
+`users.delete`
+
+Admin: delete a user and their tokens and grants
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.ntfy.api.users.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteToken
+
+`users.deleteToken`
+
+Admin: revoke one of a user's access tokens
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.ntfy.api.users.deleteToken({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+| `token` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### grantAccess
+
+`users.grantAccess`
+
+Admin: grant a user (or "*" everyone) read/write/deny access to a topic or pattern
+
+**Risk:** `write`
+
+```ts
+await corsair.ntfy.api.users.grantAccess({ username: 'phil', topic: 'alerts*', permission: 'read-only' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | A user, or "*" for everyone |
+| `topic` | `string` | Yes | Topic or pattern (* wildcard) |
+| `permission` | `read-write \| rw \| read-only \| read \| ro \| write-only \| write \| wo \| deny-all \| deny \| none` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### list
+
+`users.list`
+
+Admin: list users (or one by username) with role, tier and topic grants
+
+**Risk:** `read`
+
+```ts
+await corsair.ntfy.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | No | Read only this user |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  username: string,
+  role: string,
+  tier?: string,
+  tier_name?: string,
+  provisioned?: boolean,
+  default_access?: string,
+  grants?: {
+    topic: string,
+    permission: string,
+    provisioned?: boolean
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTokens
+
+`users.listTokens`
+
+Admin: list a user's access tokens
+
+**Risk:** `read`
+
+```ts
+await corsair.ntfy.api.users.listTokens({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tokens` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tokens full type">
+
+```ts
+{
+  username: string,
+  token: string,
+  label?: string,
+  expires?: number,
+  last_access?: number,
+  last_origin?: string,
+  provisioned?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resetAccess
+
+`users.resetAccess`
+
+Admin: remove a user's topic grants (one topic or all)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ntfy.api.users.resetAccess({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+| `topic` | `string` | No | Only this topic's grant; omit for all of the user's grants |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### resetPassword
+
+`users.resetPassword`
+
+Admin: make a password reset link for a user, optionally emailing it
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ntfy.api.users.resetPassword({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+| `sendEmail` | `boolean` | No | Also email the link to the user's primary address |
+
+Returns a reset link holding a token; the server needs a base URL configured. `sendEmail` also emails it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `link` | `string` | Yes | — |
+| `email` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`users.update`
+
+Admin: change a user's password or tier
+
+**Risk:** `write`
+
+```ts
+await corsair.ntfy.api.users.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+| `password` | `string` | No | — |
+| `hash` | `string` | No | — |
+| `tier` | `string` | No | Tier code; "-" removes the tier |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Web Push
+
+### subscribe
+
+`webPush.subscribe`
+
+Register or update a browser push subscription for topics
+
+**Risk:** `write`
+
+```ts
+await corsair.ntfy.api.webPush.subscribe({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpoint` | `string` | Yes | The browser push service endpoint |
+| `auth` | `string` | Yes | — |
+| `p256dh` | `string` | Yes | — |
+| `topics` | `string[]` | Yes | Topics this browser subscription follows |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### unsubscribe
+
+`webPush.unsubscribe`
+
+Remove a browser push subscription
+
+**Risk:** `write`
+
+```ts
+await corsair.ntfy.api.webPush.unsubscribe({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpoint` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
 
 
 
