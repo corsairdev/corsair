@@ -228,6 +228,69 @@ describe('boat routes', () => {
 		expect(sent(1)).toMatchObject({ value: 'production' });
 	});
 
+	it('fails an attach whose stream ends in an error frame, without its message', async () => {
+		const frames =
+			'{"type":"stdout","data":"partial\\n"}\n{"type":"error","error":"sandbox_direct_failed","message":"partial output quoted here"}\n';
+		reply(frames, 200, 'application/x-ndjson');
+		const error = await api.sandboxes.commands
+			.attach(ctx, { sandboxId: SANDBOX, processId: 7 })
+			.catch((e: unknown) => e as Error);
+		expect((error as Error).message).toBe(
+			'Boat sandboxes.commands.attach stream ended with an error frame (sandbox_direct_failed)',
+		);
+		expect((error as Error).message).not.toContain('quoted');
+		const reconnect =
+			'{"type":"stdout","data":"a"}\n{"type":"reconnect","stdoutOffset":1,"stderrOffset":0}\n';
+		reply(reconnect, 200, 'application/x-ndjson');
+		await expect(
+			api.sandboxes.commands.attach(ctx, { sandboxId: SANDBOX, processId: 7 }),
+		).resolves.toEqual({
+			text: reconnect,
+			contentType: 'application/x-ndjson',
+		});
+	});
+
+	it('downloads an HTML artifact sent with its documented type, and refuses a text/html page', async () => {
+		const html = '<!doctype html><html><body>report</body></html>';
+		reply(html, 200, 'application/octet-stream');
+		const out = await api.sandboxes.downloadArtifact(ctx, {
+			sandboxId: SANDBOX,
+			path: '/home/user/report.html',
+		});
+		expect(out).toMatchObject({ contentType: 'application/octet-stream' });
+		reply(html, 200, 'text/html');
+		await expect(
+			api.sandboxes.downloadArtifact(ctx, {
+				sandboxId: SANDBOX,
+				path: '/home/user/report.html',
+			}),
+		).rejects.toThrow(/without a file/);
+	});
+
+	it('scrubs single values from env-file text out of an error', async () => {
+		reply(
+			{
+				ok: false,
+				type: 'sandbox.error',
+				status: 400,
+				code: 'invalid_env',
+				message: 'Bad value sk-live-abc123 for STRIPE_KEY',
+				requestId: 'req_3',
+			},
+			400,
+		);
+		const error = await api.secrets
+			.update(ctx, {
+				envContents: 'STRIPE_KEY="sk-live-abc123"\nOTHER=1\n',
+			})
+			.catch((e: unknown) => e as ApiError);
+		expect((error as ApiError).status).toBe(400);
+		expect((error as ApiError).message).not.toContain('sk-live-abc123');
+		expect(JSON.stringify((error as ApiError).body)).not.toContain(
+			'sk-live-abc123',
+		);
+	});
+
 	it('marks spending and irreversible operations destructive', () => {
 		for (const id of [
 			'sandboxes.create',

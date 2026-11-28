@@ -20,7 +20,9 @@ import { boatWebhooksNested } from './webhooks';
  * - BOAT_ORG_API_KEY: an organization key; checks what it may and may not do.
  * - BOAT_WEBHOOK_URL + BOAT_WEBHOOK_PORT: a public HTTPS URL (a tunnel) that
  *   forwards to this port. The run registers it as a webhook and checks the
- *   signature of every delivery with the plugin's webhook handlers.
+ *   signature of every delivery with the plugin's webhook handlers as it
+ *   arrives. Without both, no webhook is registered (it would get the events
+ *   of every sandbox on the account).
  * - BOAT_LIVE_REPORT=<file>: each step's outcome as JSON.
  *
  * One small sandbox runs end to end (commands, files, ports, desktop,
@@ -111,8 +113,10 @@ function sshPublicKey(): string {
 
 type Delivery = {
 	event: string;
-	headers: Record<string, string>;
-	rawBody: string;
+	/** The plugin's verdict, taken when the delivery arrived. */
+	matched: boolean;
+	success: boolean;
+	note: string;
 };
 
 describeIfKey('boat live', () => {
@@ -238,6 +242,48 @@ describeIfKey('boat live', () => {
 		return undefined;
 	}
 
+	/** Runs one received delivery through the plugin's webhook handler. */
+	async function verifyDelivery(
+		headers: Record<string, string>,
+		rawBody: string,
+	): Promise<Delivery> {
+		const event = headers['x-ascii-event'] ?? '';
+		const hook =
+			boatWebhooksNested.sandboxes[
+				event.replace(
+					/^sandbox\./,
+					'',
+				) as keyof typeof boatWebhooksNested.sandboxes
+			];
+		if (!hook || !webhookSecret) {
+			return {
+				event,
+				matched: false,
+				success: false,
+				note: 'no handler or secret',
+			};
+		}
+		// `unknown` because the body is parsed only for the request shape; the
+		// handler verifies and parses the raw bytes itself.
+		let body: unknown;
+		try {
+			body = JSON.parse(rawBody);
+		} catch {
+			body = undefined;
+		}
+		const request = { headers, body, rawBody } as never;
+		const matched = hook.match(request) === true;
+		const result = matched
+			? await hook.handler({ key: webhookSecret } as never, request)
+			: undefined;
+		return {
+			event,
+			matched,
+			success: (result as { success?: boolean } | undefined)?.success === true,
+			note: matched ? JSON.stringify(result).slice(0, 120) : 'no match',
+		};
+	}
+
 	beforeAll(async () => {
 		main = await createClient(key as string);
 		if (orgKey) org = await createClient(orgKey);
@@ -250,12 +296,11 @@ describeIfKey('boat live', () => {
 					for (const [name, value] of Object.entries(request.headers)) {
 						if (typeof value === 'string') headers[name] = value;
 					}
-					deliveries.push({
-						event: headers['x-ascii-event'] ?? '',
-						headers,
-						rawBody: Buffer.concat(chunks).toString('utf8'),
-					});
-					response.writeHead(204).end();
+					// Verify now: the plugin refuses a timestamp five minutes old, and
+					// the run can take longer than that.
+					void verifyDelivery(headers, Buffer.concat(chunks).toString('utf8'))
+						.then((delivery) => deliveries.push(delivery))
+						.finally(() => response.writeHead(204).end());
 				});
 			});
 			await new Promise<void>((done) => server?.listen(webhookPort, done));
@@ -386,9 +431,17 @@ describeIfKey('boat live', () => {
 	});
 
 	it('registers a webhook, edits it and rotates its secret', async () => {
+		// A webhook gets the events of every sandbox on the account: register
+		// one only when this run receives them itself.
+		if (!server) {
+			console.warn(
+				'Skipping the webhook steps: set BOAT_WEBHOOK_URL and BOAT_WEBHOOK_PORT.',
+			);
+			return;
+		}
 		const created = await step('webhooks.create', {
 			name: `${NAME}-hook`,
-			url: webhookUrl ?? 'https://example.com/corsair-boat-live-test',
+			url: webhookUrl,
 			events: [
 				'sandbox.ready',
 				'sandbox.error',
@@ -963,27 +1016,11 @@ describeIfKey('boat live', () => {
 		if (!server || !webhookSecret) return;
 		// Deliveries can trail the state change by a few seconds.
 		await sleep(15_000);
-		const ctx = { key: webhookSecret } as never;
 		for (const delivery of deliveries) {
-			const event = delivery.event.replace(/^sandbox\./, '') as
-				| 'ready'
-				| 'error'
-				| 'archived'
-				| 'hydrated'
-				| 'degraded'
-				| 'recovered';
-			const hook = boatWebhooksNested.sandboxes[event];
-			const request = {
-				headers: delivery.headers,
-				body: JSON.parse(delivery.rawBody),
-				rawBody: delivery.rawBody,
-			} as never;
-			const matched = hook?.match(request) === true;
-			const result = matched ? await hook.handler(ctx, request) : undefined;
 			steps.push({
 				id: `webhook ${delivery.event as BoatWebhookEventType}`,
-				ok: matched && (result as { success?: boolean })?.success === true,
-				note: matched ? JSON.stringify(result).slice(0, 120) : 'no match',
+				ok: delivery.matched && delivery.success,
+				note: delivery.note,
 			});
 		}
 		steps.push({

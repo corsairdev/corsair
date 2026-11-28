@@ -64,6 +64,35 @@ export function streamError(text: string): string | undefined {
 	return undefined;
 }
 
+/**
+ * A newline-delimited JSON stream (a command's output) ends with exactly one
+ * `exit`, `reconnect` or `error` frame. An `error` last frame is a failure
+ * even though the response was a 200. Returns what is safe to show (the
+ * frame's error code when it is one; its message can quote output), or
+ * undefined when the stream did not end in an error.
+ */
+export function ndjsonError(text: string): string | undefined {
+	const lines = text.split(/\r?\n/).filter((line) => line.trim() !== '');
+	const last = lines[lines.length - 1];
+	if (!last) return undefined;
+	// `unknown` because each frame is the vendor's own JSON.
+	let frame: unknown;
+	try {
+		frame = JSON.parse(last);
+	} catch {
+		return undefined;
+	}
+	const record =
+		frame && typeof frame === 'object'
+			? (frame as Record<string, unknown>)
+			: undefined;
+	if (record?.type !== 'error') return undefined;
+	const code = record.error;
+	return typeof code === 'string' && /^[a-z0-9_.-]{1,64}$/i.test(code)
+		? code
+		: 'no code';
+}
+
 export type BoatOperationEndpoint<Id extends BoatOperationId> = CorsairEndpoint<
 	BoatContext,
 	BoatOperationInputs[Id],
@@ -256,6 +285,15 @@ export function isUsableFile(
 	const type = (contentType ?? '').split(';')[0]?.trim().toLowerCase() ?? '';
 	if ((operation.fileTypes ?? []).some((t) => t.includes('html'))) return true;
 	if (type.includes('html')) return false;
+	// A documented file type is the file, whatever its bytes look like (an
+	// HTML report downloaded as application/octet-stream). Only a body
+	// without a documented type is sniffed for a proxy or login page.
+	if (
+		bytes.byteLength > 0 &&
+		(operation.fileTypes ?? []).some((t) => t.toLowerCase() === type)
+	) {
+		return true;
+	}
 	// An empty file is a file when it comes back with a type the route
 	// documents; an empty body without one is a proxy or a dropped answer.
 	if (bytes.byteLength === 0) {
@@ -475,6 +513,14 @@ export function createBoatOperation<Id extends BoatOperationId>(
 				text: new TextDecoder().decode(binary.bytes),
 				contentType: binary.contentType ?? null,
 			};
+			if (type.startsWith('application/x-ndjson')) {
+				const failure = ndjsonError((response as { text: string }).text);
+				if (failure) {
+					throw new Error(
+						`Boat ${id} stream ended with an error frame (${failure})`,
+					);
+				}
+			}
 			if (type.startsWith('text/event-stream')) {
 				const failure = streamError((response as { text: string }).text);
 				if (failure) {

@@ -335,6 +335,28 @@ const SECRET_KEY =
 
 type SentString = { text: string; wholeWord: boolean };
 
+/** Body fields that carry env-file text (`envContents`, a secret file's `contents`). */
+const ENV_TEXT_KEY = /^(envContents|contents)$/;
+
+/** The non-empty lines of env-file text and the value after each `KEY=`. */
+export function envTextParts(text: string): string[] {
+	const parts: string[] = [];
+	for (const raw of text.split(/\r?\n/)) {
+		const line = raw.trim();
+		if (!line || line.startsWith('#')) continue;
+		parts.push(line);
+		const equals = line.indexOf('=');
+		if (equals > 0) {
+			const value = line
+				.slice(equals + 1)
+				.trim()
+				.replace(/^(['"])(.*)\1$/, '$2');
+			if (value) parts.push(value);
+		}
+	}
+	return parts;
+}
+
 /**
  * Every string this call sent (JSON body, query values, path values), longest
  * first, so a message that quotes one back loses it while keeping its reason.
@@ -377,6 +399,11 @@ function sentStrings(request: ApiError['request']): SentString[] {
 		if (typeof value === 'object') {
 			for (const [key, inner] of Object.entries(value)) {
 				visit(inner, depth + 1, secret || SECRET_KEY.test(key));
+				// Env-file text (`KEY=value` lines): an error can quote one value
+				// back, so each line and each value counts as sent on its own.
+				if (ENV_TEXT_KEY.test(key) && typeof inner === 'string') {
+					for (const part of envTextParts(inner)) visit(part, depth + 1, true);
+				}
 			}
 		}
 	};
