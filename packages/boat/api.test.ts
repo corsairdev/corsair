@@ -248,13 +248,14 @@ describeIfKey('boat live', () => {
 		rawBody: string,
 	): Promise<Delivery> {
 		const event = headers['x-ascii-event'] ?? '';
-		const hook =
-			boatWebhooksNested.sandboxes[
-				event.replace(
-					/^sandbox\./,
-					'',
-				) as keyof typeof boatWebhooksNested.sandboxes
-			];
+		const name = event.replace(/^sandbox\./, '');
+		// Only the six own handlers: a header like sandbox.constructor must not
+		// reach an inherited property.
+		const hook = Object.hasOwn(boatWebhooksNested.sandboxes, name)
+			? boatWebhooksNested.sandboxes[
+					name as keyof typeof boatWebhooksNested.sandboxes
+				]
+			: undefined;
 		if (!hook || !webhookSecret) {
 			return {
 				event,
@@ -300,6 +301,14 @@ describeIfKey('boat live', () => {
 					// the run can take longer than that.
 					void verifyDelivery(headers, Buffer.concat(chunks).toString('utf8'))
 						.then((delivery) => deliveries.push(delivery))
+						.catch((error: unknown) =>
+							deliveries.push({
+								event: headers['x-ascii-event'] ?? '',
+								matched: false,
+								success: false,
+								note: (error as Error).message.slice(0, 120),
+							}),
+						)
 						.finally(() => response.writeHead(204).end());
 				});
 			});
