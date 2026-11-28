@@ -61,7 +61,7 @@ await corsair.ntfy.api.account.create({});
 | `password` | `string` | Yes | — |
 | `email` | `string` | No | Optional; with email configured on the server a verification link is sent |
 
-Signup must be enabled on the server; call it without a key.
+Signup must be enabled on the server, and ntfy refuses it from a signed-in user: use the plugin with `anonymous: true` and no key.
 
 
 
@@ -1769,7 +1769,7 @@ await corsair.ntfy.api.tokens.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `label` | `string` | No | — |
-| `expires` | `number` | No | Unix seconds the token expires; omit or 0 for never |
+| `expires` | `number` | No | Unix seconds the token expires. Omitted, the server default applies (72 hours on ntfy 2.38); 0 means it never expires. |
 
 
 

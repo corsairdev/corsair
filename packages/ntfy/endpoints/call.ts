@@ -8,6 +8,8 @@ import {
 	normalizeNtfyBaseUrl,
 } from '../client';
 
+const NO_STORED_CONFIG_PATTERN = /^(Account not found|No DEK found)/;
+
 type LogFields = Record<string, string | number | boolean | undefined>;
 
 /**
@@ -21,7 +23,17 @@ export async function resolveNtfyTarget(ctx: NtfyContext): Promise<NtfyTarget> {
 	if (!base) {
 		try {
 			base = (await ctx.keys?.get_base_url?.())?.trim() || undefined;
-		} catch {
+		} catch (error) {
+			// No account row, or an account with no DEK (an SDK caller that
+			// passes the key as an option), means no stored server, so ntfy.sh.
+			// Any other failure, such as a config that cannot be decrypted,
+			// must not send the call to ntfy.sh instead of the stored server.
+			if (
+				!(error instanceof Error) ||
+				!NO_STORED_CONFIG_PATTERN.test(error.message)
+			) {
+				throw error;
+			}
 			base = undefined;
 		}
 	}

@@ -138,6 +138,15 @@ describe('ntfy key builder', () => {
 		);
 	});
 
+	it('sends anonymously with the anonymous option and no key', async () => {
+		await expect(
+			buildKey(ntfy({ anonymous: true }), keyContext(null)),
+		).resolves.toBe('');
+		await expect(
+			buildKey(ntfy({ anonymous: true }), keyContext('tk_stored')),
+		).resolves.toBe('tk_stored');
+	});
+
 	it('refuses webhook keys, because ntfy sends no inbound webhooks', async () => {
 		await expect(
 			ntfy().keyBuilder?.(keyContext('tk_stored') as never, 'webhook'),

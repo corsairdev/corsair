@@ -1,5 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { Account, Messages, Server } from './endpoints';
+import { resolveNtfyTarget } from './endpoints/call';
+import * as More from './endpoints/more';
 import {
 	actionsMessage,
 	anonymousAccount,
@@ -201,5 +203,70 @@ describe('rejections', () => {
 		await expect(
 			invoke(Messages.send, { topic: 't', message: 'x' }),
 		).rejects.toMatchObject({ status: 404, body: notFound });
+	});
+});
+
+describe('review follow-ups', () => {
+	it('uploads a JSON file as raw bytes, not JSON-encoded', async () => {
+		respond({
+			id: 'f1',
+			time: 1,
+			event: 'message',
+			topic: 't',
+			message: 'x',
+			attachment: { name: 'data.json', url: 'https://ntfy.sh/file/f1.json' },
+		});
+		const payload = '{"a":1}';
+		await invoke(More.sendFile, {
+			topic: 't',
+			filename: 'data.json',
+			contentType: 'application/json',
+			contentBase64: Buffer.from(payload).toString('base64'),
+			title: '完成',
+		});
+		const [, init] = fetchMock.mock.calls.at(-1) as [string, RequestInit];
+		expect(init.body).toBeInstanceOf(Blob);
+		expect(await (init.body as Blob).text()).toBe(payload);
+		const headers = new Headers(init.headers);
+		expect(headers.get('content-type')).toBe('application/octet-stream');
+		expect(headers.get('x-title')).toMatch(/^=\?UTF-8\?B\?/);
+	});
+
+	it('refuses a metrics answer that is not text', async () => {
+		respond({ not: 'prometheus' });
+		await expect(invoke(More.metrics, {})).rejects.toThrow();
+	});
+});
+
+describe('resolveNtfyTarget', () => {
+	function ctxWith(getBaseUrl: () => Promise<string | null>) {
+		return {
+			key: 'tk_x',
+			options: {},
+			keys: { get_base_url: getBaseUrl },
+		} as never;
+	}
+
+	it('uses the stored base_url, else ntfy.sh when nothing is stored', async () => {
+		await expect(
+			resolveNtfyTarget(ctxWith(async () => 'https://ntfy.example.com/')),
+		).resolves.toEqual({ baseUrl: 'https://ntfy.example.com', key: 'tk_x' });
+		await expect(
+			resolveNtfyTarget(
+				ctxWith(async () => {
+					throw new Error('No DEK found for account (tenant: "t")');
+				}),
+			),
+		).resolves.toMatchObject({ baseUrl: 'https://ntfy.sh' });
+	});
+
+	it('fails instead of falling back to ntfy.sh when the stored config cannot be read', async () => {
+		await expect(
+			resolveNtfyTarget(
+				ctxWith(async () => {
+					throw new Error('Unsupported state or unable to authenticate data');
+				}),
+			),
+		).rejects.toThrow('unable to authenticate');
 	});
 });

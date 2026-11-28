@@ -95,6 +95,14 @@ export async function makeNtfyRequest(
 	}: NtfyRequest,
 ): Promise<unknown> {
 	const authorization = ntfyAuthorization(target.key);
+	if (authorization && !isSafeForCredentials(target.baseUrl)) {
+		// Basic sends the password as is; a token is just as reusable. Over
+		// plain http either would be readable on the way, so the call stops
+		// here. Anonymous calls over http still go out.
+		throw new Error(
+			'ntfy: refusing to send credentials over plain http; use an https server URL',
+		);
+	}
 	const extraHeaders: Record<string, string> = {};
 	for (const [name, value] of Object.entries(headers ?? {})) {
 		if (value !== undefined && value !== '') extraHeaders[name] = value;
@@ -121,9 +129,56 @@ export async function makeNtfyRequest(
 		...(responseType ? { responseType } : {}),
 	};
 
-	return await request<unknown>(config, requestOptions, {
-		rateLimitConfig: NTFY_RATE_LIMIT_CONFIG,
-	});
+	try {
+		return await request<unknown>(config, requestOptions, {
+			rateLimitConfig: NTFY_RATE_LIMIT_CONFIG,
+		});
+	} catch (error) {
+		throw error instanceof ApiError ? withoutRequestData(error) : error;
+	}
+}
+
+/** https, or http to this machine (a local test server). */
+function isSafeForCredentials(baseUrl: string): boolean {
+	const url = new URL(baseUrl);
+	if (url.protocol === 'https:') return true;
+	return ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname);
+}
+
+/**
+ * Core's ApiError keeps the request body and query: message text, email
+ * addresses, phone numbers, passwords. It is rebuilt with only the method
+ * and path (R8 allows this), keeping status, the error body (with the ntfy
+ * code) and the rate-limit fields.
+ */
+function withoutRequestData(error: ApiError): ApiError {
+	return new ApiError(
+		{ method: error.request.method, url: error.request.url },
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		error.message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+}
+
+/**
+ * A header value ntfy can read: ASCII as is, anything else (non-Latin
+ * text, newlines) as an RFC 2047 encoded word, which ntfy decodes.
+ */
+export function ntfyHeaderValue(value: string | undefined): string | undefined {
+	if (value === undefined || value === '') return undefined;
+	if (/^[\x20-\x7e]*$/.test(value)) return value;
+	return `=?UTF-8?B?${Buffer.from(value, 'utf8').toString('base64')}?=`;
 }
 
 /**
@@ -145,7 +200,11 @@ export function parseNtfyNdjson(raw: unknown): unknown[] {
 		if (line.length === 0) continue;
 		// unknown: a line can be any JSON value until asRecord narrows it.
 		const parsed: unknown = JSON.parse(line);
-		if (asRecord(parsed)?.event === 'message') messages.push(parsed);
+		const row = asRecord(parsed);
+		if (!row || typeof row.event !== 'string') {
+			throw new Error('ntfy poll answered a row that is not an event object');
+		}
+		if (row.event === 'message') messages.push(parsed);
 	}
 	return messages;
 }

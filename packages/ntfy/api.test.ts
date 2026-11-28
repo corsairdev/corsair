@@ -75,7 +75,10 @@ describeIfKey('ntfy live API (ntfy.sh, read-only)', () => {
 });
 
 function ctxFor(key: string): NtfyContext {
-	return { key, options: { serverUrl: LIVE_URL } } as unknown as NtfyContext;
+	return {
+		key,
+		options: { serverUrl: LIVE_URL, anonymous: true },
+	} as unknown as NtfyContext;
 }
 
 async function statusOf(promise: Promise<unknown>): Promise<number> {
@@ -97,6 +100,20 @@ describeIfServer('ntfy live API (self-hosted, every operation)', () => {
 	const tierCode = `ct${suffix}`;
 	let user: NtfyContext = ctxFor(`${username}:${password}`);
 	let userToken = '';
+
+	// Whatever a failed test left behind is removed with the admin
+	// credential, each step on its own so one failure cannot stop the rest.
+	afterAll(async () => {
+		const attempts = [
+			() => More.usersUpdate(admin, { username, tier: '-' }),
+			() => More.usersDelete(admin, { username }),
+			() => More.usersDelete(admin, { username: `${username}_b` }),
+			() => More.tiersDelete(admin, { code: tierCode }),
+		];
+		for (const attempt of attempts) {
+			await attempt().catch(() => undefined);
+		}
+	});
 
 	it('server: health, ready, version, config, stats, metrics', async () => {
 		expect((await Server.health(admin, {})).healthy).toBe(true);
@@ -235,6 +252,20 @@ describeIfServer('ntfy live API (self-hosted, every operation)', () => {
 		const id = file.attachment?.url.split('/file/')[1] ?? '';
 		const downloaded = await More.download(user, { id });
 		expect(downloaded.text ?? '').toContain('hello from corsair');
+		// A JSON file keeps its bytes, and a non-ASCII title survives the
+		// RFC 2047 header encoding.
+		const json = await More.sendFile(user, {
+			topic,
+			contentBase64: Buffer.from('{"a":1}').toString('base64'),
+			filename: 'data.json',
+			contentType: 'application/json',
+			title: '完成',
+		});
+		expect(json.title).toBe('完成');
+		const jsonFile = await More.download(user, {
+			id: json.attachment?.url.split('/file/')[1] ?? '',
+		});
+		expect(jsonFile.text).toBe('{"a":1}');
 		const polled = await Messages.poll(user, { topic, since: 'all' });
 		expect(polled.messages.length).toBeGreaterThanOrEqual(2);
 		const updated = await Messages.update(user, {
@@ -344,7 +375,7 @@ describeIfServer('ntfy live API (self-hosted, every operation)', () => {
 	});
 
 	it('cleanup: tokens.delete, account.delete, users.create/delete, tiers.delete', async () => {
-		await More.tokensDelete(user, { token: userToken });
+		if (userToken) await More.tokensDelete(user, { token: userToken });
 		// account.delete only marks the account for removal, so the tier is
 		// taken off first or tiers.delete answers 409 (tier still assigned).
 		await More.usersUpdate(admin, { username, tier: '-' });

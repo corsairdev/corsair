@@ -1,5 +1,6 @@
 import { toFileOutput } from 'corsair/http';
 import { z } from 'zod';
+import { ntfyHeaderValue } from '../client';
 import * as T from './api-types';
 import { op } from './call';
 import { NtfyEndpointOutputSchemas as Outputs } from './types';
@@ -27,13 +28,16 @@ export const sendFile = op({
 			method: 'PUT',
 			path: `/${input.topic}`,
 			body: new Blob([Buffer.from(input.contentBase64, 'base64')], { type }),
-			rawMediaType: type,
+			// Always octet-stream on the wire: core would JSON-encode a Blob
+			// sent as application/json. ntfy names the attachment type from the
+			// bytes and the file name, not from this header.
+			rawMediaType: 'application/octet-stream',
 			headers: {
-				'X-Filename': input.filename,
-				'X-Title': input.title,
-				'X-Message': input.message,
+				'X-Filename': ntfyHeaderValue(input.filename),
+				'X-Title': ntfyHeaderValue(input.title),
+				'X-Message': ntfyHeaderValue(input.message),
 				'X-Priority': priorityHeader(input.priority),
-				'X-Tags': input.tags?.join(','),
+				'X-Tags': ntfyHeaderValue(input.tags?.join(',')),
 				'X-Click': input.click,
 				'X-Icon': input.icon,
 				'X-Delay': input.delay,
@@ -41,8 +45,8 @@ export const sendFile = op({
 			},
 		};
 	},
-	log: ({ topic }, result) => ({
-		topic,
+	// No topic: on ntfy.sh an unreserved topic name works as a password.
+	log: (_, result) => ({
 		messageId: result.id,
 		bytes: result.attachment?.size ?? undefined,
 	}),
@@ -55,7 +59,6 @@ export const checkAuth = op({
 	input: T.TopicsCheckAuthInputSchema,
 	output: T.SuccessSchema,
 	request: ({ topic }) => ({ method: 'GET', path: `/${topic}/auth` }),
-	log: ({ topic }) => ({ topic }),
 });
 
 export const download = op({
@@ -103,7 +106,12 @@ export const metrics = op({
 	input: T.Empty,
 	output: T.MetricsSchema,
 	request: () => ({ method: 'GET', path: '/metrics' }),
-	shape: (raw) => ({ text: typeof raw === 'string' ? raw : String(raw ?? '') }),
+	shape: (raw) => {
+		if (typeof raw !== 'string' || raw.length === 0) {
+			throw new Error('ntfy /metrics answered without Prometheus text');
+		}
+		return { text: raw };
+	},
 });
 
 // ── account ──────────────────────────────────────────────────────────────────
@@ -232,7 +240,6 @@ export const subscriptionsAdd = op({
 		path: '/v1/account/subscription',
 		body: subscriptionBody(input),
 	}),
-	log: ({ topic }) => ({ topic }),
 });
 
 export const subscriptionsUpdate = op({
@@ -244,7 +251,6 @@ export const subscriptionsUpdate = op({
 		path: '/v1/account/subscription',
 		body: subscriptionBody(input),
 	}),
-	log: ({ topic }) => ({ topic }),
 });
 
 export const subscriptionsDelete = op({
@@ -256,7 +262,6 @@ export const subscriptionsDelete = op({
 		path: '/v1/account/subscription',
 		headers: { 'X-BaseURL': baseUrl, 'X-Topic': topic },
 	}),
-	log: ({ topic }) => ({ topic }),
 });
 
 export const reservationsAdd = op({
@@ -268,7 +273,7 @@ export const reservationsAdd = op({
 		path: '/v1/account/reservation',
 		body,
 	}),
-	log: ({ topic, everyone }) => ({ topic, everyone }),
+	log: ({ everyone }) => ({ everyone }),
 });
 
 export const reservationsDelete = op({
@@ -282,7 +287,6 @@ export const reservationsDelete = op({
 			'X-Delete-Messages': deleteMessages ? 'true' : undefined,
 		},
 	}),
-	log: ({ topic }) => ({ topic }),
 });
 
 // ── phone numbers / emails ───────────────────────────────────────────────────
@@ -469,7 +473,7 @@ export const usersGrantAccess = op({
 	input: T.UsersGrantAccessInputSchema,
 	output: T.SuccessSchema,
 	request: (body) => ({ method: 'PUT', path: '/v1/users/access', body }),
-	log: ({ topic, permission }) => ({ topic, permission }),
+	log: ({ permission }) => ({ permission }),
 });
 
 export const usersResetAccess = op({
@@ -477,7 +481,6 @@ export const usersResetAccess = op({
 	input: T.UsersResetAccessInputSchema,
 	output: T.SuccessSchema,
 	request: (body) => ({ method: 'DELETE', path: '/v1/users/access', body }),
-	log: ({ topic }) => ({ topic }),
 });
 
 export const usersListTokens = op({

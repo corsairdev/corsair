@@ -79,8 +79,8 @@ export const send: NtfyEndpoints['messagesSend'] = (ctx, input) =>
 			body: publishBody(parsed),
 		}),
 		{
-			log: ({ topic, sequenceId }, result) => ({
-				topic,
+			// No topic in logs: an unreserved ntfy.sh topic name works as a password.
+			log: ({ sequenceId }, result) => ({
 				sequenceId: sequenceId ?? result.sequence_id ?? undefined,
 				messageId: result.id,
 			}),
@@ -114,7 +114,7 @@ export const poll: NtfyEndpoints['messagesPoll'] = (ctx, input) =>
 			// An unknown topic answers 200 with an empty body: a genuine
 			// empty poll, not a missing envelope.
 			shape: (raw) => ({ messages: parseNtfyNdjson(raw) }),
-			log: ({ topic }, result) => ({ topic, count: result.messages.length }),
+			log: (_, result) => ({ count: result.messages.length }),
 		},
 	);
 
@@ -133,8 +133,7 @@ export const update: NtfyEndpoints['messagesUpdate'] = (ctx, input) =>
 			body: publishBody(parsed),
 		}),
 		{
-			log: ({ topic, sequenceId }, result) => ({
-				topic,
+			log: ({ sequenceId }, result) => ({
 				sequenceId,
 				messageId: result.id,
 			}),
@@ -155,7 +154,7 @@ export const clear: NtfyEndpoints['messagesClear'] = (ctx, input) =>
 			path: `/${topic}/${sequenceId}/clear`,
 		}),
 		{
-			log: ({ topic, sequenceId }) => ({ topic, sequenceId }),
+			log: ({ sequenceId }) => ({ sequenceId }),
 		},
 	);
 
@@ -175,6 +174,6 @@ export const remove: NtfyEndpoints['messagesDelete'] = (ctx, input) =>
 			path: `/${topic}/${sequenceId}`,
 		}),
 		{
-			log: ({ topic, sequenceId }) => ({ topic, sequenceId }),
+			log: ({ sequenceId }) => ({ sequenceId }),
 		},
 	);

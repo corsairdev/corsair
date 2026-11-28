@@ -34,6 +34,13 @@ export type NtfyPluginOptions = {
 	 * account's stored `base_url`, else https://ntfy.sh.
 	 */
 	serverUrl?: string;
+	/**
+	 * Send calls without credentials when no key is set or stored: anonymous
+	 * publishing to open topics, and `account.create` signup (ntfy refuses
+	 * signup from a signed-in user). Off by default, so a tenant without a
+	 * key is asked to connect.
+	 */
+	anonymous?: boolean;
 	hooks?: InternalNtfyPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof ntfyEndpointsNested>;
@@ -577,8 +584,11 @@ export function ntfy<const T extends NtfyPluginOptions>(
 				if (res) return res;
 			}
 
-			// Any garbage Authorization header 401s on ntfy.sh, so an absent
-			// key must throw rather than send a placeholder.
+			// An empty key sends no Authorization header at all. Without the
+			// anonymous option an absent key throws instead: any garbage
+			// Authorization header 401s on ntfy.sh, and core then asks the
+			// tenant to connect.
+			if (source === 'endpoint' && options.anonymous) return '';
 			throw new AuthMissingError('ntfy', ctx.authType ?? 'api_key');
 		},
 	} satisfies InternalNtfyPlugin;

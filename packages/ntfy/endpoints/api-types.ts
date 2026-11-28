@@ -212,7 +212,9 @@ export const TokensCreateInputSchema = z.object({
 		.number()
 		.int()
 		.optional()
-		.describe('Unix seconds the token expires; omit or 0 for never'),
+		.describe(
+			'Unix seconds the token expires. Omitted, the server default applies (72 hours on ntfy 2.38); 0 means it never expires.',
+		),
 });
 
 export const TokensUpdateInputSchema = z.object({

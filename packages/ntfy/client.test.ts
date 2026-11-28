@@ -5,6 +5,7 @@ import {
 	normalizeNtfyBaseUrl,
 	ntfyAuthorization,
 	ntfyErrorCode,
+	ntfyHeaderValue,
 	parseNtfyNdjson,
 } from './client';
 import { pollNdjson, publishedMessage, unauthorized } from './test-fixtures';
@@ -225,6 +226,64 @@ describe('makeNtfyRequest', () => {
 			responseType: 'binary',
 		})) as { bytes: Uint8Array };
 		expect(Array.from(file.bytes)).toEqual([1, 2, 3]);
+	});
+});
+
+describe('safety', () => {
+	it('refuses to send credentials over plain http, but allows localhost and anonymous', async () => {
+		await expect(
+			makeNtfyRequest(
+				{ baseUrl: 'http://ntfy.example.com', key: 'phil:secret' },
+				{ method: 'GET', path: '/v1/health' },
+			),
+		).rejects.toThrow(/plain http/);
+		expect(fetchMock).not.toHaveBeenCalled();
+
+		respond({ healthy: true }, 200);
+		await makeNtfyRequest(
+			{ baseUrl: 'http://ntfy.example.com', key: '' },
+			{ method: 'GET', path: '/v1/health' },
+		);
+		respond({ healthy: true }, 200);
+		await makeNtfyRequest(
+			{ baseUrl: 'http://localhost:8080', key: API_KEY },
+			{ method: 'GET', path: '/v1/health' },
+		);
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+	});
+
+	it('drops the request body and query from errors', async () => {
+		respond(unauthorized, 403);
+		const error = await failure(
+			makeNtfyRequest(TARGET, {
+				method: 'POST',
+				path: '/',
+				body: {
+					topic: 'mytopic',
+					message: 'private text',
+					email: 'phil@example.com',
+				},
+			}),
+		);
+		expect(error.request).toEqual({ method: 'POST', url: '/' });
+		const dump = inspect(error) + JSON.stringify(error);
+		expect(dump).not.toContain('private text');
+		expect(dump).not.toContain('phil@example.com');
+		expect(ntfyErrorCode(error)).toBe(40101);
+	});
+
+	it('encodes non-ASCII header text as an RFC 2047 word', () => {
+		expect(ntfyHeaderValue('Done')).toBe('Done');
+		expect(ntfyHeaderValue('完成')).toBe(
+			`=?UTF-8?B?${Buffer.from('完成').toString('base64')}?=`,
+		);
+		expect(ntfyHeaderValue('line 1\nline 2')).toMatch(/^=\?UTF-8\?B\?/);
+		expect(ntfyHeaderValue(undefined)).toBeUndefined();
+	});
+
+	it('refuses a poll row that is not an event object', () => {
+		expect(() => parseNtfyNdjson('123\n')).toThrow();
+		expect(() => parseNtfyNdjson('{"id":"x"}\n')).toThrow();
 	});
 });
 
