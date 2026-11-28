@@ -225,6 +225,7 @@ export const BaseProviders = [
 	'digicert',
 	'digitalocean',
 	'discord',
+	'discourse',
 	'dnsfilter',
 	'dockerhub',
 	'docmosis',
@@ -1045,6 +1046,7 @@ export const ProviderDisplayNames = {
 	digicert: 'DigiCert',
 	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
+	discourse: 'Discourse',
 	dnsfilter: 'DNSFilter',
 	dockerhub: 'Docker Hub',
 	docmosis: 'Docmosis',
@@ -1872,6 +1874,7 @@ export type AllProviders =
 	| 'digicert'
 	| 'digitalocean'
 	| 'discord'
+	| 'discourse'
 	| 'dnsfilter'
 	| 'dockerhub'
 	| 'docmosis'

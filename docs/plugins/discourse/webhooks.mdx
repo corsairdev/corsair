@@ -1,0 +1,2973 @@
+---
+title: "Discourse webhooks"
+sidebarTitle: "Webhooks"
+description: "Discourse incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The Discourse plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/discourse/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `badges`
+  - `granted` (`badges.granted`)
+  - `revoked` (`badges.revoked`)
+- `categories`
+  - `created` (`categories.created`)
+  - `destroyed` (`categories.destroyed`)
+  - `updated` (`categories.updated`)
+- `groups`
+  - `created` (`groups.created`)
+  - `destroyed` (`groups.destroyed`)
+  - `updated` (`groups.updated`)
+- `likes`
+  - `liked` (`likes.liked`)
+- `notifications`
+  - `created` (`notifications.created`)
+- `ping`
+  - `ping` (`ping.ping`)
+- `posts`
+  - `created` (`posts.created`)
+  - `destroyed` (`posts.destroyed`)
+  - `edited` (`posts.edited`)
+  - `recovered` (`posts.recovered`)
+- `reviewables`
+  - `created` (`reviewables.created`)
+  - `updated` (`reviewables.updated`)
+- `tags`
+  - `created` (`tags.created`)
+  - `destroyed` (`tags.destroyed`)
+  - `updated` (`tags.updated`)
+- `topics`
+  - `created` (`topics.created`)
+  - `destroyed` (`topics.destroyed`)
+  - `edited` (`topics.edited`)
+  - `recovered` (`topics.recovered`)
+  - `revised` (`topics.revised`)
+  - `statusUpdated` (`topics.statusUpdated`)
+- `users`
+  - `addedToGroup` (`users.addedToGroup`)
+  - `anonymized` (`users.anonymized`)
+  - `approved` (`users.approved`)
+  - `confirmedEmail` (`users.confirmedEmail`)
+  - `created` (`users.created`)
+  - `destroyed` (`users.destroyed`)
+  - `loggedIn` (`users.loggedIn`)
+  - `loggedOut` (`users.loggedOut`)
+  - `promoted` (`users.promoted`)
+  - `suspended` (`users.suspended`)
+  - `unsuspended` (`users.unsuspended`)
+  - `updated` (`users.updated`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
+}
+```
+
+## Events
+
+## Badges
+
+### Granted
+
+`badges.granted`
+
+A user badge was granted (user_badge_granted).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_badge` | `object` | Yes | The user badge as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="user_badge full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  user_badge: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        badges: {
+            granted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Revoked
+
+`badges.revoked`
+
+A user badge was revoked (user_badge_revoked).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_badge` | `object` | Yes | The user badge as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="user_badge full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  user_badge: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        badges: {
+            revoked: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Categories
+
+### Created
+
+`categories.created`
+
+A category was created (category_created).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category` | `object` | Yes | The category as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="category full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  category: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        categories: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Destroyed
+
+`categories.destroyed`
+
+A category was deleted (category_destroyed).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category` | `object` | Yes | The category as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="category full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  category: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        categories: {
+            destroyed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Updated
+
+`categories.updated`
+
+A category was updated (category_updated).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category` | `object` | Yes | The category as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="category full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  category: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        categories: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Groups
+
+### Created
+
+`groups.created`
+
+A group was created (group_created).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group` | `object` | Yes | The group as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="group full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  group: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        groups: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Destroyed
+
+`groups.destroyed`
+
+A group was deleted (group_destroyed).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group` | `object` | Yes | The group as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="group full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  group: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        groups: {
+            destroyed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Updated
+
+`groups.updated`
+
+A group was updated (group_updated).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group` | `object` | Yes | The group as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="group full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  group: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        groups: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Likes
+
+### Liked
+
+`likes.liked`
+
+A like was liked (post_liked).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `like` | `object` | Yes | The like as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="like full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  like: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        likes: {
+            liked: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Notifications
+
+### Created
+
+`notifications.created`
+
+A notification was created (notification_created).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notification` | `object` | Yes | The notification as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="notification full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  notification: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        notifications: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Ping
+
+### Ping
+
+`ping.ping`
+
+The test delivery Discourse sends from the webhook settings page (ping).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ping` | `string \| null` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  ping?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        ping: {
+            ping: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Posts
+
+### Created
+
+`posts.created`
+
+A post was created (post_created).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `post` | `object` | Yes | The post as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="post full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  post: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        posts: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Destroyed
+
+`posts.destroyed`
+
+A post was deleted (post_destroyed).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `post` | `object` | Yes | The post as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="post full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  post: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        posts: {
+            destroyed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Edited
+
+`posts.edited`
+
+A post was edited (post_edited).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `post` | `object` | Yes | The post as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="post full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  post: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        posts: {
+            edited: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Recovered
+
+`posts.recovered`
+
+A post was restored (post_recovered).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `post` | `object` | Yes | The post as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="post full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  post: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        posts: {
+            recovered: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Reviewables
+
+### Created
+
+`reviewables.created`
+
+A reviewable was created (reviewable_created).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reviewable` | `object` | Yes | The reviewable as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="reviewable full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  reviewable: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        reviewables: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Updated
+
+`reviewables.updated`
+
+A review queue item changed score or status (reviewable_score_updated, reviewable_transitioned_to).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reviewable` | `object` | Yes | The reviewable as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="reviewable full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  reviewable: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        reviewables: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Tags
+
+### Created
+
+`tags.created`
+
+A tag was created (tag_created).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag` | `object` | Yes | The tag as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="tag full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  tag: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        tags: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Destroyed
+
+`tags.destroyed`
+
+A tag was deleted (tag_destroyed).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag` | `object` | Yes | The tag as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="tag full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  tag: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        tags: {
+            destroyed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Updated
+
+`tags.updated`
+
+A tag was updated (tag_updated).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag` | `object` | Yes | The tag as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="tag full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  tag: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        tags: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Topics
+
+### Created
+
+`topics.created`
+
+A topic was created (topic_created).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `topic` | `object` | Yes | The topic as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="topic full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  topic: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        topics: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Destroyed
+
+`topics.destroyed`
+
+A topic was deleted (topic_destroyed).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `topic` | `object` | Yes | The topic as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="topic full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  topic: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        topics: {
+            destroyed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Edited
+
+`topics.edited`
+
+A topic was edited (topic_edited).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `topic` | `object` | Yes | The topic as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="topic full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  topic: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        topics: {
+            edited: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Recovered
+
+`topics.recovered`
+
+A topic was restored (topic_recovered).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `topic` | `object` | Yes | The topic as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="topic full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  topic: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        topics: {
+            recovered: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Revised
+
+`topics.revised`
+
+A topic got a new revision (topic_revised).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `topic` | `object` | Yes | The topic as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="topic full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  topic: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        topics: {
+            revised: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Status Updated
+
+`topics.statusUpdated`
+
+A topic was closed, archived, pinned, unlisted or had another status change (topic_<status>_status_updated).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `topic` | `object` | Yes | The topic as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="topic full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  topic: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        topics: {
+            statusUpdated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Users
+
+### Added To Group
+
+`users.addedToGroup`
+
+A user was added to a group (user_added_to_group).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_user` | `object` | Yes | The group user as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="group_user full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  group_user: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        users: {
+            addedToGroup: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Anonymized
+
+`users.anonymized`
+
+A user was anonymized (user_anonymized).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | The user as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  user: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        users: {
+            anonymized: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Approved
+
+`users.approved`
+
+A user was approved (user_approved).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | The user as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  user: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        users: {
+            approved: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Confirmed Email
+
+`users.confirmedEmail`
+
+A user confirmed their email (user_confirmed_email).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | The user as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  user: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        users: {
+            confirmedEmail: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Created
+
+`users.created`
+
+A user was created (user_created).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | The user as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  user: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        users: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Destroyed
+
+`users.destroyed`
+
+A user was deleted (user_destroyed).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | The user as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  user: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        users: {
+            destroyed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Logged In
+
+`users.loggedIn`
+
+A user signed in (user_logged_in).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | The user as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  user: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        users: {
+            loggedIn: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Logged Out
+
+`users.loggedOut`
+
+A user signed out (user_logged_out).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | The user as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  user: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        users: {
+            loggedOut: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Promoted
+
+`users.promoted`
+
+A user moved up a trust level (user_promoted).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_promoted` | `object` | Yes | The user promoted as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="user_promoted full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  user_promoted: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        users: {
+            promoted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Suspended
+
+`users.suspended`
+
+A user was suspended (user_suspended).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | The user as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  user: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        users: {
+            suspended: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Unsuspended
+
+`users.unsuspended`
+
+A user was unsuspended (user_unsuspended).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | The user as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  user: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        users: {
+            unsuspended: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Updated
+
+`users.updated`
+
+A user was updated (user_updated).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | The user as Discourse serializes it. |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  name?: string | null,
+  title?: string | null,
+  slug?: string | null,
+  topic_id?: number | null,
+  post_number?: number | null,
+  raw?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  user: {
+    id?: number | null,
+    username?: string | null,
+    name?: string | null,
+    title?: string | null,
+    slug?: string | null,
+    topic_id?: number | null,
+    post_number?: number | null,
+    raw?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discourse({
+    webhookHooks: {
+        users: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
