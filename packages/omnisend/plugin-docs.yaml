@@ -1,0 +1,241 @@
+# Display copy for the generated docs and the catalog, plus one call
+# example per operation. Generated with the plugin from Omnisend's OpenAPI spec;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: Omnisend
+domain: omnisend.com
+description: "Email and SMS marketing with Omnisend: contacts and tags, campaigns (send, A/B tests, UTM), automations, segments, email templates and layouts, forms, products, categories, events, images, analytics and batches (108 operations)."
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key in Omnisend under Store settings > API keys and give it the scopes you need (contacts, campaigns, automations, products and so on). Things to know before you write:
+
+  - **Sending is final.** `campaigns.send` emails or texts the campaign's whole audience and `campaigns.selectAbTestWinner` sends the winning variant to the rest; both are `destructive`. `campaigns.sendTestEmail` and `automations.sendBlockTestEmail` send real mail to the addresses you give. `automations.enable` turns on a flow that messages contacts whenever its trigger fires.
+  - **Events trigger automations.** `events.send` records a customer event (placed order, custom events) and creates or updates the contact; it can start automations that email real customers and cannot be edited or deleted afterwards.
+  - **Tags replace.** `contacts.update`, `contacts.updateByEmail` and `contacts.upsert` replace a contact's tag list with the one you send. Use `contacts.addTags` / `contacts.removeTags` to change tags on up to 250 contacts or a whole segment (queued, 202).
+  - **Batches.** `batches.create` queues up to 100 contact, product, category or event writes; read progress with `batches.get` and per-item results with `batches.listItems`.
+  - **Paging.** Most lists page with `after` / `before` cursors from `paging.cursors` and stop when `paging.hasMore` is false; a few take `offset` and `limit`.
+examples:
+  read:
+    path: contacts.list
+    title: List contacts
+    args: {}
+  write:
+    path: contacts.addTags
+    title: Tag contacts
+    args: {"emails": ["ada@example.com"], "tags": ["vip"]}
+apiExamples:
+  analytics.generateReport:
+    args: {}
+  analytics.generateStatistics:
+    args: {}
+  automations.copy:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  automations.create:
+    args: {"blocks": [{"temporaryID": "tmp-1", "type": "delay"}], "name": "Spring sale", "trigger": {"condition": {"event": "placed order"}}}
+  automations.delete:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  automations.deleteSchedule:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  automations.disable:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0", "contactsInWorkflow": "keep"}
+  automations.enable:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  automations.get:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  automations.getBlockUtm:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0", "blockID": "block-1"}
+  automations.getSchedule:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  automations.getUtm:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  automations.list:
+    args: {}
+  automations.replaceBlocks:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0", "blocks": [{"type": "delay"}]}
+  automations.sendBlockTestEmail:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0", "blockID": "block-1", "recipients": ["example"]}
+  automations.setBlockUtm:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0", "blockID": "block-1", "tags": {"campaign": "spring-sale", "medium": "email", "source": "newsletter"}}
+  automations.setSchedule:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  automations.update:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  batches.create:
+    args: {"endpoint": "products", "items": ["example"], "method": "POST"}
+  batches.get:
+    args: {"batchID": "6650a1b2c3d4e5f6a7b8c9d3"}
+  batches.list:
+    args: {"endpoint": "products"}
+  batches.listItems:
+    args: {"batchID": "6650a1b2c3d4e5f6a7b8c9d3"}
+  brands.connect:
+    args: {"platform": "custom", "version": "1", "website": "https://shop.example.com"}
+  brands.getCurrent:
+    args: {}
+  campaigns.cancel:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  campaigns.copy:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  campaigns.create:
+    args: {"name": "Spring sale", "type": "regular", "channel": "email", "content": {"email": {"subject": "Spring sale starts today", "senderName": "Corsair Shop", "templateID": "6650a1b2c3d4e5f6a7b8c9d5"}}}
+  campaigns.delete:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  campaigns.get:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  campaigns.getUtm:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  campaigns.list:
+    args: {}
+  campaigns.restoreToDraft:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  campaigns.resumeAbTest:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  campaigns.selectAbTestWinner:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0", "variantID": "prod-1001-42"}
+  campaigns.send:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  campaigns.sendTestEmail:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0", "recipients": ["example"]}
+  campaigns.setUtm:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  campaigns.stopAbTest:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  campaigns.update:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  categories.create:
+    args: {"categoryID": "cat-shoes", "title": "Canvas sneaker"}
+  categories.delete:
+    args: {"categoryID": "cat-shoes"}
+  categories.get:
+    args: {"categoryID": "cat-shoes"}
+  categories.list:
+    args: {}
+  categories.update:
+    args: {"categoryID": "cat-shoes", "title": "Canvas sneaker"}
+  contacts.addTags:
+    args: {"emails": ["ada@example.com"], "tags": ["vip"]}
+  contacts.get:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  contacts.list:
+    args: {}
+  contacts.removeTags:
+    args: {"emails": ["ada@example.com"], "tags": ["vip"]}
+  contacts.update:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  contacts.updateByEmail:
+    args: {"email": "ada@example.com"}
+  contacts.upsert:
+    args: {}
+  contentTranslations.listLanguages:
+    args: {}
+  emailContent.get:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  emailContent.render:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  emailContent.replace:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  events.defineSchema:
+    args: {"name": "Spring sale", "origin": "api"}
+  events.queryMetadata:
+    args: {"category": "automations"}
+  events.send:
+    args: {}
+  events.updateSchema:
+    args: {"name": "Spring sale", "origin": "api"}
+  formAbSetups.create:
+    args: {"formID": "6650a1b2c3d4e5f6a7b8c9d2"}
+  formAbSetups.delete:
+    args: {"abSetupID": "6650a1b2c3d4e5f6a7b8c9d4"}
+  formAbSetups.get:
+    args: {"abSetupID": "6650a1b2c3d4e5f6a7b8c9d4"}
+  formAbSetups.list:
+    args: {}
+  formAbSetups.selectWinner:
+    args: {"abSetupID": "6650a1b2c3d4e5f6a7b8c9d4", "versionFormID": "6650a1b2c3d4e5f6a7b8c9d2"}
+  formAbSetups.start:
+    args: {"abSetupID": "6650a1b2c3d4e5f6a7b8c9d4"}
+  formTemplates.get:
+    args: {"templateID": "6650a1b2c3d4e5f6a7b8c9d5"}
+  formTemplates.list:
+    args: {}
+  formTemplates.render:
+    args: {"templateID": "6650a1b2c3d4e5f6a7b8c9d5"}
+  forms.create:
+    args: {"name": "Newsletter popup", "displayType": "popup", "content": {"generalSettings": {"body": {"borderRadius": "0px", "borderStyle": "solid", "borderWidth": "0px"}, "buttonPresets": [{"id": "primary_button", "styles": {"color": "#222222", "fontFamily": "Arial", "fontSize": "14px", "borderRadius": "4px", "borderStyle": "solid", "borderWidth": "0px", "fontStyle": "normal", "fontWeight": "bold", "textDecoration": "none"}}], "content": {"color": "#222222", "width": "400px"}, "fieldStyles": {"errorColor": "#d00000", "field": {"borderColor": "#cccccc", "borderRadius": "4px", "borderStyle": "solid", "borderWidth": "1px", "color": "#222222"}, "fontFamily": "Arial", "fontSize": "14px", "label": {"color": "#222222"}, "placeholder": {"color": "#999999"}}, "link": {"color": "#0066cc"}, "textPresets": [{"id": "paragraph", "styles": {"color": "#222222", "fontFamily": "Arial", "fontSize": "14px", "lineHeight": "125%"}}]}, "steps": [{"sections": [{"rows": [{"columns": [{"width": "100%", "blocks": [{"type": "emailField", "emailField": {"errorMessage": "Enter a valid email"}}, {"type": "button", "button": {"type": "submit", "text": "Subscribe"}}]}]}]}]}]}}
+  forms.delete:
+    args: {"formID": "6650a1b2c3d4e5f6a7b8c9d2"}
+  forms.disable:
+    args: {"formID": "6650a1b2c3d4e5f6a7b8c9d2"}
+  forms.enable:
+    args: {"formID": "6650a1b2c3d4e5f6a7b8c9d2"}
+  forms.get:
+    args: {"formID": "6650a1b2c3d4e5f6a7b8c9d2"}
+  forms.getPeriodicReport:
+    args: {"formID": "6650a1b2c3d4e5f6a7b8c9d2", "createdAtFrom": "2026-11-01T00:00:00Z", "createdAtTo": "2026-11-28T00:00:00Z"}
+  forms.getReport:
+    args: {"formID": "6650a1b2c3d4e5f6a7b8c9d2", "createdAtFrom": "2026-11-01T00:00:00Z", "createdAtTo": "2026-11-28T00:00:00Z"}
+  forms.list:
+    args: {}
+  forms.listAbSetupReports:
+    args: {"formID": "6650a1b2c3d4e5f6a7b8c9d2"}
+  forms.listContacts:
+    args: {"formID": "6650a1b2c3d4e5f6a7b8c9d2"}
+  forms.render:
+    args: {"formID": "6650a1b2c3d4e5f6a7b8c9d2"}
+  forms.update:
+    args: {"formID": "6650a1b2c3d4e5f6a7b8c9d2"}
+  images.delete:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  images.get:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  images.list:
+    args: {}
+  images.upload:
+    args: {"file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  images.uploadFromUrl:
+    args: {"url": "https://example.com/article"}
+  products.create:
+    args: {"currency": "USD", "id": "6650a1b2c3d4e5f6a7b8c9d0", "status": "inStock", "title": "Canvas sneaker", "url": "https://example.com/article"}
+  products.delete:
+    args: {"productID": "prod-1001"}
+  products.get:
+    args: {"productID": "prod-1001"}
+  products.list:
+    args: {}
+  products.replace:
+    args: {"productID": "prod-1001", "currency": "USD", "id": "6650a1b2c3d4e5f6a7b8c9d0", "status": "inStock", "title": "Canvas sneaker", "url": "https://example.com/article"}
+  segments.create:
+    args: {"conditionGroups": [{}], "name": "Spring sale"}
+  segments.delete:
+    args: {"segmentID": "6650a1b2c3d4e5f6a7b8c9d1"}
+  segments.get:
+    args: {"segmentID": "6650a1b2c3d4e5f6a7b8c9d1"}
+  segments.getStatistics:
+    args: {"segmentID": "6650a1b2c3d4e5f6a7b8c9d1"}
+  segments.list:
+    args: {}
+  segments.replace:
+    args: {"segmentID": "6650a1b2c3d4e5f6a7b8c9d1", "conditionGroups": [{}], "name": "Spring sale"}
+  templates.create:
+    args: {}
+  templates.delete:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  templates.get:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  templates.importFromHtml:
+    args: {"html": "<html><body><p>Hello</p></body></html>", "name": "Spring sale"}
+  templates.list:
+    args: {}
+  templates.render:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  templates.replace:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  universalLayouts.create:
+    args: {}
+  universalLayouts.delete:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  universalLayouts.get:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}
+  universalLayouts.list:
+    args: {}
+  universalLayouts.replace:
+    args: {"id": "6650a1b2c3d4e5f6a7b8c9d0"}

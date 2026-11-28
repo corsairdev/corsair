@@ -4276,6 +4276,14 @@
                 ]
               },
               {
+                "group": "Omnisend",
+                "pages": [
+                  "plugins/omnisend/overview",
+                  "plugins/omnisend/api",
+                  "plugins/omnisend/database"
+                ]
+              },
+              {
                 "group": "OneDesk",
                 "pages": [
                   "plugins/onedesk/overview",

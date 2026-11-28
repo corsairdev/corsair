@@ -514,6 +514,7 @@ export const BaseProviders = [
 	'ocrwebservice',
 	'octen',
 	'ollama',
+	'omnisend',
 	'onedesk',
 	'onedrive',
 	'onepassword',
@@ -1334,6 +1335,7 @@ export const ProviderDisplayNames = {
 	ocrwebservice: 'OcrWebService',
 	octen: 'Octen',
 	ollama: 'Ollama',
+	omnisend: 'Omnisend',
 	onedesk: 'OneDesk',
 	onedrive: 'OneDrive',
 	onepassword: '1Password',
@@ -2161,6 +2163,7 @@ export type AllProviders =
 	| 'ocrwebservice'
 	| 'octen'
 	| 'ollama'
+	| 'omnisend'
 	| 'onedesk'
 	| 'onedrive'
 	| 'onepassword'
