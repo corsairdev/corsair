@@ -1,20 +1,23 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { ShotstackAPIError } from './client';
+import { asRecord } from 'corsair/core';
+import { ApiError } from 'corsair/http';
+import { isQuotaExhausted, shotstackRequestFacts } from './client';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof ShotstackAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
+// The client rebuilds each ApiError with a `{ message, code? }` body.
 function codeOf(error: Error): string | undefined {
-	return error instanceof ShotstackAPIError ? error.code : undefined;
+	if (!(error instanceof ApiError)) return undefined;
+	const code = asRecord(error.body)?.code;
+	return typeof code === 'string' ? code : undefined;
 }
 
 /** Replays are safe only for GETs and for generate creates sent with an Idempotency-Key. */
 function replaySafe(error: Error): boolean {
-	return (
-		error instanceof ShotstackAPIError &&
-		(error.method === 'GET' || error.hasIdempotency)
-	);
+	const facts = shotstackRequestFacts(error);
+	return facts !== undefined && (facts.method === 'GET' || facts.idempotent);
 }
 
 /**
@@ -30,7 +33,9 @@ export const errorHandlers = {
 	// limit below, which also matches plain 429s.
 	QUOTA_ERROR: {
 		match: (error: Error) =>
-			statusOf(error) === 429 && error.message.includes('quota'),
+			statusOf(error) === 429 &&
+			error instanceof ApiError &&
+			isQuotaExhausted(error.body),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 429 on a fixed 60-second window per key, and the body code
@@ -42,7 +47,7 @@ export const errorHandlers = {
 		handler: async (error: Error) => ({
 			maxRetries: 3,
 			headersRetryAfterMs:
-				error instanceof ShotstackAPIError ? error.retryAfter : undefined,
+				error instanceof ApiError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -51,13 +56,14 @@ export const errorHandlers = {
 		match: (error: Error) => statusOf(error) === 402,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 401: missing, wrong or disabled key, or a sandbox key sent to v1.
+	// 401: missing, wrong or disabled key.
 	AUTH_ERROR: {
 		match: (error: Error) => statusOf(error) === 401,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 403: plan gating on generate (AiCapabilityNotIncluded and friends) or an
-	// invalid key. Changing the request cannot fix either mid-call.
+	// 403: a wrong or disabled key, a key of the other environment ("Invalid
+	// or disabled API key"), or plan gating on generate
+	// (AiCapabilityNotIncluded and friends). A retry cannot fix any of them.
 	PERMISSION_ERROR: {
 		match: (error: Error) => statusOf(error) === 403,
 		handler: async () => ({ maxRetries: 0 }),
@@ -88,9 +94,7 @@ export const errorHandlers = {
 	// that went through; still gated on idempotency for the writes.
 	TRANSPORT_ERROR: {
 		match: (error: Error) =>
-			error instanceof ShotstackAPIError &&
-			error.transport &&
-			replaySafe(error),
+			shotstackRequestFacts(error)?.transport === true && replaySafe(error),
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

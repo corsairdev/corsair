@@ -108,6 +108,55 @@ const OutputInputSchema = z
 			.loose()
 			.optional()
 			.describe('Custom size in pixels, up to 3840 per side (1920 for gif).'),
+		fps: z
+			.number()
+			.positive()
+			.optional()
+			.describe(
+				'Frames per second: 12, 15, 23.976, 24, 25 (default), 29.97, 30, 48, 50, 59.94 or 60.',
+			),
+		scaleTo: z
+			.enum(RESOLUTIONS)
+			.optional()
+			.describe(
+				'Render at another size than the one the edit was laid out for: preview, mobile, sd, hd, 1080 or 4k.',
+			),
+		quality: z
+			.enum(['verylow', 'low', 'medium', 'high', 'veryhigh'])
+			.optional()
+			.describe(
+				'Output quality; lower means smaller files and faster renders.',
+			),
+		repeat: z
+			.boolean()
+			.optional()
+			.describe('gif only: loop (true) or play once.'),
+		mute: z.boolean().optional().describe('Mute the audio of a video output.'),
+		range: z
+			.object({ start: z.number().optional(), length: z.number().optional() })
+			.loose()
+			.optional()
+			.describe(
+				'Render only part of the timeline: { start, length } in seconds.',
+			),
+		poster: z
+			.object({ capture: z.number() })
+			.loose()
+			.optional()
+			.describe('Also make a poster image from the frame at capture seconds.'),
+		thumbnail: z
+			.object({ capture: z.number(), scale: z.number().optional() })
+			.loose()
+			.optional()
+			.describe(
+				'Also make a thumbnail from the frame at capture seconds, scaled by scale (0-1).',
+			),
+		destinations: z
+			.array(z.object({ provider: z.string().min(1) }).loose())
+			.optional()
+			.describe(
+				'Where to send the output: [{ provider: "shotstack" }] (the default hosting), s3, mux, vimeo, google-cloud-storage, google-drive; set exclude: true on shotstack to skip hosting.',
+			),
 	})
 	.loose()
 	.superRefine((output, ctx) => {
@@ -236,7 +285,12 @@ const RenderResponseDataSchema = z
 	.object({
 		id: z.string(),
 		owner: z.string(),
-		status: z.enum(RENDER_STATUSES),
+		status: z
+			.enum(RENDER_STATUSES)
+			.or(z.string())
+			.describe(
+				'queued, fetching, preprocessing, rendering, generating, saving, then done or failed.',
+			),
 		plan: z.string().nullish(),
 		error: z.string().nullish(),
 		duration: z.number().nullish(),
@@ -321,10 +375,14 @@ const TemplatesCreateInputSchema = z.object({
 
 export type TemplatesCreateInput = z.input<typeof TemplatesCreateInputSchema>;
 
+// Shotstack refuses an update without the edit ("Template data is
+// required", live 11-28), so both fields are required.
 const TemplatesUpdateInputSchema = z.object({
 	id: IdSchema,
 	name: z.string().min(1).describe('The new template name.'),
-	template: EditInputSchema.optional().describe('The replacement edit.'),
+	template: EditInputSchema.describe(
+		'The replacement edit (timeline and output); required by the API.',
+	),
 });
 
 export type TemplatesUpdateInput = z.input<typeof TemplatesUpdateInputSchema>;
@@ -342,12 +400,36 @@ const TemplateResponseSchema = z.object({
 
 export type TemplateResponse = z.output<typeof TemplateResponseSchema>;
 
+// The update answers 200 with only a message ("Template Successfully
+// Updated", live 11-28); the spec's id is not sent.
+const TemplatesUpdateResponseSchema = z.object({
+	success: z.literal(true),
+	message: z.string(),
+	response: z
+		.object({
+			message: z.string().nullish(),
+			id: z.string().nullish(),
+		})
+		.loose(),
+});
+
+export type TemplatesUpdateResponse = z.output<
+	typeof TemplatesUpdateResponseSchema
+>;
+
 const TemplatesDeleteInputSchema = z.object({ id: IdSchema });
 
 export type TemplatesDeleteInput = z.input<typeof TemplatesDeleteInputSchema>;
 
-// The API answers 204 with no body; the output is that empty confirmation.
-const TemplatesDeleteResponseSchema = z.object({}).loose();
+// The spec says 204 with no body; live (11-28) it answers 200 with
+// `{ success, message, response: { message } }`. Either reads as this object.
+const TemplatesDeleteResponseSchema = z
+	.object({
+		success: z.boolean().nullish(),
+		message: z.string().nullish(),
+		response: z.record(z.string(), z.unknown()).nullish(),
+	})
+	.loose();
 
 export type TemplatesDeleteResponse = z.output<
 	typeof TemplatesDeleteResponseSchema
@@ -435,7 +517,10 @@ export type GenerationsCreateInput = z.input<
 const GenerationResponseSchema = z
 	.object({
 		id: z.string(),
-		status: z.enum(GENERATION_STATUSES),
+		status: z
+			.enum(GENERATION_STATUSES)
+			.or(z.string())
+			.describe('queued, processing, then done or failed.'),
 		url: z.string().nullish(),
 		error: z.string().nullish(),
 	})
@@ -480,7 +565,16 @@ const GenerationModelSchema = z
 
 export type GenerationModel = z.output<typeof GenerationModelSchema>;
 
-const GenerationsListModelsInputSchema = z.object({}).loose();
+const GenerationsListModelsInputSchema = z
+	.object({
+		expand: z
+			.enum(['options'])
+			.optional()
+			.describe(
+				"'options' to include each model's option schema; left out by default.",
+			),
+	})
+	.loose();
 
 export type GenerationsListModelsInput = z.input<
 	typeof GenerationsListModelsInputSchema
@@ -573,7 +667,13 @@ const SourceAttributesSchema = z
 		owner: z.string(),
 		input: z.string().nullish(),
 		source: z.string().nullish(),
-		status: z.enum(SOURCE_STATUSES).nullish(),
+		status: z
+			.enum(SOURCE_STATUSES)
+			.or(z.string())
+			.nullish()
+			.describe(
+				'queued, importing, then ready or failed; deleted or overwritten later.',
+			),
 		outputs: z.record(z.string(), z.unknown()).nullish(),
 		width: z.number().nullish(),
 		height: z.number().nullish(),
@@ -640,7 +740,10 @@ const AssetAttributesSchema = z
 	.object({
 		id: z.string(),
 		owner: z.string(),
-		status: z.enum(ASSET_STATUSES),
+		status: z
+			.enum(ASSET_STATUSES)
+			.or(z.string())
+			.describe('importing, ready, failed or deleted.'),
 		region: z.string().nullish(),
 		renderId: z.string().nullish(),
 		providerId: z.string().nullish(),
@@ -693,7 +796,7 @@ const AssetsTransferResponseSchema = z
 	.object({
 		id: z.string().nullish(),
 		owner: z.string().nullish(),
-		status: z.enum(['queued', 'failed']).nullish(),
+		status: z.enum(['queued', 'failed']).or(z.string()).nullish(),
 		created: z.string().nullish(),
 	})
 	.loose();
@@ -744,7 +847,7 @@ export const ShotstackEndpointOutputSchemas = {
 	templatesList: TemplatesListResponseSchema,
 	templatesGet: TemplatesGetResponseSchema,
 	templatesCreate: TemplateResponseSchema,
-	templatesUpdate: TemplateResponseSchema,
+	templatesUpdate: TemplatesUpdateResponseSchema,
 	templatesDelete: TemplatesDeleteResponseSchema,
 	templatesRender: TemplatesRenderResponseSchema,
 	generationsCreate: GenerationResponseSchema,

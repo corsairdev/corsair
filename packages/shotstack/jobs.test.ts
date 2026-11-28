@@ -44,6 +44,14 @@ function at(schema: z.ZodType, path: string): z.ZodType | undefined {
 	while (current instanceof z.ZodOptional || current instanceof z.ZodNullable) {
 		current = current.unwrap() as typeof current;
 	}
+	// Statuses read as `enum.or(string)`, so a value Shotstack adds later
+	// does not fail the read; the documented values are the enum branch.
+	if (current instanceof z.ZodUnion) {
+		const documented = (current.options as z.ZodType[]).find(
+			(option) => option instanceof z.ZodEnum,
+		);
+		if (documented) return documented;
+	}
 	return current;
 }
 

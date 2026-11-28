@@ -50,42 +50,59 @@ const operations = [
 ];
 
 const riskLevels: Record<string, string> = {
-	'renders.create': 'write',
+	'renders.create': 'destructive',
 	'renders.get': 'read',
 	'templates.list': 'read',
 	'templates.get': 'read',
 	'templates.create': 'write',
 	'templates.update': 'write',
 	'templates.delete': 'destructive',
-	'templates.render': 'write',
-	'generations.create': 'write',
+	'templates.render': 'destructive',
+	'generations.create': 'destructive',
 	'generations.get': 'read',
 	'generations.quote': 'read',
 	'generations.listModels': 'read',
 	'generations.getModel': 'read',
 	'media.probe': 'read',
-	'sources.fetch': 'write',
+	'sources.fetch': 'destructive',
 	'sources.list': 'read',
 	'sources.get': 'read',
 	'sources.delete': 'destructive',
 	'uploads.create': 'write',
 	'assets.get': 'read',
 	'assets.getByRenderId': 'read',
-	'assets.transfer': 'write',
+	'assets.transfer': 'destructive',
 	'assets.delete': 'destructive',
 };
 
 describe('shotstack plugin definition', () => {
 	const plugin = shotstack();
 
-	it('registers as shotstack with api_key auth and no webhooks', () => {
+	it('registers as shotstack with api_key auth, an environment field and three callbacks', () => {
 		expect(plugin.id).toBe('shotstack');
 		expect(plugin.options?.authType).toBe('api_key');
-		expect(plugin.webhooks).toEqual({});
-		// The matcher only inspects headers and body presence, so an empty
-		// delivery is a faithful stand-in.
-		const delivery = { headers: {}, body: {} } as never;
+		expect(plugin.authConfig).toEqual({
+			api_key: { account: ['environment'] },
+		});
+		expect(Object.keys(plugin.webhooks ?? {}).sort()).toEqual([
+			'render',
+			'serve',
+			'source',
+		]);
+		expect(Object.keys(plugin.webhookSchemas ?? {}).sort()).toEqual([
+			'render',
+			'serve',
+			'source',
+		]);
+		// A delivery with no Shotstack header or user agent is not Shotstack's.
+		const delivery = { headers: {}, body: { type: 'edit' } } as never;
 		expect(plugin.pluginWebhookMatcher?.(delivery)).toBe(false);
+	});
+
+	it('refuses an unknown environment option at setup', () => {
+		expect(() => shotstack({ environment: 'prod-eu' as never })).toThrow(
+			'environment must be v1 (production) or stage (sandbox)',
+		);
 	});
 
 	it('exposes exactly the 23 catalog operations across 7 groups', () => {
@@ -178,12 +195,21 @@ describe('shotstack key builder', () => {
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
-	it('refuses webhook keys, because Shotstack sends the plugin no inbound webhooks', async () => {
+	it('gives callbacks the API key, which checks them against the API', async () => {
 		await expect(
 			shotstack().keyBuilder?.(
 				keyContext('stored-key') as unknown as ShotstackKeyBuilderContext,
 				'webhook',
 			),
-		).rejects.toBeInstanceOf(AuthMissingError);
+		).resolves.toBe('stored-key');
+	});
+
+	it('gives callbacks an empty key when none is stored, so the handler refuses them', async () => {
+		await expect(
+			shotstack().keyBuilder?.(
+				keyContext(null) as unknown as ShotstackKeyBuilderContext,
+				'webhook',
+			),
+		).resolves.toBe('');
 	});
 });

@@ -98,7 +98,7 @@ export const update: ShotstackEndpoints['templatesUpdate'] = async (
 			body: { name: input.name, template: input.template },
 		}),
 		{
-			log: (_input, result) => ({ templateId: result.response.id }),
+			log: (input) => ({ templateId: input.id }),
 		},
 	);
 };

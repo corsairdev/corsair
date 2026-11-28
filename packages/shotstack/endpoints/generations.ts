@@ -107,7 +107,12 @@ export const listModels: ShotstackEndpoints['generationsListModels'] = async (
 			output: ShotstackEndpointOutputSchemas.generationsListModels,
 		},
 		rawInput,
-		() => ({ method: 'GET', service: 'edit', path: '/models' }),
+		(input: { expand?: 'options' }) => ({
+			method: 'GET',
+			service: 'edit',
+			path: '/models',
+			query: { expand: input.expand },
+		}),
 		{
 			log: (_input, result) => ({ count: result.models.length }),
 		},

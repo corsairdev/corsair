@@ -142,14 +142,45 @@ describe('output parsing per operation', () => {
 			response: { id: templateCreated.response.id },
 		});
 
-		respond(templateCreated);
+		// The update answers with a message and no id (live 11-28).
+		respond({
+			success: true,
+			message: 'OK',
+			response: { message: 'Template Successfully Updated' },
+		});
 		const updated = await invoke(Templates.update, {
 			id: templateCreated.response.id,
 			name: 'Renamed',
+			template: {
+				timeline: {
+					tracks: [
+						{
+							clips: [
+								{ asset: { type: 'text', text: 'Hi' }, start: 0, length: 1 },
+							],
+						},
+					],
+				},
+				output: { format: 'jpg', resolution: 'preview' },
+			},
 		});
 		expect(updated).toMatchObject({
-			response: { id: templateCreated.response.id },
+			response: { message: 'Template Successfully Updated' },
 		});
+		await expect(
+			invoke(Templates.update, { id: templateCreated.response.id, name: 'x' }),
+		).rejects.toHaveProperty('name', 'ZodError');
+	});
+
+	it('templates.delete reads the live 200 confirmation', async () => {
+		respond({
+			success: true,
+			message: 'OK',
+			response: { message: 'Template Successfully Deleted' },
+		});
+		await expect(
+			invoke(Templates.remove, { id: templateData.response.id }),
+		).resolves.toMatchObject({ success: true });
 	});
 
 	it('templates.delete turns the empty 204 into {}', async () => {
@@ -327,14 +358,15 @@ describe('rejections', () => {
 		expect(error).toHaveProperty('name', 'ZodError');
 	});
 
-	it('rejects a malformed known field: a status outside the documented enum', async () => {
+	it('keeps a status outside the documented values instead of failing the read', async () => {
 		respond({
 			...renderDone,
-			response: { ...renderDone.response, status: 'finished' },
+			response: { ...renderDone.response, status: 'archiving' },
 		});
 
-		const error = await captureError(invoke(Renders.get, { id: 'x' }));
-		expect(error).toHaveProperty('name', 'ZodError');
+		await expect(invoke(Renders.get, { id: 'x' })).resolves.toMatchObject({
+			response: { status: 'archiving' },
+		});
 	});
 
 	it('treats a 2xx body with success:false as a failure, not data', async () => {
@@ -393,6 +425,9 @@ describe('rejections', () => {
 	it('rejects a malformed json:api body instead of reading an empty page', async () => {
 		respond({});
 		const error = await captureError(invoke(Sources.get, { id: 'x' }));
-		expect(error).toHaveProperty('name', 'ShotstackAPIError');
+		expect(error).toHaveProperty(
+			'message',
+			'Shotstack: the response has no json:api resource attributes',
+		);
 	});
 });

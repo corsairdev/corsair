@@ -1,12 +1,13 @@
 import { inspect } from 'node:util';
+import { ApiError } from 'corsair/http';
 import {
 	attributesList,
 	attributesOf,
 	describeShotstackError,
 	makeShotstackRequest,
 	queuedResourceId,
-	ShotstackAPIError,
 	segment,
+	shotstackRequestFacts,
 } from './client';
 import {
 	errorsForbidden,
@@ -33,11 +34,22 @@ function respond(
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(promise: Promise<unknown>): Promise<ShotstackAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await captureError(promise);
-	expect(error).toBeInstanceOf(ShotstackAPIError);
-	if (!(error instanceof ShotstackAPIError)) throw error;
+	expect(error).toBeInstanceOf(ApiError);
+	if (!(error instanceof ApiError)) throw error;
 	return error;
+}
+
+async function anyFailure(promise: Promise<unknown>): Promise<Error> {
+	const error = await captureError(promise);
+	expect(error).toBeInstanceOf(Error);
+	if (!(error instanceof Error)) throw error;
+	return error;
+}
+
+function codeOf(error: ApiError): unknown {
+	return (error.body as { code?: unknown } | undefined)?.code;
 }
 
 beforeEach(() => {
@@ -152,8 +164,11 @@ describe('makeShotstackRequest', () => {
 			}),
 		);
 		expect(error.status).toBe(403);
-		expect(error.method).toBe('GET');
-		expect(error.transport).toBe(false);
+		expect(shotstackRequestFacts(error)).toEqual({
+			method: 'GET',
+			idempotent: false,
+			transport: false,
+		});
 		expect(error.message).toContain('Shotstack 403');
 		expect(error.message).toContain('Invalid or disabled API key');
 	});
@@ -170,8 +185,8 @@ describe('makeShotstackRequest', () => {
 			}),
 		);
 		expect(error.status).toBe(403);
-		expect(error.code).toBe('AiCapabilityNotIncluded');
-		expect(error.hasIdempotency).toBe(false);
+		expect(codeOf(error)).toBe('AiCapabilityNotIncluded');
+		expect(shotstackRequestFacts(error)?.idempotent).toBe(false);
 	});
 
 	it('reads the code from a json:api rate limit body', async () => {
@@ -185,15 +200,15 @@ describe('makeShotstackRequest', () => {
 			}),
 		);
 		expect(error.status).toBe(429);
-		expect(error.code).toBe('rate_limit_error');
+		expect(codeOf(error)).toBe('rate_limit_error');
 		expect(error.retryAfter).toBe(30_000);
 		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 
-	it('wraps network failures as transport errors', async () => {
+	it('marks network failures as transport errors', async () => {
 		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
 
-		const error = await failure(
+		const error = await anyFailure(
 			makeShotstackRequest(API_KEY, {
 				method: 'GET',
 				service: 'edit',
@@ -201,15 +216,18 @@ describe('makeShotstackRequest', () => {
 			}),
 		);
 		expect(error.message).toContain('fetch failed');
-		expect(error.status).toBeUndefined();
-		expect(error.transport).toBe(true);
-		expect(error.method).toBe('GET');
+		expect(error).not.toBeInstanceOf(ApiError);
+		expect(shotstackRequestFacts(error)).toEqual({
+			method: 'GET',
+			idempotent: false,
+			transport: true,
+		});
 	});
 
 	it('keeps the idempotency flag on a transport failure of a keyed create', async () => {
 		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
 
-		const error = await failure(
+		const error = await anyFailure(
 			makeShotstackRequest(API_KEY, {
 				method: 'POST',
 				service: 'edit',
@@ -218,8 +236,10 @@ describe('makeShotstackRequest', () => {
 				headers: { 'Idempotency-Key': 'key-1' },
 			}),
 		);
-		expect(error.transport).toBe(true);
-		expect(error.hasIdempotency).toBe(true);
+		expect(shotstackRequestFacts(error)).toMatchObject({
+			transport: true,
+			idempotent: true,
+		});
 	});
 
 	it('leaves the API key out of the error message, JSON and inspect output', async () => {
@@ -235,7 +255,7 @@ describe('makeShotstackRequest', () => {
 		expect(error.message).not.toContain(API_KEY);
 		expect(JSON.stringify(error)).not.toContain(API_KEY);
 		expect(inspect(error)).not.toContain(API_KEY);
-		expect(error.cause).toBeUndefined();
+		expect(JSON.stringify(error.request)).not.toContain(API_KEY);
 	});
 });
 
@@ -256,14 +276,14 @@ describe('describeShotstackError', () => {
 
 describe('json:api unwraps', () => {
 	it('attributesOf throws on a body with no resource', async () => {
-		const error = await failure(
+		const error = await anyFailure(
 			Promise.resolve().then(() => attributesOf({ data: {} })),
 		);
 		expect(error.message).toContain('no json:api resource attributes');
 	});
 
 	it('attributesList throws on a body with no array', async () => {
-		const error = await failure(
+		const error = await anyFailure(
 			Promise.resolve().then(() => attributesList({ data: null })),
 		);
 		expect(error.message).toContain('no json:api resource array');
@@ -283,7 +303,7 @@ describe('json:api unwraps', () => {
 	});
 
 	it('queuedResourceId throws when the id is missing', async () => {
-		const error = await failure(
+		const error = await anyFailure(
 			Promise.resolve().then(() =>
 				queuedResourceId({ data: { type: 'source' } }),
 			),

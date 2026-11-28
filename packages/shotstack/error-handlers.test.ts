@@ -1,6 +1,7 @@
 import type { ErrorContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { ZodError } from 'zod';
-import { ShotstackAPIError } from './client';
+import { makeShotstackRequest } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { generationQuotaError } from './test-fixtures';
 
@@ -28,33 +29,61 @@ async function strategy(error: Error) {
 	return errorHandlers[classify(error)].handler(error);
 }
 
-function apiError(
+// Errors come from the real client against a mocked fetch, so the request
+// facts the handlers read are the ones production attaches.
+async function apiError(
 	status: number | undefined,
 	options: {
 		code?: string;
 		retryAfter?: number;
-		method?: string;
+		method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
 		hasIdempotency?: boolean;
 		transport?: boolean;
 		message?: string;
 	} = {},
-) {
-	return new ShotstackAPIError(
-		options.message ?? `Shotstack ${status}: failed`,
-		{
-			status,
-			code: options.code,
-			retryAfter: options.retryAfter,
-			method: options.method,
-			hasIdempotency: options.hasIdempotency,
-			transport: options.transport,
-		},
-	);
+): Promise<Error> {
+	const fetchMock = jest.spyOn(globalThis, 'fetch');
+	try {
+		if (options.transport || status === undefined) {
+			fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
+		} else {
+			const body: Record<string, unknown> = {
+				error: options.message ?? 'failed',
+			};
+			if (options.code) body.code = options.code;
+			fetchMock.mockResolvedValueOnce(
+				new Response(JSON.stringify(body), {
+					status,
+					headers: {
+						'Content-Type': 'application/json',
+						...(options.retryAfter !== undefined
+							? { 'Retry-After': String(options.retryAfter / 1000) }
+							: {}),
+					},
+				}),
+			);
+		}
+		try {
+			await makeShotstackRequest('test-key', {
+				method: options.method ?? 'GET',
+				service: 'edit',
+				path: '/render/x',
+				headers: options.hasIdempotency
+					? { 'Idempotency-Key': 'key-1' }
+					: undefined,
+			});
+		} catch (error) {
+			return error as Error;
+		}
+		throw new Error('expected the request to fail');
+	} finally {
+		fetchMock.mockRestore();
+	}
 }
 
 describe('Shotstack error handlers', () => {
 	it('retries a plain 429 with backoff', async () => {
-		const error = apiError(429);
+		const error = await apiError(429);
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
 		expect(await strategy(error)).toEqual({
 			maxRetries: 3,
@@ -64,12 +93,12 @@ describe('Shotstack error handlers', () => {
 	});
 
 	it('matches the rate_limit_error body code even without a 429 status', async () => {
-		const error = apiError(430, { code: 'rate_limit_error' });
+		const error = await apiError(430, { code: 'rate_limit_error' });
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
 	});
 
 	it('honours Retry-After when Shotstack sends one', async () => {
-		const error = apiError(429, { retryAfter: 2000 });
+		const error = await apiError(429, { retryAfter: 2000 });
 		expect(await strategy(error)).toEqual({
 			maxRetries: 3,
 			headersRetryAfterMs: 2000,
@@ -78,7 +107,7 @@ describe('Shotstack error handlers', () => {
 	});
 
 	it('does not retry a 429 that names the generation quota, which no retry can fix', async () => {
-		const error = apiError(429, {
+		const error = await apiError(429, {
 			message: `Shotstack 429: ${generationQuotaError.error}`,
 		});
 		expect(classify(error)).toBe('QUOTA_ERROR');
@@ -86,14 +115,14 @@ describe('Shotstack error handlers', () => {
 	});
 
 	it('does not retry a 402, the account running out of generation credits', async () => {
-		const error = apiError(402);
+		const error = await apiError(402);
 		expect(classify(error)).toBe('INSUFFICIENT_BALANCE_ERROR');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
 	it('does not retry a 401 or a 403', async () => {
 		for (const status of [401, 403]) {
-			const error = apiError(status);
+			const error = await apiError(status);
 			expect(classify(error)).toBe(
 				status === 401 ? 'AUTH_ERROR' : 'PERMISSION_ERROR',
 			);
@@ -102,13 +131,13 @@ describe('Shotstack error handlers', () => {
 	});
 
 	it('does not retry a 409, the idempotency key reused for a different asset', async () => {
-		const error = apiError(409);
+		const error = await apiError(409);
 		expect(classify(error)).toBe('CONFLICT_ERROR');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
 	it.each([400, 404])('does not retry a %i', async (status) => {
-		const error = apiError(status);
+		const error = await apiError(status);
 		expect(classify(error)).toBe('VALIDATION_ERROR');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
@@ -120,7 +149,7 @@ describe('Shotstack error handlers', () => {
 	});
 
 	it.each([500, 502, 503])('replays a GET that got a %i', async (status) => {
-		const error = apiError(status, { method: 'GET' });
+		const error = await apiError(status, { method: 'GET' });
 		expect(classify(error)).toBe('SERVER_ERROR');
 		expect(await strategy(error)).toEqual({
 			maxRetries: 2,
@@ -129,7 +158,7 @@ describe('Shotstack error handlers', () => {
 	});
 
 	it('replays a keyed generate create that got a 5xx, which the Idempotency-Key makes safe', async () => {
-		const error = apiError(503, { method: 'POST', hasIdempotency: true });
+		const error = await apiError(503, { method: 'POST', hasIdempotency: true });
 		expect(classify(error)).toBe('SERVER_ERROR');
 		expect(await strategy(error)).toEqual({
 			maxRetries: 2,
@@ -137,17 +166,17 @@ describe('Shotstack error handlers', () => {
 		});
 	});
 
-	it.each(['POST', 'DELETE', 'PUT'])(
+	it.each(['POST', 'DELETE', 'PUT'] as const)(
 		'does not replay a failed %s',
 		async (method) => {
-			const error = apiError(500, { method });
+			const error = await apiError(500, { method });
 			expect(classify(error)).toBe('DEFAULT');
 			expect(await strategy(error)).toEqual({ maxRetries: 0 });
 		},
 	);
 
 	it('replays a dropped connection on a read, which never reached Shotstack', async () => {
-		const error = apiError(undefined, { method: 'GET', transport: true });
+		const error = await apiError(undefined, { method: 'GET', transport: true });
 		expect(classify(error)).toBe('TRANSPORT_ERROR');
 		expect(await strategy(error)).toEqual({
 			maxRetries: 2,
@@ -156,16 +185,16 @@ describe('Shotstack error handlers', () => {
 	});
 
 	it('does not replay a dropped connection on a write', async () => {
-		const error = apiError(undefined, { method: 'POST', transport: true });
+		const error = await apiError(undefined, {
+			method: 'POST',
+			transport: true,
+		});
 		expect(classify(error)).toBe('DEFAULT');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
 	it('does not replay a timed-out write', async () => {
-		const timeout = new Error('The operation timed out');
-		timeout.name = 'TimeoutError';
-		const error = new ShotstackAPIError(timeout.message, {
-			cause: timeout,
+		const error = await apiError(undefined, {
 			method: 'POST',
 			transport: true,
 		});
@@ -197,7 +226,7 @@ describe('Shotstack error handlers', () => {
 		);
 		// The caller's value wins over the builtin's.
 		await expect(
-			merged.RATE_LIMIT_ERROR?.handler(apiError(429), CONTEXT),
+			merged.RATE_LIMIT_ERROR?.handler(await apiError(429), CONTEXT),
 		).resolves.toEqual({ maxRetries: 9 });
 	});
 
@@ -205,16 +234,15 @@ describe('Shotstack error handlers', () => {
 		const merged = mergeErrorHandlers(errorHandlers, {
 			UPSTREAM_ERROR: {
 				match: (error: Error) =>
-					error instanceof ShotstackAPIError &&
-					error.method === 'GET' &&
-					error.status === 503,
+					error instanceof ApiError && error.status === 503,
 				handler: async () => ({ maxRetries: 5 }),
 			},
 		});
 		// Core takes the first match in key order, so the caller's 503 handler
 		// must classify ahead of the builtin SERVER_ERROR, not behind it.
+		const error503 = await apiError(503, { method: 'GET' });
 		const firstMatch = (Object.keys(merged) as (keyof typeof merged)[]).find(
-			(key) => merged[key]?.match(apiError(503, { method: 'GET' }), CONTEXT),
+			(key) => merged[key]?.match(error503, CONTEXT),
 		);
 		expect(firstMatch).toBe('UPSTREAM_ERROR');
 	});

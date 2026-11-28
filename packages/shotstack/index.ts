@@ -1,16 +1,21 @@
 import type {
 	BindEndpoints,
+	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import type { ShotstackEnvironment } from './client';
+import { parseShotstackEnvironment, tryGetStoredKey } from './client';
 import {
 	Assets,
 	Generations,
@@ -30,23 +35,64 @@ import {
 } from './endpoints/types';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { ShotstackSchema } from './schema';
+import {
+	isShotstackDelivery,
+	shotstackWebhooksNested,
+	shotstackWebhookSchemas as webhookSchemas,
+} from './webhooks';
 
 export type ShotstackPluginOptions = {
 	authType?: PickAuth<'api_key'>;
-	/** A Shotstack production API key (app.shotstack.io, under API Keys). Overrides the stored key. */
+	/**
+	 * A Shotstack API key (app.shotstack.io, under API Keys): the Production
+	 * key or the free Sandbox key. Overrides the stored key.
+	 */
 	key?: string;
+	/**
+	 * `v1` (production) or `stage` (the free, watermarked sandbox). Overrides
+	 * the account's stored `environment`. With neither set, the plugin tries
+	 * production first and the sandbox when production refuses the key (401),
+	 * and remembers which one answered.
+	 */
+	environment?: ShotstackEnvironment;
+	/**
+	 * Shotstack does not sign callbacks, so each one is looked up with the
+	 * account's key before it is accepted (one API read per callback). Set
+	 * false to accept callbacks unchecked.
+	 */
+	verifyWebhooks?: boolean;
 	hooks?: InternalShotstackPlugin['hooks'];
+	webhookHooks?: InternalShotstackPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof shotstackEndpointsNested>;
 };
 
+/**
+ * One API key per connected account, plus an optional `environment`
+ * (`v1` or `stage`) stored beside it: Shotstack gives every account a
+ * production key and a sandbox key, and each works on its own paths only.
+ */
+export const shotstackAuthConfig = {
+	api_key: {
+		account: ['environment'] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
 export type ShotstackContext = CorsairPluginContext<
 	typeof ShotstackSchema,
-	ShotstackPluginOptions
+	ShotstackPluginOptions,
+	undefined,
+	typeof shotstackAuthConfig
 >;
 
-export type ShotstackKeyBuilderContext =
-	KeyBuilderContext<ShotstackPluginOptions>;
+export type ShotstackKeyBuilderContext = KeyBuilderContext<
+	ShotstackPluginOptions,
+	typeof shotstackAuthConfig
+>;
+
+export type ShotstackBoundWebhooks = BindWebhooks<
+	typeof shotstackWebhooksNested
+>;
 
 export type ShotstackBoundEndpoints = BindEndpoints<
 	typeof shotstackEndpointsNested
@@ -240,9 +286,10 @@ const RENDER_JOB = {
 
 const shotstackEndpointMeta = {
 	'renders.create': {
-		riskLevel: 'write',
+		// Spends render credits on production (and needs a credit balance on the sandbox).
+		riskLevel: 'destructive',
 		description:
-			'Queue a video, image, GIF or audio render of a JSON timeline; spends credits. Follow it with renders.get until status is done or failed.',
+			'Queue a video, image, GIF or audio render of a JSON timeline; spends credits on production (sandbox renders are watermarked). Follow it with renders.get until status is done or failed, or pass a callback URL.',
 		job: RENDER_JOB,
 	},
 	'renders.get': {
@@ -273,13 +320,14 @@ const shotstackEndpointMeta = {
 		description: 'Permanently delete a saved template; there is no undo.',
 	},
 	'templates.render': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Queue a render of a saved template with placeholder values merged in; spends credits. Poll renders.get for the result.',
 		job: RENDER_JOB,
 	},
 	'generations.create': {
-		riskLevel: 'write',
+		// Starts a paid generation job (charged on the sandbox too).
+		riskLevel: 'destructive',
 		description:
 			'Generate an image, video or audio asset from a prompt with an AI model; spends generation credits. Follow it with generations.get until status is done or failed. Pass idempotencyKey to make retries safe.',
 		job: {
@@ -306,7 +354,7 @@ const shotstackEndpointMeta = {
 	'generations.listModels': {
 		riskLevel: 'read',
 		description:
-			'List the generation models available to this account, each with the asset type it generates.',
+			"List the generation models available to this account, each with the asset type it generates and whether the plan includes it. Pass expand: 'options' to include each model's option schema.",
 	},
 	'generations.getModel': {
 		riskLevel: 'read',
@@ -319,9 +367,10 @@ const shotstackEndpointMeta = {
 			'Inspect a media file at a remote URL and return its FFprobe metadata: width, height, duration, fps and type.',
 	},
 	'sources.fetch': {
-		riskLevel: 'write',
+		// Renditions and transcriptions requested in `outputs` spend credits.
+		riskLevel: 'destructive',
 		description:
-			'Fetch a file from a URL into Shotstack storage so the Edit API can use it; follow it with sources.get until status is ready.',
+			'Fetch a file from a URL into Shotstack storage so the Edit API can use it; renditions and transcriptions in outputs spend credits. Follow it with sources.get until status is ready, or pass a callback URL.',
 		job: {
 			idPath: 'id',
 			status: {
@@ -368,9 +417,10 @@ const shotstackEndpointMeta = {
 			'List the assets a render produced (video, poster, thumbnail), including the durable CDN URL to serve them from.',
 	},
 	'assets.transfer': {
-		riskLevel: 'write',
+		// Sends the file to third-party services (Vimeo, Mux, TikTok can publish it).
+		riskLevel: 'destructive',
 		description:
-			'Copy a hosted file to external destinations such as S3, Google Cloud Storage, Mux, Vimeo or Google Drive.',
+			'Copy a file to external destinations such as Shotstack hosting, S3, Google Cloud Storage, Mux, Vimeo or Google Drive (set up under Integrations in the dashboard). Answers queued; the copy runs afterwards.',
 	},
 	'assets.delete': {
 		riskLevel: 'destructive',
@@ -382,14 +432,20 @@ const shotstackEndpointMeta = {
 	typeof shotstackEndpointsNested
 >;
 
+const shotstackWebhookSchemas =
+	webhookSchemas satisfies RequiredPluginWebhookSchemas<
+		typeof shotstackWebhooksNested
+	>;
+
 export type BaseShotstackPlugin<T extends ShotstackPluginOptions> =
 	CorsairPlugin<
 		'shotstack',
 		typeof ShotstackSchema,
 		typeof shotstackEndpointsNested,
-		{},
+		typeof shotstackWebhooksNested,
 		T,
-		typeof defaultAuthType
+		typeof defaultAuthType,
+		typeof shotstackAuthConfig
 	>;
 
 export type InternalShotstackPlugin =
@@ -402,38 +458,48 @@ export function shotstack<const T extends ShotstackPluginOptions>(
 	incomingOptions: ShotstackPluginOptions & T = {} as ShotstackPluginOptions &
 		T,
 ): ExternalShotstackPlugin<T> {
+	// Fail at setup, not on the first call, when the option is a typo.
+	parseShotstackEnvironment(incomingOptions.environment);
 	const options = {
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
 	return {
 		id: 'shotstack',
+		authConfig: shotstackAuthConfig,
 		schema: ShotstackSchema,
 		options: options,
 		hooks: options.hooks,
+		webhookHooks: options.webhookHooks,
 		endpoints: shotstackEndpointsNested,
-		webhooks: {},
+		webhooks: shotstackWebhooksNested,
 		endpointMeta: shotstackEndpointMeta,
 		endpointSchemas: shotstackEndpointSchemas,
-		pluginWebhookMatcher: () => false,
+		webhookSchemas: shotstackWebhookSchemas,
+		pluginWebhookMatcher: isShotstackDelivery,
 		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		keyBuilder: async (ctx: ShotstackKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) {
-				return options.key;
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
+			if (options.key) return options.key;
+			if (ctx.authType === 'api_key') {
+				const res = await tryGetStoredKey(() => ctx.keys.get_api_key());
 				if (res) return res;
 			}
-
+			// A callback is checked with the API key (Shotstack does not sign
+			// them); without one the webhook handler refuses the delivery.
+			if (source === 'webhook') return '';
 			throw new AuthMissingError('shotstack', ctx.authType ?? 'api_key');
 		},
 	} satisfies InternalShotstackPlugin;
 }
 
-export { ShotstackAPIError } from './client';
-
+export type {
+	ShotstackEnvironment,
+	ShotstackRequestFacts,
+} from './client';
+export {
+	parseShotstackEnvironment,
+	shotstackRequestFacts,
+} from './client';
 export type {
 	AssetAttributes,
 	GenerationModel,
@@ -445,3 +511,9 @@ export type {
 	SourceAttributes,
 	TimelineInput,
 } from './endpoints/types';
+export type {
+	ShotstackRenderCallback,
+	ShotstackServeCallback,
+	ShotstackSourceCallback,
+	ShotstackWebhookPayloads,
+} from './webhooks';

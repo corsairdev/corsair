@@ -266,3 +266,50 @@ export const rateLimitedBody = {
 		},
 	],
 };
+
+// Callback bodies and headers as Shotstack sent them on the stage
+// environment (11-28), with the account id and file paths replaced.
+export const CALLBACK_OWNER = 'abcdefghij';
+
+export const callbackHeaders = (eventType: string) => ({
+	'user-agent': 'Shotstack-Webhook/1.0',
+	'x-shotstack-attempt': '1',
+	'x-shotstack-event-type': eventType,
+	'content-type': 'application/json',
+});
+
+export const renderCallback = {
+	type: 'edit',
+	action: 'render',
+	id: 'a08de48b-00f6-42e0-9c51-d290e3b9663d',
+	owner: CALLBACK_OWNER,
+	status: 'done',
+	url: `https://shotstack-api-stage-output.s3.ap-southeast-2.amazonaws.com/${CALLBACK_OWNER}/a08de48b-00f6-42e0-9c51-d290e3b9663d.jpg`,
+	poster: null,
+	thumbnail: null,
+	error: null,
+	completed: '2026-11-28T09:13:58.001Z',
+};
+
+export const sourceCallback = {
+	type: 'ingest',
+	action: 'source',
+	id: 'zzz01m8g-pxdr3-zjh30-gxt0b-af11d8',
+	owner: CALLBACK_OWNER,
+	status: 'ready',
+	url: `https://shotstack-ingest-api-stage-sources.s3.ap-southeast-2.amazonaws.com/${CALLBACK_OWNER}/zzz01m8g-pxdr3-zjh30-gxt0b-af11d8/source.jpg`,
+	error: null,
+	completed: '2026-11-28T09:13:56.369Z',
+};
+
+export const serveCallback = {
+	type: 'serve',
+	action: 'copy',
+	id: '40e4c264-7db7-45bb-a219-829225b3bae1',
+	render: 'a08de48b-00f6-42e0-9c51-d290e3b9663d',
+	owner: CALLBACK_OWNER,
+	status: 'ready',
+	url: `https://cdn.shotstack.io/au/stage/${CALLBACK_OWNER}/a08de48b-00f6-42e0-9c51-d290e3b9663d.jpg`,
+	error: null,
+	completed: '2026-11-28T09:13:58.356Z',
+};

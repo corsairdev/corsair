@@ -160,16 +160,26 @@ describe('templates', () => {
 	it('update PUTs the body to /edit/v1/templates/{id}', async () => {
 		respond(templateCreated);
 
+		const template = {
+			timeline: {
+				tracks: [
+					{
+						clips: [
+							{ asset: { type: 'text', text: 'Hi' }, start: 0, length: 1 },
+						],
+					},
+				],
+			},
+			output: { format: 'jpg' as const, resolution: 'preview' as const },
+		};
 		await invoke(Templates.update, {
 			id: templateData.response.id,
 			name: 'Renamed',
+			template,
 		});
 
 		expectAuthed(EDIT, `/edit/v1/templates/${templateData.response.id}`, 'PUT');
-		expect(lastRequest().body).toEqual({
-			name: 'Renamed',
-			template: undefined,
-		});
+		expect(lastRequest().body).toEqual({ name: 'Renamed', template });
 	});
 
 	it('delete DELETEs /edit/v1/templates/{id}', async () => {

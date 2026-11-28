@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { ShotstackContext } from '..';
 import type { ShotstackRequest } from '../client';
-import { makeShotstackRequest } from '../client';
+import { shotstackRequest } from '../client';
 
 type LogFields = Record<string, string | number | boolean | undefined>;
 
@@ -25,7 +25,7 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	const raw = await makeShotstackRequest(ctx.key, toRequest(parsed));
+	const raw = await shotstackRequest(ctx, toRequest(parsed));
 	const result = operation.output.parse(
 		options.shape ? options.shape(raw, parsed) : raw,
 	);

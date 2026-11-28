@@ -30,8 +30,14 @@ export const API_KEY = 'sst-secret-test-key';
  * cannot be typed as the endpoint's own input type.
  */
 export function invoke(endpoint: AnyEndpoint, input: unknown) {
+	// A fixed environment keeps these suites off the auto-detect path, which
+	// environment.test.ts covers on its own.
 	return endpoint(
-		{ key: API_KEY, authType: 'api_key' } as never,
+		{
+			key: API_KEY,
+			authType: 'api_key',
+			options: { environment: 'v1' },
+		} as never,
 		input as never,
 	);
 }
