@@ -72,7 +72,8 @@ export function readEnvelopeError(
 }
 
 function looksLikeEmail(word: string): boolean {
-	const at = word.indexOf('@');
+	// From index 1, so '@alice@example.com' (a handle-style prefix) still counts.
+	const at = word.indexOf('@', 1);
 	if (at < 1) return false;
 	const dot = word.indexOf('.', at + 2);
 	return dot > at + 1 && dot < word.length - 1;
