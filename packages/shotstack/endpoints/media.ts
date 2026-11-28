@@ -23,6 +23,7 @@ export const probe: ShotstackEndpoints['mediaProbe'] = async (
 			method: 'GET',
 			service: 'edit',
 			path: `/probe/${segment(input.url)}`,
+			errorPath: '/probe/{url}',
 		}),
 	);
 };

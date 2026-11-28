@@ -134,6 +134,32 @@ describe('render callback', () => {
 		});
 	});
 
+	it('drops a forged URL and error when the API reports none', async () => {
+		respond({
+			...renderFromApi,
+			response: {
+				...renderFromApi.response,
+				status: 'failed',
+				url: null,
+				error: '',
+			},
+		});
+		const result = await shotstackWebhooksNested.render.handler(
+			ctx(),
+			delivery('render', {
+				...renderCallback,
+				status: 'done',
+				url: 'https://attacker.example/x.mp4',
+				error: 'forged',
+				poster: 'https://attacker.example/p.jpg',
+			}),
+		);
+		expect(result).toMatchObject({
+			success: true,
+			data: { status: 'failed', url: null, error: null, poster: null },
+		});
+	});
+
 	it('refuses a callback for a render the account does not have', async () => {
 		respond({ success: false, message: 'Render not found', response: {} }, 404);
 		const result = await shotstackWebhooksNested.render.handler(

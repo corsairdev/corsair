@@ -144,6 +144,36 @@ describe('environment routing', () => {
 		expect(urls()).toEqual(['https://api.shotstack.io/edit/v1/templates']);
 	});
 
+	it('does not pin an environment after a 503, which says nothing about the key', async () => {
+		respond({ message: 'down' }, 503);
+		await captureError(
+			Templates.list({ key: 'k503', options: {} } as never, {} as never),
+		);
+		respond(unauthorized, 403);
+		respond(templateList);
+		await Templates.list({ key: 'k503', options: {} } as never, {} as never);
+		expect(urls()).toEqual([
+			'https://api.shotstack.io/edit/v1/templates',
+			'https://api.shotstack.io/edit/v1/templates',
+			'https://api.shotstack.io/edit/stage/templates',
+		]);
+	});
+
+	it('looks again when the remembered environment starts refusing the key', async () => {
+		respond(templateList);
+		await Templates.list({ key: 'moved', options: {} } as never, {} as never);
+		respond(unauthorized, 403);
+		respond(unauthorized, 403);
+		respond(templateList);
+		await Templates.list({ key: 'moved', options: {} } as never, {} as never);
+		expect(urls()).toEqual([
+			'https://api.shotstack.io/edit/v1/templates',
+			'https://api.shotstack.io/edit/v1/templates',
+			'https://api.shotstack.io/edit/v1/templates',
+			'https://api.shotstack.io/edit/stage/templates',
+		]);
+	});
+
 	it('also falls back on a plain 401', async () => {
 		respond({ message: 'Unauthorized' }, 401);
 		respond(templateList);

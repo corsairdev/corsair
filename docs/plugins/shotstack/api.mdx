@@ -128,7 +128,7 @@ await corsair.shotstack.api.assets.getByRenderId({ id: '2abd5c11-0f3d-4c6d-ba20-
 
 `assets.transfer`
 
-Copy a file to external destinations such as Shotstack hosting, S3, Google Cloud Storage, Mux, Vimeo or Google Drive (set up under Integrations in the dashboard). Answers queued; the copy runs afterwards.
+Copy a file to external destinations such as Shotstack hosting, S3, Google Cloud Storage, Mux, Vimeo or Google Drive (set up under Integrations in the dashboard). Answers queued; the copy runs afterwards. The hosted copy is listed by assets.getByRenderId with the id you passed.
 
 **Risk:** `destructive`
 
@@ -271,7 +271,7 @@ await corsair.shotstack.api.generations.getModel({ id: 'seedance-2.0-text-to-vid
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | The id the create call returned (a UUID). |
+| `id` | `string` | Yes | The model identifier from generations.listModels, e.g. flux-schnell. |
 
 
 
@@ -866,7 +866,7 @@ await corsair.shotstack.api.templates.delete({ id: 'f5493c17-d01f-445c-bb49-535f
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean \| null` | No | — |
+| `success` | `true \| null` | No | — |
 | `message` | `string \| null` | No | — |
 | `response` | `Record<string, any> \| null` | No | — |
 

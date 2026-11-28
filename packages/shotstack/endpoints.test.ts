@@ -183,6 +183,27 @@ describe('output parsing per operation', () => {
 		).resolves.toMatchObject({ success: true });
 	});
 
+	it('templates.delete refuses an explicit success: false', async () => {
+		respond({ success: false, message: 'Delete failed', response: {} });
+		const error = await captureError(
+			invoke(Templates.remove, { id: templateData.response.id }),
+		);
+		expect(error).toHaveProperty('name', 'ZodError');
+	});
+
+	it('keeps a probed URL out of the error metadata', async () => {
+		respond({ success: false, message: 'Bad Request' }, 400);
+		const error = await captureError(
+			invoke(Media.probe, {
+				url: 'https://media.example/customer.mp4?token=private-token',
+			}),
+		);
+		expect(JSON.stringify(error)).not.toContain('private-token');
+		expect((error as { url: string }).url).toBe(
+			'https://api.shotstack.io/edit/v1/probe/{url}',
+		);
+	});
+
 	it('templates.delete turns the empty 204 into {}', async () => {
 		fetchMock.mockResolvedValueOnce(new Response(null, { status: 204 }));
 

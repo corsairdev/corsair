@@ -18,7 +18,8 @@ import { shotstack } from './index';
  * small renders, one image generation with the cheapest model (generation is
  * charged in the sandbox too: the quote is checked first and the run skips
  * the create above SHOTSTACK_LIVE_MAX_CREDITS, default 1), an upload, a source
- * fetch and a transfer, and deletes everything it made at the end.
+ * fetch and a transfer, and deletes everything it made in a finally block, so a failed step still
+ * cleans up.
  *
  * With SHOTSTACK_HOOK_URL (a public URL that records requests) and
  * SHOTSTACK_HOOK_READ (a URL that returns them as webhook.site's
@@ -69,8 +70,12 @@ const textEdit = (text: string) => ({
 	output: { format: 'jpg' as const, resolution: 'preview' as const },
 });
 
+// Every test database the run opens, closed in afterAll.
+const databases: Array<ReturnType<typeof createTestDatabase>> = [];
+
 async function client(environment?: 'stage') {
 	const testDb = createTestDatabase();
+	databases.push(testDb);
 	await createIntegrationAndAccount(testDb.db, 'shotstack', 'default');
 	const corsair = createCorsair({
 		plugins: [shotstack({ key, ...(environment ? { environment } : {}) })],
@@ -101,6 +106,28 @@ describeIfLive('shotstack live (stage)', () => {
 	jest.setTimeout(900_000);
 	const results: Record<string, Result> = {};
 	let api: Json;
+	// What the run created, deleted in the test's finally even when a step fails.
+	const made = {
+		templates: [] as string[],
+		sources: [] as string[],
+		// Render ids and transfer ids: assets.getByRenderId lists the hosted
+		// copies made under either.
+		hostedUnder: [] as string[],
+	};
+
+	async function cleanup() {
+		for (const id of made.sources) await run('sources.delete', { id });
+		for (const id of made.hostedUnder) {
+			const hosted = await run('assets.getByRenderId', { id });
+			for (const asset of hosted?.assets ?? []) {
+				await run('assets.delete', { id: asset.id });
+			}
+		}
+		for (const id of made.templates) {
+			await run('templates.delete', { id });
+			await run('templates.get', { id }, { expect: /404|not found/i });
+		}
+	}
 
 	async function run(
 		id: string,
@@ -130,6 +157,7 @@ describeIfLive('shotstack live (stage)', () => {
 	}
 
 	afterAll(() => {
+		for (const db of databases) db.cleanup();
 		const failed = Object.entries(results).filter(([, r]) => !r.ok);
 		const summary = {
 			operations: Object.keys(results).filter((k) => !k.includes(':')).length,
@@ -152,7 +180,16 @@ describeIfLive('shotstack live (stage)', () => {
 
 	it('runs every operation on the sandbox', async () => {
 		api = (await client('stage')).corsair.shotstack.api;
+		try {
+			await scenario();
+		} finally {
+			await cleanup();
+		}
+		const failed = Object.entries(results).filter(([, r]) => !r.ok);
+		expect(failed).toEqual([]);
+	});
 
+	async function scenario() {
 		// The unpinned client: production refuses a sandbox key (401), so the
 		// plugin falls back to the sandbox and remembers it.
 		const auto = (await client()).corsair.shotstack.api;
@@ -171,6 +208,7 @@ describeIfLive('shotstack live (stage)', () => {
 			{ need: true },
 		);
 		const templateId = created.response.id;
+		made.templates.push(templateId);
 		await run('templates.list');
 		const got = await run('templates.get', { id: templateId });
 		expect(got?.response.template.timeline).toBeDefined();
@@ -194,6 +232,7 @@ describeIfLive('shotstack live (stage)', () => {
 			{ need: true },
 		);
 		const renderId = rendered.response.id;
+		made.hostedUnder.push(renderId);
 		const render = await until(
 			'render',
 			() => run('renders.get', { id: renderId }),
@@ -207,6 +246,7 @@ describeIfLive('shotstack live (stage)', () => {
 		});
 		expect(withData?.response.data).toBeTruthy();
 		if (templateRender) {
+			made.hostedUnder.push(templateRender.response.id);
 			await until(
 				'template render',
 				() => run('renders.get', { id: templateRender.response.id }),
@@ -222,6 +262,7 @@ describeIfLive('shotstack live (stage)', () => {
 		);
 		const assetId = hosted.assets[0].id;
 		await run('assets.get', { id: assetId });
+		made.hostedUnder.push(`corsair-live-${STAMP}`);
 		const transfer = await run('assets.transfer', {
 			url: SAMPLE_IMAGE,
 			id: `corsair-live-${STAMP}`,
@@ -278,6 +319,7 @@ describeIfLive('shotstack live (stage)', () => {
 
 		// ingest: direct upload, then a fetch
 		const upload = await run('uploads.create', {}, { need: true });
+		made.sources.push(upload.id);
 		const put = await fetch(upload.url, { method: 'PUT', body: PNG });
 		results['uploads:put-bytes'] = put.ok
 			? { ok: true }
@@ -290,6 +332,7 @@ describeIfLive('shotstack live (stage)', () => {
 			},
 			{ need: true },
 		);
+		made.sources.push(fetched.id);
 		for (const id of [upload.id, fetched.id]) {
 			const source = await until(
 				`source ${id}`,
@@ -344,18 +387,11 @@ describeIfLive('shotstack live (stage)', () => {
 				: { ok: false, error: 'no forged callback was refused' };
 		}
 
-		// cleanup
-		await run('sources.delete', { id: upload.id });
-		await run('sources.delete', { id: fetched.id });
-		await run('assets.delete', { id: assetId });
-		await run('templates.delete', { id: templateId });
-		await run(
-			'templates.get',
-			{ id: templateId },
-			{ expect: /404|not found/i },
+		// The transfer's hosted copy, listed under the id passed to it.
+		await until(
+			'transferred copy',
+			() => run('assets.getByRenderId', { id: `corsair-live-${STAMP}` }),
+			(r: Json) => r?.assets?.some((a: Json) => a.status === 'ready'),
 		);
-
-		const failed = Object.entries(results).filter(([, r]) => !r.ok);
-		expect(failed).toEqual([]);
-	});
+	}
 });

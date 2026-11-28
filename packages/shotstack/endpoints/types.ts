@@ -433,7 +433,7 @@ export type TemplatesDeleteInput = z.input<typeof TemplatesDeleteInputSchema>;
 // `{ success, message, response: { message } }`. Either reads as this object.
 const TemplatesDeleteResponseSchema = z
 	.object({
-		success: z.boolean().nullish(),
+		success: z.literal(true).nullish(),
 		message: z.string().nullish(),
 		response: z.record(z.string(), z.unknown()).nullish(),
 	})
@@ -537,6 +537,15 @@ const GenerationResponseSchema = z
 export type GenerationResponse = z.output<typeof GenerationResponseSchema>;
 
 const GenerationsGetInputSchema = z.object({ id: IdSchema });
+
+const GenerationsGetModelInputSchema = z.object({
+	id: z
+		.string()
+		.min(1)
+		.describe(
+			'The model identifier from generations.listModels, e.g. flux-schnell.',
+		),
+});
 
 export type GenerationsGetInput = z.input<typeof GenerationsGetInputSchema>;
 
@@ -836,7 +845,7 @@ export const ShotstackEndpointInputSchemas = {
 	generationsGet: GenerationsGetInputSchema,
 	generationsQuote: GenerationsQuoteInputSchema,
 	generationsListModels: GenerationsListModelsInputSchema,
-	generationsGetModel: GenerationsGetInputSchema,
+	generationsGetModel: GenerationsGetModelInputSchema,
 	mediaProbe: MediaProbeInputSchema,
 	sourcesFetch: SourcesFetchInputSchema,
 	sourcesList: SourcesListInputSchema,

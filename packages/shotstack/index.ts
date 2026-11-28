@@ -420,7 +420,7 @@ const shotstackEndpointMeta = {
 		// Sends the file to third-party services (Vimeo, Mux, TikTok can publish it).
 		riskLevel: 'destructive',
 		description:
-			'Copy a file to external destinations such as Shotstack hosting, S3, Google Cloud Storage, Mux, Vimeo or Google Drive (set up under Integrations in the dashboard). Answers queued; the copy runs afterwards.',
+			'Copy a file to external destinations such as Shotstack hosting, S3, Google Cloud Storage, Mux, Vimeo or Google Drive (set up under Integrations in the dashboard). Answers queued; the copy runs afterwards. The hosted copy is listed by assets.getByRenderId with the id you passed.',
 	},
 	'assets.delete': {
 		riskLevel: 'destructive',

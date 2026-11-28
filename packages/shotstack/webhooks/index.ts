@@ -137,7 +137,15 @@ type Fresh = {
 	status?: unknown;
 	url?: unknown;
 	error?: unknown;
+	poster?: unknown;
+	thumbnail?: unknown;
+	renderId?: unknown;
+	updated?: unknown;
 };
+
+function text(value: unknown): string | null {
+	return typeof value === 'string' && value.length > 0 ? value : null;
+}
 
 /** The job as the API reports it, for the id in the callback. */
 async function lookUp(
@@ -234,16 +242,26 @@ function shotstackWebhook<Id extends WebhookId>(
 						`The Shotstack ${id} callback names another account`,
 					);
 				}
+				const status = text(fresh.status);
+				if (!status) {
+					return refuse(503, `Shotstack returned no status for the ${id}`);
+				}
+				// Everything but the verified id, owner and kind comes from the
+				// API; a field the API leaves out is null, never the sender's.
 				event = {
-					...payload,
-					status:
-						typeof fresh.status === 'string' ? fresh.status : payload.status,
-					url: typeof fresh.url === 'string' ? fresh.url : payload.url,
-					error:
-						typeof fresh.error === 'string' && fresh.error
-							? fresh.error
-							: (payload.error ?? null),
-				};
+					type: payload.type,
+					action: payload.action,
+					id: payload.id,
+					owner: payload.owner,
+					status,
+					url: text(fresh.url),
+					error: text(fresh.error),
+					completed: text(fresh.updated),
+					...(id === 'render'
+						? { poster: text(fresh.poster), thumbnail: text(fresh.thumbnail) }
+						: {}),
+					...(id === 'serve' ? { render: text(fresh.renderId) } : {}),
+				} as ShotstackWebhookPayloads[Id];
 			}
 
 			await logEventFromContext(

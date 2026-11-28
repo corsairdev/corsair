@@ -12,7 +12,7 @@ async function createClient() {
 	const testDb = createTestDatabase();
 	await createIntegrationAndAccount(testDb.db, 'shotstack', 'default');
 	const corsair = createCorsair({
-		plugins: [shotstack({ key: 'sst-test-key' })],
+		plugins: [shotstack({ key: 'sst-test-key', environment: 'v1' })],
 		database: testDb.db,
 		kek: process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef',
 	});

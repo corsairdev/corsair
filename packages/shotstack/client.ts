@@ -33,6 +33,12 @@ export type ShotstackRequest = {
 	// unknown: the endpoint's input schema has already validated the body.
 	body?: unknown;
 	headers?: Record<string, string | undefined>;
+	/**
+	 * The route with caller-controlled segments as placeholders
+	 * (`/probe/{url}`), used in place of `path` in error metadata: a probed
+	 * URL can carry its own access token.
+	 */
+	errorPath?: string;
 };
 
 /**
@@ -166,7 +172,7 @@ function sanitizedApiError(
 		error.body,
 		error.statusText || 'request failed',
 	);
-	const path = `/${req.service}/${environment}${req.path}`;
+	const path = `/${req.service}/${environment}${req.errorPath ?? req.path}`;
 	return new ApiError(
 		{ method: req.method, url: path },
 		{
@@ -341,19 +347,28 @@ export async function shotstackRequest(
 
 	const id = fingerprint(ctx.key);
 	const known = environmentOf.get(id);
-	if (known) return makeShotstackRequest(ctx.key, req, known);
+	if (known) {
+		try {
+			return await makeShotstackRequest(ctx.key, req, known);
+		} catch (error) {
+			if (!isKeyRefused(error)) throw error;
+			// The key stopped working there (rotated, or a stale guess):
+			// forget it and look again below.
+			environmentOf.delete(id);
+		}
+	}
 
 	let lastError: unknown;
 	for (const environment of SHOTSTACK_ENVIRONMENTS) {
 		try {
 			const result = await makeShotstackRequest(ctx.key, req, environment);
+			// Only a success proves the key belongs here; a 503 or a 404
+			// says nothing about the key.
 			environmentOf.set(id, environment);
 			return result;
 		} catch (error) {
 			lastError = error;
 			if (isKeyRefused(error)) continue;
-			// Any other answer proves the key belongs here.
-			if (error instanceof ApiError) environmentOf.set(id, environment);
 			throw error;
 		}
 	}
