@@ -143,7 +143,8 @@ export function withoutRequestData(error: ApiError): ApiError {
 }
 
 function looksLikeEmail(token: string): boolean {
-	const at = token.indexOf('@');
+	// From index 1, so '@alice@example.com' (a handle-style prefix) still counts.
+	const at = token.indexOf('@', 1);
 	if (at < 1) return false;
 	const dot = token.indexOf('.', at + 2);
 	return dot > at + 1 && dot < token.length - 1;

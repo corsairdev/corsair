@@ -278,6 +278,10 @@ describe('linear redaction', () => {
 			'/customers/[redacted]',
 		);
 		expect(redactPath('/links/link_123')).toBe('/links/link_123');
+		expect(redactEmails('Invalid tag: @alice@example.com')).toBe(
+			'Invalid tag: [email]',
+		);
+		expect(redactEmails('@handle and a@b')).toBe('@handle and a@b');
 		// A long run of one character stays fast (no backtracking).
 		const started = Date.now();
 		redactEmails(`${'!'.repeat(100_000)}@`);
