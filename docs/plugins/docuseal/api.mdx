@@ -1,0 +1,3189 @@
+---
+title: "DocuSeal API reference"
+sidebarTitle: "API"
+description: "API reference for the DocuSeal plugin in Corsair: every `docuseal.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Events
+
+### listFormCompleted
+
+`events.listFormCompleted`
+
+List form.completed events (one per signer who finished), oldest first by completion time in Unix seconds; a polling alternative to webhooks
+
+**Risk:** `read`
+
+```ts
+await corsair.docuseal.api.events.listFormCompleted({ limit: 50, after: 1764320000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Results per page, 1-100. DocuSeal defaults to 10. |
+| `after` | `number` | No | Unix seconds: only events completed after this time. Pass `pagination.next` from the previous page. |
+| `before` | `number` | No | Unix seconds: only events completed before this time. |
+
+Pages by completion time in Unix seconds: pass `pagination.next` as `after`. Not in the published OpenAPI file.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  event_type: string,
+  timestamp?: string | null,
+  data: {
+    id: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  count: number,
+  next?: number | null,
+  prev?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSubmissionCompleted
+
+`events.listSubmissionCompleted`
+
+List submission.completed events (one per fully signed submission), paged by completion time in Unix seconds; a polling alternative to webhooks
+
+**Risk:** `read`
+
+```ts
+await corsair.docuseal.api.events.listSubmissionCompleted({ limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Results per page, 1-100. DocuSeal defaults to 10. |
+| `after` | `number` | No | Unix seconds: only events completed after this time. Pass `pagination.next` from the previous page. |
+| `before` | `number` | No | Unix seconds: only events completed before this time. |
+
+Pages by completion time in Unix seconds: pass `pagination.next` as `after`. Not in the published OpenAPI file.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  event_type: string,
+  timestamp?: string | null,
+  data: {
+    id: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  count: number,
+  next?: number | null,
+  prev?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Submissions
+
+### archive
+
+`submissions.archive`
+
+Archive a submission; DocuSeal has no hard delete, so it can be restored with submissions.update and archived: false
+
+**Risk:** `write`
+
+```ts
+await corsair.docuseal.api.submissions.archive({ id: 654321 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The submission to archive. DocuSeal has no hard delete; restore it with `submissions.update` and `archived: false`. |
+
+DocuSeal archives instead of deleting. Restore an archived submission with `submissions.update` and `archived: false`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `archived_at` | `string \| null` | No | — |
+
+
+
+---
+
+### create
+
+`submissions.create`
+
+Create a submission from a template, one submitter per signing role; sends the signature-request emails unless send_email is false
+
+**Risk:** `destructive`
+
+```ts
+await corsair.docuseal.api.submissions.create({ template_id: 123456, submitters: [{ role: 'First party', email: 'jordan@acme-logistics.com' }], send_email: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `number` | Yes | The template to fill. |
+| `submitters` | `object[]` | Yes | One entry per signing role on the template. |
+| `send_email` | `boolean` | No | DocuSeal defaults to true: signature-request emails go out on create. |
+| `send_sms` | `boolean` | No | DocuSeal defaults to false. |
+| `order` | `random \| preserved` | No | DocuSeal defaults to preserved. |
+| `completed_redirect_url` | `string` | No | — |
+| `bcc_completed` | `string` | No | Email address that receives the completed document. |
+| `reply_to` | `string` | No | — |
+| `expire_at` | `string` | No | Free-form datetime as DocuSeal accepts it, e.g. `2024-09-01 12:00:00 UTC`. |
+| `variables` | `Record<string, any>` | No | — |
+| `message` | `object` | No | — |
+
+Sends the signature-request emails immediately unless you pass `send_email: false`. Answers a bare array, one submitter per entry.
+
+<AccordionGroup>
+<Accordion title="submitters full type">
+
+```ts
+{
+  name?: string,
+  role?: string,
+  email?: string,
+  phone?: string,
+  values?: Record<string, any>,
+  external_id?: string,
+  completed?: boolean,
+  metadata?: Record<string, any>,
+  send_email?: boolean,
+  send_sms?: boolean,
+  reply_to?: string,
+  completed_redirect_url?: string,
+  order?: number,
+  require_phone_2fa?: boolean,
+  require_email_2fa?: boolean,
+  invite_by?: string,
+  message?: {
+    subject?: string,
+    body?: string
+  },
+  fields?: {
+    name: string,
+    default_value?: string | number | boolean | any[],
+    readonly?: boolean,
+    required?: boolean,
+    title?: string,
+    description?: string,
+    validation?: {
+      pattern?: string,
+      message?: string,
+      min?: number | string | null,
+      max?: number | string | null,
+      step?: number | null
+    },
+    preferences?: {
+      font_size?: number | null,
+      font_type?: bold | italic | bold_italic | null,
+      font?: Times | Helvetica | Courier | null,
+      color?: string | null,
+      background?: string | null,
+      align?: left | center | right | null,
+      valign?: top | center | bottom | null,
+      format?: string | null,
+      price?: number | null,
+      currency?: USD | EUR | GBP | CAD | AUD | CHF | SEK | null,
+      mask?: boolean | number | null,
+      reasons?: string[] | null
+    }
+  }[],
+  roles?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="message full type">
+
+```ts
+{
+  subject?: string,
+  body?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  submission_id: number,
+  uuid: string,
+  email?: string | null,
+  slug: string,
+  sent_at?: string | null,
+  opened_at?: string | null,
+  completed_at?: string | null,
+  declined_at?: string | null,
+  created_at: string,
+  updated_at: string,
+  name?: string | null,
+  phone?: string | null,
+  external_id?: string | null,
+  status: string,
+  role: string,
+  metadata: Record<string, any>,
+  preferences: Record<string, any>,
+  values?: {
+    field: string,
+    value?: any | null
+  }[] | null,
+  documents?: {
+    name: string,
+    url: string
+  }[] | null,
+  embed_src?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createFromDocx
+
+`submissions.createFromDocx`
+
+Create a one-off submission from base64-encoded DOCX files with &#123;&#123;...&#125;&#125; tags; sends signature-request emails unless send_email is false; may require a paid (Pro) plan
+
+**Risk:** `destructive`
+
+```ts
+await corsair.docuseal.api.submissions.createFromDocx({ documents: [{ name: 'agreement.docx', file: '<base64 DOCX>' }], submitters: [{ role: 'First party', email: 'jordan@acme-logistics.com' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `send_email` | `boolean` | No | DocuSeal defaults to true: signature-request emails go out on create. |
+| `send_sms` | `boolean` | No | DocuSeal defaults to false. |
+| `order` | `random \| preserved` | No | DocuSeal defaults to preserved. |
+| `completed_redirect_url` | `string` | No | — |
+| `bcc_completed` | `string` | No | — |
+| `reply_to` | `string` | No | — |
+| `expire_at` | `string` | No | Free-form datetime as DocuSeal accepts it, e.g. `2024-09-01 12:00:00 UTC`. |
+| `template_ids` | `number[]` | No | Reuse field schema and submitters from these templates. |
+| `submitters` | `object[]` | Yes | — |
+| `message` | `object` | No | — |
+| `merge_documents` | `boolean` | No | DocuSeal defaults to false. |
+| `variables` | `Record<string, any>` | No | — |
+| `documents` | `object[]` | Yes | DOCX files with `{{...}}` tags; may require a paid (Pro) plan. |
+| `remove_tags` | `boolean` | No | DocuSeal defaults to true. |
+
+In the DOCX, `[[variable_name]]` is replaced from `variables`, and `{{Field Name}}` tags become fillable fields. May require a paid (Pro) plan.
+
+<AccordionGroup>
+<Accordion title="submitters full type">
+
+```ts
+{
+  name?: string,
+  role?: string,
+  email?: string,
+  phone?: string,
+  values?: Record<string, any>,
+  external_id?: string,
+  completed?: boolean,
+  metadata?: Record<string, any>,
+  send_email?: boolean,
+  send_sms?: boolean,
+  reply_to?: string,
+  completed_redirect_url?: string,
+  order?: number,
+  require_phone_2fa?: boolean,
+  require_email_2fa?: boolean,
+  invite_by?: string,
+  message?: {
+    subject?: string,
+    body?: string
+  },
+  fields?: {
+    name: string,
+    default_value?: string | number | boolean | any[],
+    readonly?: boolean,
+    required?: boolean,
+    title?: string,
+    description?: string,
+    validation?: {
+      pattern?: string,
+      message?: string,
+      min?: number | string | null,
+      max?: number | string | null,
+      step?: number | null
+    },
+    preferences?: {
+      font_size?: number | null,
+      font_type?: bold | italic | bold_italic | null,
+      font?: Times | Helvetica | Courier | null,
+      color?: string | null,
+      background?: string | null,
+      align?: left | center | right | null,
+      valign?: top | center | bottom | null,
+      format?: string | null,
+      price?: number | null,
+      currency?: USD | EUR | GBP | CAD | AUD | CHF | SEK | null,
+      mask?: boolean | number | null,
+      reasons?: string[] | null
+    }
+  }[],
+  roles?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="message full type">
+
+```ts
+{
+  subject?: string,
+  body?: string
+}
+```
+</Accordion>
+
+<Accordion title="documents full type">
+
+```ts
+{
+  name: string,
+  file: string,
+  position?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `submitters` | `object[]` | Yes | — |
+| `source` | `string` | Yes | — |
+| `submitters_order` | `string \| null` | No | — |
+| `status` | `string` | Yes | — |
+| `expire_at` | `string \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `schema` | `object[] \| null` | No | — |
+| `fields` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="submitters full type">
+
+```ts
+{
+  id: number,
+  submission_id: number,
+  uuid: string,
+  email?: string | null,
+  slug: string,
+  sent_at?: string | null,
+  opened_at?: string | null,
+  completed_at?: string | null,
+  declined_at?: string | null,
+  created_at: string,
+  updated_at: string,
+  name?: string | null,
+  phone?: string | null,
+  external_id?: string | null,
+  status: string,
+  role: string,
+  metadata: Record<string, any>,
+  preferences: Record<string, any>,
+  values?: {
+    field: string,
+    value?: any | null
+  }[] | null,
+  documents?: {
+    name: string,
+    url: string
+  }[] | null,
+  embed_src?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="schema full type">
+
+```ts
+{
+  attachment_uuid: string,
+  name: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  uuid: string,
+  submitter_uuid: string,
+  name?: string | null,
+  type: string,
+  required?: boolean | null,
+  preferences?: {
+    font_size?: number | null,
+    font_type?: string | null,
+    font?: string | null,
+    color?: string | null,
+    background?: string | null,
+    align?: string | null,
+    valign?: string | null,
+    format?: string | null,
+    price?: number | null,
+    currency?: string | null,
+    mask?: boolean | number | null,
+    reasons?: string[] | null
+  } | null,
+  areas?: {
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    attachment_uuid: string,
+    page: number
+  }[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createFromEmails
+
+`submissions.createFromEmails`
+
+Create one submission per address in a comma-separated list, all from one template; sends a signature-request email to each address unless send_email is false. On DocuSeal Cloud without Pro only the first address gets a submission
+
+**Risk:** `destructive`
+
+```ts
+await corsair.docuseal.api.submissions.createFromEmails({ template_id: 123456, emails: 'jordan@acme-logistics.com, sam@fieldkit.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `number` | Yes | The template to send. |
+| `emails` | `string` | Yes | Comma-separated recipient addresses; DocuSeal creates one submission per address. |
+| `send_email` | `boolean` | No | DocuSeal defaults to true. |
+| `message` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  subject?: string,
+  body?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  submission_id: number,
+  uuid: string,
+  email?: string | null,
+  slug: string,
+  sent_at?: string | null,
+  opened_at?: string | null,
+  completed_at?: string | null,
+  declined_at?: string | null,
+  created_at: string,
+  updated_at: string,
+  name?: string | null,
+  phone?: string | null,
+  external_id?: string | null,
+  status: string,
+  role: string,
+  metadata: Record<string, any>,
+  preferences: Record<string, any>,
+  values?: {
+    field: string,
+    value?: any | null
+  }[] | null,
+  documents?: {
+    name: string,
+    url: string
+  }[] | null,
+  embed_src?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createFromHtml
+
+`submissions.createFromHtml`
+
+Create a one-off submission from HTML documents without saving a template; sends signature-request emails unless send_email is false
+
+**Risk:** `destructive`
+
+```ts
+await corsair.docuseal.api.submissions.createFromHtml({ documents: [{ html: '<p>Sign below</p>' }], submitters: [{ role: 'First party', email: 'jordan@acme-logistics.com' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `send_email` | `boolean` | No | DocuSeal defaults to true: signature-request emails go out on create. |
+| `send_sms` | `boolean` | No | DocuSeal defaults to false. |
+| `order` | `random \| preserved` | No | DocuSeal defaults to preserved. |
+| `completed_redirect_url` | `string` | No | — |
+| `bcc_completed` | `string` | No | — |
+| `reply_to` | `string` | No | — |
+| `expire_at` | `string` | No | Free-form datetime as DocuSeal accepts it, e.g. `2024-09-01 12:00:00 UTC`. |
+| `template_ids` | `number[]` | No | Reuse field schema and submitters from these templates. |
+| `submitters` | `object[]` | Yes | — |
+| `message` | `object` | No | — |
+| `merge_documents` | `boolean` | No | DocuSeal defaults to false. |
+| `documents` | `object[]` | Yes | One entry per HTML document. |
+
+One-off submissions from HTML documents; no template is saved.
+
+<AccordionGroup>
+<Accordion title="submitters full type">
+
+```ts
+{
+  name?: string,
+  role?: string,
+  email?: string,
+  phone?: string,
+  values?: Record<string, any>,
+  external_id?: string,
+  completed?: boolean,
+  metadata?: Record<string, any>,
+  send_email?: boolean,
+  send_sms?: boolean,
+  reply_to?: string,
+  completed_redirect_url?: string,
+  order?: number,
+  require_phone_2fa?: boolean,
+  require_email_2fa?: boolean,
+  invite_by?: string,
+  message?: {
+    subject?: string,
+    body?: string
+  },
+  fields?: {
+    name: string,
+    default_value?: string | number | boolean | any[],
+    readonly?: boolean,
+    required?: boolean,
+    title?: string,
+    description?: string,
+    validation?: {
+      pattern?: string,
+      message?: string,
+      min?: number | string | null,
+      max?: number | string | null,
+      step?: number | null
+    },
+    preferences?: {
+      font_size?: number | null,
+      font_type?: bold | italic | bold_italic | null,
+      font?: Times | Helvetica | Courier | null,
+      color?: string | null,
+      background?: string | null,
+      align?: left | center | right | null,
+      valign?: top | center | bottom | null,
+      format?: string | null,
+      price?: number | null,
+      currency?: USD | EUR | GBP | CAD | AUD | CHF | SEK | null,
+      mask?: boolean | number | null,
+      reasons?: string[] | null
+    }
+  }[],
+  roles?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="message full type">
+
+```ts
+{
+  subject?: string,
+  body?: string
+}
+```
+</Accordion>
+
+<Accordion title="documents full type">
+
+```ts
+{
+  html: string,
+  name?: string | null,
+  html_header?: string | null,
+  html_footer?: string | null,
+  size?: Letter | Legal | Tabloid | Ledger | A0 | A1 | A2 | A3 | A4 | A5 | A6 | null,
+  position?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `submitters` | `object[]` | Yes | — |
+| `source` | `string` | Yes | — |
+| `submitters_order` | `string \| null` | No | — |
+| `status` | `string` | Yes | — |
+| `expire_at` | `string \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `schema` | `object[] \| null` | No | — |
+| `fields` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="submitters full type">
+
+```ts
+{
+  id: number,
+  submission_id: number,
+  uuid: string,
+  email?: string | null,
+  slug: string,
+  sent_at?: string | null,
+  opened_at?: string | null,
+  completed_at?: string | null,
+  declined_at?: string | null,
+  created_at: string,
+  updated_at: string,
+  name?: string | null,
+  phone?: string | null,
+  external_id?: string | null,
+  status: string,
+  role: string,
+  metadata: Record<string, any>,
+  preferences: Record<string, any>,
+  values?: {
+    field: string,
+    value?: any | null
+  }[] | null,
+  documents?: {
+    name: string,
+    url: string
+  }[] | null,
+  embed_src?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="schema full type">
+
+```ts
+{
+  attachment_uuid: string,
+  name: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  uuid: string,
+  submitter_uuid: string,
+  name?: string | null,
+  type: string,
+  required?: boolean | null,
+  preferences?: {
+    font_size?: number | null,
+    font_type?: string | null,
+    font?: string | null,
+    color?: string | null,
+    background?: string | null,
+    align?: string | null,
+    valign?: string | null,
+    format?: string | null,
+    price?: number | null,
+    currency?: string | null,
+    mask?: boolean | number | null,
+    reasons?: string[] | null
+  } | null,
+  areas?: {
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    attachment_uuid: string,
+    page: number
+  }[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createFromPdf
+
+`submissions.createFromPdf`
+
+Create a one-off submission from base64-encoded PDF files without saving a template; sends signature-request emails unless send_email is false
+
+**Risk:** `destructive`
+
+```ts
+await corsair.docuseal.api.submissions.createFromPdf({ documents: [{ name: 'agreement.pdf', file: '<base64 PDF>' }], submitters: [{ role: 'First party', email: 'jordan@acme-logistics.com' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `send_email` | `boolean` | No | DocuSeal defaults to true: signature-request emails go out on create. |
+| `send_sms` | `boolean` | No | DocuSeal defaults to false. |
+| `order` | `random \| preserved` | No | DocuSeal defaults to preserved. |
+| `completed_redirect_url` | `string` | No | — |
+| `bcc_completed` | `string` | No | — |
+| `reply_to` | `string` | No | — |
+| `expire_at` | `string` | No | Free-form datetime as DocuSeal accepts it, e.g. `2024-09-01 12:00:00 UTC`. |
+| `template_ids` | `number[]` | No | Reuse field schema and submitters from these templates. |
+| `submitters` | `object[]` | Yes | — |
+| `message` | `object` | No | — |
+| `merge_documents` | `boolean` | No | DocuSeal defaults to false. |
+| `documents` | `object[]` | Yes | One entry per PDF; place signature fields with `fields`. |
+| `flatten` | `boolean` | No | DocuSeal defaults to false. |
+| `remove_tags` | `boolean` | No | DocuSeal defaults to true. |
+
+One-off submissions from uploaded files. May require a paid (Pro) plan.
+
+<AccordionGroup>
+<Accordion title="submitters full type">
+
+```ts
+{
+  name?: string,
+  role?: string,
+  email?: string,
+  phone?: string,
+  values?: Record<string, any>,
+  external_id?: string,
+  completed?: boolean,
+  metadata?: Record<string, any>,
+  send_email?: boolean,
+  send_sms?: boolean,
+  reply_to?: string,
+  completed_redirect_url?: string,
+  order?: number,
+  require_phone_2fa?: boolean,
+  require_email_2fa?: boolean,
+  invite_by?: string,
+  message?: {
+    subject?: string,
+    body?: string
+  },
+  fields?: {
+    name: string,
+    default_value?: string | number | boolean | any[],
+    readonly?: boolean,
+    required?: boolean,
+    title?: string,
+    description?: string,
+    validation?: {
+      pattern?: string,
+      message?: string,
+      min?: number | string | null,
+      max?: number | string | null,
+      step?: number | null
+    },
+    preferences?: {
+      font_size?: number | null,
+      font_type?: bold | italic | bold_italic | null,
+      font?: Times | Helvetica | Courier | null,
+      color?: string | null,
+      background?: string | null,
+      align?: left | center | right | null,
+      valign?: top | center | bottom | null,
+      format?: string | null,
+      price?: number | null,
+      currency?: USD | EUR | GBP | CAD | AUD | CHF | SEK | null,
+      mask?: boolean | number | null,
+      reasons?: string[] | null
+    }
+  }[],
+  roles?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="message full type">
+
+```ts
+{
+  subject?: string,
+  body?: string
+}
+```
+</Accordion>
+
+<Accordion title="documents full type">
+
+```ts
+{
+  name: string,
+  file: string,
+  position?: number | null,
+  fields?: {
+    name?: string,
+    type?: heading | text | signature | initials | date | number | image | checkbox | multiple | file | radio | select | cells | stamp | payment | phone | verification | kba | strikethrough,
+    role?: string,
+    required?: boolean,
+    title?: string,
+    description?: string,
+    areas?: {
+      x: number,
+      y: number,
+      w: number,
+      h: number,
+      page: number,
+      option?: string
+    }[],
+    options?: string[],
+    validation?: {
+      pattern?: string,
+      message?: string,
+      min?: number | string | null,
+      max?: number | string | null,
+      step?: number | null
+    },
+    preferences?: {
+      font_size?: number | null,
+      font_type?: bold | italic | bold_italic | null,
+      font?: Times | Helvetica | Courier | null,
+      color?: string | null,
+      background?: string | null,
+      align?: left | center | right | null,
+      valign?: top | center | bottom | null,
+      format?: string | null,
+      price?: number | null,
+      currency?: USD | EUR | GBP | CAD | AUD | CHF | SEK | null,
+      mask?: boolean | number | null,
+      reasons?: string[] | null
+    }
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `submitters` | `object[]` | Yes | — |
+| `source` | `string` | Yes | — |
+| `submitters_order` | `string \| null` | No | — |
+| `status` | `string` | Yes | — |
+| `expire_at` | `string \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `schema` | `object[] \| null` | No | — |
+| `fields` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="submitters full type">
+
+```ts
+{
+  id: number,
+  submission_id: number,
+  uuid: string,
+  email?: string | null,
+  slug: string,
+  sent_at?: string | null,
+  opened_at?: string | null,
+  completed_at?: string | null,
+  declined_at?: string | null,
+  created_at: string,
+  updated_at: string,
+  name?: string | null,
+  phone?: string | null,
+  external_id?: string | null,
+  status: string,
+  role: string,
+  metadata: Record<string, any>,
+  preferences: Record<string, any>,
+  values?: {
+    field: string,
+    value?: any | null
+  }[] | null,
+  documents?: {
+    name: string,
+    url: string
+  }[] | null,
+  embed_src?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="schema full type">
+
+```ts
+{
+  attachment_uuid: string,
+  name: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  uuid: string,
+  submitter_uuid: string,
+  name?: string | null,
+  type: string,
+  required?: boolean | null,
+  preferences?: {
+    font_size?: number | null,
+    font_type?: string | null,
+    font?: string | null,
+    color?: string | null,
+    background?: string | null,
+    align?: string | null,
+    valign?: string | null,
+    format?: string | null,
+    price?: number | null,
+    currency?: string | null,
+    mask?: boolean | number | null,
+    reasons?: string[] | null
+  } | null,
+  areas?: {
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    attachment_uuid: string,
+    page: number
+  }[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`submissions.get`
+
+Read one submission with its submitters, documents and event history
+
+**Risk:** `read`
+
+```ts
+await corsair.docuseal.api.submissions.get({ id: 654321 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The resource id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `slug` | `string` | Yes | — |
+| `source` | `string` | Yes | — |
+| `submitters_order` | `string \| null` | No | — |
+| `expire_at` | `string \| null` | No | — |
+| `variables` | `Record<string, any>` | Yes | — |
+| `audit_log_url` | `string \| null` | No | — |
+| `combined_document_url` | `string \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `archived_at` | `string \| null` | No | — |
+| `status` | `string` | Yes | — |
+| `completed_at` | `string \| null` | No | — |
+| `created_by_user` | `any \| null` | No | — |
+| `template` | `object \| null` | No | — |
+| `submitters` | `object[] \| null` | No | — |
+| `submission_events` | `object[] \| null` | No | — |
+| `documents` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  external_id?: string | null,
+  folder_name: string,
+  created_at: string,
+  updated_at: string
+} | null
+```
+</Accordion>
+
+<Accordion title="submitters full type">
+
+```ts
+{
+  id: number,
+  submission_id: number,
+  uuid: string,
+  email?: string | null,
+  slug: string,
+  sent_at?: string | null,
+  opened_at?: string | null,
+  completed_at?: string | null,
+  declined_at?: string | null,
+  created_at: string,
+  updated_at: string,
+  name?: string | null,
+  phone?: string | null,
+  external_id?: string | null,
+  status: string,
+  role: string,
+  metadata: Record<string, any>,
+  preferences: Record<string, any>,
+  values?: {
+    field: string,
+    value?: any | null
+  }[] | null,
+  documents?: {
+    name: string,
+    url: string
+  }[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="submission_events full type">
+
+```ts
+{
+  id: number,
+  submitter_id: number,
+  event_type: string,
+  event_timestamp: string,
+  data?: Record<string, any> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="documents full type">
+
+```ts
+{
+  name: string,
+  url: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getDocuments
+
+`submissions.getDocuments`
+
+Read the URLs of a submission's documents, which are signed and final once the submission is completed; the URLs act as bearer credentials, so treat the result as sensitive
+
+**Risk:** `read`
+
+```ts
+await corsair.docuseal.api.submissions.getDocuments({ id: 654321, merge: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The resource id. |
+| `merge` | `boolean` | No | True merges all documents into one PDF. DocuSeal defaults to false. |
+
+Returns URLs of the submission's documents, signed and final once completed. The URLs act as bearer credentials, so treat the result as sensitive.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `documents` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="documents full type">
+
+```ts
+{
+  name: string,
+  url: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`submissions.list`
+
+List submissions with template, status and folder filters, newest id first, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.docuseal.api.submissions.list({ status: 'completed', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `number` | No | — |
+| `status` | `completed \| declined \| expired \| pending` | No | Only submissions in this status. |
+| `q` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `template_folder` | `string` | No | — |
+| `archived` | `boolean` | No | List archived submissions instead of active ones. |
+| `limit` | `number` | No | Results per page, 1-100. DocuSeal defaults to 10. |
+| `after` | `number` | No | Id cursor: pass `pagination.next` from the previous page. Cloud returns records with a larger id; self-hosted 3.4.0 pages by descending id, so the cursor selects smaller ids there. |
+| `before` | `number` | No | Id cursor for the other direction (`pagination.prev`); its sense is reversed on self-hosted 3.4.0 like `after`. |
+
+Pages by id cursor: pass `pagination.next` from one page as `after` on the next. Page size is capped at 100; DocuSeal defaults to 10.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  slug: string,
+  source: string,
+  submitters_order?: string | null,
+  expire_at?: string | null,
+  variables: Record<string, any>,
+  audit_log_url?: string | null,
+  combined_document_url?: string | null,
+  created_at: string,
+  updated_at: string,
+  archived_at?: string | null,
+  status: string,
+  completed_at?: string | null,
+  created_by_user?: any | null,
+  template?: {
+    id: number,
+    name: string,
+    external_id?: string | null,
+    folder_name: string,
+    created_at: string,
+    updated_at: string
+  } | null,
+  submitters: {
+    id: number,
+    submission_id: number,
+    uuid: string,
+    email?: string | null,
+    slug: string,
+    sent_at?: string | null,
+    opened_at?: string | null,
+    completed_at?: string | null,
+    declined_at?: string | null,
+    created_at: string,
+    updated_at: string,
+    name?: string | null,
+    phone?: string | null,
+    external_id?: string | null,
+    status: string,
+    role: string,
+    metadata: Record<string, any>,
+    preferences: Record<string, any>
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  count: number,
+  next?: number | null,
+  prev?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`submissions.update`
+
+Rename a submission, change or clear its expiry, or archive and restore it with the archived flag
+
+**Risk:** `write`
+
+```ts
+await corsair.docuseal.api.submissions.update({ id: 654321, name: 'Agreement for unit 4', expire_at: null });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The resource id. |
+| `name` | `string` | No | — |
+| `expire_at` | `string \| null` | No | Free-form datetime as DocuSeal accepts it; null removes the expiry. |
+| `archived` | `boolean` | No | True archives the submission; false restores an archived one. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `slug` | `string` | Yes | — |
+| `source` | `string` | Yes | — |
+| `submitters_order` | `string \| null` | No | — |
+| `expire_at` | `string \| null` | No | — |
+| `variables` | `Record<string, any>` | Yes | — |
+| `audit_log_url` | `string \| null` | No | — |
+| `combined_document_url` | `string \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `archived_at` | `string \| null` | No | — |
+| `status` | `string` | Yes | — |
+| `completed_at` | `string \| null` | No | — |
+| `created_by_user` | `any \| null` | No | — |
+| `template` | `object \| null` | No | — |
+| `submitters` | `object[] \| null` | No | — |
+| `submission_events` | `object[] \| null` | No | — |
+| `documents` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  external_id?: string | null,
+  folder_name: string,
+  created_at: string,
+  updated_at: string
+} | null
+```
+</Accordion>
+
+<Accordion title="submitters full type">
+
+```ts
+{
+  id: number,
+  submission_id: number,
+  uuid: string,
+  email?: string | null,
+  slug: string,
+  sent_at?: string | null,
+  opened_at?: string | null,
+  completed_at?: string | null,
+  declined_at?: string | null,
+  created_at: string,
+  updated_at: string,
+  name?: string | null,
+  phone?: string | null,
+  external_id?: string | null,
+  status: string,
+  role: string,
+  metadata: Record<string, any>,
+  preferences: Record<string, any>,
+  values?: {
+    field: string,
+    value?: any | null
+  }[] | null,
+  documents?: {
+    name: string,
+    url: string
+  }[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="submission_events full type">
+
+```ts
+{
+  id: number,
+  submitter_id: number,
+  event_type: string,
+  event_timestamp: string,
+  data?: Record<string, any> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="documents full type">
+
+```ts
+{
+  name: string,
+  url: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Submitters
+
+### get
+
+`submitters.get`
+
+Read one submitter with the values they filled in and their documents
+
+**Risk:** `read`
+
+```ts
+await corsair.docuseal.api.submitters.get({ id: 987654 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The resource id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `submission_id` | `number` | Yes | — |
+| `uuid` | `string` | Yes | — |
+| `email` | `string \| null` | No | — |
+| `slug` | `string` | Yes | — |
+| `sent_at` | `string \| null` | No | — |
+| `opened_at` | `string \| null` | No | — |
+| `completed_at` | `string \| null` | No | — |
+| `declined_at` | `string \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `status` | `string` | Yes | — |
+| `role` | `string` | Yes | — |
+| `metadata` | `Record<string, any>` | Yes | — |
+| `preferences` | `Record<string, any>` | Yes | — |
+| `template` | `any \| null` | No | — |
+| `submission_events` | `object[] \| null` | No | — |
+| `values` | `object[] \| null` | No | — |
+| `documents` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="submission_events full type">
+
+```ts
+{
+  id: number,
+  submitter_id: number,
+  event_type: string,
+  event_timestamp: string,
+  data?: Record<string, any> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="values full type">
+
+```ts
+{
+  field: string,
+  value?: any | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="documents full type">
+
+```ts
+{
+  name: string,
+  url: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`submitters.list`
+
+List submitters with completion-date and external-id filters, newest id first, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.docuseal.api.submitters.list({ submission_id: 654321, limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `submission_id` | `number` | No | — |
+| `q` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `completed_after` | `string` | No | A date-time DocuSeal can parse, e.g. `2024-03-05 9:32:20` or `2024-08-01T12:00:00Z`. |
+| `completed_before` | `string` | No | A date-time DocuSeal can parse, e.g. `2024-03-05 9:32:20` or `2024-08-01T12:00:00Z`. |
+| `external_id` | `string` | No | — |
+| `limit` | `number` | No | Results per page, 1-100. DocuSeal defaults to 10. |
+| `after` | `number` | No | Id cursor: pass `pagination.next` from the previous page. Cloud returns records with a larger id; self-hosted 3.4.0 pages by descending id, so the cursor selects smaller ids there. |
+| `before` | `number` | No | Id cursor for the other direction (`pagination.prev`); its sense is reversed on self-hosted 3.4.0 like `after`. |
+
+Pages by id cursor: pass `pagination.next` from one page as `after` on the next. Page size is capped at 100; DocuSeal defaults to 10.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  submission_id: number,
+  uuid: string,
+  email?: string | null,
+  slug: string,
+  sent_at?: string | null,
+  opened_at?: string | null,
+  completed_at?: string | null,
+  declined_at?: string | null,
+  created_at: string,
+  updated_at: string,
+  name?: string | null,
+  phone?: string | null,
+  external_id?: string | null,
+  status: string,
+  role: string,
+  metadata: Record<string, any>,
+  preferences: Record<string, any>,
+  template?: any | null,
+  submission_events?: {
+    id: number,
+    submitter_id: number,
+    event_type: string,
+    event_timestamp: string,
+    data?: Record<string, any> | null
+  }[] | null,
+  values?: {
+    field: string,
+    value?: any | null
+  }[] | null,
+  documents?: {
+    name: string,
+    url: string
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  count: number,
+  next?: number | null,
+  prev?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`submitters.update`
+
+Edit a submitter, resend their invitation, or fill their fields; passing completed: true counter-signs the document as this submitter and cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.docuseal.api.submitters.update({ id: 987654, values: { 'Start date': '2026-02-01' }, send_email: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The submitter to change. |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `values` | `Record<string, any>` | No | — |
+| `external_id` | `string` | No | — |
+| `send_email` | `boolean` | No | True re-sends the signature-request email. |
+| `send_sms` | `boolean` | No | — |
+| `reply_to` | `string` | No | — |
+| `completed` | `boolean` | No | True counter-signs the document as this submitter and cannot be undone. |
+| `metadata` | `Record<string, any>` | No | — |
+| `completed_redirect_url` | `string` | No | — |
+| `require_phone_2fa` | `boolean` | No | DocuSeal defaults to false. |
+| `require_email_2fa` | `boolean` | No | DocuSeal defaults to false. |
+| `message` | `object` | No | — |
+| `fields` | `object[]` | No | — |
+
+Passing `completed: true` counter-signs the document as this submitter and cannot be undone. `send_email: true` re-sends the invitation.
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  subject?: string,
+  body?: string
+}
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  name: string,
+  default_value?: string | number | boolean | any[],
+  readonly?: boolean,
+  required?: boolean,
+  title?: string,
+  description?: string,
+  validation?: {
+    pattern?: string,
+    message?: string,
+    min?: number | string | null,
+    max?: number | string | null,
+    step?: number | null
+  },
+  preferences?: {
+    font_size?: number | null,
+    font_type?: bold | italic | bold_italic | null,
+    font?: Times | Helvetica | Courier | null,
+    color?: string | null,
+    background?: string | null,
+    align?: left | center | right | null,
+    valign?: top | center | bottom | null,
+    format?: string | null,
+    price?: number | null,
+    currency?: USD | EUR | GBP | CAD | AUD | CHF | SEK | null,
+    mask?: boolean | number | null,
+    reasons?: string[] | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `submission_id` | `number` | Yes | — |
+| `uuid` | `string` | Yes | — |
+| `email` | `string \| null` | No | — |
+| `slug` | `string` | Yes | — |
+| `sent_at` | `string \| null` | No | — |
+| `opened_at` | `string \| null` | No | — |
+| `completed_at` | `string \| null` | No | — |
+| `declined_at` | `string \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `status` | `string` | Yes | — |
+| `role` | `string` | Yes | — |
+| `metadata` | `Record<string, any>` | Yes | — |
+| `preferences` | `Record<string, any>` | Yes | — |
+| `values` | `object[] \| null` | No | — |
+| `documents` | `object[] \| null` | No | — |
+| `embed_src` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="values full type">
+
+```ts
+{
+  field: string,
+  value?: any | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="documents full type">
+
+```ts
+{
+  name: string,
+  url: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Templates
+
+### archive
+
+`templates.archive`
+
+Archive a template; DocuSeal has no hard delete, so it can be restored with templates.update and archived: false
+
+**Risk:** `write`
+
+```ts
+await corsair.docuseal.api.templates.archive({ id: 123456 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The template to archive. DocuSeal has no hard delete; restore it with `templates.update` and `archived: false`. |
+
+DocuSeal archives instead of deleting. Restore an archived template with `templates.update` and `archived: false`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `archived_at` | `string \| null` | No | — |
+
+
+
+---
+
+### clone
+
+`templates.clone`
+
+Copy an existing template into a new one
+
+**Risk:** `write`
+
+```ts
+await corsair.docuseal.api.templates.clone({ id: 123456, name: 'Rental agreement copy' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The template to clone. |
+| `name` | `string` | No | — |
+| `folder_name` | `string` | No | — |
+| `external_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `preferences` | `Record<string, any>` | Yes | — |
+| `schema` | `object[]` | Yes | — |
+| `fields` | `object[]` | Yes | — |
+| `variables_schema` | `Record<string, any>` | Yes | — |
+| `submitters` | `object[]` | Yes | — |
+| `author_id` | `number` | Yes | — |
+| `archived_at` | `string \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `source` | `string` | Yes | — |
+| `external_id` | `string \| null` | No | — |
+| `folder_id` | `number \| null` | No | — |
+| `folder_name` | `string \| null` | No | — |
+| `shared_link` | `boolean \| null` | No | — |
+| `author` | `object \| null` | No | — |
+| `documents` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="schema full type">
+
+```ts
+{
+  attachment_uuid: string,
+  name: string
+}[]
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  uuid: string,
+  submitter_uuid: string,
+  name?: string | null,
+  type: string,
+  required?: boolean | null,
+  preferences?: {
+    font_size?: number | null,
+    font_type?: string | null,
+    font?: string | null,
+    color?: string | null,
+    background?: string | null,
+    align?: string | null,
+    valign?: string | null,
+    format?: string | null,
+    price?: number | null,
+    currency?: string | null,
+    mask?: boolean | number | null,
+    reasons?: string[] | null
+  } | null,
+  areas?: {
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    attachment_uuid: string,
+    page: number
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="submitters full type">
+
+```ts
+{
+  name: string,
+  uuid: string
+}[]
+```
+</Accordion>
+
+<Accordion title="author full type">
+
+```ts
+{
+  id: number,
+  first_name?: string | null,
+  last_name?: string | null,
+  email: string
+} | null
+```
+</Accordion>
+
+<Accordion title="documents full type">
+
+```ts
+{
+  id: number,
+  uuid: string,
+  url: string,
+  preview_image_url?: string | null,
+  filename: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createFromDocx
+
+`templates.createFromDocx`
+
+Build a template from base64-encoded DOCX files with &#123;&#123;...&#125;&#125; tags; may require a paid (Pro) plan
+
+**Risk:** `write`
+
+```ts
+await corsair.docuseal.api.templates.createFromDocx({ documents: [{ name: 'agreement.docx', file: '<base64 DOCX>' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `external_id` | `string` | No | — |
+| `folder_name` | `string` | No | — |
+| `shared_link` | `boolean` | No | DocuSeal defaults to true. |
+| `documents` | `object[]` | Yes | May require a paid (Pro) plan. |
+
+Files travel base64-encoded. DOCX templates may require a paid (Pro) plan.
+
+<AccordionGroup>
+<Accordion title="documents full type">
+
+```ts
+{
+  name: string,
+  file: string,
+  dynamic?: boolean,
+  fields?: {
+    name?: string,
+    type?: heading | text | signature | initials | date | number | image | checkbox | multiple | file | radio | select | cells | stamp | payment | phone | verification | kba | strikethrough,
+    role?: string,
+    required?: boolean,
+    title?: string,
+    description?: string,
+    areas?: {
+      x: number,
+      y: number,
+      w: number,
+      h: number,
+      page: number,
+      option?: string
+    }[],
+    options?: string[],
+    validation?: {
+      pattern?: string,
+      message?: string,
+      min?: number | string | null,
+      max?: number | string | null,
+      step?: number | null
+    },
+    preferences?: {
+      font_size?: number | null,
+      font_type?: bold | italic | bold_italic | null,
+      font?: Times | Helvetica | Courier | null,
+      color?: string | null,
+      background?: string | null,
+      align?: left | center | right | null,
+      valign?: top | center | bottom | null,
+      format?: string | null,
+      price?: number | null,
+      currency?: USD | EUR | GBP | CAD | AUD | CHF | SEK | null,
+      mask?: boolean | number | null,
+      reasons?: string[] | null
+    }
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `preferences` | `Record<string, any>` | Yes | — |
+| `schema` | `object[]` | Yes | — |
+| `fields` | `object[]` | Yes | — |
+| `variables_schema` | `Record<string, any>` | Yes | — |
+| `submitters` | `object[]` | Yes | — |
+| `author_id` | `number` | Yes | — |
+| `archived_at` | `string \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `source` | `string` | Yes | — |
+| `external_id` | `string \| null` | No | — |
+| `folder_id` | `number \| null` | No | — |
+| `folder_name` | `string \| null` | No | — |
+| `shared_link` | `boolean \| null` | No | — |
+| `author` | `object \| null` | No | — |
+| `documents` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="schema full type">
+
+```ts
+{
+  attachment_uuid: string,
+  name: string
+}[]
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  uuid: string,
+  submitter_uuid: string,
+  name?: string | null,
+  type: string,
+  required?: boolean | null,
+  preferences?: {
+    font_size?: number | null,
+    font_type?: string | null,
+    font?: string | null,
+    color?: string | null,
+    background?: string | null,
+    align?: string | null,
+    valign?: string | null,
+    format?: string | null,
+    price?: number | null,
+    currency?: string | null,
+    mask?: boolean | number | null,
+    reasons?: string[] | null
+  } | null,
+  areas?: {
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    attachment_uuid: string,
+    page: number
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="submitters full type">
+
+```ts
+{
+  name: string,
+  uuid: string
+}[]
+```
+</Accordion>
+
+<Accordion title="author full type">
+
+```ts
+{
+  id: number,
+  first_name?: string | null,
+  last_name?: string | null,
+  email: string
+} | null
+```
+</Accordion>
+
+<Accordion title="documents full type">
+
+```ts
+{
+  id: number,
+  uuid: string,
+  url: string,
+  preview_image_url?: string | null,
+  filename: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createFromHtml
+
+`templates.createFromHtml`
+
+Build a template from an HTML document with fillable field tags
+
+**Risk:** `write`
+
+```ts
+await corsair.docuseal.api.templates.createFromHtml({ html: '<p>Sign below</p>', name: 'One page agreement' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `html` | `string` | No | HTML document with field tags such as `<text-field name="Name" role="Signer"></text-field>` and `<signature-field>`. Required unless `documents` is given. |
+| `html_header` | `string` | No | — |
+| `html_footer` | `string` | No | — |
+| `name` | `string` | No | — |
+| `size` | `Letter \| Legal \| Tabloid \| Ledger \| A0 \| A1 \| A2 \| A3 \| A4 \| A5 \| A6` | No | Page size for the generated PDF. DocuSeal defaults to Letter. |
+| `external_id` | `string` | No | — |
+| `folder_name` | `string` | No | — |
+| `shared_link` | `boolean` | No | DocuSeal defaults to true. |
+| `documents` | `object[]` | No | Documents of the template; use instead of `html` for several documents. |
+
+<AccordionGroup>
+<Accordion title="documents full type">
+
+```ts
+{
+  html: string,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `preferences` | `Record<string, any>` | Yes | — |
+| `schema` | `object[]` | Yes | — |
+| `fields` | `object[]` | Yes | — |
+| `variables_schema` | `Record<string, any>` | Yes | — |
+| `submitters` | `object[]` | Yes | — |
+| `author_id` | `number` | Yes | — |
+| `archived_at` | `string \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `source` | `string` | Yes | — |
+| `external_id` | `string \| null` | No | — |
+| `folder_id` | `number \| null` | No | — |
+| `folder_name` | `string \| null` | No | — |
+| `shared_link` | `boolean \| null` | No | — |
+| `author` | `object \| null` | No | — |
+| `documents` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="schema full type">
+
+```ts
+{
+  attachment_uuid: string,
+  name: string
+}[]
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  uuid: string,
+  submitter_uuid: string,
+  name?: string | null,
+  type: string,
+  required?: boolean | null,
+  preferences?: {
+    font_size?: number | null,
+    font_type?: string | null,
+    font?: string | null,
+    color?: string | null,
+    background?: string | null,
+    align?: string | null,
+    valign?: string | null,
+    format?: string | null,
+    price?: number | null,
+    currency?: string | null,
+    mask?: boolean | number | null,
+    reasons?: string[] | null
+  } | null,
+  areas?: {
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    attachment_uuid: string,
+    page: number
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="submitters full type">
+
+```ts
+{
+  name: string,
+  uuid: string
+}[]
+```
+</Accordion>
+
+<Accordion title="author full type">
+
+```ts
+{
+  id: number,
+  first_name?: string | null,
+  last_name?: string | null,
+  email: string
+} | null
+```
+</Accordion>
+
+<Accordion title="documents full type">
+
+```ts
+{
+  id: number,
+  uuid: string,
+  url: string,
+  preview_image_url?: string | null,
+  filename: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createFromPdf
+
+`templates.createFromPdf`
+
+Build a template from base64-encoded PDF files, optionally placing signature fields up front; may require a paid (Pro) plan
+
+**Risk:** `write`
+
+```ts
+await corsair.docuseal.api.templates.createFromPdf({ documents: [{ name: 'agreement.pdf', file: '<base64 PDF>' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `folder_name` | `string` | No | — |
+| `external_id` | `string` | No | — |
+| `shared_link` | `boolean` | No | DocuSeal defaults to true. |
+| `documents` | `object[]` | Yes | One entry per PDF; place signature fields with `fields`. |
+| `flatten` | `boolean` | No | DocuSeal defaults to false. |
+| `remove_tags` | `boolean` | No | DocuSeal defaults to true. |
+
+Files travel base64-encoded. May require a paid (Pro) plan.
+
+<AccordionGroup>
+<Accordion title="documents full type">
+
+```ts
+{
+  name: string,
+  file: string,
+  position?: number | null,
+  fields?: {
+    name?: string,
+    type?: heading | text | signature | initials | date | number | image | checkbox | multiple | file | radio | select | cells | stamp | payment | phone | verification | kba | strikethrough,
+    role?: string,
+    required?: boolean,
+    title?: string,
+    description?: string,
+    areas?: {
+      x: number,
+      y: number,
+      w: number,
+      h: number,
+      page: number,
+      option?: string
+    }[],
+    options?: string[],
+    validation?: {
+      pattern?: string,
+      message?: string,
+      min?: number | string | null,
+      max?: number | string | null,
+      step?: number | null
+    },
+    preferences?: {
+      font_size?: number | null,
+      font_type?: bold | italic | bold_italic | null,
+      font?: Times | Helvetica | Courier | null,
+      color?: string | null,
+      background?: string | null,
+      align?: left | center | right | null,
+      valign?: top | center | bottom | null,
+      format?: string | null,
+      price?: number | null,
+      currency?: USD | EUR | GBP | CAD | AUD | CHF | SEK | null,
+      mask?: boolean | number | null,
+      reasons?: string[] | null
+    }
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `preferences` | `Record<string, any>` | Yes | — |
+| `schema` | `object[]` | Yes | — |
+| `fields` | `object[]` | Yes | — |
+| `variables_schema` | `Record<string, any>` | Yes | — |
+| `submitters` | `object[]` | Yes | — |
+| `author_id` | `number` | Yes | — |
+| `archived_at` | `string \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `source` | `string` | Yes | — |
+| `external_id` | `string \| null` | No | — |
+| `folder_id` | `number \| null` | No | — |
+| `folder_name` | `string \| null` | No | — |
+| `shared_link` | `boolean \| null` | No | — |
+| `author` | `object \| null` | No | — |
+| `documents` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="schema full type">
+
+```ts
+{
+  attachment_uuid: string,
+  name: string
+}[]
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  uuid: string,
+  submitter_uuid: string,
+  name?: string | null,
+  type: string,
+  required?: boolean | null,
+  preferences?: {
+    font_size?: number | null,
+    font_type?: string | null,
+    font?: string | null,
+    color?: string | null,
+    background?: string | null,
+    align?: string | null,
+    valign?: string | null,
+    format?: string | null,
+    price?: number | null,
+    currency?: string | null,
+    mask?: boolean | number | null,
+    reasons?: string[] | null
+  } | null,
+  areas?: {
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    attachment_uuid: string,
+    page: number
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="submitters full type">
+
+```ts
+{
+  name: string,
+  uuid: string
+}[]
+```
+</Accordion>
+
+<Accordion title="author full type">
+
+```ts
+{
+  id: number,
+  first_name?: string | null,
+  last_name?: string | null,
+  email: string
+} | null
+```
+</Accordion>
+
+<Accordion title="documents full type">
+
+```ts
+{
+  id: number,
+  uuid: string,
+  url: string,
+  preview_image_url?: string | null,
+  filename: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`templates.get`
+
+Read one template with its documents, field schema and signing roles
+
+**Risk:** `read`
+
+```ts
+await corsair.docuseal.api.templates.get({ id: 123456 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The resource id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `preferences` | `Record<string, any>` | Yes | — |
+| `schema` | `object[]` | Yes | — |
+| `fields` | `object[]` | Yes | — |
+| `variables_schema` | `Record<string, any>` | Yes | — |
+| `submitters` | `object[]` | Yes | — |
+| `author_id` | `number` | Yes | — |
+| `archived_at` | `string \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `source` | `string` | Yes | — |
+| `external_id` | `string \| null` | No | — |
+| `folder_id` | `number \| null` | No | — |
+| `folder_name` | `string \| null` | No | — |
+| `shared_link` | `boolean \| null` | No | — |
+| `author` | `object \| null` | No | — |
+| `documents` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="schema full type">
+
+```ts
+{
+  attachment_uuid: string,
+  name: string
+}[]
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  uuid: string,
+  submitter_uuid: string,
+  name?: string | null,
+  type: string,
+  required?: boolean | null,
+  preferences?: {
+    font_size?: number | null,
+    font_type?: string | null,
+    font?: string | null,
+    color?: string | null,
+    background?: string | null,
+    align?: string | null,
+    valign?: string | null,
+    format?: string | null,
+    price?: number | null,
+    currency?: string | null,
+    mask?: boolean | number | null,
+    reasons?: string[] | null
+  } | null,
+  areas?: {
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    attachment_uuid: string,
+    page: number
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="submitters full type">
+
+```ts
+{
+  name: string,
+  uuid: string
+}[]
+```
+</Accordion>
+
+<Accordion title="author full type">
+
+```ts
+{
+  id: number,
+  first_name?: string | null,
+  last_name?: string | null,
+  email: string
+} | null
+```
+</Accordion>
+
+<Accordion title="documents full type">
+
+```ts
+{
+  id: number,
+  uuid: string,
+  url: string,
+  preview_image_url?: string | null,
+  filename: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`templates.list`
+
+List templates with search and folder filters, newest id first, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.docuseal.api.templates.list({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | Filter by template name. |
+| `slug` | `string` | No | — |
+| `external_id` | `string` | No | — |
+| `folder` | `string` | No | Only templates in this folder name. |
+| `archived` | `boolean` | No | List archived templates instead of active ones. |
+| `shared` | `boolean` | No | — |
+| `limit` | `number` | No | Results per page, 1-100. DocuSeal defaults to 10. |
+| `after` | `number` | No | Id cursor: pass `pagination.next` from the previous page. Cloud returns records with a larger id; self-hosted 3.4.0 pages by descending id, so the cursor selects smaller ids there. |
+| `before` | `number` | No | Id cursor for the other direction (`pagination.prev`); its sense is reversed on self-hosted 3.4.0 like `after`. |
+
+Pages by id cursor: pass `pagination.next` from one page as `after` on the next. Page size is capped at 100; DocuSeal defaults to 10.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  slug: string,
+  name: string,
+  preferences: Record<string, any>,
+  schema: {
+    attachment_uuid: string,
+    name: string
+  }[],
+  fields: {
+    uuid: string,
+    submitter_uuid: string,
+    name?: string | null,
+    type: string,
+    required?: boolean | null,
+    preferences?: {
+      font_size?: number | null,
+      font_type?: string | null,
+      font?: string | null,
+      color?: string | null,
+      background?: string | null,
+      align?: string | null,
+      valign?: string | null,
+      format?: string | null,
+      price?: number | null,
+      currency?: string | null,
+      mask?: boolean | number | null,
+      reasons?: string[] | null
+    } | null,
+    areas?: {
+      x: number,
+      y: number,
+      w: number,
+      h: number,
+      attachment_uuid: string,
+      page: number
+    }[] | null
+  }[],
+  variables_schema: Record<string, any>,
+  submitters: {
+    name: string,
+    uuid: string
+  }[],
+  author_id: number,
+  archived_at?: string | null,
+  created_at: string,
+  updated_at: string,
+  source: string,
+  external_id?: string | null,
+  folder_id?: number | null,
+  folder_name?: string | null,
+  shared_link?: boolean | null,
+  author?: {
+    id: number,
+    first_name?: string | null,
+    last_name?: string | null,
+    email: string
+  } | null,
+  documents: {
+    id: number,
+    uuid: string,
+    url: string,
+    preview_image_url?: string | null,
+    filename: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  count: number,
+  next?: number | null,
+  prev?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### merge
+
+`templates.merge`
+
+Combine several templates into one new template; the sources are kept; may require a paid (Pro) plan
+
+**Risk:** `write`
+
+```ts
+await corsair.docuseal.api.templates.merge({ template_ids: [123456, 123457], name: 'Combined agreement' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_ids` | `number[]` | Yes | Templates to merge, in order; the sources are kept. |
+| `name` | `string` | No | — |
+| `folder_name` | `string` | No | — |
+| `external_id` | `string` | No | — |
+| `shared_link` | `boolean` | No | DocuSeal defaults to true. |
+| `roles` | `string[]` | No | Rename the combined roles, in order. |
+
+The source templates are kept; the merge produces a new one. May require a paid (Pro) plan.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `preferences` | `Record<string, any>` | Yes | — |
+| `schema` | `object[]` | Yes | — |
+| `fields` | `object[]` | Yes | — |
+| `variables_schema` | `Record<string, any>` | Yes | — |
+| `submitters` | `object[]` | Yes | — |
+| `author_id` | `number` | Yes | — |
+| `archived_at` | `string \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `source` | `string` | Yes | — |
+| `external_id` | `string \| null` | No | — |
+| `folder_id` | `number \| null` | No | — |
+| `folder_name` | `string \| null` | No | — |
+| `shared_link` | `boolean \| null` | No | — |
+| `author` | `object \| null` | No | — |
+| `documents` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="schema full type">
+
+```ts
+{
+  attachment_uuid: string,
+  name: string
+}[]
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  uuid: string,
+  submitter_uuid: string,
+  name?: string | null,
+  type: string,
+  required?: boolean | null,
+  preferences?: {
+    font_size?: number | null,
+    font_type?: string | null,
+    font?: string | null,
+    color?: string | null,
+    background?: string | null,
+    align?: string | null,
+    valign?: string | null,
+    format?: string | null,
+    price?: number | null,
+    currency?: string | null,
+    mask?: boolean | number | null,
+    reasons?: string[] | null
+  } | null,
+  areas?: {
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    attachment_uuid: string,
+    page: number
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="submitters full type">
+
+```ts
+{
+  name: string,
+  uuid: string
+}[]
+```
+</Accordion>
+
+<Accordion title="author full type">
+
+```ts
+{
+  id: number,
+  first_name?: string | null,
+  last_name?: string | null,
+  email: string
+} | null
+```
+</Accordion>
+
+<Accordion title="documents full type">
+
+```ts
+{
+  id: number,
+  uuid: string,
+  url: string,
+  preview_image_url?: string | null,
+  filename: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`templates.update`
+
+Rename a template, move it to a folder, rename its roles, or archive and restore it with the archived flag
+
+**Risk:** `write`
+
+```ts
+await corsair.docuseal.api.templates.update({ id: 123456, name: 'Rental agreement v2', folder_name: 'Legal' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The resource id. |
+| `name` | `string` | No | — |
+| `external_id` | `string` | No | — |
+| `folder_name` | `string` | No | — |
+| `roles` | `string[]` | No | Rename the signing roles, in order. |
+| `archived` | `boolean` | No | True archives the template; false restores an archived one. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+
+
+---
+
+### updateDocuments
+
+`templates.updateDocuments`
+
+Add, replace or remove the documents attached to a template, or merge them into one PDF; a removed document can only come back by uploading it again; may require a paid (Pro) plan
+
+**Risk:** `destructive`
+
+```ts
+await corsair.docuseal.api.templates.updateDocuments({ id: 123456, documents: [{ html: '<p>Appendix</p>', position: 0, replace: true }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The template whose documents change. |
+| `documents` | `object[]` | No | Add, replace or remove documents on the template; leave out to only merge the existing ones. |
+| `merge` | `boolean` | No | Merge all of the template's documents into one PDF. DocuSeal defaults to false. |
+
+Add, replace or remove documents on an existing template. `replace: true` replaces the document at `position`; `remove: true` removes the document at `position`, or the one with that `name`; an entry with neither adds a document (at `position`, or at the end). `merge: true` alone merges the existing documents. May require a paid (Pro) plan.
+
+<AccordionGroup>
+<Accordion title="documents full type">
+
+```ts
+{
+  name?: string | null,
+  file?: string | null,
+  html?: string | null,
+  position?: number | null,
+  replace?: boolean,
+  remove?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `preferences` | `Record<string, any>` | Yes | — |
+| `schema` | `object[]` | Yes | — |
+| `fields` | `object[]` | Yes | — |
+| `variables_schema` | `Record<string, any>` | Yes | — |
+| `submitters` | `object[]` | Yes | — |
+| `author_id` | `number` | Yes | — |
+| `archived_at` | `string \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `source` | `string` | Yes | — |
+| `external_id` | `string \| null` | No | — |
+| `folder_id` | `number \| null` | No | — |
+| `folder_name` | `string \| null` | No | — |
+| `shared_link` | `boolean \| null` | No | — |
+| `author` | `object \| null` | No | — |
+| `documents` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="schema full type">
+
+```ts
+{
+  attachment_uuid: string,
+  name: string
+}[]
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  uuid: string,
+  submitter_uuid: string,
+  name?: string | null,
+  type: string,
+  required?: boolean | null,
+  preferences?: {
+    font_size?: number | null,
+    font_type?: string | null,
+    font?: string | null,
+    color?: string | null,
+    background?: string | null,
+    align?: string | null,
+    valign?: string | null,
+    format?: string | null,
+    price?: number | null,
+    currency?: string | null,
+    mask?: boolean | number | null,
+    reasons?: string[] | null
+  } | null,
+  areas?: {
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    attachment_uuid: string,
+    page: number
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="submitters full type">
+
+```ts
+{
+  name: string,
+  uuid: string
+}[]
+```
+</Accordion>
+
+<Accordion title="author full type">
+
+```ts
+{
+  id: number,
+  first_name?: string | null,
+  last_name?: string | null,
+  email: string
+} | null
+```
+</Accordion>
+
+<Accordion title="documents full type">
+
+```ts
+{
+  id: number,
+  uuid: string,
+  url: string,
+  preview_image_url?: string | null,
+  filename: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tools
+
+### mergePdfs
+
+`tools.mergePdfs`
+
+Merge two or more base64-encoded PDFs into one and return it base64-encoded; stores nothing
+
+**Risk:** `read`
+
+```ts
+await corsair.docuseal.api.tools.mergePdfs({ files: ['<base64 PDF>', '<base64 PDF>'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `files` | `string[]` | Yes | Base64-encoded PDF files, merged in this order (at least 2). |
+
+Stateless: the merged PDF comes back base64-encoded and nothing is stored. Not in the published OpenAPI file.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `string` | Yes | The merged PDF, base64-encoded. |
+
+
+
+---
+
+### verifyPdf
+
+`tools.verifyPdf`
+
+Check a base64-encoded signed PDF's digital signatures and whether it matches a document this account completed
+
+**Risk:** `read`
+
+```ts
+await corsair.docuseal.api.tools.verifyPdf({ file: '<base64 signed PDF>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `string` | Yes | A base64-encoded signed PDF. |
+
+`checksum_status` is `verified` when the file is a document this account completed. Not in the published OpenAPI file.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checksum_status` | `string` | Yes | `verified` when the file matches a document this account completed, else `not_found`. |
+| `signatures` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="signatures full type">
+
+```ts
+{
+  verification_result?: {
+    type?: string | null,
+    content?: string | null
+  }[] | null,
+  signer_name?: string | null,
+  signing_reason?: string | null,
+  signing_time?: string | null,
+  signature_type?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### me
+
+`users.me`
+
+Read the user the API key belongs to: id, first and last name, and email
+
+**Risk:** `read`
+
+```ts
+await corsair.docuseal.api.users.me({});
+```
+
+**Input:** _empty object_
+
+Not in DocuSeal's published OpenAPI file, but served by the same API (GET /user).
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+
+
+
+---
+

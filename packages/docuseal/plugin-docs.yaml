@@ -1,0 +1,105 @@
+displayName: "DocuSeal"
+description: E-signature platform for fillable PDF forms - manage templates, create submissions from templates, PDFs, HTML or DOCX, track submitters, and read back signed documents.
+domain: docuseal.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key at console.docuseal.com under API. Every DocuSeal account also gets a free sandbox with separate keys, so you can test without touching production documents. Things to know before you send:
+
+  - **Real signatures.** `submissions.create` sends the signature-request emails immediately unless you pass `send_email: false`; the same applies to the create-from-PDF, HTML and DOCX variants. `submitters.update` with `completed: true` counter-signs the document as that submitter, which cannot be undone.
+  - **Archive, not delete.** The hosted API has no hard delete. `templates.archive` and `submissions.archive` archive; restore either with `templates.update` or `submissions.update` and `archived: false`.
+  - **Signed document URLs.** `submissions.getDocuments` returns URLs of the signed documents. They act as bearer credentials, so treat the result as sensitive.
+  - **Paging.** The three list endpoints page by id cursor: pass `pagination.next` from one page as `after` on the next. Page size is capped at 100 (DocuSeal defaults to 10).
+  - **Plans and editions.** On DocuSeal Cloud every operation works in the free test mode (checked 11-28). The open-source self-hosted build has no routes for templates from HTML, PDF or DOCX, `templates.merge`, `templates.updateDocuments` or one-off submissions from PDF, HTML or DOCX: those answer 404 there. Without Pro, Cloud's `submissions.createFromEmails` creates a submission for the first address only.
+  - **Webhooks.** DocuSeal sends 11 event types (form viewed, started, completed, declined; submission created, completed, expired, archived; template created, updated, archived). Add the webhook URL in DocuSeal's webhook settings and store its signing secret (`whsec_...`) as the webhook signature: every delivery is checked against `X-Docuseal-Signature` (an HMAC-SHA256 of the timestamp and body) and refused when it is more than five minutes old. `events.listFormCompleted` and `events.listSubmissionCompleted` give the same completed events by polling.
+  - **Hosts.** Calls go to `api.docuseal.com`. Pass `baseUrl` to the plugin for the EU cloud (`https://api.docuseal.eu`) or a self-hosted site (`https://sign.example.com`; `/api` is added).
+examples:
+  read:
+    path: templates.list
+    title: List templates
+    args: {}
+  write:
+    path: submissions.create
+    title: Send a template for signature
+    args:
+      template_id: 123456
+      submitters:
+        - role: First party
+          email: jordan@acme-logistics.com
+apiExamples:
+  templates.list:
+    call: "{ limit: 20 }"
+  templates.get:
+    call: "{ id: 123456 }"
+  templates.update:
+    call: "{ id: 123456, name: 'Rental agreement v2', folder_name: 'Legal' }"
+  templates.archive:
+    call: "{ id: 123456 }"
+  templates.createFromHtml:
+    call: "{ html: '<p>Sign below</p>', name: 'One page agreement' }"
+  templates.createFromPdf:
+    call: "{ documents: [{ name: 'agreement.pdf', file: '<base64 PDF>' }] }"
+  templates.createFromDocx:
+    call: "{ documents: [{ name: 'agreement.docx', file: '<base64 DOCX>' }] }"
+  templates.clone:
+    call: "{ id: 123456, name: 'Rental agreement copy' }"
+  templates.merge:
+    call: "{ template_ids: [123456, 123457], name: 'Combined agreement' }"
+  templates.updateDocuments:
+    call: "{ id: 123456, documents: [{ html: '<p>Appendix</p>', position: 0, replace: true }] }"
+  submissions.list:
+    call: "{ status: 'completed', limit: 20 }"
+  submissions.get:
+    call: "{ id: 654321 }"
+  submissions.create:
+    call: "{ template_id: 123456, submitters: [{ role: 'First party', email: 'jordan@acme-logistics.com' }], send_email: true }"
+  submissions.createFromPdf:
+    call: "{ documents: [{ name: 'agreement.pdf', file: '<base64 PDF>' }], submitters: [{ role: 'First party', email: 'jordan@acme-logistics.com' }] }"
+  submissions.createFromHtml:
+    call: "{ documents: [{ html: '<p>Sign below</p>' }], submitters: [{ role: 'First party', email: 'jordan@acme-logistics.com' }] }"
+  submissions.createFromDocx:
+    call: "{ documents: [{ name: 'agreement.docx', file: '<base64 DOCX>' }], submitters: [{ role: 'First party', email: 'jordan@acme-logistics.com' }] }"
+  submissions.createFromEmails:
+    call: "{ template_id: 123456, emails: 'jordan@acme-logistics.com, sam@fieldkit.com' }"
+  submissions.update:
+    call: "{ id: 654321, name: 'Agreement for unit 4', expire_at: null }"
+  submissions.archive:
+    call: "{ id: 654321 }"
+  submissions.getDocuments:
+    call: "{ id: 654321, merge: true }"
+  submitters.list:
+    call: "{ submission_id: 654321, limit: 20 }"
+  submitters.get:
+    call: "{ id: 987654 }"
+  submitters.update:
+    call: "{ id: 987654, values: { 'Start date': '2026-02-01' }, send_email: true }"
+  users.me:
+    call: "{}"
+  events.listFormCompleted:
+    call: "{ limit: 50, after: 1764320000 }"
+  events.listSubmissionCompleted:
+    call: "{ limit: 50 }"
+  tools.mergePdfs:
+    call: "{ files: ['<base64 PDF>', '<base64 PDF>'] }"
+  tools.verifyPdf:
+    call: "{ file: '<base64 signed PDF>' }"
+apiNotes:
+  templates.list: 'Pages by id cursor: pass `pagination.next` from one page as `after` on the next. Page size is capped at 100; DocuSeal defaults to 10.'
+  templates.archive: 'DocuSeal archives instead of deleting. Restore an archived template with `templates.update` and `archived: false`.'
+  templates.createFromPdf: 'Files travel base64-encoded. May require a paid (Pro) plan.'
+  templates.createFromDocx: 'Files travel base64-encoded. DOCX templates may require a paid (Pro) plan.'
+  templates.merge: 'The source templates are kept; the merge produces a new one. May require a paid (Pro) plan.'
+  templates.updateDocuments: 'Add, replace or remove documents on an existing template. `replace: true` replaces the document at `position`; `remove: true` removes the document at `position`, or the one with that `name`; an entry with neither adds a document (at `position`, or at the end). `merge: true` alone merges the existing documents. May require a paid (Pro) plan.'
+  submissions.list: 'Pages by id cursor: pass `pagination.next` from one page as `after` on the next. Page size is capped at 100; DocuSeal defaults to 10.'
+  submissions.create: 'Sends the signature-request emails immediately unless you pass `send_email: false`. Answers a bare array, one submitter per entry.'
+  submissions.createFromPdf: 'One-off submissions from uploaded files. May require a paid (Pro) plan.'
+  submissions.createFromHtml: 'One-off submissions from HTML documents; no template is saved.'
+  submissions.createFromDocx: 'In the DOCX, `[[variable_name]]` is replaced from `variables`, and `{{Field Name}}` tags become fillable fields. May require a paid (Pro) plan.'
+  submissions.archive: 'DocuSeal archives instead of deleting. Restore an archived submission with `submissions.update` and `archived: false`.'
+  submissions.getDocuments: 'Returns URLs of the submission''s documents, signed and final once completed. The URLs act as bearer credentials, so treat the result as sensitive.'
+  submitters.list: 'Pages by id cursor: pass `pagination.next` from one page as `after` on the next. Page size is capped at 100; DocuSeal defaults to 10.'
+  submitters.update: 'Passing `completed: true` counter-signs the document as this submitter and cannot be undone. `send_email: true` re-sends the invitation.'
+  users.me: 'Not in DocuSeal''s published OpenAPI file, but served by the same API (GET /user).'
+  events.listFormCompleted: 'Pages by completion time in Unix seconds: pass `pagination.next` as `after`. Not in the published OpenAPI file.'
+  events.listSubmissionCompleted: 'Pages by completion time in Unix seconds: pass `pagination.next` as `after`. Not in the published OpenAPI file.'
+  tools.mergePdfs: 'Stateless: the merged PDF comes back base64-encoded and nothing is stored. Not in the published OpenAPI file.'
+  tools.verifyPdf: '`checksum_status` is `verified` when the file is a document this account completed. Not in the published OpenAPI file.'

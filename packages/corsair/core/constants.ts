@@ -233,6 +233,7 @@ export const BaseProviders = [
 	'docsumo',
 	'documenso',
 	'docupost',
+	'docuseal',
 	'docusign',
 	'dodopayments',
 	'doppler',
@@ -1053,6 +1054,7 @@ export const ProviderDisplayNames = {
 	docsumo: 'Docsumo',
 	documenso: 'Documenso',
 	docupost: 'Docupost',
+	docuseal: 'DocuSeal',
 	docusign: 'DocuSign',
 	dodopayments: 'Dodo Payments',
 	doppler: 'Doppler',
@@ -1880,6 +1882,7 @@ export type AllProviders =
 	| 'docsumo'
 	| 'documenso'
 	| 'docupost'
+	| 'docuseal'
 	| 'docusign'
 	| 'dodopayments'
 	| 'doppler'
