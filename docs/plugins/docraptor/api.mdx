@@ -1,0 +1,546 @@
+---
+title: "DocRaptor API reference"
+sidebarTitle: "API"
+description: "API reference for the DocRaptor plugin in Corsair: every `docraptor.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Documents
+
+### create
+
+`documents.create`
+
+Convert HTML or a URL to a PDF or Excel file and return the file itself (synchronous, up to 60 seconds); billed unless test is true
+
+**Risk:** `destructive`
+
+```ts
+await corsair.docraptor.api.documents.create({ type: 'pdf', test: true, name: 'invoice', document_content: '<html><body><h1>Invoice</h1></body></html>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `pdf \| xls \| xlsx` | Yes | The document type. Excel types expect XML content and validate it strictly. |
+| `name` | `string` | No | A name for identifying the document. |
+| `document_content` | `string` | No | The HTML or XML content to transform. |
+| `document_url` | `string` | No | A URL whose content is fetched and transformed. |
+| `test` | `boolean` | No | Test mode: not charged, watermarked (PDF) or cut to 20 rows (Excel). Defaults to true; set false to make a billed document. |
+| `strict` | `none \| html` | No | Force strict HTML validation. |
+| `javascript` | `boolean` | No | Enable DocRaptor JavaScript parsing. |
+| `ignore_resource_errors` | `boolean` | No | Failed loading of images, stylesheets and scripts does not stop rendering. Defaults to true. |
+| `ignore_console_messages` | `boolean` | No | Prevent console.log from stopping rendering during JavaScript execution. Defaults to true on Pipeline 7 and later, false on older pipelines. |
+| `tag` | `string` | No | A small amount of metadata stored with the document. |
+| `help` | `boolean` | No | Request support help with this request if it succeeds. |
+| `pipeline` | `string` | No | A specific DocRaptor Pipeline version to use. |
+| `referrer` | `string` | No | The HTTP referrer set while generating. |
+| `callback_url` | `string` | No | Receives a POST with download_url and download_id after an asynchronous document succeeds; never called on failure. |
+| `prince_options` | `object` | No | — |
+
+Synchronous: the answer is the PDF or Excel file, returned as core file output (contentType, byteLength, filename, contentBase64 or fileId). A conversion that runs past 60 seconds fails; use documents.createAsync for long documents.
+
+<AccordionGroup>
+<Accordion title="prince_options full type">
+
+```ts
+{
+  baseurl?: string,
+  no_xinclude?: boolean,
+  no_network?: boolean,
+  no_parallel_downloads?: boolean,
+  http_user?: string,
+  http_password?: string,
+  http_proxy?: string,
+  http_timeout?: number,
+  insecure?: boolean,
+  media?: string,
+  no_author_style?: boolean,
+  no_default_style?: boolean,
+  no_embed_fonts?: boolean,
+  no_subset_fonts?: boolean,
+  no_compress?: boolean,
+  encrypt?: boolean,
+  key_bits?: 40 | 128,
+  user_password?: string,
+  owner_password?: string,
+  disallow_print?: boolean,
+  disallow_copy?: boolean,
+  disallow_annotate?: boolean,
+  disallow_modify?: boolean,
+  debug?: boolean,
+  input?: html | xml | auto,
+  javascript?: boolean,
+  css_dpi?: number,
+  profile?: string,
+  pdf_title?: string,
+  iframes?: boolean | null,
+  page_margin?: string,
+  pdf_forms?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The file, base64-encoded. Missing when the file came back as text or contentOmitted is set. |
+| `text` | `string` | No | The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8. |
+| `contentType` | `string` | Yes | Media type of the file, for example application/pdf. |
+| `byteLength` | `number` | Yes | Size of the file in bytes. |
+| `filename` | `string` | No | The file name, when known. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
+| `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
+
+
+
+---
+
+### createAsync
+
+`documents.createAsync`
+
+Queue an HTML-to-PDF or XML-to-Excel conversion and return its status_id; poll documents.status for the download_url
+
+**Risk:** `destructive`
+
+```ts
+await corsair.docraptor.api.documents.createAsync({ type: 'pdf', test: true, document_content: '<html><body><h1>Invoice</h1></body></html>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `pdf \| xls \| xlsx` | Yes | The document type. Excel types expect XML content and validate it strictly. |
+| `name` | `string` | No | A name for identifying the document. |
+| `document_content` | `string` | No | The HTML or XML content to transform. |
+| `document_url` | `string` | No | A URL whose content is fetched and transformed. |
+| `test` | `boolean` | No | Test mode: not charged, watermarked (PDF) or cut to 20 rows (Excel). Defaults to true; set false to make a billed document. |
+| `strict` | `none \| html` | No | Force strict HTML validation. |
+| `javascript` | `boolean` | No | Enable DocRaptor JavaScript parsing. |
+| `ignore_resource_errors` | `boolean` | No | Failed loading of images, stylesheets and scripts does not stop rendering. Defaults to true. |
+| `ignore_console_messages` | `boolean` | No | Prevent console.log from stopping rendering during JavaScript execution. Defaults to true on Pipeline 7 and later, false on older pipelines. |
+| `tag` | `string` | No | A small amount of metadata stored with the document. |
+| `help` | `boolean` | No | Request support help with this request if it succeeds. |
+| `pipeline` | `string` | No | A specific DocRaptor Pipeline version to use. |
+| `referrer` | `string` | No | The HTTP referrer set while generating. |
+| `callback_url` | `string` | No | Receives a POST with download_url and download_id after an asynchronous document succeeds; never called on failure. |
+| `prince_options` | `object` | No | — |
+
+Returns a status_id. Poll documents.status until completed, then documents.download with its download_id.
+
+<AccordionGroup>
+<Accordion title="prince_options full type">
+
+```ts
+{
+  baseurl?: string,
+  no_xinclude?: boolean,
+  no_network?: boolean,
+  no_parallel_downloads?: boolean,
+  http_user?: string,
+  http_password?: string,
+  http_proxy?: string,
+  http_timeout?: number,
+  insecure?: boolean,
+  media?: string,
+  no_author_style?: boolean,
+  no_default_style?: boolean,
+  no_embed_fonts?: boolean,
+  no_subset_fonts?: boolean,
+  no_compress?: boolean,
+  encrypt?: boolean,
+  key_bits?: 40 | 128,
+  user_password?: string,
+  owner_password?: string,
+  disallow_print?: boolean,
+  disallow_copy?: boolean,
+  disallow_annotate?: boolean,
+  disallow_modify?: boolean,
+  debug?: boolean,
+  input?: html | xml | auto,
+  javascript?: boolean,
+  css_dpi?: number,
+  profile?: string,
+  pdf_title?: string,
+  iframes?: boolean | null,
+  page_margin?: string,
+  pdf_forms?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_id` | `string` | Yes | The id to poll with `documents.status`. |
+
+
+
+---
+
+### createHosted
+
+`documents.createHosted`
+
+Generate a document and host it at a public DocRaptor URL, a paid add-on; the URL is billed per download
+
+**Risk:** `destructive`
+
+```ts
+await corsair.docraptor.api.documents.createHosted({ type: 'pdf', hosted_download_limit: 5, document_content: '<html><body><h1>Report</h1></body></html>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `pdf \| xls \| xlsx` | Yes | The document type. Excel types expect XML content and validate it strictly. |
+| `name` | `string` | No | A name for identifying the document. |
+| `document_content` | `string` | No | The HTML or XML content to transform. |
+| `document_url` | `string` | No | A URL whose content is fetched and transformed. |
+| `test` | `boolean` | No | Test mode: not charged, watermarked (PDF) or cut to 20 rows (Excel). Defaults to true; set false to make a billed document. |
+| `strict` | `none \| html` | No | Force strict HTML validation. |
+| `javascript` | `boolean` | No | Enable DocRaptor JavaScript parsing. |
+| `ignore_resource_errors` | `boolean` | No | Failed loading of images, stylesheets and scripts does not stop rendering. Defaults to true. |
+| `ignore_console_messages` | `boolean` | No | Prevent console.log from stopping rendering during JavaScript execution. Defaults to true on Pipeline 7 and later, false on older pipelines. |
+| `tag` | `string` | No | A small amount of metadata stored with the document. |
+| `help` | `boolean` | No | Request support help with this request if it succeeds. |
+| `pipeline` | `string` | No | A specific DocRaptor Pipeline version to use. |
+| `referrer` | `string` | No | The HTTP referrer set while generating. |
+| `callback_url` | `string` | No | Receives a POST with download_url and download_id after an asynchronous document succeeds; never called on failure. |
+| `prince_options` | `object` | No | — |
+| `hosted_download_limit` | `number` | No | How many times the hosted document can be downloaded. Unlimited when omitted. |
+| `hosted_expires_at` | `string` | No | When the hosted document is removed, as an ISO 8601 datetime, like 1981-01-23T08:02:30-05:00; without an offset DocRaptor reads it as UTC. |
+
+Hosted documents are a paid add-on; a test-mode hosted document is free, allows five downloads and expires after one day.
+
+<AccordionGroup>
+<Accordion title="prince_options full type">
+
+```ts
+{
+  baseurl?: string,
+  no_xinclude?: boolean,
+  no_network?: boolean,
+  no_parallel_downloads?: boolean,
+  http_user?: string,
+  http_password?: string,
+  http_proxy?: string,
+  http_timeout?: number,
+  insecure?: boolean,
+  media?: string,
+  no_author_style?: boolean,
+  no_default_style?: boolean,
+  no_embed_fonts?: boolean,
+  no_subset_fonts?: boolean,
+  no_compress?: boolean,
+  encrypt?: boolean,
+  key_bits?: 40 | 128,
+  user_password?: string,
+  owner_password?: string,
+  disallow_print?: boolean,
+  disallow_copy?: boolean,
+  disallow_annotate?: boolean,
+  disallow_modify?: boolean,
+  debug?: boolean,
+  input?: html | xml | auto,
+  javascript?: boolean,
+  css_dpi?: number,
+  profile?: string,
+  pdf_title?: string,
+  iframes?: boolean | null,
+  page_margin?: string,
+  pdf_forms?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `download_id` | `string` | Yes | — |
+| `download_url` | `string` | Yes | — |
+| `number_of_pages` | `number \| null` | No | — |
+
+
+
+---
+
+### createHostedAsync
+
+`documents.createHostedAsync`
+
+Queue a hosted document (paid add-on) and return its status_id; poll documents.status for the public download_url
+
+**Risk:** `destructive`
+
+```ts
+await corsair.docraptor.api.documents.createHostedAsync({ type: 'pdf', document_url: 'https://example.com/report.html' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `pdf \| xls \| xlsx` | Yes | The document type. Excel types expect XML content and validate it strictly. |
+| `name` | `string` | No | A name for identifying the document. |
+| `document_content` | `string` | No | The HTML or XML content to transform. |
+| `document_url` | `string` | No | A URL whose content is fetched and transformed. |
+| `test` | `boolean` | No | Test mode: not charged, watermarked (PDF) or cut to 20 rows (Excel). Defaults to true; set false to make a billed document. |
+| `strict` | `none \| html` | No | Force strict HTML validation. |
+| `javascript` | `boolean` | No | Enable DocRaptor JavaScript parsing. |
+| `ignore_resource_errors` | `boolean` | No | Failed loading of images, stylesheets and scripts does not stop rendering. Defaults to true. |
+| `ignore_console_messages` | `boolean` | No | Prevent console.log from stopping rendering during JavaScript execution. Defaults to true on Pipeline 7 and later, false on older pipelines. |
+| `tag` | `string` | No | A small amount of metadata stored with the document. |
+| `help` | `boolean` | No | Request support help with this request if it succeeds. |
+| `pipeline` | `string` | No | A specific DocRaptor Pipeline version to use. |
+| `referrer` | `string` | No | The HTTP referrer set while generating. |
+| `callback_url` | `string` | No | Receives a POST with download_url and download_id after an asynchronous document succeeds; never called on failure. |
+| `prince_options` | `object` | No | — |
+| `hosted_download_limit` | `number` | No | How many times the hosted document can be downloaded. Unlimited when omitted. |
+| `hosted_expires_at` | `string` | No | When the hosted document is removed, as an ISO 8601 datetime, like 1981-01-23T08:02:30-05:00; without an offset DocRaptor reads it as UTC. |
+
+Same asynchronous flow as documents.createAsync, for a paid hosted document; poll documents.status for the public download_url.
+
+<AccordionGroup>
+<Accordion title="prince_options full type">
+
+```ts
+{
+  baseurl?: string,
+  no_xinclude?: boolean,
+  no_network?: boolean,
+  no_parallel_downloads?: boolean,
+  http_user?: string,
+  http_password?: string,
+  http_proxy?: string,
+  http_timeout?: number,
+  insecure?: boolean,
+  media?: string,
+  no_author_style?: boolean,
+  no_default_style?: boolean,
+  no_embed_fonts?: boolean,
+  no_subset_fonts?: boolean,
+  no_compress?: boolean,
+  encrypt?: boolean,
+  key_bits?: 40 | 128,
+  user_password?: string,
+  owner_password?: string,
+  disallow_print?: boolean,
+  disallow_copy?: boolean,
+  disallow_annotate?: boolean,
+  disallow_modify?: boolean,
+  debug?: boolean,
+  input?: html | xml | auto,
+  javascript?: boolean,
+  css_dpi?: number,
+  profile?: string,
+  pdf_title?: string,
+  iframes?: boolean | null,
+  page_margin?: string,
+  pdf_forms?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_id` | `string` | Yes | The id to poll with `documents.status`. |
+
+
+
+---
+
+### download
+
+`documents.download`
+
+Download a finished asynchronous document by its download_id and return the file (each download_url allows only a few fetches)
+
+**Risk:** `read`
+
+```ts
+await corsair.docraptor.api.documents.download({ downloadId: '123-456-abc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `downloadId` | `string` | Yes | The `download_id` from documents.status once an async document has completed. |
+
+Fetches the finished file by download_id, which uses up one of its few allowed fetches.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The file, base64-encoded. Missing when the file came back as text or contentOmitted is set. |
+| `text` | `string` | No | The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8. |
+| `contentType` | `string` | Yes | Media type of the file, for example application/pdf. |
+| `byteLength` | `number` | Yes | Size of the file in bytes. |
+| `filename` | `string` | No | The file name, when known. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
+| `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
+
+
+
+---
+
+### expire
+
+`documents.expire`
+
+Permanently remove a hosted document so its public URL stops working; this cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.docraptor.api.documents.expire({ downloadId: '123-456-abc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `downloadId` | `string` | Yes | The hosted document's `download_id`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`documents.list`
+
+List generated documents with paging; test-mode keys are denied this listing
+
+**Risk:** `read`
+
+```ts
+await corsair.docraptor.api.documents.list({ page: 1, per_page: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | 1-based page. |
+| `per_page` | `number` | No | Defaults to 100. |
+
+The public test key is refused this listing with a 403, so the row fields pass through exactly as a paid account receives them.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documents` | `Record<string, any>[]` | Yes | — |
+| `page` | `number` | Yes | — |
+| `per_page` | `number` | Yes | — |
+| `next_page` | `number \| null` | Yes | The next page while this one is full; null once a page comes back short. A full last page leads to one empty page. |
+
+
+
+---
+
+### status
+
+`documents.status`
+
+Read where an asynchronous document stands: queued or working, completed with its download_url, or failed with validation errors
+
+**Risk:** `read`
+
+```ts
+await corsair.docraptor.api.documents.status({ statusId: '123454321' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `statusId` | `string` | Yes | The `status_id` returned by an async create. |
+
+The download_url of a non-hosted document allows only a few fetches and expires with the account's data retention setting, so do not cache it. Hosted URLs follow hosted_download_limit and hosted_expires_at instead.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | One of queued, working, completed or failed. |
+| `download_id` | `string \| null` | No | The id for downloading, present when completed. |
+| `download_url` | `string \| null` | No | Where the document can be fetched, present when completed. Limited fetches; do not cache. |
+| `number_of_pages` | `number \| null` | No | PDF pages, present when completed. |
+| `message` | `string \| null` | No | Additional information. |
+| `validation_errors` | `string \| null` | No | Error information, present when failed. |
+
+
+
+---
+
+## Ips
+
+### list
+
+`ips.list`
+
+List the IP addresses DocRaptor downloads document assets from (document_url, images, stylesheets), for allowlisting on your servers
+
+**Risk:** `read`
+
+```ts
+await corsair.docraptor.api.ips.list({});
+```
+
+**Input:** _empty object_
+
+Public endpoint served from docraptor.com; the standard auth header is sent and ignored.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ips` | `string[]` | Yes | — |
+
+
+
+---
+

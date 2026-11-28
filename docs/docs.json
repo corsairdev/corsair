@@ -1930,6 +1930,14 @@
                 ]
               },
               {
+                "group": "DocRaptor",
+                "pages": [
+                  "plugins/docraptor/overview",
+                  "plugins/docraptor/api",
+                  "plugins/docraptor/database"
+                ]
+              },
+              {
                 "group": "DocsBot AI",
                 "pages": [
                   "plugins/docsbotai/overview",
