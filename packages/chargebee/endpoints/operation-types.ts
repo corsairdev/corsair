@@ -11780,9 +11780,9 @@ export type ChargebeeOperationInputs = {
 			/** * `flat_fee` - A fixed price that is not quantity-based. * `per_unit` - A fixed price per unit quantity. * `tiered` - The per unit price is based on the tier that the total quantity falls in. * `volume` - There are quantity tiers for which per unit prices are set. Quantities are purchased from… */
 			is_not?: "flat_fee" | "per_unit" | "tiered" | "volume" | "stairstep";
 			/** * `flat_fee` - A fixed price that is not quantity-based. * `per_unit` - A fixed price per unit quantity. * `tiered` - The per unit price is based on the tier that the total quantity falls in. * `volume` - There are quantity tiers for which per unit prices are set. Quantities are purchased from… */
-			in?: "flat_fee" | "per_unit" | "tiered" | "volume" | "stairstep";
+			in?: string;
 			/** * `flat_fee` - A fixed price that is not quantity-based. * `per_unit` - A fixed price per unit quantity. * `tiered` - The per unit price is based on the tier that the total quantity falls in. * `volume` - There are quantity tiers for which per unit prices are set. Quantities are purchased from… */
-			not_in?: "flat_fee" | "per_unit" | "tiered" | "volume" | "stairstep";
+			not_in?: string;
 		};
 		/** optional, enumerated string filter Type of charge. Possible values are : recurring, non_recurring. **Supported operators :** is, is_not, in, not_in **Example →** *charge_type\[is_not\] = "recurring"* */
 		charge_type?: {
@@ -11791,9 +11791,9 @@ export type ChargebeeOperationInputs = {
 			/** * `recurring` - Charges are automatically applied in sync with the billing frequency of subscription. * `non_recurring` - Charged immediately and only once every time it is applied. */
 			is_not?: "recurring" | "non_recurring";
 			/** * `recurring` - Charges are automatically applied in sync with the billing frequency of subscription. * `non_recurring` - Charged immediately and only once every time it is applied. */
-			in?: "recurring" | "non_recurring";
+			in?: string;
 			/** * `recurring` - Charges are automatically applied in sync with the billing frequency of subscription. * `non_recurring` - Charged immediately and only once every time it is applied. */
-			not_in?: "recurring" | "non_recurring";
+			not_in?: string;
 		};
 		/** optional, in cents filter Addon price is calculated based on the addon type and charge type. [Learn more](https://www.chargebee.com/docs/addons.html#charge-type-and-pricing). The unit depends on the [type of currency](/docs/api/getting-started) . **Supported operators :** is, is_not, lt, lte,… */
 		price?: {
@@ -11822,9 +11822,9 @@ export type ChargebeeOperationInputs = {
 			/** * `day` - Charge based on Day(S) * `week` - Charge based on week(s) * `month` - Charge based on month(s) * `year` - Charge based on year(s) * `not_applicable` - not applicable for this addon */
 			is_not?: "day" | "week" | "month" | "year" | "not_applicable";
 			/** * `day` - Charge based on Day(S) * `week` - Charge based on week(s) * `month` - Charge based on month(s) * `year` - Charge based on year(s) * `not_applicable` - not applicable for this addon */
-			in?: "day" | "week" | "month" | "year" | "not_applicable";
+			in?: string;
 			/** * `day` - Charge based on Day(S) * `week` - Charge based on week(s) * `month` - Charge based on month(s) * `year` - Charge based on year(s) * `not_applicable` - not applicable for this addon */
-			not_in?: "day" | "week" | "month" | "year" | "not_applicable";
+			not_in?: string;
 		};
 		/** optional, enumerated string filter Status of the addon. Possible values are : active, archived, deleted. **Supported operators :** is, is_not, in, not_in **Example →** *status\[is_not\] = "active"* */
 		status?: {
@@ -11833,9 +11833,9 @@ export type ChargebeeOperationInputs = {
 			/** * `active` - Only active addons can be applied to subscriptions * `archived` - No new associations with subscriptions are allowed. Existing associations for recurring addons remain as-is and can be removed if required. * `deleted` - Indicates the addon has been deleted. */
 			is_not?: "active" | "archived" | "deleted";
 			/** * `active` - Only active addons can be applied to subscriptions * `archived` - No new associations with subscriptions are allowed. Existing associations for recurring addons remain as-is and can be removed if required. * `deleted` - Indicates the addon has been deleted. */
-			in?: "active" | "archived" | "deleted";
+			in?: string;
 			/** * `active` - Only active addons can be applied to subscriptions * `archived` - No new associations with subscriptions are allowed. Existing associations for recurring addons remain as-is and can be removed if required. * `deleted` - Indicates the addon has been deleted. */
-			not_in?: "active" | "archived" | "deleted";
+			not_in?: string;
 		};
 		/** optional, timestamp(UTC) in seconds filter To filter based on updated at. This attribute will be present only if the resource has been updated after 2016-11-09. **Supported operators :** after, before, on, between **Example →** *updated_at\[on\] = "1243545465"* */
 		updated_at?: {
@@ -11859,9 +11859,9 @@ export type ChargebeeOperationInputs = {
 			/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
 			is_not?: "web" | "app_store" | "play_store";
 			/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-			in?: "web" | "app_store" | "play_store";
+			in?: string;
 			/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-			not_in?: "web" | "app_store" | "play_store";
+			not_in?: string;
 		};
 		/** If set to true, includes the deleted resources in the response. For the deleted resources in the response, the '**deleted** ' attribute will be '**true** '. */
 		include_deleted?: boolean;
@@ -12778,9 +12778,9 @@ export type ChargebeeOperationInputs = {
 			/** * `not_redeemed` - Can be applied to a subscription. * `redeemed` - Cannot be applied to a subscription as the coupon code has been already used. * `archived` - Cannot be applied to a subscription as it has been made inactive. */
 			is_not?: "not_redeemed" | "redeemed" | "archived";
 			/** * `not_redeemed` - Can be applied to a subscription. * `redeemed` - Cannot be applied to a subscription as the coupon code has been already used. * `archived` - Cannot be applied to a subscription as it has been made inactive. */
-			in?: "not_redeemed" | "redeemed" | "archived";
+			in?: string;
 			/** * `not_redeemed` - Can be applied to a subscription. * `redeemed` - Cannot be applied to a subscription as the coupon code has been already used. * `archived` - Cannot be applied to a subscription as it has been made inactive. */
-			not_in?: "not_redeemed" | "redeemed" | "archived";
+			not_in?: string;
 		};
 	};
 	'couponSets.addCouponCodes': {
@@ -13110,9 +13110,9 @@ export type ChargebeeOperationInputs = {
 			/** * `fixed_amount` - The specified amount will be deducted. * `percentage` - The specified percentage will be deducted. * `offer_quantity` - The specified units will be offered without any deduction. */
 			is_not?: "fixed_amount" | "percentage" | "offer_quantity";
 			/** * `fixed_amount` - The specified amount will be deducted. * `percentage` - The specified percentage will be deducted. * `offer_quantity` - The specified units will be offered without any deduction. */
-			in?: "fixed_amount" | "percentage" | "offer_quantity";
+			in?: string;
 			/** * `fixed_amount` - The specified amount will be deducted. * `percentage` - The specified percentage will be deducted. * `offer_quantity` - The specified units will be offered without any deduction. */
-			not_in?: "fixed_amount" | "percentage" | "offer_quantity";
+			not_in?: string;
 		};
 		/** optional, enumerated string filter Specifies the time duration for which this coupon is attached to the subscription. Possible values are : one_time, forever, limited_period. **Supported operators :** is, is_not, in, not_in **Example →** *duration_type\[is\] = "forever"* */
 		duration_type?: {
@@ -13121,9 +13121,9 @@ export type ChargebeeOperationInputs = {
 			/** * `one_time` - The coupon stays attached to the subscription till it is applied on an invoice **once**. It is removed after that from the subscription. * `forever` - The coupon is attached to the subscription and applied on the invoices until explicitly removed. * `limited_period` - The discount… */
 			is_not?: "one_time" | "forever" | "limited_period";
 			/** * `one_time` - The coupon stays attached to the subscription till it is applied on an invoice **once**. It is removed after that from the subscription. * `forever` - The coupon is attached to the subscription and applied on the invoices until explicitly removed. * `limited_period` - The discount… */
-			in?: "one_time" | "forever" | "limited_period";
+			in?: string;
 			/** * `one_time` - The coupon stays attached to the subscription till it is applied on an invoice **once**. It is removed after that from the subscription. * `forever` - The coupon is attached to the subscription and applied on the invoices until explicitly removed. * `limited_period` - The discount… */
-			not_in?: "one_time" | "forever" | "limited_period";
+			not_in?: string;
 		};
 		/** optional, enumerated string filter Status of the coupon. Possible values are : active, expired, archived, deleted. **Supported operators :** is, is_not, in, not_in **Example →** *status\[is_not\] = "active"* */
 		status?: {
@@ -13132,9 +13132,9 @@ export type ChargebeeOperationInputs = {
 			/** * `active` - Can be applied to a subscription. * `expired` - Cannot be applied to a subscription. A coupon may expire due to exceeding [max_redemptions](/docs/api/coupons?#coupon_max_redemptions) or [valid_till](/docs/api/coupons?#coupon_valid_till) date is past. Existing associations remain… */
 			is_not?: "active" | "expired" | "archived" | "deleted" | "future";
 			/** * `active` - Can be applied to a subscription. * `expired` - Cannot be applied to a subscription. A coupon may expire due to exceeding [max_redemptions](/docs/api/coupons?#coupon_max_redemptions) or [valid_till](/docs/api/coupons?#coupon_valid_till) date is past. Existing associations remain… */
-			in?: "active" | "expired" | "archived" | "deleted" | "future";
+			in?: string;
 			/** * `active` - Can be applied to a subscription. * `expired` - Cannot be applied to a subscription. A coupon may expire due to exceeding [max_redemptions](/docs/api/coupons?#coupon_max_redemptions) or [valid_till](/docs/api/coupons?#coupon_valid_till) date is past. Existing associations remain… */
-			not_in?: "active" | "expired" | "archived" | "deleted" | "future";
+			not_in?: string;
 		};
 		/** optional, enumerated string filter The amount on the invoice to which the coupon is applied. Possible values are : invoice_amount, each_specified_item. **Supported operators :** is, is_not, in, not_in **Example →** *apply_on\[is\] = "invoice_amount"* */
 		apply_on?: {
@@ -13143,9 +13143,9 @@ export type ChargebeeOperationInputs = {
 			/** * `invoice_amount` - The coupon is applied to the invoice `sub_total`. * `specified_items_total` - **(Deprecated)** Discount will be applied to the total of plan and addon items specified. * `each_specified_item` - The coupon is applied to the `invoice.line_item.amount` that corresponds to the… */
 			is_not?: "invoice_amount" | "each_specified_item";
 			/** * `invoice_amount` - The coupon is applied to the invoice `sub_total`. * `specified_items_total` - **(Deprecated)** Discount will be applied to the total of plan and addon items specified. * `each_specified_item` - The coupon is applied to the `invoice.line_item.amount` that corresponds to the… */
-			in?: "invoice_amount" | "each_specified_item";
+			in?: string;
 			/** * `invoice_amount` - The coupon is applied to the invoice `sub_total`. * `specified_items_total` - **(Deprecated)** Discount will be applied to the total of plan and addon items specified. * `each_specified_item` - The coupon is applied to the `invoice.line_item.amount` that corresponds to the… */
-			not_in?: "invoice_amount" | "each_specified_item";
+			not_in?: string;
 		};
 		/** optional, timestamp(UTC) in seconds filter Timestamp indicating when this coupon is created. **Supported operators :** after, before, on, between **Example →** *created_at\[before\] = "145222875"* */
 		created_at?: {
@@ -13651,9 +13651,9 @@ export type ChargebeeOperationInputs = {
 			/** * `adjustment` - Adjustment Credit Note * `refundable` - Refundable Credit Note * `store` - Store Credit Note */
 			is_not?: "adjustment" | "refundable" | "store";
 			/** * `adjustment` - Adjustment Credit Note * `refundable` - Refundable Credit Note * `store` - Store Credit Note */
-			in?: "adjustment" | "refundable" | "store";
+			in?: string;
 			/** * `adjustment` - Adjustment Credit Note * `refundable` - Refundable Credit Note * `store` - Store Credit Note */
-			not_in?: "adjustment" | "refundable" | "store";
+			not_in?: string;
 		};
 		/** optional, enumerated string filter The reason for issuing this Credit Note. The following reason codes are supported now\[Deprecated; use the [create_reason_code](/docs/api/credit_notes/credit_note-object#create_reason_code) parameter instead\]. Possible values are : write_off,… */
 		reason_code?: {
@@ -13662,9 +13662,9 @@ export type ChargebeeOperationInputs = {
 			/** * `write_off` - This reason will be set automatically for the Credit Notes created during invoice [Write Off](https://www.chargebee.com/docs/invoice-operations.html#write-off) operation. * `subscription_change` - This reason will be set automatically for Credit Notes created during Change… */
 			is_not?: "write_off" | "subscription_change" | "subscription_cancellation" | "subscription_pause" | "chargeback" | "product_unsatisfactory" | "service_unsatisfactory" | "order_change" | "order_cancellation" | "waiver" | "other" | "fraudulent";
 			/** * `write_off` - This reason will be set automatically for the Credit Notes created during invoice [Write Off](https://www.chargebee.com/docs/invoice-operations.html#write-off) operation. * `subscription_change` - This reason will be set automatically for Credit Notes created during Change… */
-			in?: "write_off" | "subscription_change" | "subscription_cancellation" | "subscription_pause" | "chargeback" | "product_unsatisfactory" | "service_unsatisfactory" | "order_change" | "order_cancellation" | "waiver" | "other" | "fraudulent";
+			in?: string;
 			/** * `write_off` - This reason will be set automatically for the Credit Notes created during invoice [Write Off](https://www.chargebee.com/docs/invoice-operations.html#write-off) operation. * `subscription_change` - This reason will be set automatically for Credit Notes created during Change… */
-			not_in?: "write_off" | "subscription_change" | "subscription_cancellation" | "subscription_pause" | "chargeback" | "product_unsatisfactory" | "service_unsatisfactory" | "order_change" | "order_cancellation" | "waiver" | "other" | "fraudulent";
+			not_in?: string;
 		};
 		/** optional, string filter Reason code for creating the credit note. Must be one from a list of reason codes set in the Chargebee app in **Settings \> Configure Chargebee \> Reason Codes \> Credit Notes \> Create Credit Note** . Must be passed if set as mandatory in the app. The codes are… */
 		create_reason_code?: {
@@ -13681,9 +13681,9 @@ export type ChargebeeOperationInputs = {
 			/** * `adjusted` - When the Credit Note has been adjusted against an invoice. * `refunded` - When the entire credits (Credit Note amount) have been used (i.e either allocated to invoices or refunded). * `refund_due` - When the credits are yet to be used, or have been partially used. * `voided` -… */
 			is_not?: "adjusted" | "refunded" | "refund_due" | "voided";
 			/** * `adjusted` - When the Credit Note has been adjusted against an invoice. * `refunded` - When the entire credits (Credit Note amount) have been used (i.e either allocated to invoices or refunded). * `refund_due` - When the credits are yet to be used, or have been partially used. * `voided` -… */
-			in?: "adjusted" | "refunded" | "refund_due" | "voided";
+			in?: string;
 			/** * `adjusted` - When the Credit Note has been adjusted against an invoice. * `refunded` - When the entire credits (Credit Note amount) have been used (i.e either allocated to invoices or refunded). * `refund_due` - When the credits are yet to be used, or have been partially used. * `voided` -… */
-			not_in?: "adjusted" | "refunded" | "refund_due" | "voided";
+			not_in?: string;
 		};
 		/** optional, timestamp(UTC) in seconds filter The date the Credit Note is issued. **Supported operators :** after, before, on, between **Example →** *date\[on\] = "1435054328"* */
 		date?: {
@@ -13709,9 +13709,9 @@ export type ChargebeeOperationInputs = {
 			/** * `tax_exclusive` - All amounts in the document are exclusive of tax. * `tax_inclusive` - All amounts in the document are inclusive of tax. */
 			is_not?: "tax_exclusive" | "tax_inclusive";
 			/** * `tax_exclusive` - All amounts in the document are exclusive of tax. * `tax_inclusive` - All amounts in the document are inclusive of tax. */
-			in?: "tax_exclusive" | "tax_inclusive";
+			in?: string;
 			/** * `tax_exclusive` - All amounts in the document are exclusive of tax. * `tax_inclusive` - All amounts in the document are inclusive of tax. */
-			not_in?: "tax_exclusive" | "tax_inclusive";
+			not_in?: string;
 		};
 		/** optional, in cents filter The amount allocated to the invoices. **Supported operators :** is, is_not, lt, lte, gt, gte, between **Example →** *amount_allocated\[is\] = "1200"* */
 		amount_allocated?: {
@@ -13769,9 +13769,9 @@ export type ChargebeeOperationInputs = {
 			/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
 			is_not?: "web" | "app_store" | "play_store";
 			/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-			in?: "web" | "app_store" | "play_store";
+			in?: string;
 			/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-			not_in?: "web" | "app_store" | "play_store";
+			not_in?: string;
 		};
 		/** Parameters for einvoice */
 		einvoice?: {
@@ -13782,9 +13782,9 @@ export type ChargebeeOperationInputs = {
 				/** * `scheduled` - Sending the e-invoice to the customer has been scheduled. * `skipped` - The e-invoice was not sent. This could be due to missing information or because the `entity_identifier` is not registered on the e-invoicing network. * `in_progress` - The e-invoice has been sent and… */
 				is_not?: "scheduled" | "skipped" | "in_progress" | "success" | "failed" | "registered" | "accepted" | "rejected" | "message_acknowledgement" | "in_process" | "under_query" | "conditionally_accepted" | "paid";
 				/** * `scheduled` - Sending the e-invoice to the customer has been scheduled. * `skipped` - The e-invoice was not sent. This could be due to missing information or because the `entity_identifier` is not registered on the e-invoicing network. * `in_progress` - The e-invoice has been sent and… */
-				in?: "scheduled" | "skipped" | "in_progress" | "success" | "failed" | "registered" | "accepted" | "rejected" | "message_acknowledgement" | "in_process" | "under_query" | "conditionally_accepted" | "paid";
+				in?: string;
 				/** * `scheduled` - Sending the e-invoice to the customer has been scheduled. * `skipped` - The e-invoice was not sent. This could be due to missing information or because the `entity_identifier` is not registered on the e-invoicing network. * `in_progress` - The e-invoice has been sent and… */
-				not_in?: "scheduled" | "skipped" | "in_progress" | "success" | "failed" | "registered" | "accepted" | "rejected" | "message_acknowledgement" | "in_process" | "under_query" | "conditionally_accepted" | "paid";
+				not_in?: string;
 			};
 		};
 	};
@@ -13959,7 +13959,7 @@ export type ChargebeeOperationInputs = {
 			/** * `active` - The credit unit is active. * `archived` - The credit unit is archived; it can be reactivated. */
 			is?: "active" | "archived";
 			/** * `active` - The credit unit is active. * `archived` - The credit unit is archived; it can be reactivated. */
-			in?: "active" | "archived";
+			in?: string;
 		};
 		/** optional, string filter The unique identifier of the credit unit. **Supported operators :** is, in **Example →** *id\[is\] = "ai_tokens_001"* */
 		id?: {
@@ -16049,9 +16049,9 @@ export type ChargebeeOperationInputs = {
 			/** * `on` - Whenever an invoice is created, an automatic attempt to charge the customer's payment method is made. * `off` - Automatic collection of charges will not be made. All payments must be recorded offline. */
 			is_not?: "on" | "off";
 			/** * `on` - Whenever an invoice is created, an automatic attempt to charge the customer's payment method is made. * `off` - Automatic collection of charges will not be made. All payments must be recorded offline. */
-			in?: "on" | "off";
+			in?: string;
 			/** * `on` - Whenever an invoice is created, an automatic attempt to charge the customer's payment method is made. * `off` - Automatic collection of charges will not be made. All payments must be recorded offline. */
-			not_in?: "on" | "off";
+			not_in?: string;
 		};
 		/** optional, enumerated string filter Specifies if the customer is liable for tax. Possible values are : taxable, exempt, zero_rated. **Supported operators :** is, is_not, in, not_in **Example →** *taxability\[is\] = "taxable"* */
 		taxability?: {
@@ -16060,9 +16060,9 @@ export type ChargebeeOperationInputs = {
 			/** * `taxable` - Computes tax for the customer based on the [site configuration](https://www.chargebee.com/docs/tax.html). In some cases, depending on the region, shipping_address is needed. If not provided, then billing_address is used to compute tax. If that's not available either, the tax is… */
 			is_not?: "taxable" | "exempt" | "zero_rated";
 			/** * `taxable` - Computes tax for the customer based on the [site configuration](https://www.chargebee.com/docs/tax.html). In some cases, depending on the region, shipping_address is needed. If not provided, then billing_address is used to compute tax. If that's not available either, the tax is… */
-			in?: "taxable" | "exempt" | "zero_rated";
+			in?: string;
 			/** * `taxable` - Computes tax for the customer based on the [site configuration](https://www.chargebee.com/docs/tax.html). In some cases, depending on the region, shipping_address is needed. If not provided, then billing_address is used to compute tax. If that's not available either, the tax is… */
-			not_in?: "taxable" | "exempt" | "zero_rated";
+			not_in?: string;
 		};
 		/** optional, timestamp(UTC) in seconds filter Timestamp indicating when this customer resource is created. **Supported operators :** after, before, on, between **Example →** *created_at\[before\] = "1435054328"* */
 		created_at?: {
@@ -16085,9 +16085,9 @@ export type ChargebeeOperationInputs = {
 			/** * `no_preference` - No Preference * `cash` - Cash * `check` - Check * `bank_transfer` - Bank Transfer * `ach_credit` - ACH Credit * `sepa_credit` - SEPA Credit * `boleto` - Boleto * `us_automated_bank_transfer` - US Automated Bank Transfer * `eu_automated_bank_transfer` - EU Automated Bank… */
 			is_not?: "no_preference" | "cash" | "check" | "bank_transfer" | "ach_credit" | "sepa_credit" | "boleto" | "us_automated_bank_transfer" | "eu_automated_bank_transfer" | "uk_automated_bank_transfer" | "jp_automated_bank_transfer" | "mx_automated_bank_transfer" | "custom";
 			/** * `no_preference` - No Preference * `cash` - Cash * `check` - Check * `bank_transfer` - Bank Transfer * `ach_credit` - ACH Credit * `sepa_credit` - SEPA Credit * `boleto` - Boleto * `us_automated_bank_transfer` - US Automated Bank Transfer * `eu_automated_bank_transfer` - EU Automated Bank… */
-			in?: "no_preference" | "cash" | "check" | "bank_transfer" | "ach_credit" | "sepa_credit" | "boleto" | "us_automated_bank_transfer" | "eu_automated_bank_transfer" | "uk_automated_bank_transfer" | "jp_automated_bank_transfer" | "mx_automated_bank_transfer" | "custom";
+			in?: string;
 			/** * `no_preference` - No Preference * `cash` - Cash * `check` - Check * `bank_transfer` - Bank Transfer * `ach_credit` - ACH Credit * `sepa_credit` - SEPA Credit * `boleto` - Boleto * `us_automated_bank_transfer` - US Automated Bank Transfer * `eu_automated_bank_transfer` - EU Automated Bank… */
-			not_in?: "no_preference" | "cash" | "check" | "bank_transfer" | "ach_credit" | "sepa_credit" | "boleto" | "us_automated_bank_transfer" | "eu_automated_bank_transfer" | "uk_automated_bank_transfer" | "jp_automated_bank_transfer" | "mx_automated_bank_transfer" | "custom";
+			not_in?: string;
 		};
 		/** optional, boolean filter Override for this customer, the [site-level setting](https://www.chargebee.com/docs/billing/2.0/usage-based-billing/metered_billing#configuring-metered-billing) for auto-closing invoices. Only applicable when auto-closing invoices has been enabled for the site. This… */
 		auto_close_invoices?: {
@@ -16100,9 +16100,9 @@ export type ChargebeeOperationInputs = {
 			/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
 			is_not?: "web" | "app_store" | "play_store";
 			/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-			in?: "web" | "app_store" | "play_store";
+			in?: string;
 			/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-			not_in?: "web" | "app_store" | "play_store";
+			not_in?: string;
 		};
 		/** optional, string filter The unique ID of the [business entity](/docs/api/advanced-features) of this subscription. This is always the same as the [business entity](/docs/api/subscriptions/subscription-object#customer_id) of the customer. **Supported operators :** is, is_not, starts_with **Example… */
 		business_entity_id?: {
@@ -16205,9 +16205,9 @@ export type ChargebeeOperationInputs = {
 			/** * `active` - Active and ready to be consumed * `consumed` - Consumed for a transaction and cannot be used again * `expired` - Expired before consumed and cannot be used again * `failure` - Failed to create the voucher due to gateway rejection */
 			is_not?: "active" | "consumed" | "expired" | "failure";
 			/** * `active` - Active and ready to be consumed * `consumed` - Consumed for a transaction and cannot be used again * `expired` - Expired before consumed and cannot be used again * `failure` - Failed to create the voucher due to gateway rejection */
-			in?: "active" | "consumed" | "expired" | "failure";
+			in?: string;
 			/** * `active` - Active and ready to be consumed * `consumed` - Consumed for a transaction and cannot be used again * `expired` - Expired before consumed and cannot be used again * `failure` - Failed to create the voucher due to gateway rejection */
-			not_in?: "active" | "consumed" | "expired" | "failure";
+			not_in?: string;
 		};
 		/** optional, string filter Sorts based on the specified attribute. **Supported attributes :** date, updated_at **Supported sort-orders :** asc, desc **Example →** *sort_by\[asc\] = "date"* This will sort the result based on the 'date' attribute in ascending(earliest first) order. */
 		sort_by?: {
@@ -16716,9 +16716,9 @@ export type ChargebeeOperationInputs = {
 			/** * `initiated` - The dispute has been raised by the cardholder and the funds are yet to be withdrawn. * `funds_withdrawn` - The gateway has withdrawn the disputed amount pending resolution. * `in_review` - Evidence has been submitted and the dispute is being reviewed. * `cancelled` - The dispute… */
 			is_not?: "initiated" | "funds_withdrawn" | "in_review" | "cancelled" | "lost" | "won";
 			/** * `initiated` - The dispute has been raised by the cardholder and the funds are yet to be withdrawn. * `funds_withdrawn` - The gateway has withdrawn the disputed amount pending resolution. * `in_review` - Evidence has been submitted and the dispute is being reviewed. * `cancelled` - The dispute… */
-			in?: "initiated" | "funds_withdrawn" | "in_review" | "cancelled" | "lost" | "won";
+			in?: string;
 			/** * `initiated` - The dispute has been raised by the cardholder and the funds are yet to be withdrawn. * `funds_withdrawn` - The gateway has withdrawn the disputed amount pending resolution. * `in_review` - Evidence has been submitted and the dispute is being reviewed. * `cancelled` - The dispute… */
-			not_in?: "initiated" | "funds_withdrawn" | "in_review" | "cancelled" | "lost" | "won";
+			not_in?: string;
 		};
 		/** optional, enumerated string filter The nature of the dispute raised against the payment. Possible values are : chargeback, inquiry. **Supported operators :** is, is_not, in, not_in **Example →** *type\[is\] = "chargeback"* */
 		type?: {
@@ -16727,9 +16727,9 @@ export type ChargebeeOperationInputs = {
 			/** * `chargeback` - A formal reversal of the payment raised through the card network. * `inquiry` - A pre-dispute inquiry raised by the issuer before a chargeback. */
 			is_not?: "chargeback" | "inquiry";
 			/** * `chargeback` - A formal reversal of the payment raised through the card network. * `inquiry` - A pre-dispute inquiry raised by the issuer before a chargeback. */
-			in?: "chargeback" | "inquiry";
+			in?: string;
 			/** * `chargeback` - A formal reversal of the payment raised through the card network. * `inquiry` - A pre-dispute inquiry raised by the issuer before a chargeback. */
-			not_in?: "chargeback" | "inquiry";
+			not_in?: string;
 		};
 		/** optional, string filter Identifier of the customer whose payment was disputed. **Supported operators :** is, is_not, starts_with, in, not_in **Example →** *customer_id\[is\] = "4gmiXbsjdm"* */
 		customer_id?: {
@@ -16847,7 +16847,7 @@ export type ChargebeeOperationInputs = {
 			/** * `plan` - Plan * `addon` - Addon * `charge` - Charge * `plan_price` - Plan Price * `addon_price` - Addon Price */
 			is?: "plan" | "addon" | "charge" | "plan_price" | "addon_price";
 			/** * `plan` - Plan * `addon` - Addon * `charge` - Charge * `plan_price` - Plan Price * `addon_price` - Addon Price */
-			in?: "plan" | "addon" | "charge" | "plan_price" | "addon_price";
+			in?: string;
 		};
 		/** optional, string filter The `id` of the `entity` to which this entitlement belongs. . **Supported operators :** is, is_not, starts_with, in, not_in **Example →** *entity_id\[in\] = "usd-professional-monthly"* */
 		entity_id?: {
@@ -18129,9 +18129,9 @@ export type ChargebeeOperationInputs = {
 			/** * `not_configured` - Webhook was not configured when this event occurred * `scheduled` - Webhook call has been scheduled. * `succeeded` - Webhook call was successful. * `re_scheduled` - Webhook call has been rescheduled due failure(s) in previous call(s) * `failed` - Webhook call has been… */
 			is_not?: "not_configured" | "scheduled" | "succeeded" | "re_scheduled" | "failed" | "skipped" | "not_applicable" | "disabled" | "rate_limited";
 			/** * `not_configured` - Webhook was not configured when this event occurred * `scheduled` - Webhook call has been scheduled. * `succeeded` - Webhook call was successful. * `re_scheduled` - Webhook call has been rescheduled due failure(s) in previous call(s) * `failed` - Webhook call has been… */
-			in?: "not_configured" | "scheduled" | "succeeded" | "re_scheduled" | "failed" | "skipped" | "not_applicable" | "disabled" | "rate_limited";
+			in?: string;
 			/** * `not_configured` - Webhook was not configured when this event occurred * `scheduled` - Webhook call has been scheduled. * `succeeded` - Webhook call was successful. * `re_scheduled` - Webhook call has been rescheduled due failure(s) in previous call(s) * `failed` - Webhook call has been… */
-			not_in?: "not_configured" | "scheduled" | "succeeded" | "re_scheduled" | "failed" | "skipped" | "not_applicable" | "disabled" | "rate_limited";
+			not_in?: string;
 		};
 		/** optional, enumerated string filter Specify it if you need to fetch events of a particular type. Possible values are : coupon_created, coupon_updated, coupon_deleted, coupon_set_created, coupon_set_updated, coupon_set_deleted, coupon_codes_added, coupon_codes_deleted, coupon_codes_updated,… */
 		event_type?: {
@@ -18140,9 +18140,9 @@ export type ChargebeeOperationInputs = {
 			/** * `coupon_created` - Sent when a coupon is created. * `coupon_updated` - Sent when a coupon is changed. * `coupon_deleted` - Sent when a coupon is deleted. * `coupon_set_created` - Sent when a coupon set is created * `coupon_set_updated` - Sent when a coupon set is changed * `coupon_set_deleted`… */
 			is_not?: "coupon_created" | "coupon_updated" | "coupon_deleted" | "coupon_set_created" | "coupon_set_updated" | "coupon_set_deleted" | "coupon_codes_added" | "coupon_codes_deleted" | "coupon_codes_updated" | "customer_created" | "customer_changed" | "customer_deleted" | "customer_moved_out" | "customer_moved_in" | "promotional_credits_added" | "promotional_credits_deducted" | "subscription_created" | "subscription_created_with_backdating" | "subscription_started" | "subscription_trial_end_reminder" | "subscription_activated" | "subscription_activated_with_backdating" | "subscription_changed" | "subscription_trial_extended" | "mrr_updated" | "subscription_changed_with_backdating" | "subscription_cancellation_scheduled" | "subscription_cancellation_reminder" | "subscription_cancelled" | "subscription_canceled_with_backdating" | "subscription_reactivated" | "subscription_reactivated_with_backdating" | "subscription_renewed" | "subscription_items_renewed" | "subscription_scheduled_cancellation_removed" | "subscription_changes_scheduled" | "subscription_scheduled_changes_removed" | "subscription_shipping_address_updated" | "subscription_deleted" | "subscription_paused" | "subscription_pause_scheduled" | "subscription_scheduled_pause_removed" | "subscription_resumed" | "subscription_resumption_scheduled" | "subscription_scheduled_resumption_removed" | "subscription_advance_invoice_schedule_added" | "subscription_advance_invoice_schedule_updated" | "subscription_advance_invoice_schedule_removed" | "pending_invoice_created" | "pending_invoice_updated" | "invoice_generated" | "invoice_generated_with_backdating" | "invoice_updated" | "invoice_deleted" | "credit_note_created" | "credit_note_created_with_backdating" | "credit_note_updated" | "credit_note_deleted" | "einvoice_created" | "einvoice_updated" | "payment_schedules_created" | "payment_schedules_updated" | "payment_schedule_scheme_created" | "payment_schedule_scheme_deleted" | "payment_schedules_cancelled" | "subscription_renewal_reminder" | "add_usages_reminder" | "payment_due_reminder" | "transaction_created" | "transaction_updated" | "transaction_deleted" | "payment_succeeded" | "payment_failed" | "dunning_updated" | "payment_refunded" | "refund_failed" | "payment_initiated" | "refund_initiated" | "authorization_succeeded" | "authorization_voided" | "card_added" | "card_updated" | "card_expiry_reminder" | "card_expired" | "card_deleted" | "payment_source_added" | "payment_source_updated" | "payment_source_deleted" | "payment_source_expiring" | "payment_source_expired" | "payment_source_locally_deleted" | "virtual_bank_account_added" | "virtual_bank_account_updated" | "virtual_bank_account_deleted" | "token_created" | "token_consumed" | "token_expired" | "unbilled_charges_created" | "unbilled_charges_voided" | "unbilled_charges_deleted" | "unbilled_charges_invoiced" | "order_created" | "order_updated" | "order_cancelled" | "order_delivered" | "order_returned" | "order_ready_to_process" | "order_ready_to_ship" | "order_deleted" | "order_resent" | "quote_created" | "quote_updated" | "quote_deleted" | "tax_withheld_recorded" | "tax_withheld_deleted" | "tax_withheld_refunded" | "gift_scheduled" | "gift_unclaimed" | "gift_claimed" | "gift_expired" | "gift_cancelled" | "gift_updated" | "hierarchy_created" | "hierarchy_deleted" | "payment_intent_created" | "payment_intent_updated" | "contract_term_created" | "contract_term_renewed" | "contract_term_terminated" | "contract_term_completed" | "contract_term_cancelled" | "item_family_created" | "item_family_updated" | "item_family_deleted" | "item_created" | "item_updated" | "item_deleted" | "item_price_created" | "item_price_updated" | "item_price_deleted" | "attached_item_created" | "attached_item_updated" | "attached_item_deleted" | "differential_price_created" | "differential_price_updated" | "differential_price_deleted" | "feature_created" | "feature_updated" | "feature_deleted" | "feature_activated" | "feature_reactivated" | "feature_archived" | "item_entitlements_updated" | "entitlement_overrides_updated" | "entitlement_overrides_removed" | "item_entitlements_removed" | "entitlement_overrides_auto_removed" | "subscription_entitlements_created" | "subscription_entitlements_updated" | "business_entity_created" | "business_entity_updated" | "business_entity_deleted" | "customer_business_entity_changed" | "subscription_business_entity_changed" | "payment_source_business_entity_changed" | "organization_details_created" | "organization_details_updated" | "purchase_created" | "voucher_created" | "voucher_expired" | "voucher_create_failed" | "item_price_entitlements_updated" | "item_price_entitlements_removed" | "subscription_ramp_created" | "subscription_ramp_deleted" | "subscription_ramp_applied" | "subscription_ramp_drafted" | "subscription_ramp_updated" | "price_variant_created" | "price_variant_updated" | "price_variant_deleted" | "customer_entitlements_updated" | "subscription_moved_in" | "subscription_moved_out" | "subscription_movement_failed" | "omnichannel_subscription_created" | "omnichannel_subscription_item_renewed" | "omnichannel_subscription_item_downgraded" | "omnichannel_subscription_item_expired" | "omnichannel_subscription_item_cancellation_scheduled" | "omnichannel_subscription_item_scheduled_cancellation_removed" | "omnichannel_subscription_item_resubscribed" | "omnichannel_subscription_item_upgraded" | "omnichannel_subscription_item_cancelled" | "omnichannel_subscription_imported" | "omnichannel_subscription_item_grace_period_started" | "omnichannel_subscription_item_grace_period_expired" | "omnichannel_subscription_item_dunning_started" | "omnichannel_subscription_item_dunning_expired" | "rule_created" | "rule_updated" | "rule_deleted" | "record_purchase_failed" | "omnichannel_subscription_item_change_scheduled" | "omnichannel_subscription_item_scheduled_change_removed" | "omnichannel_subscription_item_reactivated" | "sales_order_created" | "sales_order_updated" | "omnichannel_subscription_item_changed" | "omnichannel_subscription_item_paused" | "omnichannel_subscription_item_resumed" | "omnichannel_one_time_order_created" | "omnichannel_one_time_order_item_cancelled" | "usage_file_ingested" | "omnichannel_subscription_item_pause_scheduled" | "omnichannel_subscription_moved_in" | "omnichannel_transaction_created" | "alert_status_changed" | "omnichannel_subscription_item_updated" | "omnichannel_subscription_item_recovered" | "price_ramp_created" | "price_ramp_updated" | "price_ramp_deleted" | "omnichannel_subscription_item_mrr_updated" | "ledger_account_balance_updated" | "grant_blocks_created" | "grant_blocks_updated" | "ledger_updated" | "business_rule_created" | "business_rule_updated" | "business_rule_activated" | "business_rule_deactivated" | "business_rule_deleted" | "business_rule_released" | "vault_token_created" | "vault_token_updated" | "vault_token_deleted" | "chargeback_initiated" | "chargeback_won" | "chargeback_lost" | "business_ruleset_created" | "business_ruleset_updated" | "business_ruleset_activated" | "business_ruleset_deactivated" | "business_ruleset_deleted" | "collections_reminder_sequence_created" | "collections_reminder_sequence_paused" | "collections_reminder_sequence_resumed" | "collections_reminder_sequence_completed" | "collections_payment_promise_created" | "collections_payment_promise_updated" | "collections_payment_promise_fulfilled" | "collections_payment_promise_cancelled" | "collections_payment_promise_broken" | "collections_dispute_created" | "collections_dispute_updated" | "collections_dispute_resolved" | "collections_dispute_withdrawn" | "email_message_received" | "private_note_added";
 			/** * `coupon_created` - Sent when a coupon is created. * `coupon_updated` - Sent when a coupon is changed. * `coupon_deleted` - Sent when a coupon is deleted. * `coupon_set_created` - Sent when a coupon set is created * `coupon_set_updated` - Sent when a coupon set is changed * `coupon_set_deleted`… */
-			in?: "coupon_created" | "coupon_updated" | "coupon_deleted" | "coupon_set_created" | "coupon_set_updated" | "coupon_set_deleted" | "coupon_codes_added" | "coupon_codes_deleted" | "coupon_codes_updated" | "customer_created" | "customer_changed" | "customer_deleted" | "customer_moved_out" | "customer_moved_in" | "promotional_credits_added" | "promotional_credits_deducted" | "subscription_created" | "subscription_created_with_backdating" | "subscription_started" | "subscription_trial_end_reminder" | "subscription_activated" | "subscription_activated_with_backdating" | "subscription_changed" | "subscription_trial_extended" | "mrr_updated" | "subscription_changed_with_backdating" | "subscription_cancellation_scheduled" | "subscription_cancellation_reminder" | "subscription_cancelled" | "subscription_canceled_with_backdating" | "subscription_reactivated" | "subscription_reactivated_with_backdating" | "subscription_renewed" | "subscription_items_renewed" | "subscription_scheduled_cancellation_removed" | "subscription_changes_scheduled" | "subscription_scheduled_changes_removed" | "subscription_shipping_address_updated" | "subscription_deleted" | "subscription_paused" | "subscription_pause_scheduled" | "subscription_scheduled_pause_removed" | "subscription_resumed" | "subscription_resumption_scheduled" | "subscription_scheduled_resumption_removed" | "subscription_advance_invoice_schedule_added" | "subscription_advance_invoice_schedule_updated" | "subscription_advance_invoice_schedule_removed" | "pending_invoice_created" | "pending_invoice_updated" | "invoice_generated" | "invoice_generated_with_backdating" | "invoice_updated" | "invoice_deleted" | "credit_note_created" | "credit_note_created_with_backdating" | "credit_note_updated" | "credit_note_deleted" | "einvoice_created" | "einvoice_updated" | "payment_schedules_created" | "payment_schedules_updated" | "payment_schedule_scheme_created" | "payment_schedule_scheme_deleted" | "payment_schedules_cancelled" | "subscription_renewal_reminder" | "add_usages_reminder" | "payment_due_reminder" | "transaction_created" | "transaction_updated" | "transaction_deleted" | "payment_succeeded" | "payment_failed" | "dunning_updated" | "payment_refunded" | "refund_failed" | "payment_initiated" | "refund_initiated" | "authorization_succeeded" | "authorization_voided" | "card_added" | "card_updated" | "card_expiry_reminder" | "card_expired" | "card_deleted" | "payment_source_added" | "payment_source_updated" | "payment_source_deleted" | "payment_source_expiring" | "payment_source_expired" | "payment_source_locally_deleted" | "virtual_bank_account_added" | "virtual_bank_account_updated" | "virtual_bank_account_deleted" | "token_created" | "token_consumed" | "token_expired" | "unbilled_charges_created" | "unbilled_charges_voided" | "unbilled_charges_deleted" | "unbilled_charges_invoiced" | "order_created" | "order_updated" | "order_cancelled" | "order_delivered" | "order_returned" | "order_ready_to_process" | "order_ready_to_ship" | "order_deleted" | "order_resent" | "quote_created" | "quote_updated" | "quote_deleted" | "tax_withheld_recorded" | "tax_withheld_deleted" | "tax_withheld_refunded" | "gift_scheduled" | "gift_unclaimed" | "gift_claimed" | "gift_expired" | "gift_cancelled" | "gift_updated" | "hierarchy_created" | "hierarchy_deleted" | "payment_intent_created" | "payment_intent_updated" | "contract_term_created" | "contract_term_renewed" | "contract_term_terminated" | "contract_term_completed" | "contract_term_cancelled" | "item_family_created" | "item_family_updated" | "item_family_deleted" | "item_created" | "item_updated" | "item_deleted" | "item_price_created" | "item_price_updated" | "item_price_deleted" | "attached_item_created" | "attached_item_updated" | "attached_item_deleted" | "differential_price_created" | "differential_price_updated" | "differential_price_deleted" | "feature_created" | "feature_updated" | "feature_deleted" | "feature_activated" | "feature_reactivated" | "feature_archived" | "item_entitlements_updated" | "entitlement_overrides_updated" | "entitlement_overrides_removed" | "item_entitlements_removed" | "entitlement_overrides_auto_removed" | "subscription_entitlements_created" | "subscription_entitlements_updated" | "business_entity_created" | "business_entity_updated" | "business_entity_deleted" | "customer_business_entity_changed" | "subscription_business_entity_changed" | "payment_source_business_entity_changed" | "organization_details_created" | "organization_details_updated" | "purchase_created" | "voucher_created" | "voucher_expired" | "voucher_create_failed" | "item_price_entitlements_updated" | "item_price_entitlements_removed" | "subscription_ramp_created" | "subscription_ramp_deleted" | "subscription_ramp_applied" | "subscription_ramp_drafted" | "subscription_ramp_updated" | "price_variant_created" | "price_variant_updated" | "price_variant_deleted" | "customer_entitlements_updated" | "subscription_moved_in" | "subscription_moved_out" | "subscription_movement_failed" | "omnichannel_subscription_created" | "omnichannel_subscription_item_renewed" | "omnichannel_subscription_item_downgraded" | "omnichannel_subscription_item_expired" | "omnichannel_subscription_item_cancellation_scheduled" | "omnichannel_subscription_item_scheduled_cancellation_removed" | "omnichannel_subscription_item_resubscribed" | "omnichannel_subscription_item_upgraded" | "omnichannel_subscription_item_cancelled" | "omnichannel_subscription_imported" | "omnichannel_subscription_item_grace_period_started" | "omnichannel_subscription_item_grace_period_expired" | "omnichannel_subscription_item_dunning_started" | "omnichannel_subscription_item_dunning_expired" | "rule_created" | "rule_updated" | "rule_deleted" | "record_purchase_failed" | "omnichannel_subscription_item_change_scheduled" | "omnichannel_subscription_item_scheduled_change_removed" | "omnichannel_subscription_item_reactivated" | "sales_order_created" | "sales_order_updated" | "omnichannel_subscription_item_changed" | "omnichannel_subscription_item_paused" | "omnichannel_subscription_item_resumed" | "omnichannel_one_time_order_created" | "omnichannel_one_time_order_item_cancelled" | "usage_file_ingested" | "omnichannel_subscription_item_pause_scheduled" | "omnichannel_subscription_moved_in" | "omnichannel_transaction_created" | "alert_status_changed" | "omnichannel_subscription_item_updated" | "omnichannel_subscription_item_recovered" | "price_ramp_created" | "price_ramp_updated" | "price_ramp_deleted" | "omnichannel_subscription_item_mrr_updated" | "ledger_account_balance_updated" | "grant_blocks_created" | "grant_blocks_updated" | "ledger_updated" | "business_rule_created" | "business_rule_updated" | "business_rule_activated" | "business_rule_deactivated" | "business_rule_deleted" | "business_rule_released" | "vault_token_created" | "vault_token_updated" | "vault_token_deleted" | "chargeback_initiated" | "chargeback_won" | "chargeback_lost" | "business_ruleset_created" | "business_ruleset_updated" | "business_ruleset_activated" | "business_ruleset_deactivated" | "business_ruleset_deleted" | "collections_reminder_sequence_created" | "collections_reminder_sequence_paused" | "collections_reminder_sequence_resumed" | "collections_reminder_sequence_completed" | "collections_payment_promise_created" | "collections_payment_promise_updated" | "collections_payment_promise_fulfilled" | "collections_payment_promise_cancelled" | "collections_payment_promise_broken" | "collections_dispute_created" | "collections_dispute_updated" | "collections_dispute_resolved" | "collections_dispute_withdrawn" | "email_message_received" | "private_note_added";
+			in?: string;
 			/** * `coupon_created` - Sent when a coupon is created. * `coupon_updated` - Sent when a coupon is changed. * `coupon_deleted` - Sent when a coupon is deleted. * `coupon_set_created` - Sent when a coupon set is created * `coupon_set_updated` - Sent when a coupon set is changed * `coupon_set_deleted`… */
-			not_in?: "coupon_created" | "coupon_updated" | "coupon_deleted" | "coupon_set_created" | "coupon_set_updated" | "coupon_set_deleted" | "coupon_codes_added" | "coupon_codes_deleted" | "coupon_codes_updated" | "customer_created" | "customer_changed" | "customer_deleted" | "customer_moved_out" | "customer_moved_in" | "promotional_credits_added" | "promotional_credits_deducted" | "subscription_created" | "subscription_created_with_backdating" | "subscription_started" | "subscription_trial_end_reminder" | "subscription_activated" | "subscription_activated_with_backdating" | "subscription_changed" | "subscription_trial_extended" | "mrr_updated" | "subscription_changed_with_backdating" | "subscription_cancellation_scheduled" | "subscription_cancellation_reminder" | "subscription_cancelled" | "subscription_canceled_with_backdating" | "subscription_reactivated" | "subscription_reactivated_with_backdating" | "subscription_renewed" | "subscription_items_renewed" | "subscription_scheduled_cancellation_removed" | "subscription_changes_scheduled" | "subscription_scheduled_changes_removed" | "subscription_shipping_address_updated" | "subscription_deleted" | "subscription_paused" | "subscription_pause_scheduled" | "subscription_scheduled_pause_removed" | "subscription_resumed" | "subscription_resumption_scheduled" | "subscription_scheduled_resumption_removed" | "subscription_advance_invoice_schedule_added" | "subscription_advance_invoice_schedule_updated" | "subscription_advance_invoice_schedule_removed" | "pending_invoice_created" | "pending_invoice_updated" | "invoice_generated" | "invoice_generated_with_backdating" | "invoice_updated" | "invoice_deleted" | "credit_note_created" | "credit_note_created_with_backdating" | "credit_note_updated" | "credit_note_deleted" | "einvoice_created" | "einvoice_updated" | "payment_schedules_created" | "payment_schedules_updated" | "payment_schedule_scheme_created" | "payment_schedule_scheme_deleted" | "payment_schedules_cancelled" | "subscription_renewal_reminder" | "add_usages_reminder" | "payment_due_reminder" | "transaction_created" | "transaction_updated" | "transaction_deleted" | "payment_succeeded" | "payment_failed" | "dunning_updated" | "payment_refunded" | "refund_failed" | "payment_initiated" | "refund_initiated" | "authorization_succeeded" | "authorization_voided" | "card_added" | "card_updated" | "card_expiry_reminder" | "card_expired" | "card_deleted" | "payment_source_added" | "payment_source_updated" | "payment_source_deleted" | "payment_source_expiring" | "payment_source_expired" | "payment_source_locally_deleted" | "virtual_bank_account_added" | "virtual_bank_account_updated" | "virtual_bank_account_deleted" | "token_created" | "token_consumed" | "token_expired" | "unbilled_charges_created" | "unbilled_charges_voided" | "unbilled_charges_deleted" | "unbilled_charges_invoiced" | "order_created" | "order_updated" | "order_cancelled" | "order_delivered" | "order_returned" | "order_ready_to_process" | "order_ready_to_ship" | "order_deleted" | "order_resent" | "quote_created" | "quote_updated" | "quote_deleted" | "tax_withheld_recorded" | "tax_withheld_deleted" | "tax_withheld_refunded" | "gift_scheduled" | "gift_unclaimed" | "gift_claimed" | "gift_expired" | "gift_cancelled" | "gift_updated" | "hierarchy_created" | "hierarchy_deleted" | "payment_intent_created" | "payment_intent_updated" | "contract_term_created" | "contract_term_renewed" | "contract_term_terminated" | "contract_term_completed" | "contract_term_cancelled" | "item_family_created" | "item_family_updated" | "item_family_deleted" | "item_created" | "item_updated" | "item_deleted" | "item_price_created" | "item_price_updated" | "item_price_deleted" | "attached_item_created" | "attached_item_updated" | "attached_item_deleted" | "differential_price_created" | "differential_price_updated" | "differential_price_deleted" | "feature_created" | "feature_updated" | "feature_deleted" | "feature_activated" | "feature_reactivated" | "feature_archived" | "item_entitlements_updated" | "entitlement_overrides_updated" | "entitlement_overrides_removed" | "item_entitlements_removed" | "entitlement_overrides_auto_removed" | "subscription_entitlements_created" | "subscription_entitlements_updated" | "business_entity_created" | "business_entity_updated" | "business_entity_deleted" | "customer_business_entity_changed" | "subscription_business_entity_changed" | "payment_source_business_entity_changed" | "organization_details_created" | "organization_details_updated" | "purchase_created" | "voucher_created" | "voucher_expired" | "voucher_create_failed" | "item_price_entitlements_updated" | "item_price_entitlements_removed" | "subscription_ramp_created" | "subscription_ramp_deleted" | "subscription_ramp_applied" | "subscription_ramp_drafted" | "subscription_ramp_updated" | "price_variant_created" | "price_variant_updated" | "price_variant_deleted" | "customer_entitlements_updated" | "subscription_moved_in" | "subscription_moved_out" | "subscription_movement_failed" | "omnichannel_subscription_created" | "omnichannel_subscription_item_renewed" | "omnichannel_subscription_item_downgraded" | "omnichannel_subscription_item_expired" | "omnichannel_subscription_item_cancellation_scheduled" | "omnichannel_subscription_item_scheduled_cancellation_removed" | "omnichannel_subscription_item_resubscribed" | "omnichannel_subscription_item_upgraded" | "omnichannel_subscription_item_cancelled" | "omnichannel_subscription_imported" | "omnichannel_subscription_item_grace_period_started" | "omnichannel_subscription_item_grace_period_expired" | "omnichannel_subscription_item_dunning_started" | "omnichannel_subscription_item_dunning_expired" | "rule_created" | "rule_updated" | "rule_deleted" | "record_purchase_failed" | "omnichannel_subscription_item_change_scheduled" | "omnichannel_subscription_item_scheduled_change_removed" | "omnichannel_subscription_item_reactivated" | "sales_order_created" | "sales_order_updated" | "omnichannel_subscription_item_changed" | "omnichannel_subscription_item_paused" | "omnichannel_subscription_item_resumed" | "omnichannel_one_time_order_created" | "omnichannel_one_time_order_item_cancelled" | "usage_file_ingested" | "omnichannel_subscription_item_pause_scheduled" | "omnichannel_subscription_moved_in" | "omnichannel_transaction_created" | "alert_status_changed" | "omnichannel_subscription_item_updated" | "omnichannel_subscription_item_recovered" | "price_ramp_created" | "price_ramp_updated" | "price_ramp_deleted" | "omnichannel_subscription_item_mrr_updated" | "ledger_account_balance_updated" | "grant_blocks_created" | "grant_blocks_updated" | "ledger_updated" | "business_rule_created" | "business_rule_updated" | "business_rule_activated" | "business_rule_deactivated" | "business_rule_deleted" | "business_rule_released" | "vault_token_created" | "vault_token_updated" | "vault_token_deleted" | "chargeback_initiated" | "chargeback_won" | "chargeback_lost" | "business_ruleset_created" | "business_ruleset_updated" | "business_ruleset_activated" | "business_ruleset_deactivated" | "business_ruleset_deleted" | "collections_reminder_sequence_created" | "collections_reminder_sequence_paused" | "collections_reminder_sequence_resumed" | "collections_reminder_sequence_completed" | "collections_payment_promise_created" | "collections_payment_promise_updated" | "collections_payment_promise_fulfilled" | "collections_payment_promise_cancelled" | "collections_payment_promise_broken" | "collections_dispute_created" | "collections_dispute_updated" | "collections_dispute_resolved" | "collections_dispute_withdrawn" | "email_message_received" | "private_note_added";
+			not_in?: string;
 		};
 		/** optional, enumerated string filter Source of the event. Possible values are : admin_console, api, scheduled_job, hosted_page, portal, system, none, js_api, migration, bulk_operation, external_service. **Supported operators :** is, is_not, in, not_in **Example →** *source\[is_not\] = "hosted_page"* */
 		source?: {
@@ -18151,9 +18151,9 @@ export type ChargebeeOperationInputs = {
 			/** * `admin_console` - Operation made through the Chargebee admin UI * `api` - Operation made through the API * `scheduled_job` - Operation made through the Scheduled Jobs * `hosted_page` - Operation made through the Hosted Pages * `portal` - Operation made through [Self-Serve… */
 			is_not?: "admin_console" | "api" | "scheduled_job" | "hosted_page" | "portal" | "system" | "none" | "js_api" | "migration" | "bulk_operation" | "external_service" | "mcp" | "copilot" | "agent";
 			/** * `admin_console` - Operation made through the Chargebee admin UI * `api` - Operation made through the API * `scheduled_job` - Operation made through the Scheduled Jobs * `hosted_page` - Operation made through the Hosted Pages * `portal` - Operation made through [Self-Serve… */
-			in?: "admin_console" | "api" | "scheduled_job" | "hosted_page" | "portal" | "system" | "none" | "js_api" | "migration" | "bulk_operation" | "external_service" | "mcp" | "copilot" | "agent";
+			in?: string;
 			/** * `admin_console` - Operation made through the Chargebee admin UI * `api` - Operation made through the API * `scheduled_job` - Operation made through the Scheduled Jobs * `hosted_page` - Operation made through the Hosted Pages * `portal` - Operation made through [Self-Serve… */
-			not_in?: "admin_console" | "api" | "scheduled_job" | "hosted_page" | "portal" | "system" | "none" | "js_api" | "migration" | "bulk_operation" | "external_service" | "mcp" | "copilot" | "agent";
+			not_in?: string;
 		};
 		/** optional, timestamp(UTC) in seconds filter Timestamp indicating when this event had occurred. **Supported operators :** after, before, on, between **Example →** *occurred_at\[after\] = "1349116200"* */
 		occurred_at?: {
@@ -18208,9 +18208,9 @@ export type ChargebeeOperationInputs = {
 				/** * `recurring` - Charges are automatically applied in sync with the billing frequency of subscription. * `non_recurring` - Charged immediately and only once every time it is applied. */
 				is_not?: "recurring" | "non_recurring";
 				/** * `recurring` - Charges are automatically applied in sync with the billing frequency of subscription. * `non_recurring` - Charged immediately and only once every time it is applied. */
-				in?: "recurring" | "non_recurring";
+				in?: string;
 				/** * `recurring` - Charges are automatically applied in sync with the billing frequency of subscription. * `non_recurring` - Charged immediately and only once every time it is applied. */
-				not_in?: "recurring" | "non_recurring";
+				not_in?: string;
 			};
 			/** Addon price is calculated based on the addon type and charge type. [Learn more](https://www.chargebee.com/docs/addons.html#charge-type-and-pricing). The unit depends on the [type of currency](/docs/api/getting-started) . */
 			price?: {
@@ -18239,9 +18239,9 @@ export type ChargebeeOperationInputs = {
 				/** * `day` - Charge based on Day(S) * `week` - Charge based on week(s) * `month` - Charge based on month(s) * `year` - Charge based on year(s) * `not_applicable` - not applicable for this addon */
 				is_not?: "day" | "week" | "month" | "year" | "not_applicable";
 				/** * `day` - Charge based on Day(S) * `week` - Charge based on week(s) * `month` - Charge based on month(s) * `year` - Charge based on year(s) * `not_applicable` - not applicable for this addon */
-				in?: "day" | "week" | "month" | "year" | "not_applicable";
+				in?: string;
 				/** * `day` - Charge based on Day(S) * `week` - Charge based on week(s) * `month` - Charge based on month(s) * `year` - Charge based on year(s) * `not_applicable` - not applicable for this addon */
-				not_in?: "day" | "week" | "month" | "year" | "not_applicable";
+				not_in?: string;
 			};
 			/** Status of the addon */
 			status?: {
@@ -18250,9 +18250,9 @@ export type ChargebeeOperationInputs = {
 				/** * `active` - Only active addons can be applied to subscriptions * `archived` - No new associations with subscriptions are allowed. Existing associations for recurring addons remain as-is and can be removed if required. * `deleted` - Indicates the addon has been deleted. */
 				is_not?: "active" | "archived" | "deleted";
 				/** * `active` - Only active addons can be applied to subscriptions * `archived` - No new associations with subscriptions are allowed. Existing associations for recurring addons remain as-is and can be removed if required. * `deleted` - Indicates the addon has been deleted. */
-				in?: "active" | "archived" | "deleted";
+				in?: string;
 				/** * `active` - Only active addons can be applied to subscriptions * `archived` - No new associations with subscriptions are allowed. Existing associations for recurring addons remain as-is and can be removed if required. * `deleted` - Indicates the addon has been deleted. */
-				not_in?: "active" | "archived" | "deleted";
+				not_in?: string;
 			};
 			/** To filter based on updated at. This attribute will be present only if the resource has been updated after 2016-11-09. */
 			updated_at?: {
@@ -18268,9 +18268,9 @@ export type ChargebeeOperationInputs = {
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
 				is_not?: "web" | "app_store" | "play_store";
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				in?: "web" | "app_store" | "play_store";
+				in?: string;
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				not_in?: "web" | "app_store" | "play_store";
+				not_in?: string;
 			};
 		};
 	};
@@ -18290,9 +18290,9 @@ export type ChargebeeOperationInputs = {
 			/** * `plan` - An essential component of a subscription. Every subscription has exactly one plan. It has a recurring charge and its period defines the billing period of the subscription. * `addon` - A recurring component that can be added to a subscription in addition to its plan. * `charge` - A… */
 			is_not?: "plan" | "addon" | "charge";
 			/** * `plan` - An essential component of a subscription. Every subscription has exactly one plan. It has a recurring charge and its period defines the billing period of the subscription. * `addon` - A recurring component that can be added to a subscription in addition to its plan. * `charge` - A… */
-			in?: "plan" | "addon" | "charge";
+			in?: string;
 			/** * `plan` - An essential component of a subscription. Every subscription has exactly one plan. It has a recurring charge and its period defines the billing period of the subscription. * `addon` - A recurring component that can be added to a subscription in addition to its plan. * `charge` - A… */
-			not_in?: "plan" | "addon" | "charge";
+			not_in?: string;
 		};
 		/** Parameters for attached_item */
 		attached_item?: {
@@ -18319,9 +18319,9 @@ export type ChargebeeOperationInputs = {
 				/** * `recommended` - The addon is recommended to go with the plan-item when using [Checkout](https://www.chargebee.com/docs/2.0/configure-inapp.html#fundamental-settings_recommending-addons-in-checkout) or… */
 				is_not?: "recommended" | "mandatory" | "optional";
 				/** * `recommended` - The addon is recommended to go with the plan-item when using [Checkout](https://www.chargebee.com/docs/2.0/configure-inapp.html#fundamental-settings_recommending-addons-in-checkout) or… */
-				in?: "recommended" | "mandatory" | "optional";
+				in?: string;
 				/** * `recommended` - The addon is recommended to go with the plan-item when using [Checkout](https://www.chargebee.com/docs/2.0/configure-inapp.html#fundamental-settings_recommending-addons-in-checkout) or… */
-				not_in?: "recommended" | "mandatory" | "optional";
+				not_in?: string;
 			};
 			/** Indicates when the item is charged. This attribute only applies to charge-items. */
 			charge_on_event?: {
@@ -18330,9 +18330,9 @@ export type ChargebeeOperationInputs = {
 				/** * `subscription_creation` - the time of creation of the subscription. * `subscription_trial_start` - the time when the trial period of the subscription begins. * `plan_activation` - same as subscription activation, but also includes the case when the plan-item of the subscription is changed. *… */
 				is_not?: "subscription_creation" | "subscription_trial_start" | "plan_activation" | "subscription_activation" | "contract_termination" | "on_demand";
 				/** * `subscription_creation` - the time of creation of the subscription. * `subscription_trial_start` - the time when the trial period of the subscription begins. * `plan_activation` - same as subscription activation, but also includes the case when the plan-item of the subscription is changed. *… */
-				in?: "subscription_creation" | "subscription_trial_start" | "plan_activation" | "subscription_activation" | "contract_termination" | "on_demand";
+				in?: string;
 				/** * `subscription_creation` - the time of creation of the subscription. * `subscription_trial_start` - the time when the trial period of the subscription begins. * `plan_activation` - same as subscription activation, but also includes the case when the plan-item of the subscription is changed. *… */
-				not_in?: "subscription_creation" | "subscription_trial_start" | "plan_activation" | "subscription_activation" | "contract_termination" | "on_demand";
+				not_in?: string;
 			};
 			/** Filter attached items based on when the attached items were last updated. */
 			updated_at?: {
@@ -18398,9 +18398,9 @@ export type ChargebeeOperationInputs = {
 				/** * `fixed_amount` - The specified amount will be deducted. * `percentage` - The specified percentage will be deducted. * `offer_quantity` - The specified units will be offered without any deduction. */
 				is_not?: "fixed_amount" | "percentage" | "offer_quantity";
 				/** * `fixed_amount` - The specified amount will be deducted. * `percentage` - The specified percentage will be deducted. * `offer_quantity` - The specified units will be offered without any deduction. */
-				in?: "fixed_amount" | "percentage" | "offer_quantity";
+				in?: string;
 				/** * `fixed_amount` - The specified amount will be deducted. * `percentage` - The specified percentage will be deducted. * `offer_quantity` - The specified units will be offered without any deduction. */
-				not_in?: "fixed_amount" | "percentage" | "offer_quantity";
+				not_in?: string;
 			};
 			/** Specifies the time duration for which this coupon is attached to the subscription. */
 			duration_type?: {
@@ -18409,9 +18409,9 @@ export type ChargebeeOperationInputs = {
 				/** * `one_time` - The coupon stays attached to the subscription till it is applied on an invoice **once**. It is removed after that from the subscription. * `forever` - The coupon is attached to the subscription and applied on the invoices until explicitly removed. * `limited_period` - The discount… */
 				is_not?: "one_time" | "forever" | "limited_period";
 				/** * `one_time` - The coupon stays attached to the subscription till it is applied on an invoice **once**. It is removed after that from the subscription. * `forever` - The coupon is attached to the subscription and applied on the invoices until explicitly removed. * `limited_period` - The discount… */
-				in?: "one_time" | "forever" | "limited_period";
+				in?: string;
 				/** * `one_time` - The coupon stays attached to the subscription till it is applied on an invoice **once**. It is removed after that from the subscription. * `forever` - The coupon is attached to the subscription and applied on the invoices until explicitly removed. * `limited_period` - The discount… */
-				not_in?: "one_time" | "forever" | "limited_period";
+				not_in?: string;
 			};
 			/** Status of the coupon. */
 			status?: {
@@ -18420,9 +18420,9 @@ export type ChargebeeOperationInputs = {
 				/** * `active` - Can be applied to a subscription. * `expired` - Cannot be applied to a subscription. A coupon may expire due to exceeding [max_redemptions](/docs/api/coupons?#coupon_max_redemptions) or [valid_till](/docs/api/coupons?#coupon_valid_till) date is past. Existing associations remain… */
 				is_not?: "active" | "expired" | "archived" | "deleted" | "future";
 				/** * `active` - Can be applied to a subscription. * `expired` - Cannot be applied to a subscription. A coupon may expire due to exceeding [max_redemptions](/docs/api/coupons?#coupon_max_redemptions) or [valid_till](/docs/api/coupons?#coupon_valid_till) date is past. Existing associations remain… */
-				in?: "active" | "expired" | "archived" | "deleted" | "future";
+				in?: string;
 				/** * `active` - Can be applied to a subscription. * `expired` - Cannot be applied to a subscription. A coupon may expire due to exceeding [max_redemptions](/docs/api/coupons?#coupon_max_redemptions) or [valid_till](/docs/api/coupons?#coupon_valid_till) date is past. Existing associations remain… */
-				not_in?: "active" | "expired" | "archived" | "deleted" | "future";
+				not_in?: string;
 			};
 			/** The amount on the invoice to which the coupon is applied. */
 			apply_on?: {
@@ -18431,9 +18431,9 @@ export type ChargebeeOperationInputs = {
 				/** * `invoice_amount` - The coupon is applied to the invoice `sub_total`. * `specified_items_total` - **(Deprecated)** Discount will be applied to the total of plan and addon items specified. * `each_specified_item` - The coupon is applied to the `invoice.line_item.amount` that corresponds to the… */
 				is_not?: "invoice_amount" | "each_specified_item";
 				/** * `invoice_amount` - The coupon is applied to the invoice `sub_total`. * `specified_items_total` - **(Deprecated)** Discount will be applied to the total of plan and addon items specified. * `each_specified_item` - The coupon is applied to the `invoice.line_item.amount` that corresponds to the… */
-				in?: "invoice_amount" | "each_specified_item";
+				in?: string;
 				/** * `invoice_amount` - The coupon is applied to the invoice `sub_total`. * `specified_items_total` - **(Deprecated)** Discount will be applied to the total of plan and addon items specified. * `each_specified_item` - The coupon is applied to the `invoice.line_item.amount` that corresponds to the… */
-				not_in?: "invoice_amount" | "each_specified_item";
+				not_in?: string;
 			};
 			/** Timestamp indicating when this coupon is created. */
 			created_at?: {
@@ -18503,9 +18503,9 @@ export type ChargebeeOperationInputs = {
 				/** * `adjustment` - Adjustment Credit Note * `refundable` - Refundable Credit Note * `store` - Store Credit Note */
 				is_not?: "adjustment" | "refundable" | "store";
 				/** * `adjustment` - Adjustment Credit Note * `refundable` - Refundable Credit Note * `store` - Store Credit Note */
-				in?: "adjustment" | "refundable" | "store";
+				in?: string;
 				/** * `adjustment` - Adjustment Credit Note * `refundable` - Refundable Credit Note * `store` - Store Credit Note */
-				not_in?: "adjustment" | "refundable" | "store";
+				not_in?: string;
 			};
 			/** The reason for issuing this Credit Note. The following reason codes are supported now\[Deprecated; use the [create_reason_code](/docs/api/credit_notes/credit_note-object#create_reason_code) parameter instead\] */
 			reason_code?: {
@@ -18514,9 +18514,9 @@ export type ChargebeeOperationInputs = {
 				/** * `write_off` - This reason will be set automatically for the Credit Notes created during invoice [Write Off](https://www.chargebee.com/docs/invoice-operations.html#write-off) operation. * `subscription_change` - This reason will be set automatically for Credit Notes created during Change… */
 				is_not?: "write_off" | "subscription_change" | "subscription_cancellation" | "subscription_pause" | "chargeback" | "product_unsatisfactory" | "service_unsatisfactory" | "order_change" | "order_cancellation" | "waiver" | "other" | "fraudulent";
 				/** * `write_off` - This reason will be set automatically for the Credit Notes created during invoice [Write Off](https://www.chargebee.com/docs/invoice-operations.html#write-off) operation. * `subscription_change` - This reason will be set automatically for Credit Notes created during Change… */
-				in?: "write_off" | "subscription_change" | "subscription_cancellation" | "subscription_pause" | "chargeback" | "product_unsatisfactory" | "service_unsatisfactory" | "order_change" | "order_cancellation" | "waiver" | "other" | "fraudulent";
+				in?: string;
 				/** * `write_off` - This reason will be set automatically for the Credit Notes created during invoice [Write Off](https://www.chargebee.com/docs/invoice-operations.html#write-off) operation. * `subscription_change` - This reason will be set automatically for Credit Notes created during Change… */
-				not_in?: "write_off" | "subscription_change" | "subscription_cancellation" | "subscription_pause" | "chargeback" | "product_unsatisfactory" | "service_unsatisfactory" | "order_change" | "order_cancellation" | "waiver" | "other" | "fraudulent";
+				not_in?: string;
 			};
 			/** Reason code for creating the credit note. Must be one from a list of reason codes set in the Chargebee app in **Settings \> Configure Chargebee \> Reason Codes \> Credit Notes \> Create Credit Note**. Must be passed if set as mandatory in the app. The codes are case-sensitive */
 			create_reason_code?: {
@@ -18533,9 +18533,9 @@ export type ChargebeeOperationInputs = {
 				/** * `adjusted` - When the Credit Note has been adjusted against an invoice. * `refunded` - When the entire credits (Credit Note amount) have been used (i.e either allocated to invoices or refunded). * `refund_due` - When the credits are yet to be used, or have been partially used. * `voided` -… */
 				is_not?: "adjusted" | "refunded" | "refund_due" | "voided";
 				/** * `adjusted` - When the Credit Note has been adjusted against an invoice. * `refunded` - When the entire credits (Credit Note amount) have been used (i.e either allocated to invoices or refunded). * `refund_due` - When the credits are yet to be used, or have been partially used. * `voided` -… */
-				in?: "adjusted" | "refunded" | "refund_due" | "voided";
+				in?: string;
 				/** * `adjusted` - When the Credit Note has been adjusted against an invoice. * `refunded` - When the entire credits (Credit Note amount) have been used (i.e either allocated to invoices or refunded). * `refund_due` - When the credits are yet to be used, or have been partially used. * `voided` -… */
-				not_in?: "adjusted" | "refunded" | "refund_due" | "voided";
+				not_in?: string;
 			};
 			/** The date the Credit Note is issued. */
 			date?: {
@@ -18561,9 +18561,9 @@ export type ChargebeeOperationInputs = {
 				/** * `tax_exclusive` - All amounts in the document are exclusive of tax. * `tax_inclusive` - All amounts in the document are inclusive of tax. */
 				is_not?: "tax_exclusive" | "tax_inclusive";
 				/** * `tax_exclusive` - All amounts in the document are exclusive of tax. * `tax_inclusive` - All amounts in the document are inclusive of tax. */
-				in?: "tax_exclusive" | "tax_inclusive";
+				in?: string;
 				/** * `tax_exclusive` - All amounts in the document are exclusive of tax. * `tax_inclusive` - All amounts in the document are inclusive of tax. */
-				not_in?: "tax_exclusive" | "tax_inclusive";
+				not_in?: string;
 			};
 			/** The amount allocated to the invoices. */
 			amount_allocated?: {
@@ -18616,9 +18616,9 @@ export type ChargebeeOperationInputs = {
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
 				is_not?: "web" | "app_store" | "play_store";
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				in?: "web" | "app_store" | "play_store";
+				in?: string;
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				not_in?: "web" | "app_store" | "play_store";
+				not_in?: string;
 			};
 		};
 	};
@@ -18691,9 +18691,9 @@ export type ChargebeeOperationInputs = {
 				/** * `on` - Whenever an invoice is created, an automatic attempt to charge the customer's payment method is made. * `off` - Automatic collection of charges will not be made. All payments must be recorded offline. */
 				is_not?: "on" | "off";
 				/** * `on` - Whenever an invoice is created, an automatic attempt to charge the customer's payment method is made. * `off` - Automatic collection of charges will not be made. All payments must be recorded offline. */
-				in?: "on" | "off";
+				in?: string;
 				/** * `on` - Whenever an invoice is created, an automatic attempt to charge the customer's payment method is made. * `off` - Automatic collection of charges will not be made. All payments must be recorded offline. */
-				not_in?: "on" | "off";
+				not_in?: string;
 			};
 			/** Specifies if the customer is liable for tax. Possible values are : taxable, exempt, zero_rated. */
 			taxability?: {
@@ -18702,9 +18702,9 @@ export type ChargebeeOperationInputs = {
 				/** * `taxable` - Computes tax for the customer based on the [site configuration](https://www.chargebee.com/docs/tax.html). In some cases, depending on the region, shipping_address is needed. If not provided, then billing_address is used to compute tax. If that's not available either, the tax is… */
 				is_not?: "taxable" | "exempt" | "zero_rated";
 				/** * `taxable` - Computes tax for the customer based on the [site configuration](https://www.chargebee.com/docs/tax.html). In some cases, depending on the region, shipping_address is needed. If not provided, then billing_address is used to compute tax. If that's not available either, the tax is… */
-				in?: "taxable" | "exempt" | "zero_rated";
+				in?: string;
 				/** * `taxable` - Computes tax for the customer based on the [site configuration](https://www.chargebee.com/docs/tax.html). In some cases, depending on the region, shipping_address is needed. If not provided, then billing_address is used to compute tax. If that's not available either, the tax is… */
-				not_in?: "taxable" | "exempt" | "zero_rated";
+				not_in?: string;
 			};
 			/** Timestamp indicating when this customer resource is created. */
 			created_at?: {
@@ -18727,9 +18727,9 @@ export type ChargebeeOperationInputs = {
 				/** * `no_preference` - No Preference * `cash` - Cash * `check` - Check * `bank_transfer` - Bank Transfer * `ach_credit` - ACH Credit * `sepa_credit` - SEPA Credit * `boleto` - Boleto * `us_automated_bank_transfer` - US Automated Bank Transfer * `eu_automated_bank_transfer` - EU Automated Bank… */
 				is_not?: "no_preference" | "cash" | "check" | "bank_transfer" | "ach_credit" | "sepa_credit" | "boleto" | "us_automated_bank_transfer" | "eu_automated_bank_transfer" | "uk_automated_bank_transfer" | "jp_automated_bank_transfer" | "mx_automated_bank_transfer" | "custom";
 				/** * `no_preference` - No Preference * `cash` - Cash * `check` - Check * `bank_transfer` - Bank Transfer * `ach_credit` - ACH Credit * `sepa_credit` - SEPA Credit * `boleto` - Boleto * `us_automated_bank_transfer` - US Automated Bank Transfer * `eu_automated_bank_transfer` - EU Automated Bank… */
-				in?: "no_preference" | "cash" | "check" | "bank_transfer" | "ach_credit" | "sepa_credit" | "boleto" | "us_automated_bank_transfer" | "eu_automated_bank_transfer" | "uk_automated_bank_transfer" | "jp_automated_bank_transfer" | "mx_automated_bank_transfer" | "custom";
+				in?: string;
 				/** * `no_preference` - No Preference * `cash` - Cash * `check` - Check * `bank_transfer` - Bank Transfer * `ach_credit` - ACH Credit * `sepa_credit` - SEPA Credit * `boleto` - Boleto * `us_automated_bank_transfer` - US Automated Bank Transfer * `eu_automated_bank_transfer` - EU Automated Bank… */
-				not_in?: "no_preference" | "cash" | "check" | "bank_transfer" | "ach_credit" | "sepa_credit" | "boleto" | "us_automated_bank_transfer" | "eu_automated_bank_transfer" | "uk_automated_bank_transfer" | "jp_automated_bank_transfer" | "mx_automated_bank_transfer" | "custom";
+				not_in?: string;
 			};
 			/** Override for this customer, the [site-level setting](https://www.chargebee.com/docs/billing/2.0/usage-based-billing/metered_billing#configuring-metered-billing) for auto-closing invoices. Only applicable when auto-closing invoices has been enabled for the site. This attribute is also available… */
 			auto_close_invoices?: {
@@ -18742,9 +18742,9 @@ export type ChargebeeOperationInputs = {
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
 				is_not?: "web" | "app_store" | "play_store";
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				in?: "web" | "app_store" | "play_store";
+				in?: string;
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				not_in?: "web" | "app_store" | "play_store";
+				not_in?: string;
 			};
 		};
 		/** Parameters for relationship */
@@ -18851,9 +18851,9 @@ export type ChargebeeOperationInputs = {
 				/** * `paid` - Indicates a paid invoice. * `posted` - Indicates the payment is not yet collected and will be in this state till the due date to indicate the due period * `payment_due` - Indicates the payment is not yet collected and is being retried as per retry settings. * `not_paid` - Indicates… */
 				is_not?: "paid" | "posted" | "payment_due" | "not_paid" | "voided" | "pending";
 				/** * `paid` - Indicates a paid invoice. * `posted` - Indicates the payment is not yet collected and will be in this state till the due date to indicate the due period * `payment_due` - Indicates the payment is not yet collected and is being retried as per retry settings. * `not_paid` - Indicates… */
-				in?: "paid" | "posted" | "payment_due" | "not_paid" | "voided" | "pending";
+				in?: string;
 				/** * `paid` - Indicates a paid invoice. * `posted` - Indicates the payment is not yet collected and will be in this state till the due date to indicate the due period * `payment_due` - Indicates the payment is not yet collected and is being retried as per retry settings. * `not_paid` - Indicates… */
-				not_in?: "paid" | "posted" | "payment_due" | "not_paid" | "voided" | "pending";
+				not_in?: string;
 			};
 			/** The price type of the invoice. */
 			price_type?: {
@@ -18862,9 +18862,9 @@ export type ChargebeeOperationInputs = {
 				/** * `tax_exclusive` - All amounts in the document are exclusive of tax. * `tax_inclusive` - All amounts in the document are inclusive of tax. */
 				is_not?: "tax_exclusive" | "tax_inclusive";
 				/** * `tax_exclusive` - All amounts in the document are exclusive of tax. * `tax_inclusive` - All amounts in the document are inclusive of tax. */
-				in?: "tax_exclusive" | "tax_inclusive";
+				in?: string;
 				/** * `tax_exclusive` - All amounts in the document are exclusive of tax. * `tax_inclusive` - All amounts in the document are inclusive of tax. */
-				not_in?: "tax_exclusive" | "tax_inclusive";
+				not_in?: string;
 			};
 			/** The document date displayed on the invoice PDF. */
 			date?: {
@@ -18937,9 +18937,9 @@ export type ChargebeeOperationInputs = {
 				/** * `in_progress` - Dunning is still in progress. * `exhausted` - Maximum number of attempts have been made. * `stopped` - Dunning has stopped for this invoice. * `success` - Payment successfully collected during dunning process. */
 				is_not?: "in_progress" | "exhausted" | "stopped" | "success";
 				/** * `in_progress` - Dunning is still in progress. * `exhausted` - Maximum number of attempts have been made. * `stopped` - Dunning has stopped for this invoice. * `success` - Payment successfully collected during dunning process. */
-				in?: "in_progress" | "exhausted" | "stopped" | "success";
+				in?: string;
 				/** * `in_progress` - Dunning is still in progress. * `exhausted` - Maximum number of attempts have been made. * `stopped` - Dunning has stopped for this invoice. * `success` - Payment successfully collected during dunning process. */
-				not_in?: "in_progress" | "exhausted" | "stopped" | "success";
+				not_in?: string;
 				is_present?: "true" | "false";
 			};
 			/** To filter based on `updated_at`. This attribute will be present only if the resource has been updated after 2016-09-28. It is advisable when using this filter, to pass the `sort_by` input parameter as `updated_at` for a faster response. */
@@ -18956,9 +18956,9 @@ export type ChargebeeOperationInputs = {
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
 				is_not?: "web" | "app_store" | "play_store";
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				in?: "web" | "app_store" | "play_store";
+				in?: string;
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				not_in?: "web" | "app_store" | "play_store";
+				not_in?: string;
 			};
 		};
 		/** Parameters for subscription */
@@ -18986,9 +18986,9 @@ export type ChargebeeOperationInputs = {
 				/** * `future` - The subscription is scheduled to start at a future date. * `in_trial` - The subscription is in trial. * `active` - The subscription is active and will be charged for automatically based on the items in it. * `non_renewing` - The subscription will be canceled at the end of the… */
 				is_not?: "future" | "in_trial" | "active" | "non_renewing" | "paused" | "cancelled" | "transferred";
 				/** * `future` - The subscription is scheduled to start at a future date. * `in_trial` - The subscription is in trial. * `active` - The subscription is active and will be charged for automatically based on the items in it. * `non_renewing` - The subscription will be canceled at the end of the… */
-				in?: "future" | "in_trial" | "active" | "non_renewing" | "paused" | "cancelled" | "transferred";
+				in?: string;
 				/** * `future` - The subscription is scheduled to start at a future date. * `in_trial` - The subscription is in trial. * `active` - The subscription is active and will be charged for automatically based on the items in it. * `non_renewing` - The subscription will be canceled at the end of the… */
-				not_in?: "future" | "in_trial" | "active" | "non_renewing" | "paused" | "cancelled" | "transferred";
+				not_in?: string;
 			};
 			/** The reason for canceling the subscription. Set by Chargebee automatically. */
 			cancel_reason?: {
@@ -18997,9 +18997,9 @@ export type ChargebeeOperationInputs = {
 				/** * `not_paid` - Not Paid * `no_card` - No Card * `fraud_review_failed` - Fraud Review Failed * `non_compliant_eu_customer` - Non Compliant EU Customer * `tax_calculation_failed` - Tax Calculation Failed * `currency_incompatible_with_gateway` - Currency incompatible with Gateway *… */
 				is_not?: "not_paid" | "no_card" | "fraud_review_failed" | "non_compliant_eu_customer" | "tax_calculation_failed" | "currency_incompatible_with_gateway" | "non_compliant_customer";
 				/** * `not_paid` - Not Paid * `no_card` - No Card * `fraud_review_failed` - Fraud Review Failed * `non_compliant_eu_customer` - Non Compliant EU Customer * `tax_calculation_failed` - Tax Calculation Failed * `currency_incompatible_with_gateway` - Currency incompatible with Gateway *… */
-				in?: "not_paid" | "no_card" | "fraud_review_failed" | "non_compliant_eu_customer" | "tax_calculation_failed" | "currency_incompatible_with_gateway" | "non_compliant_customer";
+				in?: string;
 				/** * `not_paid` - Not Paid * `no_card` - No Card * `fraud_review_failed` - Fraud Review Failed * `non_compliant_eu_customer` - Non Compliant EU Customer * `tax_calculation_failed` - Tax Calculation Failed * `currency_incompatible_with_gateway` - Currency incompatible with Gateway *… */
-				not_in?: "not_paid" | "no_card" | "fraud_review_failed" | "non_compliant_eu_customer" | "tax_calculation_failed" | "currency_incompatible_with_gateway" | "non_compliant_customer";
+				not_in?: string;
 				is_present?: "true" | "false";
 			};
 			/** * When the subscription is not on a contract term: this value is the number of billing cycles remaining after the current cycle, at the end of which, the subscription cancels. * When the subscription is on a [contract term](/docs/api/contract_terms): this value is the number of billing cycles… */
@@ -19060,9 +19060,9 @@ export type ChargebeeOperationInputs = {
 				/** * `no_preference` - No Preference * `cash` - Cash * `check` - Check * `bank_transfer` - Bank Transfer * `ach_credit` - ACH Credit * `sepa_credit` - SEPA Credit * `boleto` - Boleto * `us_automated_bank_transfer` - US Automated Bank Transfer * `eu_automated_bank_transfer` - EU Automated Bank… */
 				is_not?: "no_preference" | "cash" | "check" | "bank_transfer" | "ach_credit" | "sepa_credit" | "boleto" | "us_automated_bank_transfer" | "eu_automated_bank_transfer" | "uk_automated_bank_transfer" | "jp_automated_bank_transfer" | "mx_automated_bank_transfer" | "custom";
 				/** * `no_preference` - No Preference * `cash` - Cash * `check` - Check * `bank_transfer` - Bank Transfer * `ach_credit` - ACH Credit * `sepa_credit` - SEPA Credit * `boleto` - Boleto * `us_automated_bank_transfer` - US Automated Bank Transfer * `eu_automated_bank_transfer` - EU Automated Bank… */
-				in?: "no_preference" | "cash" | "check" | "bank_transfer" | "ach_credit" | "sepa_credit" | "boleto" | "us_automated_bank_transfer" | "eu_automated_bank_transfer" | "uk_automated_bank_transfer" | "jp_automated_bank_transfer" | "mx_automated_bank_transfer" | "custom";
+				in?: string;
 				/** * `no_preference` - No Preference * `cash` - Cash * `check` - Check * `bank_transfer` - Bank Transfer * `ach_credit` - ACH Credit * `sepa_credit` - SEPA Credit * `boleto` - Boleto * `us_automated_bank_transfer` - US Automated Bank Transfer * `eu_automated_bank_transfer` - EU Automated Bank… */
-				not_in?: "no_preference" | "cash" | "check" | "bank_transfer" | "ach_credit" | "sepa_credit" | "boleto" | "us_automated_bank_transfer" | "eu_automated_bank_transfer" | "uk_automated_bank_transfer" | "jp_automated_bank_transfer" | "mx_automated_bank_transfer" | "custom";
+				not_in?: string;
 			};
 			/** Set to `false` to override for this subscription, the [site-level setting](https://www.chargebee.com/docs/billing/2.0/usage-based-billing/metered_billing#configuring-metered-billing) for auto-closing invoices. Only applicable when auto-closing invoices has been enabled for the site. This… */
 			auto_close_invoices?: {
@@ -19075,9 +19075,9 @@ export type ChargebeeOperationInputs = {
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
 				is_not?: "web" | "app_store" | "play_store";
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				in?: "web" | "app_store" | "play_store";
+				in?: string;
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				not_in?: "web" | "app_store" | "play_store";
+				not_in?: string;
 			};
 		};
 		/** Parameters for customer */
@@ -19132,9 +19132,9 @@ export type ChargebeeOperationInputs = {
 				/** * `on` - Whenever an invoice is created, an automatic attempt to charge the customer's payment method is made. * `off` - Automatic collection of charges will not be made. All payments must be recorded offline. */
 				is_not?: "on" | "off";
 				/** * `on` - Whenever an invoice is created, an automatic attempt to charge the customer's payment method is made. * `off` - Automatic collection of charges will not be made. All payments must be recorded offline. */
-				in?: "on" | "off";
+				in?: string;
 				/** * `on` - Whenever an invoice is created, an automatic attempt to charge the customer's payment method is made. * `off` - Automatic collection of charges will not be made. All payments must be recorded offline. */
-				not_in?: "on" | "off";
+				not_in?: string;
 			};
 			/** Specifies if the customer is liable for tax. Possible values are : taxable, exempt, zero_rated. */
 			taxability?: {
@@ -19143,9 +19143,9 @@ export type ChargebeeOperationInputs = {
 				/** * `taxable` - Computes tax for the customer based on the [site configuration](https://www.chargebee.com/docs/tax.html). In some cases, depending on the region, shipping_address is needed. If not provided, then billing_address is used to compute tax. If that's not available either, the tax is… */
 				is_not?: "taxable" | "exempt" | "zero_rated";
 				/** * `taxable` - Computes tax for the customer based on the [site configuration](https://www.chargebee.com/docs/tax.html). In some cases, depending on the region, shipping_address is needed. If not provided, then billing_address is used to compute tax. If that's not available either, the tax is… */
-				in?: "taxable" | "exempt" | "zero_rated";
+				in?: string;
 				/** * `taxable` - Computes tax for the customer based on the [site configuration](https://www.chargebee.com/docs/tax.html). In some cases, depending on the region, shipping_address is needed. If not provided, then billing_address is used to compute tax. If that's not available either, the tax is… */
-				not_in?: "taxable" | "exempt" | "zero_rated";
+				not_in?: string;
 			};
 			/** Timestamp indicating when this customer resource is created. */
 			created_at?: {
@@ -19168,9 +19168,9 @@ export type ChargebeeOperationInputs = {
 				/** * `no_preference` - No Preference * `cash` - Cash * `check` - Check * `bank_transfer` - Bank Transfer * `ach_credit` - ACH Credit * `sepa_credit` - SEPA Credit * `boleto` - Boleto * `us_automated_bank_transfer` - US Automated Bank Transfer * `eu_automated_bank_transfer` - EU Automated Bank… */
 				is_not?: "no_preference" | "cash" | "check" | "bank_transfer" | "ach_credit" | "sepa_credit" | "boleto" | "us_automated_bank_transfer" | "eu_automated_bank_transfer" | "uk_automated_bank_transfer" | "jp_automated_bank_transfer" | "mx_automated_bank_transfer" | "custom";
 				/** * `no_preference` - No Preference * `cash` - Cash * `check` - Check * `bank_transfer` - Bank Transfer * `ach_credit` - ACH Credit * `sepa_credit` - SEPA Credit * `boleto` - Boleto * `us_automated_bank_transfer` - US Automated Bank Transfer * `eu_automated_bank_transfer` - EU Automated Bank… */
-				in?: "no_preference" | "cash" | "check" | "bank_transfer" | "ach_credit" | "sepa_credit" | "boleto" | "us_automated_bank_transfer" | "eu_automated_bank_transfer" | "uk_automated_bank_transfer" | "jp_automated_bank_transfer" | "mx_automated_bank_transfer" | "custom";
+				in?: string;
 				/** * `no_preference` - No Preference * `cash` - Cash * `check` - Check * `bank_transfer` - Bank Transfer * `ach_credit` - ACH Credit * `sepa_credit` - SEPA Credit * `boleto` - Boleto * `us_automated_bank_transfer` - US Automated Bank Transfer * `eu_automated_bank_transfer` - EU Automated Bank… */
-				not_in?: "no_preference" | "cash" | "check" | "bank_transfer" | "ach_credit" | "sepa_credit" | "boleto" | "us_automated_bank_transfer" | "eu_automated_bank_transfer" | "uk_automated_bank_transfer" | "jp_automated_bank_transfer" | "mx_automated_bank_transfer" | "custom";
+				not_in?: string;
 			};
 			/** Override for this customer, the [site-level setting](https://www.chargebee.com/docs/billing/2.0/usage-based-billing/metered_billing#configuring-metered-billing) for auto-closing invoices. Only applicable when auto-closing invoices has been enabled for the site. This attribute is also available… */
 			auto_close_invoices?: {
@@ -19183,9 +19183,9 @@ export type ChargebeeOperationInputs = {
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
 				is_not?: "web" | "app_store" | "play_store";
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				in?: "web" | "app_store" | "play_store";
+				in?: string;
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				not_in?: "web" | "app_store" | "play_store";
+				not_in?: string;
 			};
 		};
 		/** Parameters for relationship */
@@ -19315,9 +19315,9 @@ export type ChargebeeOperationInputs = {
 				/** * `paid` - Indicates a paid invoice. * `posted` - Indicates the payment is not yet collected and will be in this state till the due date to indicate the due period * `payment_due` - Indicates the payment is not yet collected and is being retried as per retry settings. * `not_paid` - Indicates… */
 				is_not?: "paid" | "posted" | "payment_due" | "not_paid" | "voided" | "pending";
 				/** * `paid` - Indicates a paid invoice. * `posted` - Indicates the payment is not yet collected and will be in this state till the due date to indicate the due period * `payment_due` - Indicates the payment is not yet collected and is being retried as per retry settings. * `not_paid` - Indicates… */
-				in?: "paid" | "posted" | "payment_due" | "not_paid" | "voided" | "pending";
+				in?: string;
 				/** * `paid` - Indicates a paid invoice. * `posted` - Indicates the payment is not yet collected and will be in this state till the due date to indicate the due period * `payment_due` - Indicates the payment is not yet collected and is being retried as per retry settings. * `not_paid` - Indicates… */
-				not_in?: "paid" | "posted" | "payment_due" | "not_paid" | "voided" | "pending";
+				not_in?: string;
 			};
 			/** The price type of the invoice. */
 			price_type?: {
@@ -19326,9 +19326,9 @@ export type ChargebeeOperationInputs = {
 				/** * `tax_exclusive` - All amounts in the document are exclusive of tax. * `tax_inclusive` - All amounts in the document are inclusive of tax. */
 				is_not?: "tax_exclusive" | "tax_inclusive";
 				/** * `tax_exclusive` - All amounts in the document are exclusive of tax. * `tax_inclusive` - All amounts in the document are inclusive of tax. */
-				in?: "tax_exclusive" | "tax_inclusive";
+				in?: string;
 				/** * `tax_exclusive` - All amounts in the document are exclusive of tax. * `tax_inclusive` - All amounts in the document are inclusive of tax. */
-				not_in?: "tax_exclusive" | "tax_inclusive";
+				not_in?: string;
 			};
 			/** The document date displayed on the invoice PDF. */
 			date?: {
@@ -19401,9 +19401,9 @@ export type ChargebeeOperationInputs = {
 				/** * `in_progress` - Dunning is still in progress. * `exhausted` - Maximum number of attempts have been made. * `stopped` - Dunning has stopped for this invoice. * `success` - Payment successfully collected during dunning process. */
 				is_not?: "in_progress" | "exhausted" | "stopped" | "success";
 				/** * `in_progress` - Dunning is still in progress. * `exhausted` - Maximum number of attempts have been made. * `stopped` - Dunning has stopped for this invoice. * `success` - Payment successfully collected during dunning process. */
-				in?: "in_progress" | "exhausted" | "stopped" | "success";
+				in?: string;
 				/** * `in_progress` - Dunning is still in progress. * `exhausted` - Maximum number of attempts have been made. * `stopped` - Dunning has stopped for this invoice. * `success` - Payment successfully collected during dunning process. */
-				not_in?: "in_progress" | "exhausted" | "stopped" | "success";
+				not_in?: string;
 				is_present?: "true" | "false";
 			};
 			/** To filter based on `updated_at`. This attribute will be present only if the resource has been updated after 2016-09-28. It is advisable when using this filter, to pass the `sort_by` input parameter as `updated_at` for a faster response. [Learn more](/docs/api/exports) about the best practice… */
@@ -19420,9 +19420,9 @@ export type ChargebeeOperationInputs = {
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
 				is_not?: "web" | "app_store" | "play_store";
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				in?: "web" | "app_store" | "play_store";
+				in?: string;
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				not_in?: "web" | "app_store" | "play_store";
+				not_in?: string;
 			};
 		};
 	};
@@ -19493,9 +19493,9 @@ export type ChargebeeOperationInputs = {
 			/** * `plan` - An essential component of a subscription. Every subscription has exactly one plan. It has a recurring charge and its period defines the billing period of the subscription. * `addon` - A recurring component that can be added to a subscription in addition to its plan. * `charge` - A… */
 			is_not?: "plan" | "addon" | "charge";
 			/** * `plan` - An essential component of a subscription. Every subscription has exactly one plan. It has a recurring charge and its period defines the billing period of the subscription. * `addon` - A recurring component that can be added to a subscription in addition to its plan. * `charge` - A… */
-			in?: "plan" | "addon" | "charge";
+			in?: string;
 			/** * `plan` - An essential component of a subscription. Every subscription has exactly one plan. It has a recurring charge and its period defines the billing period of the subscription. * `addon` - A recurring component that can be added to a subscription in addition to its plan. * `charge` - A… */
-			not_in?: "plan" | "addon" | "charge";
+			not_in?: string;
 		};
 		/** optional, string filter Filter item prices based on their `currency_code` . **Supported operators :** is, is_not, starts_with, in, not_in **Example →** *currency_code\[is\] = "USD"* */
 		currency_code?: {
@@ -19539,9 +19539,9 @@ export type ChargebeeOperationInputs = {
 				/** * `flat_fee` - A fixed price that is not quantity-based. * `per_unit` - A fixed price per unit quantity. * `tiered` - The per unit price is based on the tier that the total quantity falls in. * `volume` - There are quantity tiers for which per unit prices are set. Quantities are purchased from… */
 				is_not?: "flat_fee" | "per_unit" | "tiered" | "volume" | "stairstep";
 				/** * `flat_fee` - A fixed price that is not quantity-based. * `per_unit` - A fixed price per unit quantity. * `tiered` - The per unit price is based on the tier that the total quantity falls in. * `volume` - There are quantity tiers for which per unit prices are set. Quantities are purchased from… */
-				in?: "flat_fee" | "per_unit" | "tiered" | "volume" | "stairstep";
+				in?: string;
 				/** * `flat_fee` - A fixed price that is not quantity-based. * `per_unit` - A fixed price per unit quantity. * `tiered` - The per unit price is based on the tier that the total quantity falls in. * `volume` - There are quantity tiers for which per unit prices are set. Quantities are purchased from… */
-				not_in?: "flat_fee" | "per_unit" | "tiered" | "volume" | "stairstep";
+				not_in?: string;
 			};
 			/** Filter item prices based on their `item_id` . */
 			item_id?: {
@@ -19576,9 +19576,9 @@ export type ChargebeeOperationInputs = {
 				/** * `day` - A period of 24 hours. * `month` - A period of 1 calendar month. */
 				is_not?: "day" | "month";
 				/** * `day` - A period of 24 hours. * `month` - A period of 1 calendar month. */
-				in?: "day" | "month";
+				in?: string;
 				/** * `day` - A period of 24 hours. * `month` - A period of 1 calendar month. */
-				not_in?: "day" | "month";
+				not_in?: string;
 			};
 			/** Filter item prices based on their `status` . */
 			status?: {
@@ -19587,9 +19587,9 @@ export type ChargebeeOperationInputs = {
 				/** * `active` - The item price can be used in subscriptions. * `archived` - The item price is no longer active and cannot be used in new subscriptions or added to existing ones. Existing subscriptions that already have this item price will continue to renew with the item price. * `deleted` -… */
 				is_not?: "active" | "archived" | "deleted";
 				/** * `active` - The item price can be used in subscriptions. * `archived` - The item price is no longer active and cannot be used in new subscriptions or added to existing ones. Existing subscriptions that already have this item price will continue to renew with the item price. * `deleted` -… */
-				in?: "active" | "archived" | "deleted";
+				in?: string;
 				/** * `active` - The item price can be used in subscriptions. * `archived` - The item price is no longer active and cannot be used in new subscriptions or added to existing ones. Existing subscriptions that already have this item price will continue to renew with the item price. * `deleted` -… */
-				not_in?: "active" | "archived" | "deleted";
+				not_in?: string;
 			};
 			/** Filter item prices based on their `updated_at` . */
 			updated_at?: {
@@ -19605,9 +19605,9 @@ export type ChargebeeOperationInputs = {
 				/** * `day` - A period of 24 hours. * `week` - A period of 7 days. * `month` - A period of 1 calendar month. * `year` - A period of 1 calendar year. */
 				is_not?: "day" | "week" | "month" | "year";
 				/** * `day` - A period of 24 hours. * `week` - A period of 7 days. * `month` - A period of 1 calendar month. * `year` - A period of 1 calendar year. */
-				in?: "day" | "week" | "month" | "year";
+				in?: string;
 				/** * `day` - A period of 24 hours. * `week` - A period of 7 days. * `month` - A period of 1 calendar month. * `year` - A period of 1 calendar year. */
-				not_in?: "day" | "week" | "month" | "year";
+				not_in?: string;
 			};
 			/** Filter item prices based on their `period` . */
 			period?: {
@@ -19626,9 +19626,9 @@ export type ChargebeeOperationInputs = {
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
 				is_not?: "web" | "app_store" | "play_store";
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				in?: "web" | "app_store" | "play_store";
+				in?: string;
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				not_in?: "web" | "app_store" | "play_store";
+				not_in?: string;
 			};
 		};
 	};
@@ -19675,9 +19675,9 @@ export type ChargebeeOperationInputs = {
 				/** * `plan` - An essential component of a subscription. Every subscription has exactly one plan. It has a recurring charge and its period defines the billing period of the subscription. * `addon` - A recurring component that can be added to a subscription in addition to its plan. * `charge` - A… */
 				is_not?: "plan" | "addon" | "charge";
 				/** * `plan` - An essential component of a subscription. Every subscription has exactly one plan. It has a recurring charge and its period defines the billing period of the subscription. * `addon` - A recurring component that can be added to a subscription in addition to its plan. * `charge` - A… */
-				in?: "plan" | "addon" | "charge";
+				in?: string;
 				/** * `plan` - An essential component of a subscription. Every subscription has exactly one plan. It has a recurring charge and its period defines the billing period of the subscription. * `addon` - A recurring component that can be added to a subscription in addition to its plan. * `charge` - A… */
-				not_in?: "plan" | "addon" | "charge";
+				not_in?: string;
 			};
 			/** Filter items based on item `name` . */
 			name?: {
@@ -19692,9 +19692,9 @@ export type ChargebeeOperationInputs = {
 				/** * `all` - all addon-items and charge-items are applicable to this plan-item. * `restricted` - only the addon-items or charge-items provided in `applicable_items` can be applied to this plan-item. */
 				is_not?: "all" | "restricted";
 				/** * `all` - all addon-items and charge-items are applicable to this plan-item. * `restricted` - only the addon-items or charge-items provided in `applicable_items` can be applied to this plan-item. */
-				in?: "all" | "restricted";
+				in?: string;
 				/** * `all` - all addon-items and charge-items are applicable to this plan-item. * `restricted` - only the addon-items or charge-items provided in `applicable_items` can be applied to this plan-item. */
-				not_in?: "all" | "restricted";
+				not_in?: string;
 			};
 			/** Filter items based on item `status` . */
 			status?: {
@@ -19703,9 +19703,9 @@ export type ChargebeeOperationInputs = {
 				/** * `active` - The item can be used to create new item prices. * `archived` - The item is no longer active and no new item prices can be created * `deleted` - Indicates that the item has been [deleted](./items?prod_cat_ver=2#delete_an_item). The `id` and `name` can be reused. Deleted items can be… */
 				is_not?: "active" | "archived" | "deleted";
 				/** * `active` - The item can be used to create new item prices. * `archived` - The item is no longer active and no new item prices can be created * `deleted` - Indicates that the item has been [deleted](./items?prod_cat_ver=2#delete_an_item). The `id` and `name` can be reused. Deleted items can be… */
-				in?: "active" | "archived" | "deleted";
+				in?: string;
 				/** * `active` - The item can be used to create new item prices. * `archived` - The item is no longer active and no new item prices can be created * `deleted` - Indicates that the item has been [deleted](./items?prod_cat_ver=2#delete_an_item). The `id` and `name` can be reused. Deleted items can be… */
-				not_in?: "active" | "archived" | "deleted";
+				not_in?: string;
 			};
 			/** Specifies if gift subscriptions can be created for this item. */
 			is_giftable?: {
@@ -19737,9 +19737,9 @@ export type ChargebeeOperationInputs = {
 				/** * `sum_of_usages` - the net quantity is the sum of the `quantity` of all usages for the current term. * `last_usage` - from among the usage records for the [item price](/docs/api/subscriptions?prod_cat_ver=2#subscription_subscription_items_item_price_id) with `usage_date` within the relevant… */
 				is_not?: "sum_of_usages" | "last_usage" | "max_usage";
 				/** * `sum_of_usages` - the net quantity is the sum of the `quantity` of all usages for the current term. * `last_usage` - from among the usage records for the [item price](/docs/api/subscriptions?prod_cat_ver=2#subscription_subscription_items_item_price_id) with `usage_date` within the relevant… */
-				in?: "sum_of_usages" | "last_usage" | "max_usage";
+				in?: string;
 				/** * `sum_of_usages` - the net quantity is the sum of the `quantity` of all usages for the current term. * `last_usage` - from among the usage records for the [item price](/docs/api/subscriptions?prod_cat_ver=2#subscription_subscription_items_item_price_id) with `usage_date` within the relevant… */
-				not_in?: "sum_of_usages" | "last_usage" | "max_usage";
+				not_in?: string;
 			};
 			/** The subscription channel this object originated from and is maintained in. */
 			channel?: {
@@ -19748,9 +19748,9 @@ export type ChargebeeOperationInputs = {
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
 				is_not?: "web" | "app_store" | "play_store";
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				in?: "web" | "app_store" | "play_store";
+				in?: string;
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				not_in?: "web" | "app_store" | "play_store";
+				not_in?: string;
 			};
 		};
 	};
@@ -19807,9 +19807,9 @@ export type ChargebeeOperationInputs = {
 				/** * `new` - Order has been created. Applicable only if you are using Chargebee's legacy order management system. * `processing` - Order is being processed. Applicable only if you are using Chargebee's legacy order management system * `complete` - Order has been processed successfully. Applicable… */
 				is_not?: "new" | "processing" | "complete" | "cancelled" | "voided" | "queued" | "awaiting_shipment" | "on_hold" | "delivered" | "shipped" | "partially_delivered" | "returned";
 				/** * `new` - Order has been created. Applicable only if you are using Chargebee's legacy order management system. * `processing` - Order is being processed. Applicable only if you are using Chargebee's legacy order management system * `complete` - Order has been processed successfully. Applicable… */
-				in?: "new" | "processing" | "complete" | "cancelled" | "voided" | "queued" | "awaiting_shipment" | "on_hold" | "delivered" | "shipped" | "partially_delivered" | "returned";
+				in?: string;
 				/** * `new` - Order has been created. Applicable only if you are using Chargebee's legacy order management system. * `processing` - Order is being processed. Applicable only if you are using Chargebee's legacy order management system * `complete` - Order has been processed successfully. Applicable… */
-				not_in?: "new" | "processing" | "complete" | "cancelled" | "voided" | "queued" | "awaiting_shipment" | "on_hold" | "delivered" | "shipped" | "partially_delivered" | "returned";
+				not_in?: string;
 			};
 			/** The price type of the order */
 			price_type?: {
@@ -19818,9 +19818,9 @@ export type ChargebeeOperationInputs = {
 				/** * `tax_exclusive` - All amounts in the document are exclusive of tax. * `tax_inclusive` - All amounts in the document are inclusive of tax. */
 				is_not?: "tax_exclusive" | "tax_inclusive";
 				/** * `tax_exclusive` - All amounts in the document are exclusive of tax. * `tax_inclusive` - All amounts in the document are inclusive of tax. */
-				in?: "tax_exclusive" | "tax_inclusive";
+				in?: string;
 				/** * `tax_exclusive` - All amounts in the document are exclusive of tax. * `tax_inclusive` - All amounts in the document are inclusive of tax. */
-				not_in?: "tax_exclusive" | "tax_inclusive";
+				not_in?: string;
 			};
 			/** The date on which the order will start getting processed. */
 			order_date?: {
@@ -19901,9 +19901,9 @@ export type ChargebeeOperationInputs = {
 				/** * `fully_resent` - Order is Fully resent * `partially_resent` - Order is Partially resent */
 				is_not?: "fully_resent" | "partially_resent";
 				/** * `fully_resent` - Order is Fully resent * `partially_resent` - Order is Partially resent */
-				in?: "fully_resent" | "partially_resent";
+				in?: string;
 				/** * `fully_resent` - Order is Fully resent * `partially_resent` - Order is Partially resent */
-				not_in?: "fully_resent" | "partially_resent";
+				not_in?: string;
 			};
 			/** Order is resent order or not. */
 			is_resent?: {
@@ -19977,9 +19977,9 @@ export type ChargebeeOperationInputs = {
 				/** * `day` - Charge based on day(s) * `week` - Charge based on week(s) * `month` - Charge based on month(s) * `year` - Charge based on year(s) */
 				is_not?: "day" | "week" | "month" | "year";
 				/** * `day` - Charge based on day(s) * `week` - Charge based on week(s) * `month` - Charge based on month(s) * `year` - Charge based on year(s) */
-				in?: "day" | "week" | "month" | "year";
+				in?: string;
 				/** * `day` - Charge based on day(s) * `week` - Charge based on week(s) * `month` - Charge based on month(s) * `year` - Charge based on year(s) */
-				not_in?: "day" | "week" | "month" | "year";
+				not_in?: string;
 			};
 			/** The free time window for your customer to try your product */
 			trial_period?: {
@@ -19999,9 +19999,9 @@ export type ChargebeeOperationInputs = {
 				/** * `day` - In days * `month` - In months */
 				is_not?: "day" | "month";
 				/** * `day` - In days * `month` - In months */
-				in?: "day" | "month";
+				in?: string;
 				/** * `day` - In days * `month` - In months */
-				not_in?: "day" | "month";
+				not_in?: string;
 			};
 			/** Indicates if all or only some addons are applicable with the plan. */
 			addon_applicability?: {
@@ -20010,9 +20010,9 @@ export type ChargebeeOperationInputs = {
 				/** * `all` - All addons are applicable with this plan. * `restricted` - Only addons marked as 'applicable_addons' are applicable with the plan. */
 				is_not?: "all" | "restricted";
 				/** * `all` - All addons are applicable with this plan. * `restricted` - Only addons marked as 'applicable_addons' are applicable with the plan. */
-				in?: "all" | "restricted";
+				in?: string;
 				/** * `all` - All addons are applicable with this plan. * `restricted` - Only addons marked as 'applicable_addons' are applicable with the plan. */
-				not_in?: "all" | "restricted";
+				not_in?: string;
 			};
 			/** Specifies if the plan should be gifted or not. */
 			giftable?: {
@@ -20025,9 +20025,9 @@ export type ChargebeeOperationInputs = {
 				/** * `active` - New subscriptions can be created with the plan. * `archived` - No new subscriptions allowed for the plan. Existing subscriptions on this plan will remain as-is and can be migrated to another active plan if required. * `deleted` - Indicates the plan has been deleted. */
 				is_not?: "active" | "archived" | "deleted";
 				/** * `active` - New subscriptions can be created with the plan. * `archived` - No new subscriptions allowed for the plan. Existing subscriptions on this plan will remain as-is and can be migrated to another active plan if required. * `deleted` - Indicates the plan has been deleted. */
-				in?: "active" | "archived" | "deleted";
+				in?: string;
 				/** * `active` - New subscriptions can be created with the plan. * `archived` - No new subscriptions allowed for the plan. Existing subscriptions on this plan will remain as-is and can be migrated to another active plan if required. * `deleted` - Indicates the plan has been deleted. */
-				not_in?: "active" | "archived" | "deleted";
+				not_in?: string;
 			};
 			/** To filter based on updated at. This attribute will be present only if the resource has been updated after 2016-11-09. */
 			updated_at?: {
@@ -20043,9 +20043,9 @@ export type ChargebeeOperationInputs = {
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
 				is_not?: "web" | "app_store" | "play_store";
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				in?: "web" | "app_store" | "play_store";
+				in?: string;
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				not_in?: "web" | "app_store" | "play_store";
+				not_in?: string;
 			};
 		};
 	};
@@ -20092,9 +20092,9 @@ export type ChargebeeOperationInputs = {
 				/** * `active` - Active * `archived` - Archived */
 				is_not?: "active" | "archived";
 				/** * `active` - Active * `archived` - Archived */
-				in?: "active" | "archived";
+				in?: string;
 				/** * `active` - Active * `archived` - Archived */
-				not_in?: "active" | "archived";
+				not_in?: string;
 			};
 			/** Filter product based on their `updated time` . */
 			updated_at?: {
@@ -20130,7 +20130,7 @@ export type ChargebeeOperationInputs = {
 				/** * `scheduled` - Status of the subscription schedule on creation. * `succeeded` - The execution status of the schedule if success. * `failed` - The execution status of the schedule if failed. * `draft` - Status of the subscription schedule considering as draft */
 				is?: "scheduled" | "succeeded" | "failed" | "draft";
 				/** * `scheduled` - Status of the subscription schedule on creation. * `succeeded` - The execution status of the schedule if success. * `failed` - The execution status of the schedule if failed. * `draft` - Status of the subscription schedule considering as draft */
-				in?: "scheduled" | "succeeded" | "failed" | "draft";
+				in?: string;
 			};
 			/** The ID of the subscription for which the ramp was created. Use this filter to export ramps that belong to specific subscriptions. */
 			subscription_id?: {
@@ -20235,9 +20235,9 @@ export type ChargebeeOperationInputs = {
 				/** * `paid` - Indicates a paid invoice. * `posted` - Indicates the payment is not yet collected and will be in this state till the due date to indicate the due period * `payment_due` - Indicates the payment is not yet collected and is being retried as per retry settings. * `not_paid` - Indicates… */
 				is_not?: "paid" | "posted" | "payment_due" | "not_paid" | "voided" | "pending";
 				/** * `paid` - Indicates a paid invoice. * `posted` - Indicates the payment is not yet collected and will be in this state till the due date to indicate the due period * `payment_due` - Indicates the payment is not yet collected and is being retried as per retry settings. * `not_paid` - Indicates… */
-				in?: "paid" | "posted" | "payment_due" | "not_paid" | "voided" | "pending";
+				in?: string;
 				/** * `paid` - Indicates a paid invoice. * `posted` - Indicates the payment is not yet collected and will be in this state till the due date to indicate the due period * `payment_due` - Indicates the payment is not yet collected and is being retried as per retry settings. * `not_paid` - Indicates… */
-				not_in?: "paid" | "posted" | "payment_due" | "not_paid" | "voided" | "pending";
+				not_in?: string;
 			};
 			/** The price type of the invoice. */
 			price_type?: {
@@ -20246,9 +20246,9 @@ export type ChargebeeOperationInputs = {
 				/** * `tax_exclusive` - All amounts in the document are exclusive of tax. * `tax_inclusive` - All amounts in the document are inclusive of tax. */
 				is_not?: "tax_exclusive" | "tax_inclusive";
 				/** * `tax_exclusive` - All amounts in the document are exclusive of tax. * `tax_inclusive` - All amounts in the document are inclusive of tax. */
-				in?: "tax_exclusive" | "tax_inclusive";
+				in?: string;
 				/** * `tax_exclusive` - All amounts in the document are exclusive of tax. * `tax_inclusive` - All amounts in the document are inclusive of tax. */
-				not_in?: "tax_exclusive" | "tax_inclusive";
+				not_in?: string;
 			};
 			/** The document date displayed on the invoice PDF. */
 			date?: {
@@ -20321,9 +20321,9 @@ export type ChargebeeOperationInputs = {
 				/** * `in_progress` - Dunning is still in progress. * `exhausted` - Maximum number of attempts have been made. * `stopped` - Dunning has stopped for this invoice. * `success` - Payment successfully collected during dunning process. */
 				is_not?: "in_progress" | "exhausted" | "stopped" | "success";
 				/** * `in_progress` - Dunning is still in progress. * `exhausted` - Maximum number of attempts have been made. * `stopped` - Dunning has stopped for this invoice. * `success` - Payment successfully collected during dunning process. */
-				in?: "in_progress" | "exhausted" | "stopped" | "success";
+				in?: string;
 				/** * `in_progress` - Dunning is still in progress. * `exhausted` - Maximum number of attempts have been made. * `stopped` - Dunning has stopped for this invoice. * `success` - Payment successfully collected during dunning process. */
-				not_in?: "in_progress" | "exhausted" | "stopped" | "success";
+				not_in?: string;
 				is_present?: "true" | "false";
 			};
 			/** To filter based on `updated_at`. This attribute will be present only if the resource has been updated after 2016-09-28. It is advisable when using this filter, to pass the `sort_by` input parameter as `updated_at` for a faster response. */
@@ -20340,9 +20340,9 @@ export type ChargebeeOperationInputs = {
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
 				is_not?: "web" | "app_store" | "play_store";
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				in?: "web" | "app_store" | "play_store";
+				in?: string;
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				not_in?: "web" | "app_store" | "play_store";
+				not_in?: string;
 			};
 		};
 		/** Parameters for subscription */
@@ -20370,9 +20370,9 @@ export type ChargebeeOperationInputs = {
 				/** * `future` - The subscription is scheduled to start at a future date. * `in_trial` - The subscription is in trial. * `active` - The subscription is active and will be charged for automatically based on the items in it. * `non_renewing` - The subscription will be canceled at the end of the… */
 				is_not?: "future" | "in_trial" | "active" | "non_renewing" | "paused" | "cancelled" | "transferred";
 				/** * `future` - The subscription is scheduled to start at a future date. * `in_trial` - The subscription is in trial. * `active` - The subscription is active and will be charged for automatically based on the items in it. * `non_renewing` - The subscription will be canceled at the end of the… */
-				in?: "future" | "in_trial" | "active" | "non_renewing" | "paused" | "cancelled" | "transferred";
+				in?: string;
 				/** * `future` - The subscription is scheduled to start at a future date. * `in_trial` - The subscription is in trial. * `active` - The subscription is active and will be charged for automatically based on the items in it. * `non_renewing` - The subscription will be canceled at the end of the… */
-				not_in?: "future" | "in_trial" | "active" | "non_renewing" | "paused" | "cancelled" | "transferred";
+				not_in?: string;
 			};
 			/** The reason for canceling the subscription. Set by Chargebee automatically. */
 			cancel_reason?: {
@@ -20381,9 +20381,9 @@ export type ChargebeeOperationInputs = {
 				/** * `not_paid` - Not Paid * `no_card` - No Card * `fraud_review_failed` - Fraud Review Failed * `non_compliant_eu_customer` - Non Compliant EU Customer * `tax_calculation_failed` - Tax Calculation Failed * `currency_incompatible_with_gateway` - Currency incompatible with Gateway *… */
 				is_not?: "not_paid" | "no_card" | "fraud_review_failed" | "non_compliant_eu_customer" | "tax_calculation_failed" | "currency_incompatible_with_gateway" | "non_compliant_customer";
 				/** * `not_paid` - Not Paid * `no_card` - No Card * `fraud_review_failed` - Fraud Review Failed * `non_compliant_eu_customer` - Non Compliant EU Customer * `tax_calculation_failed` - Tax Calculation Failed * `currency_incompatible_with_gateway` - Currency incompatible with Gateway *… */
-				in?: "not_paid" | "no_card" | "fraud_review_failed" | "non_compliant_eu_customer" | "tax_calculation_failed" | "currency_incompatible_with_gateway" | "non_compliant_customer";
+				in?: string;
 				/** * `not_paid` - Not Paid * `no_card` - No Card * `fraud_review_failed` - Fraud Review Failed * `non_compliant_eu_customer` - Non Compliant EU Customer * `tax_calculation_failed` - Tax Calculation Failed * `currency_incompatible_with_gateway` - Currency incompatible with Gateway *… */
-				not_in?: "not_paid" | "no_card" | "fraud_review_failed" | "non_compliant_eu_customer" | "tax_calculation_failed" | "currency_incompatible_with_gateway" | "non_compliant_customer";
+				not_in?: string;
 				is_present?: "true" | "false";
 			};
 			/** * When the subscription is not on a contract term: this value is the number of billing cycles remaining after the current cycle, at the end of which, the subscription cancels. * When the subscription is on a [contract term](/docs/api/contract_terms): this value is the number of billing cycles… */
@@ -20444,9 +20444,9 @@ export type ChargebeeOperationInputs = {
 				/** * `no_preference` - No Preference * `cash` - Cash * `check` - Check * `bank_transfer` - Bank Transfer * `ach_credit` - ACH Credit * `sepa_credit` - SEPA Credit * `boleto` - Boleto * `us_automated_bank_transfer` - US Automated Bank Transfer * `eu_automated_bank_transfer` - EU Automated Bank… */
 				is_not?: "no_preference" | "cash" | "check" | "bank_transfer" | "ach_credit" | "sepa_credit" | "boleto" | "us_automated_bank_transfer" | "eu_automated_bank_transfer" | "uk_automated_bank_transfer" | "jp_automated_bank_transfer" | "mx_automated_bank_transfer" | "custom";
 				/** * `no_preference` - No Preference * `cash` - Cash * `check` - Check * `bank_transfer` - Bank Transfer * `ach_credit` - ACH Credit * `sepa_credit` - SEPA Credit * `boleto` - Boleto * `us_automated_bank_transfer` - US Automated Bank Transfer * `eu_automated_bank_transfer` - EU Automated Bank… */
-				in?: "no_preference" | "cash" | "check" | "bank_transfer" | "ach_credit" | "sepa_credit" | "boleto" | "us_automated_bank_transfer" | "eu_automated_bank_transfer" | "uk_automated_bank_transfer" | "jp_automated_bank_transfer" | "mx_automated_bank_transfer" | "custom";
+				in?: string;
 				/** * `no_preference` - No Preference * `cash` - Cash * `check` - Check * `bank_transfer` - Bank Transfer * `ach_credit` - ACH Credit * `sepa_credit` - SEPA Credit * `boleto` - Boleto * `us_automated_bank_transfer` - US Automated Bank Transfer * `eu_automated_bank_transfer` - EU Automated Bank… */
-				not_in?: "no_preference" | "cash" | "check" | "bank_transfer" | "ach_credit" | "sepa_credit" | "boleto" | "us_automated_bank_transfer" | "eu_automated_bank_transfer" | "uk_automated_bank_transfer" | "jp_automated_bank_transfer" | "mx_automated_bank_transfer" | "custom";
+				not_in?: string;
 			};
 			/** Set to `false` to override for this subscription, the [site-level setting](https://www.chargebee.com/docs/billing/2.0/usage-based-billing/metered_billing#configuring-metered-billing) for auto-closing invoices. Only applicable when auto-closing invoices has been enabled for the site. This… */
 			auto_close_invoices?: {
@@ -20459,9 +20459,9 @@ export type ChargebeeOperationInputs = {
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
 				is_not?: "web" | "app_store" | "play_store";
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				in?: "web" | "app_store" | "play_store";
+				in?: string;
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				not_in?: "web" | "app_store" | "play_store";
+				not_in?: string;
 			};
 		};
 		/** Parameters for customer */
@@ -20516,9 +20516,9 @@ export type ChargebeeOperationInputs = {
 				/** * `on` - Whenever an invoice is created, an automatic attempt to charge the customer's payment method is made. * `off` - Automatic collection of charges will not be made. All payments must be recorded offline. */
 				is_not?: "on" | "off";
 				/** * `on` - Whenever an invoice is created, an automatic attempt to charge the customer's payment method is made. * `off` - Automatic collection of charges will not be made. All payments must be recorded offline. */
-				in?: "on" | "off";
+				in?: string;
 				/** * `on` - Whenever an invoice is created, an automatic attempt to charge the customer's payment method is made. * `off` - Automatic collection of charges will not be made. All payments must be recorded offline. */
-				not_in?: "on" | "off";
+				not_in?: string;
 			};
 			/** Specifies if the customer is liable for tax. Possible values are : taxable, exempt, zero_rated. */
 			taxability?: {
@@ -20527,9 +20527,9 @@ export type ChargebeeOperationInputs = {
 				/** * `taxable` - Computes tax for the customer based on the [site configuration](https://www.chargebee.com/docs/tax.html). In some cases, depending on the region, shipping_address is needed. If not provided, then billing_address is used to compute tax. If that's not available either, the tax is… */
 				is_not?: "taxable" | "exempt" | "zero_rated";
 				/** * `taxable` - Computes tax for the customer based on the [site configuration](https://www.chargebee.com/docs/tax.html). In some cases, depending on the region, shipping_address is needed. If not provided, then billing_address is used to compute tax. If that's not available either, the tax is… */
-				in?: "taxable" | "exempt" | "zero_rated";
+				in?: string;
 				/** * `taxable` - Computes tax for the customer based on the [site configuration](https://www.chargebee.com/docs/tax.html). In some cases, depending on the region, shipping_address is needed. If not provided, then billing_address is used to compute tax. If that's not available either, the tax is… */
-				not_in?: "taxable" | "exempt" | "zero_rated";
+				not_in?: string;
 			};
 			/** Timestamp indicating when this customer resource is created. */
 			created_at?: {
@@ -20552,9 +20552,9 @@ export type ChargebeeOperationInputs = {
 				/** * `no_preference` - No Preference * `cash` - Cash * `check` - Check * `bank_transfer` - Bank Transfer * `ach_credit` - ACH Credit * `sepa_credit` - SEPA Credit * `boleto` - Boleto * `us_automated_bank_transfer` - US Automated Bank Transfer * `eu_automated_bank_transfer` - EU Automated Bank… */
 				is_not?: "no_preference" | "cash" | "check" | "bank_transfer" | "ach_credit" | "sepa_credit" | "boleto" | "us_automated_bank_transfer" | "eu_automated_bank_transfer" | "uk_automated_bank_transfer" | "jp_automated_bank_transfer" | "mx_automated_bank_transfer" | "custom";
 				/** * `no_preference` - No Preference * `cash` - Cash * `check` - Check * `bank_transfer` - Bank Transfer * `ach_credit` - ACH Credit * `sepa_credit` - SEPA Credit * `boleto` - Boleto * `us_automated_bank_transfer` - US Automated Bank Transfer * `eu_automated_bank_transfer` - EU Automated Bank… */
-				in?: "no_preference" | "cash" | "check" | "bank_transfer" | "ach_credit" | "sepa_credit" | "boleto" | "us_automated_bank_transfer" | "eu_automated_bank_transfer" | "uk_automated_bank_transfer" | "jp_automated_bank_transfer" | "mx_automated_bank_transfer" | "custom";
+				in?: string;
 				/** * `no_preference` - No Preference * `cash` - Cash * `check` - Check * `bank_transfer` - Bank Transfer * `ach_credit` - ACH Credit * `sepa_credit` - SEPA Credit * `boleto` - Boleto * `us_automated_bank_transfer` - US Automated Bank Transfer * `eu_automated_bank_transfer` - EU Automated Bank… */
-				not_in?: "no_preference" | "cash" | "check" | "bank_transfer" | "ach_credit" | "sepa_credit" | "boleto" | "us_automated_bank_transfer" | "eu_automated_bank_transfer" | "uk_automated_bank_transfer" | "jp_automated_bank_transfer" | "mx_automated_bank_transfer" | "custom";
+				not_in?: string;
 			};
 			/** Override for this customer, the [site-level setting](https://www.chargebee.com/docs/billing/2.0/usage-based-billing/metered_billing#configuring-metered-billing) for auto-closing invoices. Only applicable when auto-closing invoices has been enabled for the site. This attribute is also available… */
 			auto_close_invoices?: {
@@ -20567,9 +20567,9 @@ export type ChargebeeOperationInputs = {
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
 				is_not?: "web" | "app_store" | "play_store";
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				in?: "web" | "app_store" | "play_store";
+				in?: string;
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				not_in?: "web" | "app_store" | "play_store";
+				not_in?: string;
 			};
 		};
 		/** Parameters for relationship */
@@ -20654,9 +20654,9 @@ export type ChargebeeOperationInputs = {
 				/** * `future` - The subscription is scheduled to start at a future date. * `in_trial` - The subscription is in trial. * `active` - The subscription is active and will be charged for automatically based on the items in it. * `non_renewing` - The subscription will be canceled at the end of the… */
 				is_not?: "future" | "in_trial" | "active" | "non_renewing" | "paused" | "cancelled" | "transferred";
 				/** * `future` - The subscription is scheduled to start at a future date. * `in_trial` - The subscription is in trial. * `active` - The subscription is active and will be charged for automatically based on the items in it. * `non_renewing` - The subscription will be canceled at the end of the… */
-				in?: "future" | "in_trial" | "active" | "non_renewing" | "paused" | "cancelled" | "transferred";
+				in?: string;
 				/** * `future` - The subscription is scheduled to start at a future date. * `in_trial` - The subscription is in trial. * `active` - The subscription is active and will be charged for automatically based on the items in it. * `non_renewing` - The subscription will be canceled at the end of the… */
-				not_in?: "future" | "in_trial" | "active" | "non_renewing" | "paused" | "cancelled" | "transferred";
+				not_in?: string;
 			};
 			/** The reason for canceling the subscription. Set by Chargebee automatically. */
 			cancel_reason?: {
@@ -20665,9 +20665,9 @@ export type ChargebeeOperationInputs = {
 				/** * `not_paid` - Not Paid * `no_card` - No Card * `fraud_review_failed` - Fraud Review Failed * `non_compliant_eu_customer` - Non Compliant EU Customer * `tax_calculation_failed` - Tax Calculation Failed * `currency_incompatible_with_gateway` - Currency incompatible with Gateway *… */
 				is_not?: "not_paid" | "no_card" | "fraud_review_failed" | "non_compliant_eu_customer" | "tax_calculation_failed" | "currency_incompatible_with_gateway" | "non_compliant_customer";
 				/** * `not_paid` - Not Paid * `no_card` - No Card * `fraud_review_failed` - Fraud Review Failed * `non_compliant_eu_customer` - Non Compliant EU Customer * `tax_calculation_failed` - Tax Calculation Failed * `currency_incompatible_with_gateway` - Currency incompatible with Gateway *… */
-				in?: "not_paid" | "no_card" | "fraud_review_failed" | "non_compliant_eu_customer" | "tax_calculation_failed" | "currency_incompatible_with_gateway" | "non_compliant_customer";
+				in?: string;
 				/** * `not_paid` - Not Paid * `no_card` - No Card * `fraud_review_failed` - Fraud Review Failed * `non_compliant_eu_customer` - Non Compliant EU Customer * `tax_calculation_failed` - Tax Calculation Failed * `currency_incompatible_with_gateway` - Currency incompatible with Gateway *… */
-				not_in?: "not_paid" | "no_card" | "fraud_review_failed" | "non_compliant_eu_customer" | "tax_calculation_failed" | "currency_incompatible_with_gateway" | "non_compliant_customer";
+				not_in?: string;
 				is_present?: "true" | "false";
 			};
 			/** * When the subscription is not on a contract term: this value is the number of billing cycles remaining after the current cycle, at the end of which, the subscription cancels. * When the subscription is on a [contract term](/docs/api/contract_terms): this value is the number of billing cycles… */
@@ -20728,9 +20728,9 @@ export type ChargebeeOperationInputs = {
 				/** * `no_preference` - No Preference * `cash` - Cash * `check` - Check * `bank_transfer` - Bank Transfer * `ach_credit` - ACH Credit * `sepa_credit` - SEPA Credit * `boleto` - Boleto * `us_automated_bank_transfer` - US Automated Bank Transfer * `eu_automated_bank_transfer` - EU Automated Bank… */
 				is_not?: "no_preference" | "cash" | "check" | "bank_transfer" | "ach_credit" | "sepa_credit" | "boleto" | "us_automated_bank_transfer" | "eu_automated_bank_transfer" | "uk_automated_bank_transfer" | "jp_automated_bank_transfer" | "mx_automated_bank_transfer" | "custom";
 				/** * `no_preference` - No Preference * `cash` - Cash * `check` - Check * `bank_transfer` - Bank Transfer * `ach_credit` - ACH Credit * `sepa_credit` - SEPA Credit * `boleto` - Boleto * `us_automated_bank_transfer` - US Automated Bank Transfer * `eu_automated_bank_transfer` - EU Automated Bank… */
-				in?: "no_preference" | "cash" | "check" | "bank_transfer" | "ach_credit" | "sepa_credit" | "boleto" | "us_automated_bank_transfer" | "eu_automated_bank_transfer" | "uk_automated_bank_transfer" | "jp_automated_bank_transfer" | "mx_automated_bank_transfer" | "custom";
+				in?: string;
 				/** * `no_preference` - No Preference * `cash` - Cash * `check` - Check * `bank_transfer` - Bank Transfer * `ach_credit` - ACH Credit * `sepa_credit` - SEPA Credit * `boleto` - Boleto * `us_automated_bank_transfer` - US Automated Bank Transfer * `eu_automated_bank_transfer` - EU Automated Bank… */
-				not_in?: "no_preference" | "cash" | "check" | "bank_transfer" | "ach_credit" | "sepa_credit" | "boleto" | "us_automated_bank_transfer" | "eu_automated_bank_transfer" | "uk_automated_bank_transfer" | "jp_automated_bank_transfer" | "mx_automated_bank_transfer" | "custom";
+				not_in?: string;
 			};
 			/** Set to `false` to override for this subscription, the [site-level setting](https://www.chargebee.com/docs/billing/2.0/usage-based-billing/metered_billing#configuring-metered-billing) for auto-closing invoices. Only applicable when auto-closing invoices has been enabled for the site. This… */
 			auto_close_invoices?: {
@@ -20743,9 +20743,9 @@ export type ChargebeeOperationInputs = {
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
 				is_not?: "web" | "app_store" | "play_store";
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				in?: "web" | "app_store" | "play_store";
+				in?: string;
 				/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-				not_in?: "web" | "app_store" | "play_store";
+				not_in?: string;
 			};
 			/** Specifies whether a cancelled subscription is decommissioned or not */
 			decommissioned?: {
@@ -20806,9 +20806,9 @@ export type ChargebeeOperationInputs = {
 				/** * `card` - Card * `cash` - Cash * `check` - Check * `chargeback` - Only applicable for a transaction of [type](transactions#transaction_type) = `refund`. This value is set by Chargebee when an automated [chargeback](https://www.chargebee.com/docs/chargeback.html#chargeback-process) occurs. You… */
 				is_not?: "card" | "cash" | "check" | "chargeback" | "bank_transfer" | "amazon_payments" | "paypal_express_checkout" | "direct_debit" | "alipay" | "unionpay" | "apple_pay" | "wechat_pay" | "ach_credit" | "sepa_credit" | "ideal" | "google_pay" | "sofort" | "bancontact" | "giropay" | "dotpay" | "other" | "upi" | "netbanking_emandates" | "custom" | "boleto" | "venmo" | "pay_to" | "faster_payments" | "sepa_instant_transfer" | "automated_bank_transfer" | "klarna_pay_now" | "online_banking_poland" | "payconiq_by_bancontact" | "electronic_payment_standard" | "kbc_payment_button" | "pay_by_bank" | "trustly" | "stablecoin" | "kakao_pay" | "naver_pay" | "revolut_pay" | "cash_app_pay" | "pix" | "twint" | "go_pay" | "grab_pay" | "pay_co" | "after_pay" | "swish" | "payme" | "klarna" | "alipay_hk" | "paypay" | "gcash" | "south_korean_cards" | "paynow" | "bizum" | "promptpay" | "dana" | "touch_n_go" | "tamara" | "qpay" | "ovo" | "momo" | "mercado_pago" | "nequi" | "nupay" | "picpay" | "thai_qr" | "blik" | "fpx" | "wero" | "p24" | "affirm_pay" | "rakuten_pay";
 				/** * `card` - Card * `cash` - Cash * `check` - Check * `chargeback` - Only applicable for a transaction of [type](transactions#transaction_type) = `refund`. This value is set by Chargebee when an automated [chargeback](https://www.chargebee.com/docs/chargeback.html#chargeback-process) occurs. You… */
-				in?: "card" | "cash" | "check" | "chargeback" | "bank_transfer" | "amazon_payments" | "paypal_express_checkout" | "direct_debit" | "alipay" | "unionpay" | "apple_pay" | "wechat_pay" | "ach_credit" | "sepa_credit" | "ideal" | "google_pay" | "sofort" | "bancontact" | "giropay" | "dotpay" | "other" | "upi" | "netbanking_emandates" | "custom" | "boleto" | "venmo" | "pay_to" | "faster_payments" | "sepa_instant_transfer" | "automated_bank_transfer" | "klarna_pay_now" | "online_banking_poland" | "payconiq_by_bancontact" | "electronic_payment_standard" | "kbc_payment_button" | "pay_by_bank" | "trustly" | "stablecoin" | "kakao_pay" | "naver_pay" | "revolut_pay" | "cash_app_pay" | "pix" | "twint" | "go_pay" | "grab_pay" | "pay_co" | "after_pay" | "swish" | "payme" | "klarna" | "alipay_hk" | "paypay" | "gcash" | "south_korean_cards" | "paynow" | "bizum" | "promptpay" | "dana" | "touch_n_go" | "tamara" | "qpay" | "ovo" | "momo" | "mercado_pago" | "nequi" | "nupay" | "picpay" | "thai_qr" | "blik" | "fpx" | "wero" | "p24" | "affirm_pay" | "rakuten_pay";
+				in?: string;
 				/** * `card` - Card * `cash` - Cash * `check` - Check * `chargeback` - Only applicable for a transaction of [type](transactions#transaction_type) = `refund`. This value is set by Chargebee when an automated [chargeback](https://www.chargebee.com/docs/chargeback.html#chargeback-process) occurs. You… */
-				not_in?: "card" | "cash" | "check" | "chargeback" | "bank_transfer" | "amazon_payments" | "paypal_express_checkout" | "direct_debit" | "alipay" | "unionpay" | "apple_pay" | "wechat_pay" | "ach_credit" | "sepa_credit" | "ideal" | "google_pay" | "sofort" | "bancontact" | "giropay" | "dotpay" | "other" | "upi" | "netbanking_emandates" | "custom" | "boleto" | "venmo" | "pay_to" | "faster_payments" | "sepa_instant_transfer" | "automated_bank_transfer" | "klarna_pay_now" | "online_banking_poland" | "payconiq_by_bancontact" | "electronic_payment_standard" | "kbc_payment_button" | "pay_by_bank" | "trustly" | "stablecoin" | "kakao_pay" | "naver_pay" | "revolut_pay" | "cash_app_pay" | "pix" | "twint" | "go_pay" | "grab_pay" | "pay_co" | "after_pay" | "swish" | "payme" | "klarna" | "alipay_hk" | "paypay" | "gcash" | "south_korean_cards" | "paynow" | "bizum" | "promptpay" | "dana" | "touch_n_go" | "tamara" | "qpay" | "ovo" | "momo" | "mercado_pago" | "nequi" | "nupay" | "picpay" | "thai_qr" | "blik" | "fpx" | "wero" | "p24" | "affirm_pay" | "rakuten_pay";
+				not_in?: string;
 			};
 			/** Gateway through which this transaction was done. Applicable only for 'Card' Payment Method */
 			gateway?: {
@@ -20817,9 +20817,9 @@ export type ChargebeeOperationInputs = {
 				/** * `chargebee` - Chargebee test gateway. * `chargebee_payments` - Chargebee Pay gateway * `adyen` - Adyen is a payment gateway. * `stripe` - Stripe is a payment gateway. * `wepay` - WePay is a payment gateway. * `braintree` - Braintree is a payment gateway. * `authorize_net` - Authorize.net is a… */
 				is_not?: "chargebee" | "chargebee_payments" | "adyen" | "stripe" | "wepay" | "braintree" | "authorize_net" | "paypal_pro" | "pin" | "eway" | "eway_rapid" | "worldpay" | "balanced_payments" | "beanstream" | "bluepay" | "elavon" | "first_data_global" | "hdfc" | "migs" | "nmi" | "ogone" | "paymill" | "paypal_payflow_pro" | "sage_pay" | "tco" | "wirecard" | "amazon_payments" | "paypal_express_checkout" | "gocardless" | "orbital" | "moneris_us" | "moneris" | "bluesnap" | "cybersource" | "vantiv" | "checkout_com" | "paypal" | "ingenico_direct" | "exact" | "mollie" | "quickbooks" | "razorpay" | "global_payments" | "bank_of_america" | "ecentric" | "metrics_global" | "windcave" | "pay_com" | "ebanx" | "dlocal" | "nuvei" | "solidgate" | "paystack" | "jp_morgan" | "deutsche_bank" | "ezidebit" | "twikey" | "tempus" | "moyasar" | "payway" | "payu" | "not_applicable";
 				/** * `chargebee` - Chargebee test gateway. * `chargebee_payments` - Chargebee Pay gateway * `adyen` - Adyen is a payment gateway. * `stripe` - Stripe is a payment gateway. * `wepay` - WePay is a payment gateway. * `braintree` - Braintree is a payment gateway. * `authorize_net` - Authorize.net is a… */
-				in?: "chargebee" | "chargebee_payments" | "adyen" | "stripe" | "wepay" | "braintree" | "authorize_net" | "paypal_pro" | "pin" | "eway" | "eway_rapid" | "worldpay" | "balanced_payments" | "beanstream" | "bluepay" | "elavon" | "first_data_global" | "hdfc" | "migs" | "nmi" | "ogone" | "paymill" | "paypal_payflow_pro" | "sage_pay" | "tco" | "wirecard" | "amazon_payments" | "paypal_express_checkout" | "gocardless" | "orbital" | "moneris_us" | "moneris" | "bluesnap" | "cybersource" | "vantiv" | "checkout_com" | "paypal" | "ingenico_direct" | "exact" | "mollie" | "quickbooks" | "razorpay" | "global_payments" | "bank_of_america" | "ecentric" | "metrics_global" | "windcave" | "pay_com" | "ebanx" | "dlocal" | "nuvei" | "solidgate" | "paystack" | "jp_morgan" | "deutsche_bank" | "ezidebit" | "twikey" | "tempus" | "moyasar" | "payway" | "payu" | "not_applicable";
+				in?: string;
 				/** * `chargebee` - Chargebee test gateway. * `chargebee_payments` - Chargebee Pay gateway * `adyen` - Adyen is a payment gateway. * `stripe` - Stripe is a payment gateway. * `wepay` - WePay is a payment gateway. * `braintree` - Braintree is a payment gateway. * `authorize_net` - Authorize.net is a… */
-				not_in?: "chargebee" | "chargebee_payments" | "adyen" | "stripe" | "wepay" | "braintree" | "authorize_net" | "paypal_pro" | "pin" | "eway" | "eway_rapid" | "worldpay" | "balanced_payments" | "beanstream" | "bluepay" | "elavon" | "first_data_global" | "hdfc" | "migs" | "nmi" | "ogone" | "paymill" | "paypal_payflow_pro" | "sage_pay" | "tco" | "wirecard" | "amazon_payments" | "paypal_express_checkout" | "gocardless" | "orbital" | "moneris_us" | "moneris" | "bluesnap" | "cybersource" | "vantiv" | "checkout_com" | "paypal" | "ingenico_direct" | "exact" | "mollie" | "quickbooks" | "razorpay" | "global_payments" | "bank_of_america" | "ecentric" | "metrics_global" | "windcave" | "pay_com" | "ebanx" | "dlocal" | "nuvei" | "solidgate" | "paystack" | "jp_morgan" | "deutsche_bank" | "ezidebit" | "twikey" | "tempus" | "moyasar" | "payway" | "payu" | "not_applicable";
+				not_in?: string;
 			};
 			/** The gateway account used for this transaction */
 			gateway_account_id?: {
@@ -20849,9 +20849,9 @@ export type ChargebeeOperationInputs = {
 				/** * `authorization` - The transaction represents an authorization for capturing the [amount](transactions#transaction_amount) from the customer's [payment_source](payment_sources). * `payment` - The transaction represents capture of [amount](transactions#transaction_amount) from the customer's… */
 				is_not?: "authorization" | "payment" | "refund" | "payment_reversal";
 				/** * `authorization` - The transaction represents an authorization for capturing the [amount](transactions#transaction_amount) from the customer's [payment_source](payment_sources). * `payment` - The transaction represents capture of [amount](transactions#transaction_amount) from the customer's… */
-				in?: "authorization" | "payment" | "refund" | "payment_reversal";
+				in?: string;
 				/** * `authorization` - The transaction represents an authorization for capturing the [amount](transactions#transaction_amount) from the customer's [payment_source](payment_sources). * `payment` - The transaction represents capture of [amount](transactions#transaction_amount) from the customer's… */
-				not_in?: "authorization" | "payment" | "refund" | "payment_reversal";
+				not_in?: string;
 			};
 			/** Indicates when this transaction occurred. */
 			date?: {
@@ -20887,9 +20887,9 @@ export type ChargebeeOperationInputs = {
 				/** * `in_progress` - Transaction is being processed by the gateway. This typically happens for [direct debit transactions](https://www.chargebee.com/docs/direct-debit-payments.html) or, in case of cards, refund transactions. Such transactions can take 2-7 days to complete, depending on the gateway… */
 				is_not?: "in_progress" | "success" | "voided" | "failure" | "timeout" | "needs_attention" | "late_failure";
 				/** * `in_progress` - Transaction is being processed by the gateway. This typically happens for [direct debit transactions](https://www.chargebee.com/docs/direct-debit-payments.html) or, in case of cards, refund transactions. Such transactions can take 2-7 days to complete, depending on the gateway… */
-				in?: "in_progress" | "success" | "voided" | "failure" | "timeout" | "needs_attention" | "late_failure";
+				in?: string;
 				/** * `in_progress` - Transaction is being processed by the gateway. This typically happens for [direct debit transactions](https://www.chargebee.com/docs/direct-debit-payments.html) or, in case of cards, refund transactions. Such transactions can take 2-7 days to complete, depending on the gateway… */
-				not_in?: "in_progress" | "success" | "voided" | "failure" | "timeout" | "needs_attention" | "late_failure";
+				not_in?: string;
 			};
 			/** To filter based on `updated_at`. This attribute will be present only if the resource has been updated after 2016-09-28. It is advisable when using this filter, to pass the `sort_by` input parameter as `updated_at` for a faster response. */
 			updated_at?: {
@@ -21001,9 +21001,9 @@ export type ChargebeeOperationInputs = {
 			/** * `active` - A `draft` or an `archived` feature can be changed to `active`. Any [item](item_entitlements) or [subscription entitlements](subscription_entitlements) defined for the feature take effect immediately. * `archived` - An `active` feature can be changed to `archived`. Once `archived`,… */
 			is_not?: "active" | "archived" | "draft";
 			/** * `active` - A `draft` or an `archived` feature can be changed to `active`. Any [item](item_entitlements) or [subscription entitlements](subscription_entitlements) defined for the feature take effect immediately. * `archived` - An `active` feature can be changed to `archived`. Once `archived`,… */
-			in?: "active" | "archived" | "draft";
+			in?: string;
 			/** * `active` - A `draft` or an `archived` feature can be changed to `active`. Any [item](item_entitlements) or [subscription entitlements](subscription_entitlements) defined for the feature take effect immediately. * `archived` - An `active` feature can be changed to `archived`. Once `archived`,… */
-			not_in?: "active" | "archived" | "draft";
+			not_in?: string;
 		};
 		/** optional, enumerated string filter The type of feature. Possible values are : switch, custom, quantity, range. **Supported operators :** is, is_not, in, not_in **Example →** *type\[is\] = "boolean"* */
 		type?: {
@@ -21012,9 +21012,9 @@ export type ChargebeeOperationInputs = {
 			/** * `switch` - A switch or toggle is a feature that an item or subscription can be either fully entitled to or not entitled to at all. * `custom` - The entitlement levels available for this feature are defined as a set of custom values. For example, a feature `Email Support` can have entitlement… */
 			is_not?: "switch" | "custom" | "quantity" | "range";
 			/** * `switch` - A switch or toggle is a feature that an item or subscription can be either fully entitled to or not entitled to at all. * `custom` - The entitlement levels available for this feature are defined as a set of custom values. For example, a feature `Email Support` can have entitlement… */
-			in?: "switch" | "custom" | "quantity" | "range";
+			in?: string;
 			/** * `switch` - A switch or toggle is a feature that an item or subscription can be either fully entitled to or not entitled to at all. * `custom` - The entitlement levels available for this feature are defined as a set of custom values. For example, a feature `Email Support` can have entitlement… */
-			not_in?: "switch" | "custom" | "quantity" | "range";
+			not_in?: string;
 		};
 		/** optional, boolean filter Specifies whether the feature is a metered feature. **Supported operators :** is **Example →** *metered\[is\] = "true"* */
 		metered?: {
@@ -21616,9 +21616,9 @@ export type ChargebeeOperationInputs = {
 			/** * `scheduled` - Gift has been scheduled. * `unclaimed` - Gift is not yet claimed and is ready to be claimed. * `claimed` - Gift is claimed. * `cancelled` - Gift is cancelled. * `expired` - Gift is expired. */
 			is_not?: "scheduled" | "unclaimed" | "claimed" | "cancelled" | "expired";
 			/** * `scheduled` - Gift has been scheduled. * `unclaimed` - Gift is not yet claimed and is ready to be claimed. * `claimed` - Gift is claimed. * `cancelled` - Gift is cancelled. * `expired` - Gift is expired. */
-			in?: "scheduled" | "unclaimed" | "claimed" | "cancelled" | "expired";
+			in?: string;
 			/** * `scheduled` - Gift has been scheduled. * `unclaimed` - Gift is not yet claimed and is ready to be claimed. * `claimed` - Gift is claimed. * `cancelled` - Gift is cancelled. * `expired` - Gift is expired. */
-			not_in?: "scheduled" | "unclaimed" | "claimed" | "cancelled" | "expired";
+			not_in?: string;
 		};
 		/** Parameters for gift_receiver */
 		gift_receiver?: {
@@ -23064,9 +23064,9 @@ export type ChargebeeOperationInputs = {
 			/** * `checkout_new` - Checkout new Subscription * `checkout_existing` - Checkout existing Subscription * `update_card` - **(Deprecated)** Update Card for a Customer * `update_payment_method` - **(Deprecated)** Update Payment Method for a Customer * `manage_payment_sources` - Manage Payments for a… */
 			is_not?: "checkout_new" | "checkout_existing" | "manage_payment_sources" | "collect_now" | "extend_subscription" | "checkout_one_time" | "pre_cancel" | "view_voucher" | "accept_quote";
 			/** * `checkout_new` - Checkout new Subscription * `checkout_existing` - Checkout existing Subscription * `update_card` - **(Deprecated)** Update Card for a Customer * `update_payment_method` - **(Deprecated)** Update Payment Method for a Customer * `manage_payment_sources` - Manage Payments for a… */
-			in?: "checkout_new" | "checkout_existing" | "manage_payment_sources" | "collect_now" | "extend_subscription" | "checkout_one_time" | "pre_cancel" | "view_voucher" | "accept_quote";
+			in?: string;
 			/** * `checkout_new` - Checkout new Subscription * `checkout_existing` - Checkout existing Subscription * `update_card` - **(Deprecated)** Update Card for a Customer * `update_payment_method` - **(Deprecated)** Update Payment Method for a Customer * `manage_payment_sources` - Manage Payments for a… */
-			not_in?: "checkout_new" | "checkout_existing" | "manage_payment_sources" | "collect_now" | "extend_subscription" | "checkout_one_time" | "pre_cancel" | "view_voucher" | "accept_quote";
+			not_in?: string;
 		};
 		/** optional, enumerated string filter Indicating the current state of the hosted page resource. Possible values are : created, requested, succeeded, cancelled, acknowledged. **Supported operators :** is, is_not, in, not_in **Example →** *state\[is\] = "succeeded"* */
 		state?: {
@@ -23075,9 +23075,9 @@ export type ChargebeeOperationInputs = {
 			/** * `created` - Indicates the hosted page is just created. * `requested` - Indicates the hosted page is requested by the website * `succeeded` - Indicates the hosted page is successfully submitted by the user and response is sent to the return url. * `cancelled` - Indicates the page is cancelled… */
 			is_not?: "created" | "requested" | "succeeded" | "cancelled" | "acknowledged";
 			/** * `created` - Indicates the hosted page is just created. * `requested` - Indicates the hosted page is requested by the website * `succeeded` - Indicates the hosted page is successfully submitted by the user and response is sent to the return url. * `cancelled` - Indicates the page is cancelled… */
-			in?: "created" | "requested" | "succeeded" | "cancelled" | "acknowledged";
+			in?: string;
 			/** * `created` - Indicates the hosted page is just created. * `requested` - Indicates the hosted page is requested by the website * `succeeded` - Indicates the hosted page is successfully submitted by the user and response is sent to the return url. * `cancelled` - Indicates the page is cancelled… */
-			not_in?: "created" | "requested" | "succeeded" | "cancelled" | "acknowledged";
+			not_in?: string;
 		};
 		/** optional, timestamp(UTC) in seconds filter Timestamp indicating when this hosted page was last updated. **Supported operators :** after, before, on, between **Example →** *updated_at\[on\] = "1490784813"* */
 		updated_at?: {
@@ -24544,9 +24544,9 @@ export type ChargebeeOperationInputs = {
 			/** * `paid` - Indicates a paid invoice. * `posted` - Indicates the payment is not yet collected and will be in this state till the due date to indicate the due period * `payment_due` - Indicates the payment is not yet collected and is being retried as per retry settings. * `not_paid` - Indicates… */
 			is_not?: "paid" | "posted" | "payment_due" | "not_paid" | "voided" | "pending";
 			/** * `paid` - Indicates a paid invoice. * `posted` - Indicates the payment is not yet collected and will be in this state till the due date to indicate the due period * `payment_due` - Indicates the payment is not yet collected and is being retried as per retry settings. * `not_paid` - Indicates… */
-			in?: "paid" | "posted" | "payment_due" | "not_paid" | "voided" | "pending";
+			in?: string;
 			/** * `paid` - Indicates a paid invoice. * `posted` - Indicates the payment is not yet collected and will be in this state till the due date to indicate the due period * `payment_due` - Indicates the payment is not yet collected and is being retried as per retry settings. * `not_paid` - Indicates… */
-			not_in?: "paid" | "posted" | "payment_due" | "not_paid" | "voided" | "pending";
+			not_in?: string;
 		};
 		/** optional, enumerated string filter The price type of the invoice. Possible values are : tax_exclusive, tax_inclusive. **Supported operators :** is, is_not, in, not_in **Example →** *price_type\[is\] = "tax_exclusive"* */
 		price_type?: {
@@ -24555,9 +24555,9 @@ export type ChargebeeOperationInputs = {
 			/** * `tax_exclusive` - All amounts in the document are exclusive of tax. * `tax_inclusive` - All amounts in the document are inclusive of tax. */
 			is_not?: "tax_exclusive" | "tax_inclusive";
 			/** * `tax_exclusive` - All amounts in the document are exclusive of tax. * `tax_inclusive` - All amounts in the document are inclusive of tax. */
-			in?: "tax_exclusive" | "tax_inclusive";
+			in?: string;
 			/** * `tax_exclusive` - All amounts in the document are exclusive of tax. * `tax_inclusive` - All amounts in the document are inclusive of tax. */
-			not_in?: "tax_exclusive" | "tax_inclusive";
+			not_in?: string;
 		};
 		/** optional, timestamp(UTC) in seconds filter The document date displayed on the invoice PDF. **Supported operators :** after, before, on, between **Example →** *date\[on\] = "1394532759"* */
 		date?: {
@@ -24630,9 +24630,9 @@ export type ChargebeeOperationInputs = {
 			/** * `in_progress` - Dunning is still in progress. * `exhausted` - Maximum number of attempts have been made. * `stopped` - Dunning has stopped for this invoice. * `success` - Payment successfully collected during dunning process. */
 			is_not?: "in_progress" | "exhausted" | "stopped" | "success";
 			/** * `in_progress` - Dunning is still in progress. * `exhausted` - Maximum number of attempts have been made. * `stopped` - Dunning has stopped for this invoice. * `success` - Payment successfully collected during dunning process. */
-			in?: "in_progress" | "exhausted" | "stopped" | "success";
+			in?: string;
 			/** * `in_progress` - Dunning is still in progress. * `exhausted` - Maximum number of attempts have been made. * `stopped` - Dunning has stopped for this invoice. * `success` - Payment successfully collected during dunning process. */
-			not_in?: "in_progress" | "exhausted" | "stopped" | "success";
+			not_in?: string;
 			is_present?: "true" | "false";
 		};
 		/** optional, string filter Payment owner of an invoice. **Supported operators :** is, is_not, starts_with, in, not_in **Example →** *payment_owner\[is\] = "payment_customer"* */
@@ -24657,9 +24657,9 @@ export type ChargebeeOperationInputs = {
 			/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
 			is_not?: "web" | "app_store" | "play_store";
 			/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-			in?: "web" | "app_store" | "play_store";
+			in?: string;
 			/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-			not_in?: "web" | "app_store" | "play_store";
+			not_in?: string;
 		};
 		/** optional, timestamp(UTC) in seconds filter Timestamp indicating the date \& time this invoice got voided. **Supported operators :** after, before, on, between **Example →** *voided_at\[on\] = "1394532759"* */
 		voided_at?: {
@@ -24693,9 +24693,9 @@ export type ChargebeeOperationInputs = {
 				/** * `scheduled` - Sending the e-invoice to the customer has been scheduled. * `skipped` - The e-invoice was not sent. This could be due to missing information or because the `entity_identifier` is not registered on the e-invoicing network. * `in_progress` - The e-invoice has been sent and… */
 				is_not?: "scheduled" | "skipped" | "in_progress" | "success" | "failed" | "registered" | "accepted" | "rejected" | "message_acknowledgement" | "in_process" | "under_query" | "conditionally_accepted" | "paid";
 				/** * `scheduled` - Sending the e-invoice to the customer has been scheduled. * `skipped` - The e-invoice was not sent. This could be due to missing information or because the `entity_identifier` is not registered on the e-invoicing network. * `in_progress` - The e-invoice has been sent and… */
-				in?: "scheduled" | "skipped" | "in_progress" | "success" | "failed" | "registered" | "accepted" | "rejected" | "message_acknowledgement" | "in_process" | "under_query" | "conditionally_accepted" | "paid";
+				in?: string;
 				/** * `scheduled` - Sending the e-invoice to the customer has been scheduled. * `skipped` - The e-invoice was not sent. This could be due to missing information or because the `entity_identifier` is not registered on the e-invoicing network. * `in_progress` - The e-invoice has been sent and… */
-				not_in?: "scheduled" | "skipped" | "in_progress" | "success" | "failed" | "registered" | "accepted" | "rejected" | "message_acknowledgement" | "in_process" | "under_query" | "conditionally_accepted" | "paid";
+				not_in?: string;
 			};
 		};
 	};
@@ -24735,9 +24735,9 @@ export type ChargebeeOperationInputs = {
 			/** * `active` - Active and ready to be consumed * `consumed` - Consumed for a transaction and cannot be used again * `expired` - Expired before consumed and cannot be used again * `failure` - Failed to create the voucher due to gateway rejection */
 			is_not?: "active" | "consumed" | "expired" | "failure";
 			/** * `active` - Active and ready to be consumed * `consumed` - Consumed for a transaction and cannot be used again * `expired` - Expired before consumed and cannot be used again * `failure` - Failed to create the voucher due to gateway rejection */
-			in?: "active" | "consumed" | "expired" | "failure";
+			in?: string;
 			/** * `active` - Active and ready to be consumed * `consumed` - Consumed for a transaction and cannot be used again * `expired` - Expired before consumed and cannot be used again * `failure` - Failed to create the voucher due to gateway rejection */
-			not_in?: "active" | "consumed" | "expired" | "failure";
+			not_in?: string;
 		};
 		/** optional, string filter Sorts based on the specified attribute. **Supported attributes :** date, updated_at **Supported sort-orders :** asc, desc **Example →** *sort_by\[asc\] = "date"* This will sort the result based on the 'date' attribute in ascending(earliest first) order. */
 		sort_by?: {
@@ -25452,9 +25452,9 @@ export type ChargebeeOperationInputs = {
 			/** * `flat_fee` - A fixed price that is not quantity-based. * `per_unit` - A fixed price per unit quantity. * `tiered` - The per unit price is based on the tier that the total quantity falls in. * `volume` - There are quantity tiers for which per unit prices are set. Quantities are purchased from… */
 			is_not?: "flat_fee" | "per_unit" | "tiered" | "volume" | "stairstep";
 			/** * `flat_fee` - A fixed price that is not quantity-based. * `per_unit` - A fixed price per unit quantity. * `tiered` - The per unit price is based on the tier that the total quantity falls in. * `volume` - There are quantity tiers for which per unit prices are set. Quantities are purchased from… */
-			in?: "flat_fee" | "per_unit" | "tiered" | "volume" | "stairstep";
+			in?: string;
 			/** * `flat_fee` - A fixed price that is not quantity-based. * `per_unit` - A fixed price per unit quantity. * `tiered` - The per unit price is based on the tier that the total quantity falls in. * `volume` - There are quantity tiers for which per unit prices are set. Quantities are purchased from… */
-			not_in?: "flat_fee" | "per_unit" | "tiered" | "volume" | "stairstep";
+			not_in?: string;
 		};
 		/** optional, string filter Filter item prices based on their `item_id` . **Supported operators :** is, is_not, starts_with, in, not_in **Example →** *item_id\[is\] = "basic"* */
 		item_id?: {
@@ -25479,9 +25479,9 @@ export type ChargebeeOperationInputs = {
 			/** * `plan` - An essential component of a subscription. Every subscription has exactly one plan. It has a recurring charge and its period defines the billing period of the subscription. * `addon` - A recurring component that can be added to a subscription in addition to its plan. * `charge` - A… */
 			is_not?: "plan" | "addon" | "charge";
 			/** * `plan` - An essential component of a subscription. Every subscription has exactly one plan. It has a recurring charge and its period defines the billing period of the subscription. * `addon` - A recurring component that can be added to a subscription in addition to its plan. * `charge` - A… */
-			in?: "plan" | "addon" | "charge";
+			in?: string;
 			/** * `plan` - An essential component of a subscription. Every subscription has exactly one plan. It has a recurring charge and its period defines the billing period of the subscription. * `addon` - A recurring component that can be added to a subscription in addition to its plan. * `charge` - A… */
-			not_in?: "plan" | "addon" | "charge";
+			not_in?: string;
 		};
 		/** optional, string filter Filter item prices based on their `currency_code` . **Supported operators :** is, is_not, starts_with, in, not_in **Example →** *currency_code\[is_not\] = "USD"* */
 		currency_code?: {
@@ -25516,9 +25516,9 @@ export type ChargebeeOperationInputs = {
 			/** * `day` - A period of 24 hours. * `month` - A period of 1 calendar month. */
 			is_not?: "day" | "month";
 			/** * `day` - A period of 24 hours. * `month` - A period of 1 calendar month. */
-			in?: "day" | "month";
+			in?: string;
 			/** * `day` - A period of 24 hours. * `month` - A period of 1 calendar month. */
-			not_in?: "day" | "month";
+			not_in?: string;
 		};
 		/** optional, enumerated string filter Filter item prices based on their `status`. Possible values are : active, archived. **Supported operators :** is, is_not, in, not_in **Example →** *status\[is\] = "active"* */
 		status?: {
@@ -25527,9 +25527,9 @@ export type ChargebeeOperationInputs = {
 			/** * `active` - The item price can be used in subscriptions. * `archived` - The item price is no longer active and cannot be used in new subscriptions or added to existing ones. Existing subscriptions that already have this item price will continue to renew with the item price. * `deleted` -… */
 			is_not?: "active" | "archived" | "deleted";
 			/** * `active` - The item price can be used in subscriptions. * `archived` - The item price is no longer active and cannot be used in new subscriptions or added to existing ones. Existing subscriptions that already have this item price will continue to renew with the item price. * `deleted` -… */
-			in?: "active" | "archived" | "deleted";
+			in?: string;
 			/** * `active` - The item price can be used in subscriptions. * `archived` - The item price is no longer active and cannot be used in new subscriptions or added to existing ones. Existing subscriptions that already have this item price will continue to renew with the item price. * `deleted` -… */
-			not_in?: "active" | "archived" | "deleted";
+			not_in?: string;
 		};
 		/** optional, timestamp(UTC) in seconds filter Filter item prices based on their `updated_at` . **Supported operators :** after, before, on, between **Example →** *updated_at\[after\] = "1243545465"* */
 		updated_at?: {
@@ -25554,9 +25554,9 @@ export type ChargebeeOperationInputs = {
 			/** * `day` - A period of 24 hours. * `week` - A period of 7 days. * `month` - A period of 1 calendar month. * `year` - A period of 1 calendar year. */
 			is_not?: "day" | "week" | "month" | "year";
 			/** * `day` - A period of 24 hours. * `week` - A period of 7 days. * `month` - A period of 1 calendar month. * `year` - A period of 1 calendar year. */
-			in?: "day" | "week" | "month" | "year";
+			in?: string;
 			/** * `day` - A period of 24 hours. * `week` - A period of 7 days. * `month` - A period of 1 calendar month. * `year` - A period of 1 calendar year. */
-			not_in?: "day" | "week" | "month" | "year";
+			not_in?: string;
 		};
 		/** optional, integer filter Filter item prices based on their `period` . **Supported operators :** is, is_not, lt, lte, gt, gte, between **Example →** *period\[is\] = "3"* */
 		period?: {
@@ -25575,9 +25575,9 @@ export type ChargebeeOperationInputs = {
 			/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
 			is_not?: "web" | "app_store" | "play_store";
 			/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-			in?: "web" | "app_store" | "play_store";
+			in?: string;
 			/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-			not_in?: "web" | "app_store" | "play_store";
+			not_in?: string;
 		};
 		/** optional, string filter Sorts based on the specified attribute. **Supported attributes :** name, id, updated_at **Supported sort-orders :** asc, desc **Example →** *sort_by\[asc\] = "name"* This will sort the result based on the 'name' attribute in ascending(earliest first) order. */
 		sort_by?: {
@@ -25877,9 +25877,9 @@ export type ChargebeeOperationInputs = {
 			/** * `plan` - An essential component of a subscription. Every subscription has exactly one plan. It has a recurring charge and its period defines the billing period of the subscription. * `addon` - A recurring component that can be added to a subscription in addition to its plan. * `charge` - A… */
 			is_not?: "plan" | "addon" | "charge";
 			/** * `plan` - An essential component of a subscription. Every subscription has exactly one plan. It has a recurring charge and its period defines the billing period of the subscription. * `addon` - A recurring component that can be added to a subscription in addition to its plan. * `charge` - A… */
-			in?: "plan" | "addon" | "charge";
+			in?: string;
 			/** * `plan` - An essential component of a subscription. Every subscription has exactly one plan. It has a recurring charge and its period defines the billing period of the subscription. * `addon` - A recurring component that can be added to a subscription in addition to its plan. * `charge` - A… */
-			not_in?: "plan" | "addon" | "charge";
+			not_in?: string;
 		};
 		/** optional, string filter Filter items based on item `name` . **Supported operators :** is, is_not, starts_with **Example →** *name\[is_not\] = "basic"* */
 		name?: {
@@ -25894,9 +25894,9 @@ export type ChargebeeOperationInputs = {
 			/** * `all` - all addon-items and charge-items are applicable to this plan-item. * `restricted` - only the addon-items or charge-items provided in `applicable_items` can be applied to this plan-item. */
 			is_not?: "all" | "restricted";
 			/** * `all` - all addon-items and charge-items are applicable to this plan-item. * `restricted` - only the addon-items or charge-items provided in `applicable_items` can be applied to this plan-item. */
-			in?: "all" | "restricted";
+			in?: string;
 			/** * `all` - all addon-items and charge-items are applicable to this plan-item. * `restricted` - only the addon-items or charge-items provided in `applicable_items` can be applied to this plan-item. */
-			not_in?: "all" | "restricted";
+			not_in?: string;
 		};
 		/** optional, enumerated string filter Filter items based on item `status`. Possible values are : active, archived. **Supported operators :** is, is_not, in, not_in **Example →** *status\[is\] = "active"* */
 		status?: {
@@ -25905,9 +25905,9 @@ export type ChargebeeOperationInputs = {
 			/** * `active` - The item can be used to create new item prices. * `archived` - The item is no longer active and no new item prices can be created * `deleted` - Indicates that the item has been [deleted](./items?prod_cat_ver=2#delete_an_item). The `id` and `name` can be reused. Deleted items can be… */
 			is_not?: "active" | "archived" | "deleted";
 			/** * `active` - The item can be used to create new item prices. * `archived` - The item is no longer active and no new item prices can be created * `deleted` - Indicates that the item has been [deleted](./items?prod_cat_ver=2#delete_an_item). The `id` and `name` can be reused. Deleted items can be… */
-			in?: "active" | "archived" | "deleted";
+			in?: string;
 			/** * `active` - The item can be used to create new item prices. * `archived` - The item is no longer active and no new item prices can be created * `deleted` - Indicates that the item has been [deleted](./items?prod_cat_ver=2#delete_an_item). The `id` and `name` can be reused. Deleted items can be… */
-			not_in?: "active" | "archived" | "deleted";
+			not_in?: string;
 		};
 		/** optional, boolean filter Specifies if gift subscriptions can be created for this item. Possible values are : *true, false* **Supported operators :** is **Example →** *is_giftable\[is\] = "true"* */
 		is_giftable?: {
@@ -25939,9 +25939,9 @@ export type ChargebeeOperationInputs = {
 			/** * `sum_of_usages` - the net quantity is the sum of the `quantity` of all usages for the current term. * `last_usage` - from among the usage records for the [item price](/docs/api/subscriptions?prod_cat_ver=2#subscription_subscription_items_item_price_id) with `usage_date` within the relevant… */
 			is_not?: "sum_of_usages" | "last_usage" | "max_usage";
 			/** * `sum_of_usages` - the net quantity is the sum of the `quantity` of all usages for the current term. * `last_usage` - from among the usage records for the [item price](/docs/api/subscriptions?prod_cat_ver=2#subscription_subscription_items_item_price_id) with `usage_date` within the relevant… */
-			in?: "sum_of_usages" | "last_usage" | "max_usage";
+			in?: string;
 			/** * `sum_of_usages` - the net quantity is the sum of the `quantity` of all usages for the current term. * `last_usage` - from among the usage records for the [item price](/docs/api/subscriptions?prod_cat_ver=2#subscription_subscription_items_item_price_id) with `usage_date` within the relevant… */
-			not_in?: "sum_of_usages" | "last_usage" | "max_usage";
+			not_in?: string;
 		};
 		/** optional, enumerated string filter The subscription channel this object originated from and is maintained in. Possible values are : web, app_store, play_store. **Supported operators :** is, is_not, in, not_in **Example →** *channel\[is\] = "APP STORE"* */
 		channel?: {
@@ -25950,9 +25950,9 @@ export type ChargebeeOperationInputs = {
 			/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
 			is_not?: "web" | "app_store" | "play_store";
 			/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-			in?: "web" | "app_store" | "play_store";
+			in?: string;
 			/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-			not_in?: "web" | "app_store" | "play_store";
+			not_in?: string;
 		};
 		/** optional, string filter The unique ID of the [business entity](/docs/api/business_entities) of this `item`. [Learn more](/docs/api/using_business_entity_filters_in_product_catalog_list_apis) about all the scenarios before using this filter. **Supported operators :** is, is_present **Example →**… */
 		business_entity_id?: {
@@ -25977,9 +25977,9 @@ export type ChargebeeOperationInputs = {
 				/** * `fixed` - Fixed `bundle_configurations.type` appears when you create a bundle plan that cannot be updated during checkout or subscription creation. */
 				is_not?: "fixed";
 				/** * `fixed` - Fixed `bundle_configurations.type` appears when you create a bundle plan that cannot be updated during checkout or subscription creation. */
-				in?: "fixed";
+				in?: string;
 				/** * `fixed` - Fixed `bundle_configurations.type` appears when you create a bundle plan that cannot be updated during checkout or subscription creation. */
-				not_in?: "fixed";
+				not_in?: string;
 			};
 		};
 	};
@@ -26014,9 +26014,9 @@ export type ChargebeeOperationInputs = {
 			/** * `recommended` - The addon is recommended to go with the plan-item when using [Checkout](https://www.chargebee.com/docs/2.0/configure-inapp.html#fundamental-settings_recommending-addons-in-checkout) or… */
 			is_not?: "recommended" | "mandatory" | "optional";
 			/** * `recommended` - The addon is recommended to go with the plan-item when using [Checkout](https://www.chargebee.com/docs/2.0/configure-inapp.html#fundamental-settings_recommending-addons-in-checkout) or… */
-			in?: "recommended" | "mandatory" | "optional";
+			in?: string;
 			/** * `recommended` - The addon is recommended to go with the plan-item when using [Checkout](https://www.chargebee.com/docs/2.0/configure-inapp.html#fundamental-settings_recommending-addons-in-checkout) or… */
-			not_in?: "recommended" | "mandatory" | "optional";
+			not_in?: string;
 		};
 		/** optional, enumerated string filter To filter based on the type of of the attached item. Possible values are : `addon` , `charge`. Possible values are : plan, addon, charge. **Supported operators :** is, is_not, in, not_in **Example →** *item_type\[is_not\] = "plan"* */
 		item_type?: {
@@ -26025,9 +26025,9 @@ export type ChargebeeOperationInputs = {
 			/** * `plan` - An essential component of a subscription. Every subscription has exactly one plan. It has a recurring charge and its period defines the billing period of the subscription. * `addon` - A recurring component that can be added to a subscription in addition to its plan. * `charge` - A… */
 			is_not?: "plan" | "addon" | "charge";
 			/** * `plan` - An essential component of a subscription. Every subscription has exactly one plan. It has a recurring charge and its period defines the billing period of the subscription. * `addon` - A recurring component that can be added to a subscription in addition to its plan. * `charge` - A… */
-			in?: "plan" | "addon" | "charge";
+			in?: string;
 			/** * `plan` - An essential component of a subscription. Every subscription has exactly one plan. It has a recurring charge and its period defines the billing period of the subscription. * `addon` - A recurring component that can be added to a subscription in addition to its plan. * `charge` - A… */
-			not_in?: "plan" | "addon" | "charge";
+			not_in?: string;
 		};
 		/** optional, enumerated string filter Indicates when the item is charged. This attribute only applies to charge-items. Possible values are : subscription_creation, subscription_trial_start, plan_activation, subscription_activation, contract_termination, on_demand. **Supported operators :** is,… */
 		charge_on_event?: {
@@ -26036,9 +26036,9 @@ export type ChargebeeOperationInputs = {
 			/** * `subscription_creation` - the time of creation of the subscription. * `subscription_trial_start` - the time when the trial period of the subscription begins. * `plan_activation` - same as subscription activation, but also includes the case when the plan-item of the subscription is changed. *… */
 			is_not?: "subscription_creation" | "subscription_trial_start" | "plan_activation" | "subscription_activation" | "contract_termination" | "on_demand";
 			/** * `subscription_creation` - the time of creation of the subscription. * `subscription_trial_start` - the time when the trial period of the subscription begins. * `plan_activation` - same as subscription activation, but also includes the case when the plan-item of the subscription is changed. *… */
-			in?: "subscription_creation" | "subscription_trial_start" | "plan_activation" | "subscription_activation" | "contract_termination" | "on_demand";
+			in?: string;
 			/** * `subscription_creation` - the time of creation of the subscription. * `subscription_trial_start` - the time when the trial period of the subscription begins. * `plan_activation` - same as subscription activation, but also includes the case when the plan-item of the subscription is changed. *… */
-			not_in?: "subscription_creation" | "subscription_trial_start" | "plan_activation" | "subscription_activation" | "contract_termination" | "on_demand";
+			not_in?: string;
 		};
 		/** optional, timestamp(UTC) in seconds filter Filter attached items based on when the attached items were last updated. **Supported operators :** after, before, on, between **Example →** *updated_at\[after\] = "1243545465"* */
 		updated_at?: {
@@ -26309,7 +26309,7 @@ export type ChargebeeOperationInputs = {
 			/** * `allocation` - Allocation Operation * `capture` - Capture Operation * `authorize` - Authorization Operation * `release_authorization` - Release Authorization Operation * `capture_authorization` - Capture Authorization Operation * `expiry` - Expiry Operation * `void` - Void Operation *… */
 			is?: "allocation" | "capture" | "authorize" | "release_authorization" | "capture_authorization" | "expiry" | "void" | "rollover" | "adjustment" | "overdraft_settlement";
 			/** * `allocation` - Allocation Operation * `capture` - Capture Operation * `authorize` - Authorization Operation * `release_authorization` - Release Authorization Operation * `capture_authorization` - Capture Authorization Operation * `expiry` - Expiry Operation * `void` - Void Operation *… */
-			in?: "allocation" | "capture" | "authorize" | "release_authorization" | "capture_authorization" | "expiry" | "void" | "rollover" | "adjustment" | "overdraft_settlement";
+			in?: string;
 		};
 		/** optional, string filter Specifies the field used to sort the result set. **Supported attributes** * `created_at` **Sort Order** * `asc` (ascending order) * `desc` (descending order) **Example →** *sort_by\[desc\] = "created_at"* This sorts operations by `created_at` in descending order (most… */
 		sort_by?: {
@@ -26518,9 +26518,9 @@ export type ChargebeeOperationInputs = {
 			/** * `apple_app_store` - Source of the app is apple app store * `google_play_store` - Source of the app is google play store * `roku` - Source of the app is roku * `amazon_app_store` - Source of the app is amazon app store */
 			is_not?: "apple_app_store" | "google_play_store" | "roku" | "amazon_app_store";
 			/** * `apple_app_store` - Source of the app is apple app store * `google_play_store` - Source of the app is google play store * `roku` - Source of the app is roku * `amazon_app_store` - Source of the app is amazon app store */
-			in?: "apple_app_store" | "google_play_store" | "roku" | "amazon_app_store";
+			in?: string;
 			/** * `apple_app_store` - Source of the app is apple app store * `google_play_store` - Source of the app is google play store * `roku` - Source of the app is roku * `amazon_app_store` - Source of the app is amazon app store */
-			not_in?: "apple_app_store" | "google_play_store" | "roku" | "amazon_app_store";
+			not_in?: string;
 		};
 		/** optional, string filter Chargebee Customer External Identifier. **Supported operators :** is, is_not, starts_with **Example →** *customer_id\[is\] = "8gsnbYfsMLds"* */
 		customer_id?: {
@@ -26557,9 +26557,9 @@ export type ChargebeeOperationInputs = {
 			/** * `apple_app_store` - Source of the app is apple app store * `google_play_store` - Source of the app is google play store * `roku` - Source of the app is roku * `amazon_app_store` - Source of the app is amazon app store */
 			is_not?: "apple_app_store" | "google_play_store" | "roku" | "amazon_app_store";
 			/** * `apple_app_store` - Source of the app is apple app store * `google_play_store` - Source of the app is google play store * `roku` - Source of the app is roku * `amazon_app_store` - Source of the app is amazon app store */
-			in?: "apple_app_store" | "google_play_store" | "roku" | "amazon_app_store";
+			in?: string;
 			/** * `apple_app_store` - Source of the app is apple app store * `google_play_store` - Source of the app is google play store * `roku` - Source of the app is roku * `amazon_app_store` - Source of the app is amazon app store */
-			not_in?: "apple_app_store" | "google_play_store" | "roku" | "amazon_app_store";
+			not_in?: string;
 		};
 		/** optional, string filter Chargebee Customer External Identifier. **Supported operators :** is, is_not, starts_with, in, not_in **Example →** *customer_id\[is\] = "8gsnbYfsMLds"* */
 		customer_id?: {
@@ -26613,9 +26613,9 @@ export type ChargebeeOperationInputs = {
 				/** * `active` - active * `expired` - expired * `cancelled` - cancelled * `in_dunning` - in_dunning * `in_grace_period` - in_grace_period * `paused` - paused */
 				is_not?: "active" | "expired" | "cancelled" | "in_dunning" | "in_grace_period" | "paused";
 				/** * `active` - active * `expired` - expired * `cancelled` - cancelled * `in_dunning` - in_dunning * `in_grace_period` - in_grace_period * `paused` - paused */
-				in?: "active" | "expired" | "cancelled" | "in_dunning" | "in_grace_period" | "paused";
+				in?: string;
 				/** * `active` - active * `expired` - expired * `cancelled` - cancelled * `in_dunning` - in_dunning * `in_grace_period` - in_grace_period * `paused` - paused */
-				not_in?: "active" | "expired" | "cancelled" | "in_dunning" | "in_grace_period" | "paused";
+				not_in?: string;
 			};
 			/** Product ID in the [`source`](omnichannel_subscriptions#omnichannel_subscription_source). */
 			item_id_at_source?: {
@@ -26904,9 +26904,9 @@ export type ChargebeeOperationInputs = {
 			/** * `new` - Order has been created. Applicable only if you are using Chargebee's legacy order management system. * `processing` - Order is being processed. Applicable only if you are using Chargebee's legacy order management system * `complete` - Order has been processed successfully. Applicable… */
 			is_not?: "new" | "processing" | "complete" | "cancelled" | "voided" | "queued" | "awaiting_shipment" | "on_hold" | "delivered" | "shipped" | "partially_delivered" | "returned";
 			/** * `new` - Order has been created. Applicable only if you are using Chargebee's legacy order management system. * `processing` - Order is being processed. Applicable only if you are using Chargebee's legacy order management system * `complete` - Order has been processed successfully. Applicable… */
-			in?: "new" | "processing" | "complete" | "cancelled" | "voided" | "queued" | "awaiting_shipment" | "on_hold" | "delivered" | "shipped" | "partially_delivered" | "returned";
+			in?: string;
 			/** * `new` - Order has been created. Applicable only if you are using Chargebee's legacy order management system. * `processing` - Order is being processed. Applicable only if you are using Chargebee's legacy order management system * `complete` - Order has been processed successfully. Applicable… */
-			not_in?: "new" | "processing" | "complete" | "cancelled" | "voided" | "queued" | "awaiting_shipment" | "on_hold" | "delivered" | "shipped" | "partially_delivered" | "returned";
+			not_in?: string;
 		};
 		/** optional, timestamp(UTC) in seconds filter This is the date on which the order will be delivered to the customer. **Supported operators :** after, before, on, between **Example →** *shipping_date\[after\] = "1435054328"* */
 		shipping_date?: {
@@ -26929,9 +26929,9 @@ export type ChargebeeOperationInputs = {
 			/** * `manual` - The order has been created by the the user using Chargebee's legacy order management system. * `system_generated` - The order has been created by Chargebee automatically based on the preferences set by the user. */
 			is_not?: "manual" | "system_generated";
 			/** * `manual` - The order has been created by the the user using Chargebee's legacy order management system. * `system_generated` - The order has been created by Chargebee automatically based on the preferences set by the user. */
-			in?: "manual" | "system_generated";
+			in?: string;
 			/** * `manual` - The order has been created by the the user using Chargebee's legacy order management system. * `system_generated` - The order has been created by Chargebee automatically based on the preferences set by the user. */
-			not_in?: "manual" | "system_generated";
+			not_in?: string;
 		};
 		/** optional, timestamp(UTC) in seconds filter The date on which the order will start getting processed. **Supported operators :** after, before, on, between **Example →** *order_date\[before\] = "1435054328"* */
 		order_date?: {
@@ -26968,9 +26968,9 @@ export type ChargebeeOperationInputs = {
 			/** * `fully_resent` - Order is Fully resent * `partially_resent` - Order is Partially resent */
 			is_not?: "fully_resent" | "partially_resent";
 			/** * `fully_resent` - Order is Fully resent * `partially_resent` - Order is Partially resent */
-			in?: "fully_resent" | "partially_resent";
+			in?: string;
 			/** * `fully_resent` - Order is Fully resent * `partially_resent` - Order is Partially resent */
-			not_in?: "fully_resent" | "partially_resent";
+			not_in?: string;
 		};
 		/** optional, boolean filter Order is resent order or not. Possible values are : *true, false* **Supported operators :** is **Example →** *is_resent\[is\] = "false"* */
 		is_resent?: {
@@ -27660,9 +27660,9 @@ export type ChargebeeOperationInputs = {
 			/** * `card` - Card based payment including credit cards and debit cards. Details about the card can be obtained from the card resource. * `paypal_express_checkout` - Payments made via PayPal Express Checkout. * `amazon_payments` - Payments made via Amazon Payments. * `direct_debit` - Represents… */
 			is_not?: "card" | "paypal_express_checkout" | "amazon_payments" | "direct_debit" | "generic" | "alipay" | "unionpay" | "apple_pay" | "wechat_pay" | "ideal" | "google_pay" | "sofort" | "bancontact" | "giropay" | "dotpay" | "upi" | "netbanking_emandates" | "venmo" | "pay_to" | "faster_payments" | "sepa_instant_transfer" | "automated_bank_transfer" | "klarna_pay_now" | "online_banking_poland" | "payconiq_by_bancontact" | "electronic_payment_standard" | "kbc_payment_button" | "pay_by_bank" | "trustly" | "stablecoin" | "kakao_pay" | "naver_pay" | "revolut_pay" | "cash_app_pay" | "twint" | "go_pay" | "grab_pay" | "pay_co" | "after_pay" | "swish" | "payme" | "pix" | "klarna" | "alipay_hk" | "paypay" | "gcash" | "south_korean_cards" | "paynow" | "bizum" | "promptpay" | "dana" | "touch_n_go" | "tamara" | "qpay" | "ovo" | "momo" | "mercado_pago" | "nequi" | "nupay" | "picpay" | "thai_qr" | "blik" | "fpx" | "wero" | "p24" | "affirm_pay" | "rakuten_pay";
 			/** * `card` - Card based payment including credit cards and debit cards. Details about the card can be obtained from the card resource. * `paypal_express_checkout` - Payments made via PayPal Express Checkout. * `amazon_payments` - Payments made via Amazon Payments. * `direct_debit` - Represents… */
-			in?: "card" | "paypal_express_checkout" | "amazon_payments" | "direct_debit" | "generic" | "alipay" | "unionpay" | "apple_pay" | "wechat_pay" | "ideal" | "google_pay" | "sofort" | "bancontact" | "giropay" | "dotpay" | "upi" | "netbanking_emandates" | "venmo" | "pay_to" | "faster_payments" | "sepa_instant_transfer" | "automated_bank_transfer" | "klarna_pay_now" | "online_banking_poland" | "payconiq_by_bancontact" | "electronic_payment_standard" | "kbc_payment_button" | "pay_by_bank" | "trustly" | "stablecoin" | "kakao_pay" | "naver_pay" | "revolut_pay" | "cash_app_pay" | "twint" | "go_pay" | "grab_pay" | "pay_co" | "after_pay" | "swish" | "payme" | "pix" | "klarna" | "alipay_hk" | "paypay" | "gcash" | "south_korean_cards" | "paynow" | "bizum" | "promptpay" | "dana" | "touch_n_go" | "tamara" | "qpay" | "ovo" | "momo" | "mercado_pago" | "nequi" | "nupay" | "picpay" | "thai_qr" | "blik" | "fpx" | "wero" | "p24" | "affirm_pay" | "rakuten_pay";
+			in?: string;
 			/** * `card` - Card based payment including credit cards and debit cards. Details about the card can be obtained from the card resource. * `paypal_express_checkout` - Payments made via PayPal Express Checkout. * `amazon_payments` - Payments made via Amazon Payments. * `direct_debit` - Represents… */
-			not_in?: "card" | "paypal_express_checkout" | "amazon_payments" | "direct_debit" | "generic" | "alipay" | "unionpay" | "apple_pay" | "wechat_pay" | "ideal" | "google_pay" | "sofort" | "bancontact" | "giropay" | "dotpay" | "upi" | "netbanking_emandates" | "venmo" | "pay_to" | "faster_payments" | "sepa_instant_transfer" | "automated_bank_transfer" | "klarna_pay_now" | "online_banking_poland" | "payconiq_by_bancontact" | "electronic_payment_standard" | "kbc_payment_button" | "pay_by_bank" | "trustly" | "stablecoin" | "kakao_pay" | "naver_pay" | "revolut_pay" | "cash_app_pay" | "twint" | "go_pay" | "grab_pay" | "pay_co" | "after_pay" | "swish" | "payme" | "pix" | "klarna" | "alipay_hk" | "paypay" | "gcash" | "south_korean_cards" | "paynow" | "bizum" | "promptpay" | "dana" | "touch_n_go" | "tamara" | "qpay" | "ovo" | "momo" | "mercado_pago" | "nequi" | "nupay" | "picpay" | "thai_qr" | "blik" | "fpx" | "wero" | "p24" | "affirm_pay" | "rakuten_pay";
+			not_in?: string;
 		};
 		/** optional, enumerated string filter Current status of the payment source. Possible values are : valid, expiring, expired, invalid, pending_verification. **Supported operators :** is, is_not, in, not_in **Example →** *status\[is\] = "valid"* */
 		status?: {
@@ -27671,9 +27671,9 @@ export type ChargebeeOperationInputs = {
 			/** * `valid` - A payment source that is valid and active. * `expiring` - A payment source that is expiring (like card's status based on its expiry date). * `expired` - A payment source that has expired * `invalid` - The billing agreement cannot be used. It might become valid again either… */
 			is_not?: "valid" | "expiring" | "expired" | "invalid" | "pending_verification";
 			/** * `valid` - A payment source that is valid and active. * `expiring` - A payment source that is expiring (like card's status based on its expiry date). * `expired` - A payment source that has expired * `invalid` - The billing agreement cannot be used. It might become valid again either… */
-			in?: "valid" | "expiring" | "expired" | "invalid" | "pending_verification";
+			in?: string;
 			/** * `valid` - A payment source that is valid and active. * `expiring` - A payment source that is expiring (like card's status based on its expiry date). * `expired` - A payment source that has expired * `invalid` - The billing agreement cannot be used. It might become valid again either… */
-			not_in?: "valid" | "expiring" | "expired" | "invalid" | "pending_verification";
+			not_in?: string;
 		};
 		/** optional, timestamp(UTC) in seconds filter Timestamp indicating when this payment source resource was last updated. **Supported operators :** after, before, on, between **Example →** *updated_at\[on\] = "1435054328"* */
 		updated_at?: {
@@ -27935,9 +27935,9 @@ export type ChargebeeOperationInputs = {
 			/** * `plan` - PLAN * `addon` - ADDON */
 			is_not?: "plan" | "addon";
 			/** * `plan` - PLAN * `addon` - ADDON */
-			in?: "plan" | "addon";
+			in?: string;
 			/** * `plan` - PLAN * `addon` - ADDON */
-			not_in?: "plan" | "addon";
+			not_in?: string;
 		};
 		is_recurring?: {
 			is?: "true" | "false";
@@ -28372,9 +28372,9 @@ export type ChargebeeOperationInputs = {
 			/** * `day` - Charge based on day(s) * `week` - Charge based on week(s) * `month` - Charge based on month(s) * `year` - Charge based on year(s) */
 			is_not?: "day" | "week" | "month" | "year";
 			/** * `day` - Charge based on day(s) * `week` - Charge based on week(s) * `month` - Charge based on month(s) * `year` - Charge based on year(s) */
-			in?: "day" | "week" | "month" | "year";
+			in?: string;
 			/** * `day` - Charge based on day(s) * `week` - Charge based on week(s) * `month` - Charge based on month(s) * `year` - Charge based on year(s) */
-			not_in?: "day" | "week" | "month" | "year";
+			not_in?: string;
 		};
 		/** optional, integer filter The free time window for your customer to try your product. **Supported operators :** is, is_not, lt, lte, gt, gte, between, is_present **Example →** *trial_period\[lt\] = "14"* */
 		trial_period?: {
@@ -28394,9 +28394,9 @@ export type ChargebeeOperationInputs = {
 			/** * `day` - In days * `month` - In months */
 			is_not?: "day" | "month";
 			/** * `day` - In days * `month` - In months */
-			in?: "day" | "month";
+			in?: string;
 			/** * `day` - In days * `month` - In months */
-			not_in?: "day" | "month";
+			not_in?: string;
 		};
 		/** optional, enumerated string filter Indicates if all or only some addons are applicable with the plan. Possible values are : all, restricted. **Supported operators :** is, is_not, in, not_in **Example →** *addon_applicability\[is\] = "all"* */
 		addon_applicability?: {
@@ -28405,9 +28405,9 @@ export type ChargebeeOperationInputs = {
 			/** * `all` - All addons are applicable with this plan. * `restricted` - Only addons marked as 'applicable_addons' are applicable with the plan. */
 			is_not?: "all" | "restricted";
 			/** * `all` - All addons are applicable with this plan. * `restricted` - Only addons marked as 'applicable_addons' are applicable with the plan. */
-			in?: "all" | "restricted";
+			in?: string;
 			/** * `all` - All addons are applicable with this plan. * `restricted` - Only addons marked as 'applicable_addons' are applicable with the plan. */
-			not_in?: "all" | "restricted";
+			not_in?: string;
 		};
 		/** optional, boolean filter Specifies if the plan should be gifted or not. Possible values are : *true, false* **Supported operators :** is **Example →** *giftable\[is\] = "true"* */
 		giftable?: {
@@ -28420,9 +28420,9 @@ export type ChargebeeOperationInputs = {
 			/** * `flat_fee` - A fixed price that is not quantity-based. * `per_unit` - A fixed price per unit quantity. * `tiered` - The per unit price is based on the tier that the total quantity falls in. * `volume` - There are quantity tiers for which per unit prices are set. Quantities are purchased from… */
 			is_not?: "flat_fee" | "per_unit" | "tiered" | "volume" | "stairstep";
 			/** * `flat_fee` - A fixed price that is not quantity-based. * `per_unit` - A fixed price per unit quantity. * `tiered` - The per unit price is based on the tier that the total quantity falls in. * `volume` - There are quantity tiers for which per unit prices are set. Quantities are purchased from… */
-			in?: "flat_fee" | "per_unit" | "tiered" | "volume" | "stairstep";
+			in?: string;
 			/** * `flat_fee` - A fixed price that is not quantity-based. * `per_unit` - A fixed price per unit quantity. * `tiered` - The per unit price is based on the tier that the total quantity falls in. * `volume` - There are quantity tiers for which per unit prices are set. Quantities are purchased from… */
-			not_in?: "flat_fee" | "per_unit" | "tiered" | "volume" | "stairstep";
+			not_in?: string;
 		};
 		/** optional, enumerated string filter The plan state. Possible values are : active, archived, deleted. **Supported operators :** is, is_not, in, not_in **Example →** *status\[is\] = "active"* */
 		status?: {
@@ -28431,9 +28431,9 @@ export type ChargebeeOperationInputs = {
 			/** * `active` - New subscriptions can be created with the plan. * `archived` - No new subscriptions allowed for the plan. Existing subscriptions on this plan will remain as-is and can be migrated to another active plan if required. * `deleted` - Indicates the plan has been deleted. */
 			is_not?: "active" | "archived" | "deleted";
 			/** * `active` - New subscriptions can be created with the plan. * `archived` - No new subscriptions allowed for the plan. Existing subscriptions on this plan will remain as-is and can be migrated to another active plan if required. * `deleted` - Indicates the plan has been deleted. */
-			in?: "active" | "archived" | "deleted";
+			in?: string;
 			/** * `active` - New subscriptions can be created with the plan. * `archived` - No new subscriptions allowed for the plan. Existing subscriptions on this plan will remain as-is and can be migrated to another active plan if required. * `deleted` - Indicates the plan has been deleted. */
-			not_in?: "active" | "archived" | "deleted";
+			not_in?: string;
 		};
 		/** optional, timestamp(UTC) in seconds filter To filter based on updated at. This attribute will be present only if the resource has been updated after 2016-11-09. **Supported operators :** after, before, on, between **Example →** *updated_at\[before\] = "1243545465"* */
 		updated_at?: {
@@ -28457,9 +28457,9 @@ export type ChargebeeOperationInputs = {
 			/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
 			is_not?: "web" | "app_store" | "play_store";
 			/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-			in?: "web" | "app_store" | "play_store";
+			in?: string;
 			/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-			not_in?: "web" | "app_store" | "play_store";
+			not_in?: string;
 		};
 		/** If set to true, includes the deleted resources in the response. For the deleted resources in the response, the '**deleted** ' attribute will be '**true** '. */
 		include_deleted?: boolean;
@@ -28738,9 +28738,9 @@ export type ChargebeeOperationInputs = {
 			/** * `active` - Active * `archived` - Archived */
 			is_not?: "active" | "archived";
 			/** * `active` - Active * `archived` - Archived */
-			in?: "active" | "archived";
+			in?: string;
 			/** * `active` - Active * `archived` - Archived */
-			not_in?: "active" | "archived";
+			not_in?: string;
 		};
 		/** Filter price ramps based on the timestamp at which they were last updated. **Supported operators :** after, before, on, between */
 		updated_at?: {
@@ -28865,9 +28865,9 @@ export type ChargebeeOperationInputs = {
 			/** * `active` - Active * `archived` - Archived */
 			is_not?: "active" | "archived";
 			/** * `active` - Active * `archived` - Archived */
-			in?: "active" | "archived";
+			in?: string;
 			/** * `active` - Active * `archived` - Archived */
-			not_in?: "active" | "archived";
+			not_in?: string;
 		};
 		/** optional, timestamp(UTC) in seconds filter Filter product based on their `updated time` . **Supported operators :** after, before, on, between **Example →** *updated_at\[on\] = "1243545465"* */
 		updated_at?: {
@@ -29219,9 +29219,9 @@ export type ChargebeeOperationInputs = {
 			/** * `active` - active * `inactive` - inactive */
 			is_not?: "active" | "inactive";
 			/** * `active` - active * `inactive` - inactive */
-			in?: "active" | "inactive";
+			in?: string;
 			/** * `active` - active * `inactive` - inactive */
-			not_in?: "active" | "inactive";
+			not_in?: string;
 		};
 		/** optional, boolean filter Filter product based on whether it is shippable or not. Possible values are : *true, false* **Supported operators :** is **Example →** *shippable\[is\] = "true"* */
 		shippable?: {
@@ -29292,9 +29292,9 @@ export type ChargebeeOperationInputs = {
 			/** * `active` - active * `inactive` - inactive */
 			is_not?: "active" | "inactive";
 			/** * `active` - active * `inactive` - inactive */
-			in?: "active" | "inactive";
+			in?: string;
 			/** * `active` - active * `inactive` - inactive */
-			not_in?: "active" | "inactive";
+			not_in?: string;
 		};
 		/** optional, timestamp(UTC) in seconds filter Filter product based on their `updated time` . **Supported operators :** after, before, on, between **Example →** *updated_at\[before\] = "basic"* */
 		updated_at?: {
@@ -29443,9 +29443,9 @@ export type ChargebeeOperationInputs = {
 			/** * `increment` - Increment * `decrement` - Decrement */
 			is_not?: "increment" | "decrement";
 			/** * `increment` - Increment * `decrement` - Decrement */
-			in?: "increment" | "decrement";
+			in?: string;
 			/** * `increment` - Increment * `decrement` - Decrement */
-			not_in?: "increment" | "decrement";
+			not_in?: string;
 		};
 		/** optional, string filter Identifier of the customer. **Supported operators :** is, is_not, starts_with **Example →** *customer_id\[is\] = "4gkYnd21ouvW"* */
 		customer_id?: {
@@ -31178,9 +31178,9 @@ export type ChargebeeOperationInputs = {
 			/** * `open` - Open * `accepted` - Accepted. * `declined` - Declined. * `invoiced` - Invoiced * `closed` - Closed * `pending_approval` - Pending Approval * `approval_rejected` - Approval Rejected * `proposed` - Proposed. * `voided` - Voided. * `expired` - Expired */
 			is_not?: "open" | "accepted" | "declined" | "invoiced" | "closed" | "pending_approval" | "approval_rejected" | "proposed" | "voided" | "expired";
 			/** * `open` - Open * `accepted` - Accepted. * `declined` - Declined. * `invoiced` - Invoiced * `closed` - Closed * `pending_approval` - Pending Approval * `approval_rejected` - Approval Rejected * `proposed` - Proposed. * `voided` - Voided. * `expired` - Expired */
-			in?: "open" | "accepted" | "declined" | "invoiced" | "closed" | "pending_approval" | "approval_rejected" | "proposed" | "voided" | "expired";
+			in?: string;
 			/** * `open` - Open * `accepted` - Accepted. * `declined` - Declined. * `invoiced` - Invoiced * `closed` - Closed * `pending_approval` - Pending Approval * `approval_rejected` - Approval Rejected * `proposed` - Proposed. * `voided` - Voided. * `expired` - Expired */
-			not_in?: "open" | "accepted" | "declined" | "invoiced" | "closed" | "pending_approval" | "approval_rejected" | "proposed" | "voided" | "expired";
+			not_in?: string;
 		};
 		/** optional, timestamp(UTC) in seconds filter Creation date of the quote. Typically this is the date on which quote is generated. **Supported operators :** after, before, on, between **Example →** *date\[on\] = "1435054328"* */
 		date?: {
@@ -31692,7 +31692,7 @@ export type ChargebeeOperationInputs = {
 			/** * `scheduled` - Status of the subscription schedule on creation. * `succeeded` - The execution status of the schedule if success. * `failed` - The execution status of the schedule if failed. * `draft` - Status of the subscription schedule considering as draft */
 			is?: "scheduled" | "succeeded" | "failed" | "draft";
 			/** * `scheduled` - Status of the subscription schedule on creation. * `succeeded` - The execution status of the schedule if success. * `failed` - The execution status of the schedule if failed. * `draft` - Status of the subscription schedule considering as draft */
-			in?: "scheduled" | "succeeded" | "failed" | "draft";
+			in?: string;
 		};
 		/** optional, string filter Filter subscription ramps based on `subscription_id` . **Caution** This filter is mandatory when filtering by `status` or `effective_from`. **Supported operators :** is, in **Example →** *subscription_id\[is\] = "8gsnbYfsMLds"* */
 		subscription_id: {
@@ -31947,9 +31947,9 @@ export type ChargebeeOperationInputs = {
 			/** * `customer` - Entity that represents a customer * `subscription` - Entity that represents a subscription of a customer * `invoice` - Invoice * `credit_note` - Credit note * `transaction` - Entity that represents a transaction. * `order` - Entity that represents an order */
 			is_not?: "customer" | "subscription" | "invoice" | "credit_note" | "transaction" | "order";
 			/** * `customer` - Entity that represents a customer * `subscription` - Entity that represents a subscription of a customer * `invoice` - Invoice * `credit_note` - Credit note * `transaction` - Entity that represents a transaction. * `order` - Entity that represents an order */
-			in?: "customer" | "subscription" | "invoice" | "credit_note" | "transaction" | "order";
+			in?: string;
 			/** * `customer` - Entity that represents a customer * `subscription` - Entity that represents a subscription of a customer * `invoice` - Invoice * `credit_note` - Credit note * `transaction` - Entity that represents a transaction. * `order` - Entity that represents an order */
-			not_in?: "customer" | "subscription" | "invoice" | "credit_note" | "transaction" | "order";
+			not_in?: string;
 		};
 		/** optional, enumerated string filter Status of the migration. Possible values are : moved_in, moved_out, moving_out. **Supported operators :** is, is_not, in, not_in **Example →** *status\[is\] = "MOVED_OUT"* */
 		status?: {
@@ -31958,9 +31958,9 @@ export type ChargebeeOperationInputs = {
 			/** * `moved_in` - Moved in from another cb site * `moved_out` - Moved out from one cb site to another * `moving_out` - Moving out from one cb site to another */
 			is_not?: "moved_in" | "moved_out" | "moving_out";
 			/** * `moved_in` - Moved in from another cb site * `moved_out` - Moved out from one cb site to another * `moving_out` - Moving out from one cb site to another */
-			in?: "moved_in" | "moved_out" | "moving_out";
+			in?: string;
 			/** * `moved_in` - Moved in from another cb site * `moved_out` - Moved out from one cb site to another * `moving_out` - Moving out from one cb site to another */
-			not_in?: "moved_in" | "moved_out" | "moving_out";
+			not_in?: string;
 		};
 	};
 	'sitePcMetaRecords.list': {
@@ -33371,9 +33371,9 @@ export type ChargebeeOperationInputs = {
 			/** * `future` - The subscription is scheduled to start at a future date. * `in_trial` - The subscription is in trial. * `active` - The subscription is active and will be charged for automatically based on the items in it. * `non_renewing` - The subscription will be canceled at the end of the… */
 			is_not?: "future" | "in_trial" | "active" | "non_renewing" | "paused" | "cancelled" | "transferred";
 			/** * `future` - The subscription is scheduled to start at a future date. * `in_trial` - The subscription is in trial. * `active` - The subscription is active and will be charged for automatically based on the items in it. * `non_renewing` - The subscription will be canceled at the end of the… */
-			in?: "future" | "in_trial" | "active" | "non_renewing" | "paused" | "cancelled" | "transferred";
+			in?: string;
 			/** * `future` - The subscription is scheduled to start at a future date. * `in_trial` - The subscription is in trial. * `active` - The subscription is active and will be charged for automatically based on the items in it. * `non_renewing` - The subscription will be canceled at the end of the… */
-			not_in?: "future" | "in_trial" | "active" | "non_renewing" | "paused" | "cancelled" | "transferred";
+			not_in?: string;
 		};
 		/** optional, enumerated string filter The reason for canceling the subscription. Set by Chargebee automatically. Possible values are : not_paid, no_card, fraud_review_failed, non_compliant_eu_customer, tax_calculation_failed, currency_incompatible_with_gateway, non_compliant_customer. **Supported… */
 		cancel_reason?: {
@@ -33382,9 +33382,9 @@ export type ChargebeeOperationInputs = {
 			/** * `not_paid` - Not Paid * `no_card` - No Card * `fraud_review_failed` - Fraud Review Failed * `non_compliant_eu_customer` - Non Compliant EU Customer * `tax_calculation_failed` - Tax Calculation Failed * `currency_incompatible_with_gateway` - Currency incompatible with Gateway *… */
 			is_not?: "not_paid" | "no_card" | "fraud_review_failed" | "non_compliant_eu_customer" | "tax_calculation_failed" | "currency_incompatible_with_gateway" | "non_compliant_customer";
 			/** * `not_paid` - Not Paid * `no_card` - No Card * `fraud_review_failed` - Fraud Review Failed * `non_compliant_eu_customer` - Non Compliant EU Customer * `tax_calculation_failed` - Tax Calculation Failed * `currency_incompatible_with_gateway` - Currency incompatible with Gateway *… */
-			in?: "not_paid" | "no_card" | "fraud_review_failed" | "non_compliant_eu_customer" | "tax_calculation_failed" | "currency_incompatible_with_gateway" | "non_compliant_customer";
+			in?: string;
 			/** * `not_paid` - Not Paid * `no_card` - No Card * `fraud_review_failed` - Fraud Review Failed * `non_compliant_eu_customer` - Non Compliant EU Customer * `tax_calculation_failed` - Tax Calculation Failed * `currency_incompatible_with_gateway` - Currency incompatible with Gateway *… */
-			not_in?: "not_paid" | "no_card" | "fraud_review_failed" | "non_compliant_eu_customer" | "tax_calculation_failed" | "currency_incompatible_with_gateway" | "non_compliant_customer";
+			not_in?: string;
 			is_present?: "true" | "false";
 		};
 		/** optional, string filter Reason code for canceling the subscription. Must be one from a list of reason codes set in the Chargebee app in **Settings \> Configure Chargebee \> Reason Codes \> Subscriptions \> Subscription Cancellation** . Must be passed if set as mandatory in the app. The codes are… */
@@ -33453,9 +33453,9 @@ export type ChargebeeOperationInputs = {
 			/** * `no_preference` - No Preference * `cash` - Cash * `check` - Check * `bank_transfer` - Bank Transfer * `ach_credit` - ACH Credit * `sepa_credit` - SEPA Credit * `boleto` - Boleto * `us_automated_bank_transfer` - US Automated Bank Transfer * `eu_automated_bank_transfer` - EU Automated Bank… */
 			is_not?: "no_preference" | "cash" | "check" | "bank_transfer" | "ach_credit" | "sepa_credit" | "boleto" | "us_automated_bank_transfer" | "eu_automated_bank_transfer" | "uk_automated_bank_transfer" | "jp_automated_bank_transfer" | "mx_automated_bank_transfer" | "custom";
 			/** * `no_preference` - No Preference * `cash` - Cash * `check` - Check * `bank_transfer` - Bank Transfer * `ach_credit` - ACH Credit * `sepa_credit` - SEPA Credit * `boleto` - Boleto * `us_automated_bank_transfer` - US Automated Bank Transfer * `eu_automated_bank_transfer` - EU Automated Bank… */
-			in?: "no_preference" | "cash" | "check" | "bank_transfer" | "ach_credit" | "sepa_credit" | "boleto" | "us_automated_bank_transfer" | "eu_automated_bank_transfer" | "uk_automated_bank_transfer" | "jp_automated_bank_transfer" | "mx_automated_bank_transfer" | "custom";
+			in?: string;
 			/** * `no_preference` - No Preference * `cash` - Cash * `check` - Check * `bank_transfer` - Bank Transfer * `ach_credit` - ACH Credit * `sepa_credit` - SEPA Credit * `boleto` - Boleto * `us_automated_bank_transfer` - US Automated Bank Transfer * `eu_automated_bank_transfer` - EU Automated Bank… */
-			not_in?: "no_preference" | "cash" | "check" | "bank_transfer" | "ach_credit" | "sepa_credit" | "boleto" | "us_automated_bank_transfer" | "eu_automated_bank_transfer" | "uk_automated_bank_transfer" | "jp_automated_bank_transfer" | "mx_automated_bank_transfer" | "custom";
+			not_in?: string;
 		};
 		/** optional, boolean filter Set to `false` to override for this subscription, the [site-level setting](https://www.chargebee.com/docs/billing/2.0/usage-based-billing/metered_billing#configuring-metered-billing) for auto-closing invoices. Only applicable when auto-closing invoices has been enabled… */
 		auto_close_invoices?: {
@@ -33481,9 +33481,9 @@ export type ChargebeeOperationInputs = {
 			/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
 			is_not?: "web" | "app_store" | "play_store";
 			/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-			in?: "web" | "app_store" | "play_store";
+			in?: string;
 			/** * `web` - The object was created (and is maintained) for the web channel directly in Chargebee via API or UI. * `app_store` - The object data is synchronized with data from [in-app subscription(s)](https://apidocs.chargebee.com/docs/api/in_app_subscriptions) created in Apple App Store. Direct… */
-			not_in?: "web" | "app_store" | "play_store";
+			not_in?: string;
 		};
 		/** optional, boolean filter Filter subscriptions based on whether they have been [decommissioned](/docs/api/subscriptions/subscription-object#decommissioned). **Example →** `decommissioned[is] = "true"` */
 		decommissioned?: {
@@ -34764,9 +34764,9 @@ export type ChargebeeOperationInputs = {
 			/** * `card` - Card * `cash` - Cash * `check` - Check * `chargeback` - Only applicable for a transaction of [type](transactions#transaction_type) = `refund`. This value is set by Chargebee when an automated [chargeback](https://www.chargebee.com/docs/chargeback.html#chargeback-process) occurs. You… */
 			is_not?: "card" | "cash" | "check" | "chargeback" | "bank_transfer" | "amazon_payments" | "paypal_express_checkout" | "direct_debit" | "alipay" | "unionpay" | "apple_pay" | "wechat_pay" | "ach_credit" | "sepa_credit" | "ideal" | "google_pay" | "sofort" | "bancontact" | "giropay" | "dotpay" | "other" | "upi" | "netbanking_emandates" | "custom" | "boleto" | "venmo" | "pay_to" | "faster_payments" | "sepa_instant_transfer" | "automated_bank_transfer" | "klarna_pay_now" | "online_banking_poland" | "payconiq_by_bancontact" | "electronic_payment_standard" | "kbc_payment_button" | "pay_by_bank" | "trustly" | "stablecoin" | "kakao_pay" | "naver_pay" | "revolut_pay" | "cash_app_pay" | "pix" | "twint" | "go_pay" | "grab_pay" | "pay_co" | "after_pay" | "swish" | "payme" | "klarna" | "alipay_hk" | "paypay" | "gcash" | "south_korean_cards" | "paynow" | "bizum" | "promptpay" | "dana" | "touch_n_go" | "tamara" | "qpay" | "ovo" | "momo" | "mercado_pago" | "nequi" | "nupay" | "picpay" | "thai_qr" | "blik" | "fpx" | "wero" | "p24" | "affirm_pay" | "rakuten_pay";
 			/** * `card` - Card * `cash` - Cash * `check` - Check * `chargeback` - Only applicable for a transaction of [type](transactions#transaction_type) = `refund`. This value is set by Chargebee when an automated [chargeback](https://www.chargebee.com/docs/chargeback.html#chargeback-process) occurs. You… */
-			in?: "card" | "cash" | "check" | "chargeback" | "bank_transfer" | "amazon_payments" | "paypal_express_checkout" | "direct_debit" | "alipay" | "unionpay" | "apple_pay" | "wechat_pay" | "ach_credit" | "sepa_credit" | "ideal" | "google_pay" | "sofort" | "bancontact" | "giropay" | "dotpay" | "other" | "upi" | "netbanking_emandates" | "custom" | "boleto" | "venmo" | "pay_to" | "faster_payments" | "sepa_instant_transfer" | "automated_bank_transfer" | "klarna_pay_now" | "online_banking_poland" | "payconiq_by_bancontact" | "electronic_payment_standard" | "kbc_payment_button" | "pay_by_bank" | "trustly" | "stablecoin" | "kakao_pay" | "naver_pay" | "revolut_pay" | "cash_app_pay" | "pix" | "twint" | "go_pay" | "grab_pay" | "pay_co" | "after_pay" | "swish" | "payme" | "klarna" | "alipay_hk" | "paypay" | "gcash" | "south_korean_cards" | "paynow" | "bizum" | "promptpay" | "dana" | "touch_n_go" | "tamara" | "qpay" | "ovo" | "momo" | "mercado_pago" | "nequi" | "nupay" | "picpay" | "thai_qr" | "blik" | "fpx" | "wero" | "p24" | "affirm_pay" | "rakuten_pay";
+			in?: string;
 			/** * `card` - Card * `cash` - Cash * `check` - Check * `chargeback` - Only applicable for a transaction of [type](transactions#transaction_type) = `refund`. This value is set by Chargebee when an automated [chargeback](https://www.chargebee.com/docs/chargeback.html#chargeback-process) occurs. You… */
-			not_in?: "card" | "cash" | "check" | "chargeback" | "bank_transfer" | "amazon_payments" | "paypal_express_checkout" | "direct_debit" | "alipay" | "unionpay" | "apple_pay" | "wechat_pay" | "ach_credit" | "sepa_credit" | "ideal" | "google_pay" | "sofort" | "bancontact" | "giropay" | "dotpay" | "other" | "upi" | "netbanking_emandates" | "custom" | "boleto" | "venmo" | "pay_to" | "faster_payments" | "sepa_instant_transfer" | "automated_bank_transfer" | "klarna_pay_now" | "online_banking_poland" | "payconiq_by_bancontact" | "electronic_payment_standard" | "kbc_payment_button" | "pay_by_bank" | "trustly" | "stablecoin" | "kakao_pay" | "naver_pay" | "revolut_pay" | "cash_app_pay" | "pix" | "twint" | "go_pay" | "grab_pay" | "pay_co" | "after_pay" | "swish" | "payme" | "klarna" | "alipay_hk" | "paypay" | "gcash" | "south_korean_cards" | "paynow" | "bizum" | "promptpay" | "dana" | "touch_n_go" | "tamara" | "qpay" | "ovo" | "momo" | "mercado_pago" | "nequi" | "nupay" | "picpay" | "thai_qr" | "blik" | "fpx" | "wero" | "p24" | "affirm_pay" | "rakuten_pay";
+			not_in?: string;
 		};
 		/** optional, enumerated string filter Gateway through which this transaction was done. Applicable only for 'Card' Payment Method. Possible values are : chargebee, chargebee_payments, stripe, wepay, braintree, authorize_net, paypal_pro, pin, eway, eway_rapid, worldpay, balanced_payments, beanstream,… */
 		gateway?: {
@@ -34775,9 +34775,9 @@ export type ChargebeeOperationInputs = {
 			/** * `chargebee` - Chargebee test gateway. * `chargebee_payments` - Chargebee Pay gateway * `adyen` - Adyen is a payment gateway. * `stripe` - Stripe is a payment gateway. * `wepay` - WePay is a payment gateway. * `braintree` - Braintree is a payment gateway. * `authorize_net` - Authorize.net is a… */
 			is_not?: "chargebee" | "chargebee_payments" | "adyen" | "stripe" | "wepay" | "braintree" | "authorize_net" | "paypal_pro" | "pin" | "eway" | "eway_rapid" | "worldpay" | "balanced_payments" | "beanstream" | "bluepay" | "elavon" | "first_data_global" | "hdfc" | "migs" | "nmi" | "ogone" | "paymill" | "paypal_payflow_pro" | "sage_pay" | "tco" | "wirecard" | "amazon_payments" | "paypal_express_checkout" | "gocardless" | "orbital" | "moneris_us" | "moneris" | "bluesnap" | "cybersource" | "vantiv" | "checkout_com" | "paypal" | "ingenico_direct" | "exact" | "mollie" | "quickbooks" | "razorpay" | "global_payments" | "bank_of_america" | "ecentric" | "metrics_global" | "windcave" | "pay_com" | "ebanx" | "dlocal" | "nuvei" | "solidgate" | "paystack" | "jp_morgan" | "deutsche_bank" | "ezidebit" | "twikey" | "tempus" | "moyasar" | "payway" | "payu" | "not_applicable";
 			/** * `chargebee` - Chargebee test gateway. * `chargebee_payments` - Chargebee Pay gateway * `adyen` - Adyen is a payment gateway. * `stripe` - Stripe is a payment gateway. * `wepay` - WePay is a payment gateway. * `braintree` - Braintree is a payment gateway. * `authorize_net` - Authorize.net is a… */
-			in?: "chargebee" | "chargebee_payments" | "adyen" | "stripe" | "wepay" | "braintree" | "authorize_net" | "paypal_pro" | "pin" | "eway" | "eway_rapid" | "worldpay" | "balanced_payments" | "beanstream" | "bluepay" | "elavon" | "first_data_global" | "hdfc" | "migs" | "nmi" | "ogone" | "paymill" | "paypal_payflow_pro" | "sage_pay" | "tco" | "wirecard" | "amazon_payments" | "paypal_express_checkout" | "gocardless" | "orbital" | "moneris_us" | "moneris" | "bluesnap" | "cybersource" | "vantiv" | "checkout_com" | "paypal" | "ingenico_direct" | "exact" | "mollie" | "quickbooks" | "razorpay" | "global_payments" | "bank_of_america" | "ecentric" | "metrics_global" | "windcave" | "pay_com" | "ebanx" | "dlocal" | "nuvei" | "solidgate" | "paystack" | "jp_morgan" | "deutsche_bank" | "ezidebit" | "twikey" | "tempus" | "moyasar" | "payway" | "payu" | "not_applicable";
+			in?: string;
 			/** * `chargebee` - Chargebee test gateway. * `chargebee_payments` - Chargebee Pay gateway * `adyen` - Adyen is a payment gateway. * `stripe` - Stripe is a payment gateway. * `wepay` - WePay is a payment gateway. * `braintree` - Braintree is a payment gateway. * `authorize_net` - Authorize.net is a… */
-			not_in?: "chargebee" | "chargebee_payments" | "adyen" | "stripe" | "wepay" | "braintree" | "authorize_net" | "paypal_pro" | "pin" | "eway" | "eway_rapid" | "worldpay" | "balanced_payments" | "beanstream" | "bluepay" | "elavon" | "first_data_global" | "hdfc" | "migs" | "nmi" | "ogone" | "paymill" | "paypal_payflow_pro" | "sage_pay" | "tco" | "wirecard" | "amazon_payments" | "paypal_express_checkout" | "gocardless" | "orbital" | "moneris_us" | "moneris" | "bluesnap" | "cybersource" | "vantiv" | "checkout_com" | "paypal" | "ingenico_direct" | "exact" | "mollie" | "quickbooks" | "razorpay" | "global_payments" | "bank_of_america" | "ecentric" | "metrics_global" | "windcave" | "pay_com" | "ebanx" | "dlocal" | "nuvei" | "solidgate" | "paystack" | "jp_morgan" | "deutsche_bank" | "ezidebit" | "twikey" | "tempus" | "moyasar" | "payway" | "payu" | "not_applicable";
+			not_in?: string;
 		};
 		/** optional, string filter The gateway account used for this transaction. **Supported operators :** is, is_not, starts_with, in, not_in **Example →** *gateway_account_id\[is\] = "gw_3Nl9BNeQ7438Ks1"* */
 		gateway_account_id?: {
@@ -34807,9 +34807,9 @@ export type ChargebeeOperationInputs = {
 			/** * `authorization` - The transaction represents an authorization for capturing the [amount](transactions#transaction_amount) from the customer's [payment_source](payment_sources). * `payment` - The transaction represents capture of [amount](transactions#transaction_amount) from the customer's… */
 			is_not?: "authorization" | "payment" | "refund" | "payment_reversal";
 			/** * `authorization` - The transaction represents an authorization for capturing the [amount](transactions#transaction_amount) from the customer's [payment_source](payment_sources). * `payment` - The transaction represents capture of [amount](transactions#transaction_amount) from the customer's… */
-			in?: "authorization" | "payment" | "refund" | "payment_reversal";
+			in?: string;
 			/** * `authorization` - The transaction represents an authorization for capturing the [amount](transactions#transaction_amount) from the customer's [payment_source](payment_sources). * `payment` - The transaction represents capture of [amount](transactions#transaction_amount) from the customer's… */
-			not_in?: "authorization" | "payment" | "refund" | "payment_reversal";
+			not_in?: string;
 		};
 		/** optional, timestamp(UTC) in seconds filter Indicates when this transaction occurred. We recommend using this filter when listing transactions for better query performance. It is advisable when using this filter, to pass the `sort_by` input parameter as `date` for a faster response. **Supported… */
 		date?: {
@@ -34845,9 +34845,9 @@ export type ChargebeeOperationInputs = {
 			/** * `in_progress` - Transaction is being processed by the gateway. This typically happens for [direct debit transactions](https://www.chargebee.com/docs/direct-debit-payments.html) or, in case of cards, refund transactions. Such transactions can take 2-7 days to complete, depending on the gateway… */
 			is_not?: "in_progress" | "success" | "voided" | "failure" | "timeout" | "needs_attention" | "late_failure";
 			/** * `in_progress` - Transaction is being processed by the gateway. This typically happens for [direct debit transactions](https://www.chargebee.com/docs/direct-debit-payments.html) or, in case of cards, refund transactions. Such transactions can take 2-7 days to complete, depending on the gateway… */
-			in?: "in_progress" | "success" | "voided" | "failure" | "timeout" | "needs_attention" | "late_failure";
+			in?: string;
 			/** * `in_progress` - Transaction is being processed by the gateway. This typically happens for [direct debit transactions](https://www.chargebee.com/docs/direct-debit-payments.html) or, in case of cards, refund transactions. Such transactions can take 2-7 days to complete, depending on the gateway… */
-			not_in?: "in_progress" | "success" | "voided" | "failure" | "timeout" | "needs_attention" | "late_failure";
+			not_in?: string;
 		};
 		/** optional, timestamp(UTC) in seconds filter To filter based on `updated_at`. This attribute will be present only if the resource has been updated after 2016-09-28. It is advisable when using this filter, to pass the `sort_by` input parameter as `updated_at` for a faster response. **Supported… */
 		updated_at?: {
@@ -35265,9 +35265,9 @@ export type ChargebeeOperationInputs = {
 			/** * `admin_console` - Operation made through the Chargebee admin UI * `api` - Operation made through the API * `bulk_operation` - Operation that are triggerd through bulk operation. */
 			is_not?: "admin_console" | "api" | "bulk_operation";
 			/** * `admin_console` - Operation made through the Chargebee admin UI * `api` - Operation made through the API * `bulk_operation` - Operation that are triggerd through bulk operation. */
-			in?: "admin_console" | "api" | "bulk_operation";
+			in?: string;
 			/** * `admin_console` - Operation made through the Chargebee admin UI * `api` - Operation made through the API * `bulk_operation` - Operation that are triggerd through bulk operation. */
-			not_in?: "admin_console" | "api" | "bulk_operation";
+			not_in?: string;
 		};
 		/** optional, string filter Sorts based on the specified attribute. **Supported attributes :** usage_date **Supported sort-orders :** asc, desc **Example →** *sort_by\[asc\] = "usage_date"* This will sort the result based on the 'usage_date' attribute in ascending(earliest first) order. */
 		sort_by?: {
@@ -35909,10 +35909,10 @@ export type ChargebeeOperationOutputs = {
 		/** Resource object representing credit_note */
 		credit_note?: ChargebeeCreditNote | null;
 	};
-	'creditNotes.sendEmail': {
+	'creditNotes.sendEmail': ({
 		/** List of [email log](/docs/api/email_logs) objects for the send request. Each entry describes one email that was sent or attempted. */
 		email_logs?: Array<ChargebeeEmailLog> | null;
-	};
+	}) | { /** Chargebee accepted the call; it answered with no body. */ success: true; };
 	'creditNotes.update': {
 		/** Resource object representing credit_note */
 		credit_note?: ChargebeeCreditNote | null;
@@ -36197,10 +36197,10 @@ export type ChargebeeOperationOutputs = {
 		/** Resource object representing transaction */
 		transaction?: ChargebeeTransaction | null;
 	};
-	'customers.sendPaymentRequest': {
+	'customers.sendPaymentRequest': ({
 		/** List of [email log](/docs/api/email_logs) objects for the send request. Each entry describes one email that was sent or attempted. */
 		email_logs?: Array<ChargebeeEmailLog> | null;
-	};
+	}) | { /** Chargebee accepted the call; it answered with no body. */ success: true; };
 	'customers.switchGateway': {
 		/** Resource object representing customer */
 		customer?: ChargebeeCustomer | null;
@@ -36833,10 +36833,10 @@ export type ChargebeeOperationOutputs = {
 		/** Resource object representing invoice */
 		invoice?: ChargebeeInvoice | null;
 	};
-	'invoices.sendEmail': {
+	'invoices.sendEmail': ({
 		/** List of [email log](/docs/api/email_logs) objects for the send request. Each entry describes one email that was sent or attempted. */
 		email_logs?: Array<ChargebeeEmailLog> | null;
-	};
+	}) | { /** Chargebee accepted the call; it answered with no body. */ success: true; };
 	'invoices.stopDunning': {
 		/** Resource object representing invoice */
 		invoice?: ChargebeeInvoice | null;

@@ -1,7 +1,5 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
-import { chargebeeEndpointMeta } from './endpoints/catalog';
-import { chargebeeOperations } from './endpoints/manifest';
 
 // Chargebee answers errors as { message, type, api_error_code, param, http_status_code }: 400 invalid_request / payment errors, 401 api_authentication_failed, 403 api_authorization_failed, 404 resource_not_found, 409 invalid_state_for_request, 429 api_request_limit_exceeded, 5xx internal errors.
 // The status is the signal; the message text is a fallback for an error that
@@ -14,23 +12,13 @@ function status(error: Error): number | undefined {
 	return error instanceof ApiError ? error.status : undefined;
 }
 
-/** Routes that only read, whatever their method (a search sent as POST). */
-const READ_ROUTES = new Set(
-	chargebeeOperations
-		.filter(
-			(operation) =>
-				chargebeeEndpointMeta[
-					operation.id as keyof typeof chargebeeEndpointMeta
-				]?.riskLevel === 'read',
-		)
-		.map((operation) => `${operation.method} ${operation.path}`),
-);
-
+/**
+ * A 5xx is retried for GETs only. Chargebee's read-only POSTs are not safe to
+ * replay: `exports.*` starts a job, and a retry after a proxy's 503 could
+ * queue a second one on the site's few export slots.
+ */
 function isRead(error: Error): boolean {
-	if (!(error instanceof ApiError)) return false;
-	const method = error.request?.method;
-	if (method === 'GET') return true;
-	return READ_ROUTES.has(`${method} ${error.request?.url}`);
+	return error instanceof ApiError && error.request?.method === 'GET';
 }
 
 export const errorHandlers = {

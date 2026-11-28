@@ -547,8 +547,8 @@ await corsair.chargebee.api.addons.list({});
 {
   is?: flat_fee | per_unit | tiered | volume | stairstep,
   is_not?: flat_fee | per_unit | tiered | volume | stairstep,
-  in?: flat_fee | per_unit | tiered | volume | stairstep,
-  not_in?: flat_fee | per_unit | tiered | volume | stairstep
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -559,8 +559,8 @@ await corsair.chargebee.api.addons.list({});
 {
   is?: recurring | non_recurring,
   is_not?: recurring | non_recurring,
-  in?: recurring | non_recurring,
-  not_in?: recurring | non_recurring
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -601,8 +601,8 @@ await corsair.chargebee.api.addons.list({});
 {
   is?: day | week | month | year | not_applicable,
   is_not?: day | week | month | year | not_applicable,
-  in?: day | week | month | year | not_applicable,
-  not_in?: day | week | month | year | not_applicable
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -613,8 +613,8 @@ await corsair.chargebee.api.addons.list({});
 {
   is?: active | archived | deleted,
   is_not?: active | archived | deleted,
-  in?: active | archived | deleted,
-  not_in?: active | archived | deleted
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -650,8 +650,8 @@ await corsair.chargebee.api.addons.list({});
 {
   is?: web | app_store | play_store,
   is_not?: web | app_store | play_store,
-  in?: web | app_store | play_store,
-  not_in?: web | app_store | play_store
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -4396,8 +4396,8 @@ await corsair.chargebee.api.couponCodes.list({});
 {
   is?: not_redeemed | redeemed | archived,
   is_not?: not_redeemed | redeemed | archived,
-  in?: not_redeemed | redeemed | archived,
-  not_in?: not_redeemed | redeemed | archived
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -5009,8 +5009,8 @@ await corsair.chargebee.api.coupons.list({});
 {
   is?: fixed_amount | percentage | offer_quantity,
   is_not?: fixed_amount | percentage | offer_quantity,
-  in?: fixed_amount | percentage | offer_quantity,
-  not_in?: fixed_amount | percentage | offer_quantity
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -5021,8 +5021,8 @@ await corsair.chargebee.api.coupons.list({});
 {
   is?: one_time | forever | limited_period,
   is_not?: one_time | forever | limited_period,
-  in?: one_time | forever | limited_period,
-  not_in?: one_time | forever | limited_period
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -5033,8 +5033,8 @@ await corsair.chargebee.api.coupons.list({});
 {
   is?: active | expired | archived | deleted | future,
   is_not?: active | expired | archived | deleted | future,
-  in?: active | expired | archived | deleted | future,
-  not_in?: active | expired | archived | deleted | future
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -5045,8 +5045,8 @@ await corsair.chargebee.api.coupons.list({});
 {
   is?: invoice_amount | each_specified_item,
   is_not?: invoice_amount | each_specified_item,
-  in?: invoice_amount | each_specified_item,
-  not_in?: invoice_amount | each_specified_item
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -7675,8 +7675,8 @@ await corsair.chargebee.api.creditNotes.list({});
 {
   is?: adjustment | refundable | store,
   is_not?: adjustment | refundable | store,
-  in?: adjustment | refundable | store,
-  not_in?: adjustment | refundable | store
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -7687,8 +7687,8 @@ await corsair.chargebee.api.creditNotes.list({});
 {
   is?: write_off | subscription_change | subscription_cancellation | subscription_pause | chargeback | product_unsatisfactory | service_unsatisfactory | order_change | order_cancellation | waiver | other | fraudulent,
   is_not?: write_off | subscription_change | subscription_cancellation | subscription_pause | chargeback | product_unsatisfactory | service_unsatisfactory | order_change | order_cancellation | waiver | other | fraudulent,
-  in?: write_off | subscription_change | subscription_cancellation | subscription_pause | chargeback | product_unsatisfactory | service_unsatisfactory | order_change | order_cancellation | waiver | other | fraudulent,
-  not_in?: write_off | subscription_change | subscription_cancellation | subscription_pause | chargeback | product_unsatisfactory | service_unsatisfactory | order_change | order_cancellation | waiver | other | fraudulent
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -7712,8 +7712,8 @@ await corsair.chargebee.api.creditNotes.list({});
 {
   is?: adjusted | refunded | refund_due | voided,
   is_not?: adjusted | refunded | refund_due | voided,
-  in?: adjusted | refunded | refund_due | voided,
-  not_in?: adjusted | refunded | refund_due | voided
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -7751,8 +7751,8 @@ await corsair.chargebee.api.creditNotes.list({});
 {
   is?: tax_exclusive | tax_inclusive,
   is_not?: tax_exclusive | tax_inclusive,
-  in?: tax_exclusive | tax_inclusive,
-  not_in?: tax_exclusive | tax_inclusive
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -7842,8 +7842,8 @@ await corsair.chargebee.api.creditNotes.list({});
 {
   is?: web | app_store | play_store,
   is_not?: web | app_store | play_store,
-  in?: web | app_store | play_store,
-  not_in?: web | app_store | play_store
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -7855,8 +7855,8 @@ await corsair.chargebee.api.creditNotes.list({});
   status?: {
     is?: scheduled | skipped | in_progress | success | failed | registered | accepted | rejected | message_acknowledgement | in_process | under_query | conditionally_accepted | paid,
     is_not?: scheduled | skipped | in_progress | success | failed | registered | accepted | rejected | message_acknowledgement | in_process | under_query | conditionally_accepted | paid,
-    in?: scheduled | skipped | in_progress | success | failed | registered | accepted | rejected | message_acknowledgement | in_process | under_query | conditionally_accepted | paid,
-    not_in?: scheduled | skipped | in_progress | success | failed | registered | accepted | rejected | message_acknowledgement | in_process | under_query | conditionally_accepted | paid
+    in?: string,
+    not_in?: string
   }
 }
 ```
@@ -9633,35 +9633,34 @@ await corsair.chargebee.api.creditNotes.sendEmail({ creditNoteId: 'example' });
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `email_logs` | `object[] \| null` | No | List of [email log](/docs/api/email_logs) objects for the send request. Each entry describes one email that was sent or attempted. |
+**Output:** `object`
 
 <AccordionGroup>
-<Accordion title="email_logs full type">
+<Accordion title="Output full type">
 
 ```ts
 {
-  id?: string | null,
-  template_name?: string | null,
-  from_address?: string | null,
-  to_address?: string | null,
-  subject?: string | null,
-  status?: string | null,
-  sent_on?: number | null,
-  customer_id?: string | null,
-  email_conversation_id?: string | null,
-  site_id?: string | null,
-  business_entity_id?: string | null,
-  brand_id?: string | null,
-  error_message?: string | null
-}[] | null
+  email_logs?: {
+    id?: string | null,
+    template_name?: string | null,
+    from_address?: string | null,
+    to_address?: string | null,
+    subject?: string | null,
+    status?: string | null,
+    sent_on?: number | null,
+    customer_id?: string | null,
+    email_conversation_id?: string | null,
+    site_id?: string | null,
+    business_entity_id?: string | null,
+    brand_id?: string | null,
+    error_message?: string | null
+  }[] | null
+} | {
+  success: true
+}
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -10318,7 +10317,7 @@ await corsair.chargebee.api.creditUnits.list({});
 ```ts
 {
   is?: active | archived,
-  in?: active | archived
+  in?: string
 }
 ```
 </Accordion>
@@ -20380,8 +20379,8 @@ await corsair.chargebee.api.customers.list({ limit: 10 });
 {
   is?: on | off,
   is_not?: on | off,
-  in?: on | off,
-  not_in?: on | off
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -20392,8 +20391,8 @@ await corsair.chargebee.api.customers.list({ limit: 10 });
 {
   is?: taxable | exempt | zero_rated,
   is_not?: taxable | exempt | zero_rated,
-  in?: taxable | exempt | zero_rated,
-  not_in?: taxable | exempt | zero_rated
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -20428,8 +20427,8 @@ await corsair.chargebee.api.customers.list({ limit: 10 });
 {
   is?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom,
   is_not?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom,
-  in?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom,
-  not_in?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -20449,8 +20448,8 @@ await corsair.chargebee.api.customers.list({ limit: 10 });
 {
   is?: web | app_store | play_store,
   is_not?: web | app_store | play_store,
-  in?: web | app_store | play_store,
-  not_in?: web | app_store | play_store
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -20977,8 +20976,8 @@ await corsair.chargebee.api.customers.listPaymentVouchers({ customerId: 'cust_8g
 {
   is?: active | consumed | expired | failure,
   is_not?: active | consumed | expired | failure,
-  in?: active | consumed | expired | failure,
-  not_in?: active | consumed | expired | failure
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -21613,35 +21612,34 @@ await corsair.chargebee.api.customers.sendPaymentRequest({ customerId: 'cust_8gs
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `email_logs` | `object[] \| null` | No | List of [email log](/docs/api/email_logs) objects for the send request. Each entry describes one email that was sent or attempted. |
+**Output:** `object`
 
 <AccordionGroup>
-<Accordion title="email_logs full type">
+<Accordion title="Output full type">
 
 ```ts
 {
-  id?: string | null,
-  template_name?: string | null,
-  from_address?: string | null,
-  to_address?: string | null,
-  subject?: string | null,
-  status?: string | null,
-  sent_on?: number | null,
-  customer_id?: string | null,
-  email_conversation_id?: string | null,
-  site_id?: string | null,
-  business_entity_id?: string | null,
-  brand_id?: string | null,
-  error_message?: string | null
-}[] | null
+  email_logs?: {
+    id?: string | null,
+    template_name?: string | null,
+    from_address?: string | null,
+    to_address?: string | null,
+    subject?: string | null,
+    status?: string | null,
+    sent_on?: number | null,
+    customer_id?: string | null,
+    email_conversation_id?: string | null,
+    site_id?: string | null,
+    business_entity_id?: string | null,
+    brand_id?: string | null,
+    error_message?: string | null
+  }[] | null
+} | {
+  success: true
+}
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -23941,8 +23939,8 @@ await corsair.chargebee.api.disputes.list({});
 {
   is?: initiated | funds_withdrawn | in_review | cancelled | lost | won,
   is_not?: initiated | funds_withdrawn | in_review | cancelled | lost | won,
-  in?: initiated | funds_withdrawn | in_review | cancelled | lost | won,
-  not_in?: initiated | funds_withdrawn | in_review | cancelled | lost | won
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -23953,8 +23951,8 @@ await corsair.chargebee.api.disputes.list({});
 {
   is?: chargeback | inquiry,
   is_not?: chargeback | inquiry,
-  in?: chargeback | inquiry,
-  not_in?: chargeback | inquiry
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -24349,7 +24347,7 @@ await corsair.chargebee.api.entitlements.list({});
 ```ts
 {
   is?: plan | addon | charge | plan_price | addon_price,
-  in?: plan | addon | charge | plan_price | addon_price
+  in?: string
 }
 ```
 </Accordion>
@@ -31016,8 +31014,8 @@ await corsair.chargebee.api.events.list({});
 {
   is?: not_configured | scheduled | succeeded | re_scheduled | failed | skipped | not_applicable | disabled | rate_limited,
   is_not?: not_configured | scheduled | succeeded | re_scheduled | failed | skipped | not_applicable | disabled | rate_limited,
-  in?: not_configured | scheduled | succeeded | re_scheduled | failed | skipped | not_applicable | disabled | rate_limited,
-  not_in?: not_configured | scheduled | succeeded | re_scheduled | failed | skipped | not_applicable | disabled | rate_limited
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -31028,8 +31026,8 @@ await corsair.chargebee.api.events.list({});
 {
   is?: coupon_created | coupon_updated | coupon_deleted | coupon_set_created | coupon_set_updated | coupon_set_deleted | coupon_codes_added | coupon_codes_deleted | coupon_codes_updated | customer_created | customer_changed | customer_deleted | customer_moved_out | customer_moved_in | promotional_credits_added | promotional_credits_deducted | subscription_created | subscription_created_with_backdating | subscription_started | subscription_trial_end_reminder | subscription_activated | subscription_activated_with_backdating | subscription_changed | subscription_trial_extended | mrr_updated | subscription_changed_with_backdating | subscription_cancellation_scheduled | subscription_cancellation_reminder | subscription_cancelled | subscription_canceled_with_backdating | subscription_reactivated | subscription_reactivated_with_backdating | subscription_renewed | subscription_items_renewed | subscription_scheduled_cancellation_removed | subscription_changes_scheduled | subscription_scheduled_changes_removed | subscription_shipping_address_updated | subscription_deleted | subscription_paused | subscription_pause_scheduled | subscription_scheduled_pause_removed | subscription_resumed | subscription_resumption_scheduled | subscription_scheduled_resumption_removed | subscription_advance_invoice_schedule_added | subscription_advance_invoice_schedule_updated | subscription_advance_invoice_schedule_removed | pending_invoice_created | pending_invoice_updated | invoice_generated | invoice_generated_with_backdating | invoice_updated | invoice_deleted | credit_note_created | credit_note_created_with_backdating | credit_note_updated | credit_note_deleted | einvoice_created | einvoice_updated | payment_schedules_created | payment_schedules_updated | payment_schedule_scheme_created | payment_schedule_scheme_deleted | payment_schedules_cancelled | subscription_renewal_reminder | add_usages_reminder | payment_due_reminder | transaction_created | transaction_updated | transaction_deleted | payment_succeeded | payment_failed | dunning_updated | payment_refunded | refund_failed | payment_initiated | refund_initiated | authorization_succeeded | authorization_voided | card_added | card_updated | card_expiry_reminder | card_expired | card_deleted | payment_source_added | payment_source_updated | payment_source_deleted | payment_source_expiring | payment_source_expired | payment_source_locally_deleted | virtual_bank_account_added | virtual_bank_account_updated | virtual_bank_account_deleted | token_created | token_consumed | token_expired | unbilled_charges_created | unbilled_charges_voided | unbilled_charges_deleted | unbilled_charges_invoiced | order_created | order_updated | order_cancelled | order_delivered | order_returned | order_ready_to_process | order_ready_to_ship | order_deleted | order_resent | quote_created | quote_updated | quote_deleted | tax_withheld_recorded | tax_withheld_deleted | tax_withheld_refunded | gift_scheduled | gift_unclaimed | gift_claimed | gift_expired | gift_cancelled | gift_updated | hierarchy_created | hierarchy_deleted | payment_intent_created | payment_intent_updated | contract_term_created | contract_term_renewed | contract_term_terminated | contract_term_completed | contract_term_cancelled | item_family_created | item_family_updated | item_family_deleted | item_created | item_updated | item_deleted | item_price_created | item_price_updated | item_price_deleted | attached_item_created | attached_item_updated | attached_item_deleted | differential_price_created | differential_price_updated | differential_price_deleted | feature_created | feature_updated | feature_deleted | feature_activated | feature_reactivated | feature_archived | item_entitlements_updated | entitlement_overrides_updated | entitlement_overrides_removed | item_entitlements_removed | entitlement_overrides_auto_removed | subscription_entitlements_created | subscription_entitlements_updated | business_entity_created | business_entity_updated | business_entity_deleted | customer_business_entity_changed | subscription_business_entity_changed | payment_source_business_entity_changed | organization_details_created | organization_details_updated | purchase_created | voucher_created | voucher_expired | voucher_create_failed | item_price_entitlements_updated | item_price_entitlements_removed | subscription_ramp_created | subscription_ramp_deleted | subscription_ramp_applied | subscription_ramp_drafted | subscription_ramp_updated | price_variant_created | price_variant_updated | price_variant_deleted | customer_entitlements_updated | subscription_moved_in | subscription_moved_out | subscription_movement_failed | omnichannel_subscription_created | omnichannel_subscription_item_renewed | omnichannel_subscription_item_downgraded | omnichannel_subscription_item_expired | omnichannel_subscription_item_cancellation_scheduled | omnichannel_subscription_item_scheduled_cancellation_removed | omnichannel_subscription_item_resubscribed | omnichannel_subscription_item_upgraded | omnichannel_subscription_item_cancelled | omnichannel_subscription_imported | omnichannel_subscription_item_grace_period_started | omnichannel_subscription_item_grace_period_expired | omnichannel_subscription_item_dunning_started | omnichannel_subscription_item_dunning_expired | rule_created | rule_updated | rule_deleted | record_purchase_failed | omnichannel_subscription_item_change_scheduled | omnichannel_subscription_item_scheduled_change_removed | omnichannel_subscription_item_reactivated | sales_order_created | sales_order_updated | omnichannel_subscription_item_changed | omnichannel_subscription_item_paused | omnichannel_subscription_item_resumed | omnichannel_one_time_order_created | omnichannel_one_time_order_item_cancelled | usage_file_ingested | omnichannel_subscription_item_pause_scheduled | omnichannel_subscription_moved_in | omnichannel_transaction_created | alert_status_changed | omnichannel_subscription_item_updated | omnichannel_subscription_item_recovered | price_ramp_created | price_ramp_updated | price_ramp_deleted | omnichannel_subscription_item_mrr_updated | ledger_account_balance_updated | grant_blocks_created | grant_blocks_updated | ledger_updated | business_rule_created | business_rule_updated | business_rule_activated | business_rule_deactivated | business_rule_deleted | business_rule_released | vault_token_created | vault_token_updated | vault_token_deleted | chargeback_initiated | chargeback_won | chargeback_lost | business_ruleset_created | business_ruleset_updated | business_ruleset_activated | business_ruleset_deactivated | business_ruleset_deleted | collections_reminder_sequence_created | collections_reminder_sequence_paused | collections_reminder_sequence_resumed | collections_reminder_sequence_completed | collections_payment_promise_created | collections_payment_promise_updated | collections_payment_promise_fulfilled | collections_payment_promise_cancelled | collections_payment_promise_broken | collections_dispute_created | collections_dispute_updated | collections_dispute_resolved | collections_dispute_withdrawn | email_message_received | private_note_added,
   is_not?: coupon_created | coupon_updated | coupon_deleted | coupon_set_created | coupon_set_updated | coupon_set_deleted | coupon_codes_added | coupon_codes_deleted | coupon_codes_updated | customer_created | customer_changed | customer_deleted | customer_moved_out | customer_moved_in | promotional_credits_added | promotional_credits_deducted | subscription_created | subscription_created_with_backdating | subscription_started | subscription_trial_end_reminder | subscription_activated | subscription_activated_with_backdating | subscription_changed | subscription_trial_extended | mrr_updated | subscription_changed_with_backdating | subscription_cancellation_scheduled | subscription_cancellation_reminder | subscription_cancelled | subscription_canceled_with_backdating | subscription_reactivated | subscription_reactivated_with_backdating | subscription_renewed | subscription_items_renewed | subscription_scheduled_cancellation_removed | subscription_changes_scheduled | subscription_scheduled_changes_removed | subscription_shipping_address_updated | subscription_deleted | subscription_paused | subscription_pause_scheduled | subscription_scheduled_pause_removed | subscription_resumed | subscription_resumption_scheduled | subscription_scheduled_resumption_removed | subscription_advance_invoice_schedule_added | subscription_advance_invoice_schedule_updated | subscription_advance_invoice_schedule_removed | pending_invoice_created | pending_invoice_updated | invoice_generated | invoice_generated_with_backdating | invoice_updated | invoice_deleted | credit_note_created | credit_note_created_with_backdating | credit_note_updated | credit_note_deleted | einvoice_created | einvoice_updated | payment_schedules_created | payment_schedules_updated | payment_schedule_scheme_created | payment_schedule_scheme_deleted | payment_schedules_cancelled | subscription_renewal_reminder | add_usages_reminder | payment_due_reminder | transaction_created | transaction_updated | transaction_deleted | payment_succeeded | payment_failed | dunning_updated | payment_refunded | refund_failed | payment_initiated | refund_initiated | authorization_succeeded | authorization_voided | card_added | card_updated | card_expiry_reminder | card_expired | card_deleted | payment_source_added | payment_source_updated | payment_source_deleted | payment_source_expiring | payment_source_expired | payment_source_locally_deleted | virtual_bank_account_added | virtual_bank_account_updated | virtual_bank_account_deleted | token_created | token_consumed | token_expired | unbilled_charges_created | unbilled_charges_voided | unbilled_charges_deleted | unbilled_charges_invoiced | order_created | order_updated | order_cancelled | order_delivered | order_returned | order_ready_to_process | order_ready_to_ship | order_deleted | order_resent | quote_created | quote_updated | quote_deleted | tax_withheld_recorded | tax_withheld_deleted | tax_withheld_refunded | gift_scheduled | gift_unclaimed | gift_claimed | gift_expired | gift_cancelled | gift_updated | hierarchy_created | hierarchy_deleted | payment_intent_created | payment_intent_updated | contract_term_created | contract_term_renewed | contract_term_terminated | contract_term_completed | contract_term_cancelled | item_family_created | item_family_updated | item_family_deleted | item_created | item_updated | item_deleted | item_price_created | item_price_updated | item_price_deleted | attached_item_created | attached_item_updated | attached_item_deleted | differential_price_created | differential_price_updated | differential_price_deleted | feature_created | feature_updated | feature_deleted | feature_activated | feature_reactivated | feature_archived | item_entitlements_updated | entitlement_overrides_updated | entitlement_overrides_removed | item_entitlements_removed | entitlement_overrides_auto_removed | subscription_entitlements_created | subscription_entitlements_updated | business_entity_created | business_entity_updated | business_entity_deleted | customer_business_entity_changed | subscription_business_entity_changed | payment_source_business_entity_changed | organization_details_created | organization_details_updated | purchase_created | voucher_created | voucher_expired | voucher_create_failed | item_price_entitlements_updated | item_price_entitlements_removed | subscription_ramp_created | subscription_ramp_deleted | subscription_ramp_applied | subscription_ramp_drafted | subscription_ramp_updated | price_variant_created | price_variant_updated | price_variant_deleted | customer_entitlements_updated | subscription_moved_in | subscription_moved_out | subscription_movement_failed | omnichannel_subscription_created | omnichannel_subscription_item_renewed | omnichannel_subscription_item_downgraded | omnichannel_subscription_item_expired | omnichannel_subscription_item_cancellation_scheduled | omnichannel_subscription_item_scheduled_cancellation_removed | omnichannel_subscription_item_resubscribed | omnichannel_subscription_item_upgraded | omnichannel_subscription_item_cancelled | omnichannel_subscription_imported | omnichannel_subscription_item_grace_period_started | omnichannel_subscription_item_grace_period_expired | omnichannel_subscription_item_dunning_started | omnichannel_subscription_item_dunning_expired | rule_created | rule_updated | rule_deleted | record_purchase_failed | omnichannel_subscription_item_change_scheduled | omnichannel_subscription_item_scheduled_change_removed | omnichannel_subscription_item_reactivated | sales_order_created | sales_order_updated | omnichannel_subscription_item_changed | omnichannel_subscription_item_paused | omnichannel_subscription_item_resumed | omnichannel_one_time_order_created | omnichannel_one_time_order_item_cancelled | usage_file_ingested | omnichannel_subscription_item_pause_scheduled | omnichannel_subscription_moved_in | omnichannel_transaction_created | alert_status_changed | omnichannel_subscription_item_updated | omnichannel_subscription_item_recovered | price_ramp_created | price_ramp_updated | price_ramp_deleted | omnichannel_subscription_item_mrr_updated | ledger_account_balance_updated | grant_blocks_created | grant_blocks_updated | ledger_updated | business_rule_created | business_rule_updated | business_rule_activated | business_rule_deactivated | business_rule_deleted | business_rule_released | vault_token_created | vault_token_updated | vault_token_deleted | chargeback_initiated | chargeback_won | chargeback_lost | business_ruleset_created | business_ruleset_updated | business_ruleset_activated | business_ruleset_deactivated | business_ruleset_deleted | collections_reminder_sequence_created | collections_reminder_sequence_paused | collections_reminder_sequence_resumed | collections_reminder_sequence_completed | collections_payment_promise_created | collections_payment_promise_updated | collections_payment_promise_fulfilled | collections_payment_promise_cancelled | collections_payment_promise_broken | collections_dispute_created | collections_dispute_updated | collections_dispute_resolved | collections_dispute_withdrawn | email_message_received | private_note_added,
-  in?: coupon_created | coupon_updated | coupon_deleted | coupon_set_created | coupon_set_updated | coupon_set_deleted | coupon_codes_added | coupon_codes_deleted | coupon_codes_updated | customer_created | customer_changed | customer_deleted | customer_moved_out | customer_moved_in | promotional_credits_added | promotional_credits_deducted | subscription_created | subscription_created_with_backdating | subscription_started | subscription_trial_end_reminder | subscription_activated | subscription_activated_with_backdating | subscription_changed | subscription_trial_extended | mrr_updated | subscription_changed_with_backdating | subscription_cancellation_scheduled | subscription_cancellation_reminder | subscription_cancelled | subscription_canceled_with_backdating | subscription_reactivated | subscription_reactivated_with_backdating | subscription_renewed | subscription_items_renewed | subscription_scheduled_cancellation_removed | subscription_changes_scheduled | subscription_scheduled_changes_removed | subscription_shipping_address_updated | subscription_deleted | subscription_paused | subscription_pause_scheduled | subscription_scheduled_pause_removed | subscription_resumed | subscription_resumption_scheduled | subscription_scheduled_resumption_removed | subscription_advance_invoice_schedule_added | subscription_advance_invoice_schedule_updated | subscription_advance_invoice_schedule_removed | pending_invoice_created | pending_invoice_updated | invoice_generated | invoice_generated_with_backdating | invoice_updated | invoice_deleted | credit_note_created | credit_note_created_with_backdating | credit_note_updated | credit_note_deleted | einvoice_created | einvoice_updated | payment_schedules_created | payment_schedules_updated | payment_schedule_scheme_created | payment_schedule_scheme_deleted | payment_schedules_cancelled | subscription_renewal_reminder | add_usages_reminder | payment_due_reminder | transaction_created | transaction_updated | transaction_deleted | payment_succeeded | payment_failed | dunning_updated | payment_refunded | refund_failed | payment_initiated | refund_initiated | authorization_succeeded | authorization_voided | card_added | card_updated | card_expiry_reminder | card_expired | card_deleted | payment_source_added | payment_source_updated | payment_source_deleted | payment_source_expiring | payment_source_expired | payment_source_locally_deleted | virtual_bank_account_added | virtual_bank_account_updated | virtual_bank_account_deleted | token_created | token_consumed | token_expired | unbilled_charges_created | unbilled_charges_voided | unbilled_charges_deleted | unbilled_charges_invoiced | order_created | order_updated | order_cancelled | order_delivered | order_returned | order_ready_to_process | order_ready_to_ship | order_deleted | order_resent | quote_created | quote_updated | quote_deleted | tax_withheld_recorded | tax_withheld_deleted | tax_withheld_refunded | gift_scheduled | gift_unclaimed | gift_claimed | gift_expired | gift_cancelled | gift_updated | hierarchy_created | hierarchy_deleted | payment_intent_created | payment_intent_updated | contract_term_created | contract_term_renewed | contract_term_terminated | contract_term_completed | contract_term_cancelled | item_family_created | item_family_updated | item_family_deleted | item_created | item_updated | item_deleted | item_price_created | item_price_updated | item_price_deleted | attached_item_created | attached_item_updated | attached_item_deleted | differential_price_created | differential_price_updated | differential_price_deleted | feature_created | feature_updated | feature_deleted | feature_activated | feature_reactivated | feature_archived | item_entitlements_updated | entitlement_overrides_updated | entitlement_overrides_removed | item_entitlements_removed | entitlement_overrides_auto_removed | subscription_entitlements_created | subscription_entitlements_updated | business_entity_created | business_entity_updated | business_entity_deleted | customer_business_entity_changed | subscription_business_entity_changed | payment_source_business_entity_changed | organization_details_created | organization_details_updated | purchase_created | voucher_created | voucher_expired | voucher_create_failed | item_price_entitlements_updated | item_price_entitlements_removed | subscription_ramp_created | subscription_ramp_deleted | subscription_ramp_applied | subscription_ramp_drafted | subscription_ramp_updated | price_variant_created | price_variant_updated | price_variant_deleted | customer_entitlements_updated | subscription_moved_in | subscription_moved_out | subscription_movement_failed | omnichannel_subscription_created | omnichannel_subscription_item_renewed | omnichannel_subscription_item_downgraded | omnichannel_subscription_item_expired | omnichannel_subscription_item_cancellation_scheduled | omnichannel_subscription_item_scheduled_cancellation_removed | omnichannel_subscription_item_resubscribed | omnichannel_subscription_item_upgraded | omnichannel_subscription_item_cancelled | omnichannel_subscription_imported | omnichannel_subscription_item_grace_period_started | omnichannel_subscription_item_grace_period_expired | omnichannel_subscription_item_dunning_started | omnichannel_subscription_item_dunning_expired | rule_created | rule_updated | rule_deleted | record_purchase_failed | omnichannel_subscription_item_change_scheduled | omnichannel_subscription_item_scheduled_change_removed | omnichannel_subscription_item_reactivated | sales_order_created | sales_order_updated | omnichannel_subscription_item_changed | omnichannel_subscription_item_paused | omnichannel_subscription_item_resumed | omnichannel_one_time_order_created | omnichannel_one_time_order_item_cancelled | usage_file_ingested | omnichannel_subscription_item_pause_scheduled | omnichannel_subscription_moved_in | omnichannel_transaction_created | alert_status_changed | omnichannel_subscription_item_updated | omnichannel_subscription_item_recovered | price_ramp_created | price_ramp_updated | price_ramp_deleted | omnichannel_subscription_item_mrr_updated | ledger_account_balance_updated | grant_blocks_created | grant_blocks_updated | ledger_updated | business_rule_created | business_rule_updated | business_rule_activated | business_rule_deactivated | business_rule_deleted | business_rule_released | vault_token_created | vault_token_updated | vault_token_deleted | chargeback_initiated | chargeback_won | chargeback_lost | business_ruleset_created | business_ruleset_updated | business_ruleset_activated | business_ruleset_deactivated | business_ruleset_deleted | collections_reminder_sequence_created | collections_reminder_sequence_paused | collections_reminder_sequence_resumed | collections_reminder_sequence_completed | collections_payment_promise_created | collections_payment_promise_updated | collections_payment_promise_fulfilled | collections_payment_promise_cancelled | collections_payment_promise_broken | collections_dispute_created | collections_dispute_updated | collections_dispute_resolved | collections_dispute_withdrawn | email_message_received | private_note_added,
-  not_in?: coupon_created | coupon_updated | coupon_deleted | coupon_set_created | coupon_set_updated | coupon_set_deleted | coupon_codes_added | coupon_codes_deleted | coupon_codes_updated | customer_created | customer_changed | customer_deleted | customer_moved_out | customer_moved_in | promotional_credits_added | promotional_credits_deducted | subscription_created | subscription_created_with_backdating | subscription_started | subscription_trial_end_reminder | subscription_activated | subscription_activated_with_backdating | subscription_changed | subscription_trial_extended | mrr_updated | subscription_changed_with_backdating | subscription_cancellation_scheduled | subscription_cancellation_reminder | subscription_cancelled | subscription_canceled_with_backdating | subscription_reactivated | subscription_reactivated_with_backdating | subscription_renewed | subscription_items_renewed | subscription_scheduled_cancellation_removed | subscription_changes_scheduled | subscription_scheduled_changes_removed | subscription_shipping_address_updated | subscription_deleted | subscription_paused | subscription_pause_scheduled | subscription_scheduled_pause_removed | subscription_resumed | subscription_resumption_scheduled | subscription_scheduled_resumption_removed | subscription_advance_invoice_schedule_added | subscription_advance_invoice_schedule_updated | subscription_advance_invoice_schedule_removed | pending_invoice_created | pending_invoice_updated | invoice_generated | invoice_generated_with_backdating | invoice_updated | invoice_deleted | credit_note_created | credit_note_created_with_backdating | credit_note_updated | credit_note_deleted | einvoice_created | einvoice_updated | payment_schedules_created | payment_schedules_updated | payment_schedule_scheme_created | payment_schedule_scheme_deleted | payment_schedules_cancelled | subscription_renewal_reminder | add_usages_reminder | payment_due_reminder | transaction_created | transaction_updated | transaction_deleted | payment_succeeded | payment_failed | dunning_updated | payment_refunded | refund_failed | payment_initiated | refund_initiated | authorization_succeeded | authorization_voided | card_added | card_updated | card_expiry_reminder | card_expired | card_deleted | payment_source_added | payment_source_updated | payment_source_deleted | payment_source_expiring | payment_source_expired | payment_source_locally_deleted | virtual_bank_account_added | virtual_bank_account_updated | virtual_bank_account_deleted | token_created | token_consumed | token_expired | unbilled_charges_created | unbilled_charges_voided | unbilled_charges_deleted | unbilled_charges_invoiced | order_created | order_updated | order_cancelled | order_delivered | order_returned | order_ready_to_process | order_ready_to_ship | order_deleted | order_resent | quote_created | quote_updated | quote_deleted | tax_withheld_recorded | tax_withheld_deleted | tax_withheld_refunded | gift_scheduled | gift_unclaimed | gift_claimed | gift_expired | gift_cancelled | gift_updated | hierarchy_created | hierarchy_deleted | payment_intent_created | payment_intent_updated | contract_term_created | contract_term_renewed | contract_term_terminated | contract_term_completed | contract_term_cancelled | item_family_created | item_family_updated | item_family_deleted | item_created | item_updated | item_deleted | item_price_created | item_price_updated | item_price_deleted | attached_item_created | attached_item_updated | attached_item_deleted | differential_price_created | differential_price_updated | differential_price_deleted | feature_created | feature_updated | feature_deleted | feature_activated | feature_reactivated | feature_archived | item_entitlements_updated | entitlement_overrides_updated | entitlement_overrides_removed | item_entitlements_removed | entitlement_overrides_auto_removed | subscription_entitlements_created | subscription_entitlements_updated | business_entity_created | business_entity_updated | business_entity_deleted | customer_business_entity_changed | subscription_business_entity_changed | payment_source_business_entity_changed | organization_details_created | organization_details_updated | purchase_created | voucher_created | voucher_expired | voucher_create_failed | item_price_entitlements_updated | item_price_entitlements_removed | subscription_ramp_created | subscription_ramp_deleted | subscription_ramp_applied | subscription_ramp_drafted | subscription_ramp_updated | price_variant_created | price_variant_updated | price_variant_deleted | customer_entitlements_updated | subscription_moved_in | subscription_moved_out | subscription_movement_failed | omnichannel_subscription_created | omnichannel_subscription_item_renewed | omnichannel_subscription_item_downgraded | omnichannel_subscription_item_expired | omnichannel_subscription_item_cancellation_scheduled | omnichannel_subscription_item_scheduled_cancellation_removed | omnichannel_subscription_item_resubscribed | omnichannel_subscription_item_upgraded | omnichannel_subscription_item_cancelled | omnichannel_subscription_imported | omnichannel_subscription_item_grace_period_started | omnichannel_subscription_item_grace_period_expired | omnichannel_subscription_item_dunning_started | omnichannel_subscription_item_dunning_expired | rule_created | rule_updated | rule_deleted | record_purchase_failed | omnichannel_subscription_item_change_scheduled | omnichannel_subscription_item_scheduled_change_removed | omnichannel_subscription_item_reactivated | sales_order_created | sales_order_updated | omnichannel_subscription_item_changed | omnichannel_subscription_item_paused | omnichannel_subscription_item_resumed | omnichannel_one_time_order_created | omnichannel_one_time_order_item_cancelled | usage_file_ingested | omnichannel_subscription_item_pause_scheduled | omnichannel_subscription_moved_in | omnichannel_transaction_created | alert_status_changed | omnichannel_subscription_item_updated | omnichannel_subscription_item_recovered | price_ramp_created | price_ramp_updated | price_ramp_deleted | omnichannel_subscription_item_mrr_updated | ledger_account_balance_updated | grant_blocks_created | grant_blocks_updated | ledger_updated | business_rule_created | business_rule_updated | business_rule_activated | business_rule_deactivated | business_rule_deleted | business_rule_released | vault_token_created | vault_token_updated | vault_token_deleted | chargeback_initiated | chargeback_won | chargeback_lost | business_ruleset_created | business_ruleset_updated | business_ruleset_activated | business_ruleset_deactivated | business_ruleset_deleted | collections_reminder_sequence_created | collections_reminder_sequence_paused | collections_reminder_sequence_resumed | collections_reminder_sequence_completed | collections_payment_promise_created | collections_payment_promise_updated | collections_payment_promise_fulfilled | collections_payment_promise_cancelled | collections_payment_promise_broken | collections_dispute_created | collections_dispute_updated | collections_dispute_resolved | collections_dispute_withdrawn | email_message_received | private_note_added
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -31040,8 +31038,8 @@ await corsair.chargebee.api.events.list({});
 {
   is?: admin_console | api | scheduled_job | hosted_page | portal | system | none | js_api | migration | bulk_operation | external_service | mcp | copilot | agent,
   is_not?: admin_console | api | scheduled_job | hosted_page | portal | system | none | js_api | migration | bulk_operation | external_service | mcp | copilot | agent,
-  in?: admin_console | api | scheduled_job | hosted_page | portal | system | none | js_api | migration | bulk_operation | external_service | mcp | copilot | agent,
-  not_in?: admin_console | api | scheduled_job | hosted_page | portal | system | none | js_api | migration | bulk_operation | external_service | mcp | copilot | agent
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -31167,8 +31165,8 @@ await corsair.chargebee.api.exports.addons({});
   charge_type?: {
     is?: recurring | non_recurring,
     is_not?: recurring | non_recurring,
-    in?: recurring | non_recurring,
-    not_in?: recurring | non_recurring
+    in?: string,
+    not_in?: string
   },
   price?: {
     is?: string,
@@ -31191,14 +31189,14 @@ await corsair.chargebee.api.exports.addons({});
   period_unit?: {
     is?: day | week | month | year | not_applicable,
     is_not?: day | week | month | year | not_applicable,
-    in?: day | week | month | year | not_applicable,
-    not_in?: day | week | month | year | not_applicable
+    in?: string,
+    not_in?: string
   },
   status?: {
     is?: active | archived | deleted,
     is_not?: active | archived | deleted,
-    in?: active | archived | deleted,
-    not_in?: active | archived | deleted
+    in?: string,
+    not_in?: string
   },
   updated_at?: {
     after?: string,
@@ -31209,8 +31207,8 @@ await corsair.chargebee.api.exports.addons({});
   channel?: {
     is?: web | app_store | play_store,
     is_not?: web | app_store | play_store,
-    in?: web | app_store | play_store,
-    not_in?: web | app_store | play_store
+    in?: string,
+    not_in?: string
   }
 }
 ```
@@ -31279,8 +31277,8 @@ await corsair.chargebee.api.exports.attachedItems({});
 {
   is?: plan | addon | charge,
   is_not?: plan | addon | charge,
-  in?: plan | addon | charge,
-  not_in?: plan | addon | charge
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -31306,14 +31304,14 @@ await corsair.chargebee.api.exports.attachedItems({});
   type?: {
     is?: recommended | mandatory | optional,
     is_not?: recommended | mandatory | optional,
-    in?: recommended | mandatory | optional,
-    not_in?: recommended | mandatory | optional
+    in?: string,
+    not_in?: string
   },
   charge_on_event?: {
     is?: subscription_creation | subscription_trial_start | plan_activation | subscription_activation | contract_termination | on_demand,
     is_not?: subscription_creation | subscription_trial_start | plan_activation | subscription_activation | contract_termination | on_demand,
-    in?: subscription_creation | subscription_trial_start | plan_activation | subscription_activation | contract_termination | on_demand,
-    not_in?: subscription_creation | subscription_trial_start | plan_activation | subscription_activation | contract_termination | on_demand
+    in?: string,
+    not_in?: string
   },
   updated_at?: {
     after?: string,
@@ -31434,26 +31432,26 @@ await corsair.chargebee.api.exports.coupons({});
   discount_type?: {
     is?: fixed_amount | percentage | offer_quantity,
     is_not?: fixed_amount | percentage | offer_quantity,
-    in?: fixed_amount | percentage | offer_quantity,
-    not_in?: fixed_amount | percentage | offer_quantity
+    in?: string,
+    not_in?: string
   },
   duration_type?: {
     is?: one_time | forever | limited_period,
     is_not?: one_time | forever | limited_period,
-    in?: one_time | forever | limited_period,
-    not_in?: one_time | forever | limited_period
+    in?: string,
+    not_in?: string
   },
   status?: {
     is?: active | expired | archived | deleted | future,
     is_not?: active | expired | archived | deleted | future,
-    in?: active | expired | archived | deleted | future,
-    not_in?: active | expired | archived | deleted | future
+    in?: string,
+    not_in?: string
   },
   apply_on?: {
     is?: invoice_amount | each_specified_item,
     is_not?: invoice_amount | each_specified_item,
-    in?: invoice_amount | each_specified_item,
-    not_in?: invoice_amount | each_specified_item
+    in?: string,
+    not_in?: string
   },
   created_at?: {
     after?: string,
@@ -31564,14 +31562,14 @@ await corsair.chargebee.api.exports.creditNotes({});
   type?: {
     is?: adjustment | refundable | store,
     is_not?: adjustment | refundable | store,
-    in?: adjustment | refundable | store,
-    not_in?: adjustment | refundable | store
+    in?: string,
+    not_in?: string
   },
   reason_code?: {
     is?: write_off | subscription_change | subscription_cancellation | subscription_pause | chargeback | product_unsatisfactory | service_unsatisfactory | order_change | order_cancellation | waiver | other | fraudulent,
     is_not?: write_off | subscription_change | subscription_cancellation | subscription_pause | chargeback | product_unsatisfactory | service_unsatisfactory | order_change | order_cancellation | waiver | other | fraudulent,
-    in?: write_off | subscription_change | subscription_cancellation | subscription_pause | chargeback | product_unsatisfactory | service_unsatisfactory | order_change | order_cancellation | waiver | other | fraudulent,
-    not_in?: write_off | subscription_change | subscription_cancellation | subscription_pause | chargeback | product_unsatisfactory | service_unsatisfactory | order_change | order_cancellation | waiver | other | fraudulent
+    in?: string,
+    not_in?: string
   },
   create_reason_code?: {
     is?: string,
@@ -31583,8 +31581,8 @@ await corsair.chargebee.api.exports.creditNotes({});
   status?: {
     is?: adjusted | refunded | refund_due | voided,
     is_not?: adjusted | refunded | refund_due | voided,
-    in?: adjusted | refunded | refund_due | voided,
-    not_in?: adjusted | refunded | refund_due | voided
+    in?: string,
+    not_in?: string
   },
   date?: {
     after?: string,
@@ -31604,8 +31602,8 @@ await corsair.chargebee.api.exports.creditNotes({});
   price_type?: {
     is?: tax_exclusive | tax_inclusive,
     is_not?: tax_exclusive | tax_inclusive,
-    in?: tax_exclusive | tax_inclusive,
-    not_in?: tax_exclusive | tax_inclusive
+    in?: string,
+    not_in?: string
   },
   amount_allocated?: {
     is?: string,
@@ -31649,8 +31647,8 @@ await corsair.chargebee.api.exports.creditNotes({});
   channel?: {
     is?: web | app_store | play_store,
     is_not?: web | app_store | play_store,
-    in?: web | app_store | play_store,
-    not_in?: web | app_store | play_store
+    in?: string,
+    not_in?: string
   }
 }
 ```
@@ -31770,14 +31768,14 @@ await corsair.chargebee.api.exports.customers({});
   auto_collection?: {
     is?: on | off,
     is_not?: on | off,
-    in?: on | off,
-    not_in?: on | off
+    in?: string,
+    not_in?: string
   },
   taxability?: {
     is?: taxable | exempt | zero_rated,
     is_not?: taxable | exempt | zero_rated,
-    in?: taxable | exempt | zero_rated,
-    not_in?: taxable | exempt | zero_rated
+    in?: string,
+    not_in?: string
   },
   created_at?: {
     after?: string,
@@ -31794,8 +31792,8 @@ await corsair.chargebee.api.exports.customers({});
   offline_payment_method?: {
     is?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom,
     is_not?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom,
-    in?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom,
-    not_in?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom
+    in?: string,
+    not_in?: string
   },
   auto_close_invoices?: {
     is?: true | false
@@ -31803,8 +31801,8 @@ await corsair.chargebee.api.exports.customers({});
   channel?: {
     is?: web | app_store | play_store,
     is_not?: web | app_store | play_store,
-    in?: web | app_store | play_store,
-    not_in?: web | app_store | play_store
+    in?: string,
+    not_in?: string
   }
 }
 ```
@@ -31990,14 +31988,14 @@ await corsair.chargebee.api.exports.deferredRevenue({
   status?: {
     is?: paid | posted | payment_due | not_paid | voided | pending,
     is_not?: paid | posted | payment_due | not_paid | voided | pending,
-    in?: paid | posted | payment_due | not_paid | voided | pending,
-    not_in?: paid | posted | payment_due | not_paid | voided | pending
+    in?: string,
+    not_in?: string
   },
   price_type?: {
     is?: tax_exclusive | tax_inclusive,
     is_not?: tax_exclusive | tax_inclusive,
-    in?: tax_exclusive | tax_inclusive,
-    not_in?: tax_exclusive | tax_inclusive
+    in?: string,
+    not_in?: string
   },
   date?: {
     after?: string,
@@ -32059,8 +32057,8 @@ await corsair.chargebee.api.exports.deferredRevenue({
   dunning_status?: {
     is?: in_progress | exhausted | stopped | success,
     is_not?: in_progress | exhausted | stopped | success,
-    in?: in_progress | exhausted | stopped | success,
-    not_in?: in_progress | exhausted | stopped | success,
+    in?: string,
+    not_in?: string,
     is_present?: true | false
   },
   updated_at?: {
@@ -32072,8 +32070,8 @@ await corsair.chargebee.api.exports.deferredRevenue({
   channel?: {
     is?: web | app_store | play_store,
     is_not?: web | app_store | play_store,
-    in?: web | app_store | play_store,
-    not_in?: web | app_store | play_store
+    in?: string,
+    not_in?: string
   }
 }
 ```
@@ -32100,14 +32098,14 @@ await corsair.chargebee.api.exports.deferredRevenue({
   status?: {
     is?: future | in_trial | active | non_renewing | paused | cancelled | transferred,
     is_not?: future | in_trial | active | non_renewing | paused | cancelled | transferred,
-    in?: future | in_trial | active | non_renewing | paused | cancelled | transferred,
-    not_in?: future | in_trial | active | non_renewing | paused | cancelled | transferred
+    in?: string,
+    not_in?: string
   },
   cancel_reason?: {
     is?: not_paid | no_card | fraud_review_failed | non_compliant_eu_customer | tax_calculation_failed | currency_incompatible_with_gateway | non_compliant_customer,
     is_not?: not_paid | no_card | fraud_review_failed | non_compliant_eu_customer | tax_calculation_failed | currency_incompatible_with_gateway | non_compliant_customer,
-    in?: not_paid | no_card | fraud_review_failed | non_compliant_eu_customer | tax_calculation_failed | currency_incompatible_with_gateway | non_compliant_customer,
-    not_in?: not_paid | no_card | fraud_review_failed | non_compliant_eu_customer | tax_calculation_failed | currency_incompatible_with_gateway | non_compliant_customer,
+    in?: string,
+    not_in?: string,
     is_present?: true | false
   },
   remaining_billing_cycles?: {
@@ -32157,8 +32155,8 @@ await corsair.chargebee.api.exports.deferredRevenue({
   offline_payment_method?: {
     is?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom,
     is_not?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom,
-    in?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom,
-    not_in?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom
+    in?: string,
+    not_in?: string
   },
   auto_close_invoices?: {
     is?: true | false
@@ -32166,8 +32164,8 @@ await corsair.chargebee.api.exports.deferredRevenue({
   channel?: {
     is?: web | app_store | play_store,
     is_not?: web | app_store | play_store,
-    in?: web | app_store | play_store,
-    not_in?: web | app_store | play_store
+    in?: string,
+    not_in?: string
   }
 }
 ```
@@ -32217,14 +32215,14 @@ await corsair.chargebee.api.exports.deferredRevenue({
   auto_collection?: {
     is?: on | off,
     is_not?: on | off,
-    in?: on | off,
-    not_in?: on | off
+    in?: string,
+    not_in?: string
   },
   taxability?: {
     is?: taxable | exempt | zero_rated,
     is_not?: taxable | exempt | zero_rated,
-    in?: taxable | exempt | zero_rated,
-    not_in?: taxable | exempt | zero_rated
+    in?: string,
+    not_in?: string
   },
   created_at?: {
     after?: string,
@@ -32241,8 +32239,8 @@ await corsair.chargebee.api.exports.deferredRevenue({
   offline_payment_method?: {
     is?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom,
     is_not?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom,
-    in?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom,
-    not_in?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom
+    in?: string,
+    not_in?: string
   },
   auto_close_invoices?: {
     is?: true | false
@@ -32250,8 +32248,8 @@ await corsair.chargebee.api.exports.deferredRevenue({
   channel?: {
     is?: web | app_store | play_store,
     is_not?: web | app_store | play_store,
-    in?: web | app_store | play_store,
-    not_in?: web | app_store | play_store
+    in?: string,
+    not_in?: string
   }
 }
 ```
@@ -32532,14 +32530,14 @@ await corsair.chargebee.api.exports.invoices({});
   status?: {
     is?: paid | posted | payment_due | not_paid | voided | pending,
     is_not?: paid | posted | payment_due | not_paid | voided | pending,
-    in?: paid | posted | payment_due | not_paid | voided | pending,
-    not_in?: paid | posted | payment_due | not_paid | voided | pending
+    in?: string,
+    not_in?: string
   },
   price_type?: {
     is?: tax_exclusive | tax_inclusive,
     is_not?: tax_exclusive | tax_inclusive,
-    in?: tax_exclusive | tax_inclusive,
-    not_in?: tax_exclusive | tax_inclusive
+    in?: string,
+    not_in?: string
   },
   date?: {
     after?: string,
@@ -32601,8 +32599,8 @@ await corsair.chargebee.api.exports.invoices({});
   dunning_status?: {
     is?: in_progress | exhausted | stopped | success,
     is_not?: in_progress | exhausted | stopped | success,
-    in?: in_progress | exhausted | stopped | success,
-    not_in?: in_progress | exhausted | stopped | success,
+    in?: string,
+    not_in?: string,
     is_present?: true | false
   },
   updated_at?: {
@@ -32614,8 +32612,8 @@ await corsair.chargebee.api.exports.invoices({});
   channel?: {
     is?: web | app_store | play_store,
     is_not?: web | app_store | play_store,
-    in?: web | app_store | play_store,
-    not_in?: web | app_store | play_store
+    in?: string,
+    not_in?: string
   }
 }
 ```
@@ -32804,8 +32802,8 @@ await corsair.chargebee.api.exports.itemPrices({});
 {
   is?: plan | addon | charge,
   is_not?: plan | addon | charge,
-  in?: plan | addon | charge,
-  not_in?: plan | addon | charge
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -32863,8 +32861,8 @@ await corsair.chargebee.api.exports.itemPrices({});
   pricing_model?: {
     is?: flat_fee | per_unit | tiered | volume | stairstep,
     is_not?: flat_fee | per_unit | tiered | volume | stairstep,
-    in?: flat_fee | per_unit | tiered | volume | stairstep,
-    not_in?: flat_fee | per_unit | tiered | volume | stairstep
+    in?: string,
+    not_in?: string
   },
   item_id?: {
     is?: string,
@@ -32892,14 +32890,14 @@ await corsair.chargebee.api.exports.itemPrices({});
   trial_period_unit?: {
     is?: day | month,
     is_not?: day | month,
-    in?: day | month,
-    not_in?: day | month
+    in?: string,
+    not_in?: string
   },
   status?: {
     is?: active | archived | deleted,
     is_not?: active | archived | deleted,
-    in?: active | archived | deleted,
-    not_in?: active | archived | deleted
+    in?: string,
+    not_in?: string
   },
   updated_at?: {
     after?: string,
@@ -32910,8 +32908,8 @@ await corsair.chargebee.api.exports.itemPrices({});
   period_unit?: {
     is?: day | week | month | year,
     is_not?: day | week | month | year,
-    in?: day | week | month | year,
-    not_in?: day | week | month | year
+    in?: string,
+    not_in?: string
   },
   period?: {
     is?: string,
@@ -32925,8 +32923,8 @@ await corsair.chargebee.api.exports.itemPrices({});
   channel?: {
     is?: web | app_store | play_store,
     is_not?: web | app_store | play_store,
-    in?: web | app_store | play_store,
-    not_in?: web | app_store | play_store
+    in?: string,
+    not_in?: string
   }
 }
 ```
@@ -33030,8 +33028,8 @@ await corsair.chargebee.api.exports.items({});
   type?: {
     is?: plan | addon | charge,
     is_not?: plan | addon | charge,
-    in?: plan | addon | charge,
-    not_in?: plan | addon | charge
+    in?: string,
+    not_in?: string
   },
   name?: {
     is?: string,
@@ -33041,14 +33039,14 @@ await corsair.chargebee.api.exports.items({});
   item_applicability?: {
     is?: all | restricted,
     is_not?: all | restricted,
-    in?: all | restricted,
-    not_in?: all | restricted
+    in?: string,
+    not_in?: string
   },
   status?: {
     is?: active | archived | deleted,
     is_not?: active | archived | deleted,
-    in?: active | archived | deleted,
-    not_in?: active | archived | deleted
+    in?: string,
+    not_in?: string
   },
   is_giftable?: {
     is?: true | false
@@ -33071,14 +33069,14 @@ await corsair.chargebee.api.exports.items({});
   usage_calculation?: {
     is?: sum_of_usages | last_usage | max_usage,
     is_not?: sum_of_usages | last_usage | max_usage,
-    in?: sum_of_usages | last_usage | max_usage,
-    not_in?: sum_of_usages | last_usage | max_usage
+    in?: string,
+    not_in?: string
   },
   channel?: {
     is?: web | app_store | play_store,
     is_not?: web | app_store | play_store,
-    in?: web | app_store | play_store,
-    not_in?: web | app_store | play_store
+    in?: string,
+    not_in?: string
   }
 }
 ```
@@ -33185,14 +33183,14 @@ await corsair.chargebee.api.exports.orders({});
   status?: {
     is?: new | processing | complete | cancelled | voided | queued | awaiting_shipment | on_hold | delivered | shipped | partially_delivered | returned,
     is_not?: new | processing | complete | cancelled | voided | queued | awaiting_shipment | on_hold | delivered | shipped | partially_delivered | returned,
-    in?: new | processing | complete | cancelled | voided | queued | awaiting_shipment | on_hold | delivered | shipped | partially_delivered | returned,
-    not_in?: new | processing | complete | cancelled | voided | queued | awaiting_shipment | on_hold | delivered | shipped | partially_delivered | returned
+    in?: string,
+    not_in?: string
   },
   price_type?: {
     is?: tax_exclusive | tax_inclusive,
     is_not?: tax_exclusive | tax_inclusive,
-    in?: tax_exclusive | tax_inclusive,
-    not_in?: tax_exclusive | tax_inclusive
+    in?: string,
+    not_in?: string
   },
   order_date?: {
     after?: string,
@@ -33260,8 +33258,8 @@ await corsair.chargebee.api.exports.orders({});
   resent_status?: {
     is?: fully_resent | partially_resent,
     is_not?: fully_resent | partially_resent,
-    in?: fully_resent | partially_resent,
-    not_in?: fully_resent | partially_resent
+    in?: string,
+    not_in?: string
   },
   is_resent?: {
     is?: true | false
@@ -33383,8 +33381,8 @@ await corsair.chargebee.api.exports.plans({});
   period_unit?: {
     is?: day | week | month | year,
     is_not?: day | week | month | year,
-    in?: day | week | month | year,
-    not_in?: day | week | month | year
+    in?: string,
+    not_in?: string
   },
   trial_period?: {
     is?: string,
@@ -33399,14 +33397,14 @@ await corsair.chargebee.api.exports.plans({});
   trial_period_unit?: {
     is?: day | month,
     is_not?: day | month,
-    in?: day | month,
-    not_in?: day | month
+    in?: string,
+    not_in?: string
   },
   addon_applicability?: {
     is?: all | restricted,
     is_not?: all | restricted,
-    in?: all | restricted,
-    not_in?: all | restricted
+    in?: string,
+    not_in?: string
   },
   giftable?: {
     is?: true | false
@@ -33414,8 +33412,8 @@ await corsair.chargebee.api.exports.plans({});
   status?: {
     is?: active | archived | deleted,
     is_not?: active | archived | deleted,
-    in?: active | archived | deleted,
-    not_in?: active | archived | deleted
+    in?: string,
+    not_in?: string
   },
   updated_at?: {
     after?: string,
@@ -33426,8 +33424,8 @@ await corsair.chargebee.api.exports.plans({});
   channel?: {
     is?: web | app_store | play_store,
     is_not?: web | app_store | play_store,
-    in?: web | app_store | play_store,
-    not_in?: web | app_store | play_store
+    in?: string,
+    not_in?: string
   }
 }
 ```
@@ -33531,8 +33529,8 @@ await corsair.chargebee.api.exports.priceVariants({});
   status?: {
     is?: active | archived,
     is_not?: active | archived,
-    in?: active | archived,
-    not_in?: active | archived
+    in?: string,
+    not_in?: string
   },
   updated_at?: {
     after?: string,
@@ -33613,7 +33611,7 @@ await corsair.chargebee.api.exports.ramps({});
 {
   status?: {
     is?: scheduled | succeeded | failed | draft,
-    in?: scheduled | succeeded | failed | draft
+    in?: string
   },
   subscription_id?: {
     is?: string,
@@ -33792,14 +33790,14 @@ await corsair.chargebee.api.exports.revenueRecognition({
   status?: {
     is?: paid | posted | payment_due | not_paid | voided | pending,
     is_not?: paid | posted | payment_due | not_paid | voided | pending,
-    in?: paid | posted | payment_due | not_paid | voided | pending,
-    not_in?: paid | posted | payment_due | not_paid | voided | pending
+    in?: string,
+    not_in?: string
   },
   price_type?: {
     is?: tax_exclusive | tax_inclusive,
     is_not?: tax_exclusive | tax_inclusive,
-    in?: tax_exclusive | tax_inclusive,
-    not_in?: tax_exclusive | tax_inclusive
+    in?: string,
+    not_in?: string
   },
   date?: {
     after?: string,
@@ -33861,8 +33859,8 @@ await corsair.chargebee.api.exports.revenueRecognition({
   dunning_status?: {
     is?: in_progress | exhausted | stopped | success,
     is_not?: in_progress | exhausted | stopped | success,
-    in?: in_progress | exhausted | stopped | success,
-    not_in?: in_progress | exhausted | stopped | success,
+    in?: string,
+    not_in?: string,
     is_present?: true | false
   },
   updated_at?: {
@@ -33874,8 +33872,8 @@ await corsair.chargebee.api.exports.revenueRecognition({
   channel?: {
     is?: web | app_store | play_store,
     is_not?: web | app_store | play_store,
-    in?: web | app_store | play_store,
-    not_in?: web | app_store | play_store
+    in?: string,
+    not_in?: string
   }
 }
 ```
@@ -33902,14 +33900,14 @@ await corsair.chargebee.api.exports.revenueRecognition({
   status?: {
     is?: future | in_trial | active | non_renewing | paused | cancelled | transferred,
     is_not?: future | in_trial | active | non_renewing | paused | cancelled | transferred,
-    in?: future | in_trial | active | non_renewing | paused | cancelled | transferred,
-    not_in?: future | in_trial | active | non_renewing | paused | cancelled | transferred
+    in?: string,
+    not_in?: string
   },
   cancel_reason?: {
     is?: not_paid | no_card | fraud_review_failed | non_compliant_eu_customer | tax_calculation_failed | currency_incompatible_with_gateway | non_compliant_customer,
     is_not?: not_paid | no_card | fraud_review_failed | non_compliant_eu_customer | tax_calculation_failed | currency_incompatible_with_gateway | non_compliant_customer,
-    in?: not_paid | no_card | fraud_review_failed | non_compliant_eu_customer | tax_calculation_failed | currency_incompatible_with_gateway | non_compliant_customer,
-    not_in?: not_paid | no_card | fraud_review_failed | non_compliant_eu_customer | tax_calculation_failed | currency_incompatible_with_gateway | non_compliant_customer,
+    in?: string,
+    not_in?: string,
     is_present?: true | false
   },
   remaining_billing_cycles?: {
@@ -33959,8 +33957,8 @@ await corsair.chargebee.api.exports.revenueRecognition({
   offline_payment_method?: {
     is?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom,
     is_not?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom,
-    in?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom,
-    not_in?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom
+    in?: string,
+    not_in?: string
   },
   auto_close_invoices?: {
     is?: true | false
@@ -33968,8 +33966,8 @@ await corsair.chargebee.api.exports.revenueRecognition({
   channel?: {
     is?: web | app_store | play_store,
     is_not?: web | app_store | play_store,
-    in?: web | app_store | play_store,
-    not_in?: web | app_store | play_store
+    in?: string,
+    not_in?: string
   }
 }
 ```
@@ -34019,14 +34017,14 @@ await corsair.chargebee.api.exports.revenueRecognition({
   auto_collection?: {
     is?: on | off,
     is_not?: on | off,
-    in?: on | off,
-    not_in?: on | off
+    in?: string,
+    not_in?: string
   },
   taxability?: {
     is?: taxable | exempt | zero_rated,
     is_not?: taxable | exempt | zero_rated,
-    in?: taxable | exempt | zero_rated,
-    not_in?: taxable | exempt | zero_rated
+    in?: string,
+    not_in?: string
   },
   created_at?: {
     after?: string,
@@ -34043,8 +34041,8 @@ await corsair.chargebee.api.exports.revenueRecognition({
   offline_payment_method?: {
     is?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom,
     is_not?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom,
-    in?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom,
-    not_in?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom
+    in?: string,
+    not_in?: string
   },
   auto_close_invoices?: {
     is?: true | false
@@ -34052,8 +34050,8 @@ await corsair.chargebee.api.exports.revenueRecognition({
   channel?: {
     is?: web | app_store | play_store,
     is_not?: web | app_store | play_store,
-    in?: web | app_store | play_store,
-    not_in?: web | app_store | play_store
+    in?: string,
+    not_in?: string
   }
 }
 ```
@@ -34202,14 +34200,14 @@ await corsair.chargebee.api.exports.subscriptions({});
   status?: {
     is?: future | in_trial | active | non_renewing | paused | cancelled | transferred,
     is_not?: future | in_trial | active | non_renewing | paused | cancelled | transferred,
-    in?: future | in_trial | active | non_renewing | paused | cancelled | transferred,
-    not_in?: future | in_trial | active | non_renewing | paused | cancelled | transferred
+    in?: string,
+    not_in?: string
   },
   cancel_reason?: {
     is?: not_paid | no_card | fraud_review_failed | non_compliant_eu_customer | tax_calculation_failed | currency_incompatible_with_gateway | non_compliant_customer,
     is_not?: not_paid | no_card | fraud_review_failed | non_compliant_eu_customer | tax_calculation_failed | currency_incompatible_with_gateway | non_compliant_customer,
-    in?: not_paid | no_card | fraud_review_failed | non_compliant_eu_customer | tax_calculation_failed | currency_incompatible_with_gateway | non_compliant_customer,
-    not_in?: not_paid | no_card | fraud_review_failed | non_compliant_eu_customer | tax_calculation_failed | currency_incompatible_with_gateway | non_compliant_customer,
+    in?: string,
+    not_in?: string,
     is_present?: true | false
   },
   remaining_billing_cycles?: {
@@ -34259,8 +34257,8 @@ await corsair.chargebee.api.exports.subscriptions({});
   offline_payment_method?: {
     is?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom,
     is_not?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom,
-    in?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom,
-    not_in?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom
+    in?: string,
+    not_in?: string
   },
   auto_close_invoices?: {
     is?: true | false
@@ -34268,8 +34266,8 @@ await corsair.chargebee.api.exports.subscriptions({});
   channel?: {
     is?: web | app_store | play_store,
     is_not?: web | app_store | play_store,
-    in?: web | app_store | play_store,
-    not_in?: web | app_store | play_store
+    in?: string,
+    not_in?: string
   },
   decommissioned?: {
     is?: true | false
@@ -34372,14 +34370,14 @@ await corsair.chargebee.api.exports.transactions({});
   payment_method?: {
     is?: card | cash | check | chargeback | bank_transfer | amazon_payments | paypal_express_checkout | direct_debit | alipay | unionpay | apple_pay | wechat_pay | ach_credit | sepa_credit | ideal | google_pay | sofort | bancontact | giropay | dotpay | other | upi | netbanking_emandates | custom | boleto | venmo | pay_to | faster_payments | sepa_instant_transfer | automated_bank_transfer | klarna_pay_now | online_banking_poland | payconiq_by_bancontact | electronic_payment_standard | kbc_payment_button | pay_by_bank | trustly | stablecoin | kakao_pay | naver_pay | revolut_pay | cash_app_pay | pix | twint | go_pay | grab_pay | pay_co | after_pay | swish | payme | klarna | alipay_hk | paypay | gcash | south_korean_cards | paynow | bizum | promptpay | dana | touch_n_go | tamara | qpay | ovo | momo | mercado_pago | nequi | nupay | picpay | thai_qr | blik | fpx | wero | p24 | affirm_pay | rakuten_pay,
     is_not?: card | cash | check | chargeback | bank_transfer | amazon_payments | paypal_express_checkout | direct_debit | alipay | unionpay | apple_pay | wechat_pay | ach_credit | sepa_credit | ideal | google_pay | sofort | bancontact | giropay | dotpay | other | upi | netbanking_emandates | custom | boleto | venmo | pay_to | faster_payments | sepa_instant_transfer | automated_bank_transfer | klarna_pay_now | online_banking_poland | payconiq_by_bancontact | electronic_payment_standard | kbc_payment_button | pay_by_bank | trustly | stablecoin | kakao_pay | naver_pay | revolut_pay | cash_app_pay | pix | twint | go_pay | grab_pay | pay_co | after_pay | swish | payme | klarna | alipay_hk | paypay | gcash | south_korean_cards | paynow | bizum | promptpay | dana | touch_n_go | tamara | qpay | ovo | momo | mercado_pago | nequi | nupay | picpay | thai_qr | blik | fpx | wero | p24 | affirm_pay | rakuten_pay,
-    in?: card | cash | check | chargeback | bank_transfer | amazon_payments | paypal_express_checkout | direct_debit | alipay | unionpay | apple_pay | wechat_pay | ach_credit | sepa_credit | ideal | google_pay | sofort | bancontact | giropay | dotpay | other | upi | netbanking_emandates | custom | boleto | venmo | pay_to | faster_payments | sepa_instant_transfer | automated_bank_transfer | klarna_pay_now | online_banking_poland | payconiq_by_bancontact | electronic_payment_standard | kbc_payment_button | pay_by_bank | trustly | stablecoin | kakao_pay | naver_pay | revolut_pay | cash_app_pay | pix | twint | go_pay | grab_pay | pay_co | after_pay | swish | payme | klarna | alipay_hk | paypay | gcash | south_korean_cards | paynow | bizum | promptpay | dana | touch_n_go | tamara | qpay | ovo | momo | mercado_pago | nequi | nupay | picpay | thai_qr | blik | fpx | wero | p24 | affirm_pay | rakuten_pay,
-    not_in?: card | cash | check | chargeback | bank_transfer | amazon_payments | paypal_express_checkout | direct_debit | alipay | unionpay | apple_pay | wechat_pay | ach_credit | sepa_credit | ideal | google_pay | sofort | bancontact | giropay | dotpay | other | upi | netbanking_emandates | custom | boleto | venmo | pay_to | faster_payments | sepa_instant_transfer | automated_bank_transfer | klarna_pay_now | online_banking_poland | payconiq_by_bancontact | electronic_payment_standard | kbc_payment_button | pay_by_bank | trustly | stablecoin | kakao_pay | naver_pay | revolut_pay | cash_app_pay | pix | twint | go_pay | grab_pay | pay_co | after_pay | swish | payme | klarna | alipay_hk | paypay | gcash | south_korean_cards | paynow | bizum | promptpay | dana | touch_n_go | tamara | qpay | ovo | momo | mercado_pago | nequi | nupay | picpay | thai_qr | blik | fpx | wero | p24 | affirm_pay | rakuten_pay
+    in?: string,
+    not_in?: string
   },
   gateway?: {
     is?: chargebee | chargebee_payments | adyen | stripe | wepay | braintree | authorize_net | paypal_pro | pin | eway | eway_rapid | worldpay | balanced_payments | beanstream | bluepay | elavon | first_data_global | hdfc | migs | nmi | ogone | paymill | paypal_payflow_pro | sage_pay | tco | wirecard | amazon_payments | paypal_express_checkout | gocardless | orbital | moneris_us | moneris | bluesnap | cybersource | vantiv | checkout_com | paypal | ingenico_direct | exact | mollie | quickbooks | razorpay | global_payments | bank_of_america | ecentric | metrics_global | windcave | pay_com | ebanx | dlocal | nuvei | solidgate | paystack | jp_morgan | deutsche_bank | ezidebit | twikey | tempus | moyasar | payway | payu | not_applicable,
     is_not?: chargebee | chargebee_payments | adyen | stripe | wepay | braintree | authorize_net | paypal_pro | pin | eway | eway_rapid | worldpay | balanced_payments | beanstream | bluepay | elavon | first_data_global | hdfc | migs | nmi | ogone | paymill | paypal_payflow_pro | sage_pay | tco | wirecard | amazon_payments | paypal_express_checkout | gocardless | orbital | moneris_us | moneris | bluesnap | cybersource | vantiv | checkout_com | paypal | ingenico_direct | exact | mollie | quickbooks | razorpay | global_payments | bank_of_america | ecentric | metrics_global | windcave | pay_com | ebanx | dlocal | nuvei | solidgate | paystack | jp_morgan | deutsche_bank | ezidebit | twikey | tempus | moyasar | payway | payu | not_applicable,
-    in?: chargebee | chargebee_payments | adyen | stripe | wepay | braintree | authorize_net | paypal_pro | pin | eway | eway_rapid | worldpay | balanced_payments | beanstream | bluepay | elavon | first_data_global | hdfc | migs | nmi | ogone | paymill | paypal_payflow_pro | sage_pay | tco | wirecard | amazon_payments | paypal_express_checkout | gocardless | orbital | moneris_us | moneris | bluesnap | cybersource | vantiv | checkout_com | paypal | ingenico_direct | exact | mollie | quickbooks | razorpay | global_payments | bank_of_america | ecentric | metrics_global | windcave | pay_com | ebanx | dlocal | nuvei | solidgate | paystack | jp_morgan | deutsche_bank | ezidebit | twikey | tempus | moyasar | payway | payu | not_applicable,
-    not_in?: chargebee | chargebee_payments | adyen | stripe | wepay | braintree | authorize_net | paypal_pro | pin | eway | eway_rapid | worldpay | balanced_payments | beanstream | bluepay | elavon | first_data_global | hdfc | migs | nmi | ogone | paymill | paypal_payflow_pro | sage_pay | tco | wirecard | amazon_payments | paypal_express_checkout | gocardless | orbital | moneris_us | moneris | bluesnap | cybersource | vantiv | checkout_com | paypal | ingenico_direct | exact | mollie | quickbooks | razorpay | global_payments | bank_of_america | ecentric | metrics_global | windcave | pay_com | ebanx | dlocal | nuvei | solidgate | paystack | jp_morgan | deutsche_bank | ezidebit | twikey | tempus | moyasar | payway | payu | not_applicable
+    in?: string,
+    not_in?: string
   },
   gateway_account_id?: {
     is?: string,
@@ -34402,8 +34400,8 @@ await corsair.chargebee.api.exports.transactions({});
   type?: {
     is?: authorization | payment | refund | payment_reversal,
     is_not?: authorization | payment | refund | payment_reversal,
-    in?: authorization | payment | refund | payment_reversal,
-    not_in?: authorization | payment | refund | payment_reversal
+    in?: string,
+    not_in?: string
   },
   date?: {
     after?: string,
@@ -34432,8 +34430,8 @@ await corsair.chargebee.api.exports.transactions({});
   status?: {
     is?: in_progress | success | voided | failure | timeout | needs_attention | late_failure,
     is_not?: in_progress | success | voided | failure | timeout | needs_attention | late_failure,
-    in?: in_progress | success | voided | failure | timeout | needs_attention | late_failure,
-    not_in?: in_progress | success | voided | failure | timeout | needs_attention | late_failure
+    in?: string,
+    not_in?: string
   },
   updated_at?: {
     after?: string,
@@ -34855,8 +34853,8 @@ await corsair.chargebee.api.features.list({});
 {
   is?: active | archived | draft,
   is_not?: active | archived | draft,
-  in?: active | archived | draft,
-  not_in?: active | archived | draft
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -34867,8 +34865,8 @@ await corsair.chargebee.api.features.list({});
 {
   is?: switch | custom | quantity | range,
   is_not?: switch | custom | quantity | range,
-  in?: switch | custom | quantity | range,
-  not_in?: switch | custom | quantity | range
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -37998,8 +37996,8 @@ await corsair.chargebee.api.gifts.list({});
 {
   is?: scheduled | unclaimed | claimed | cancelled | expired,
   is_not?: scheduled | unclaimed | claimed | cancelled | expired,
-  in?: scheduled | unclaimed | claimed | cancelled | expired,
-  not_in?: scheduled | unclaimed | claimed | cancelled | expired
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -40701,8 +40699,8 @@ await corsair.chargebee.api.hostedPages.list({});
 {
   is?: checkout_new | checkout_existing | manage_payment_sources | collect_now | extend_subscription | checkout_one_time | pre_cancel | view_voucher | accept_quote,
   is_not?: checkout_new | checkout_existing | manage_payment_sources | collect_now | extend_subscription | checkout_one_time | pre_cancel | view_voucher | accept_quote,
-  in?: checkout_new | checkout_existing | manage_payment_sources | collect_now | extend_subscription | checkout_one_time | pre_cancel | view_voucher | accept_quote,
-  not_in?: checkout_new | checkout_existing | manage_payment_sources | collect_now | extend_subscription | checkout_one_time | pre_cancel | view_voucher | accept_quote
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -40713,8 +40711,8 @@ await corsair.chargebee.api.hostedPages.list({});
 {
   is?: created | requested | succeeded | cancelled | acknowledged,
   is_not?: created | requested | succeeded | cancelled | acknowledged,
-  in?: created | requested | succeeded | cancelled | acknowledged,
-  not_in?: created | requested | succeeded | cancelled | acknowledged
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -48106,8 +48104,8 @@ await corsair.chargebee.api.invoices.list({});
 {
   is?: paid | posted | payment_due | not_paid | voided | pending,
   is_not?: paid | posted | payment_due | not_paid | voided | pending,
-  in?: paid | posted | payment_due | not_paid | voided | pending,
-  not_in?: paid | posted | payment_due | not_paid | voided | pending
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -48118,8 +48116,8 @@ await corsair.chargebee.api.invoices.list({});
 {
   is?: tax_exclusive | tax_inclusive,
   is_not?: tax_exclusive | tax_inclusive,
-  in?: tax_exclusive | tax_inclusive,
-  not_in?: tax_exclusive | tax_inclusive
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -48229,8 +48227,8 @@ await corsair.chargebee.api.invoices.list({});
 {
   is?: in_progress | exhausted | stopped | success,
   is_not?: in_progress | exhausted | stopped | success,
-  in?: in_progress | exhausted | stopped | success,
-  not_in?: in_progress | exhausted | stopped | success,
+  in?: string,
+  not_in?: string,
   is_present?: true | false
 }
 ```
@@ -48267,8 +48265,8 @@ await corsair.chargebee.api.invoices.list({});
 {
   is?: web | app_store | play_store,
   is_not?: web | app_store | play_store,
-  in?: web | app_store | play_store,
-  not_in?: web | app_store | play_store
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -48324,8 +48322,8 @@ await corsair.chargebee.api.invoices.list({});
   status?: {
     is?: scheduled | skipped | in_progress | success | failed | registered | accepted | rejected | message_acknowledgement | in_process | under_query | conditionally_accepted | paid,
     is_not?: scheduled | skipped | in_progress | success | failed | registered | accepted | rejected | message_acknowledgement | in_process | under_query | conditionally_accepted | paid,
-    in?: scheduled | skipped | in_progress | success | failed | registered | accepted | rejected | message_acknowledgement | in_process | under_query | conditionally_accepted | paid,
-    not_in?: scheduled | skipped | in_progress | success | failed | registered | accepted | rejected | message_acknowledgement | in_process | under_query | conditionally_accepted | paid
+    in?: string,
+    not_in?: string
   }
 }
 ```
@@ -48889,8 +48887,8 @@ await corsair.chargebee.api.invoices.listPaymentVouchers({ invoiceId: 'inv_1001'
 {
   is?: active | consumed | expired | failure,
   is_not?: active | consumed | expired | failure,
-  in?: active | consumed | expired | failure,
-  not_in?: active | consumed | expired | failure
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -54125,35 +54123,34 @@ await corsair.chargebee.api.invoices.sendEmail({ invoiceId: 'inv_1001' });
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `email_logs` | `object[] \| null` | No | List of [email log](/docs/api/email_logs) objects for the send request. Each entry describes one email that was sent or attempted. |
+**Output:** `object`
 
 <AccordionGroup>
-<Accordion title="email_logs full type">
+<Accordion title="Output full type">
 
 ```ts
 {
-  id?: string | null,
-  template_name?: string | null,
-  from_address?: string | null,
-  to_address?: string | null,
-  subject?: string | null,
-  status?: string | null,
-  sent_on?: number | null,
-  customer_id?: string | null,
-  email_conversation_id?: string | null,
-  site_id?: string | null,
-  business_entity_id?: string | null,
-  brand_id?: string | null,
-  error_message?: string | null
-}[] | null
+  email_logs?: {
+    id?: string | null,
+    template_name?: string | null,
+    from_address?: string | null,
+    to_address?: string | null,
+    subject?: string | null,
+    status?: string | null,
+    sent_on?: number | null,
+    customer_id?: string | null,
+    email_conversation_id?: string | null,
+    site_id?: string | null,
+    business_entity_id?: string | null,
+    brand_id?: string | null,
+    error_message?: string | null
+  }[] | null
+} | {
+  success: true
+}
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -56313,7 +56310,7 @@ await corsair.chargebee.api.invoices.voidBeforeCapture({ invoiceId: 'inv_1001' }
 
 Write off an invoice. Write off the specified invoice. Use this operation to mark invoices as settled when they remain unpaid after multiple attempts to collect payment. #### Reverse a write-off You can reverse the write-off by removing the linked credit note.
 
-**Risk:** `destructive` · **Irreversible**
+**Risk:** `destructive`
 
 ```ts
 await corsair.chargebee.api.invoices.writeOff({ invoiceId: 'inv_1001' });
@@ -57804,8 +57801,8 @@ await corsair.chargebee.api.itemPrices.list({});
 {
   is?: flat_fee | per_unit | tiered | volume | stairstep,
   is_not?: flat_fee | per_unit | tiered | volume | stairstep,
-  in?: flat_fee | per_unit | tiered | volume | stairstep,
-  not_in?: flat_fee | per_unit | tiered | volume | stairstep
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -57842,8 +57839,8 @@ await corsair.chargebee.api.itemPrices.list({});
 {
   is?: plan | addon | charge,
   is_not?: plan | addon | charge,
-  in?: plan | addon | charge,
-  not_in?: plan | addon | charge
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -57895,8 +57892,8 @@ await corsair.chargebee.api.itemPrices.list({});
 {
   is?: day | month,
   is_not?: day | month,
-  in?: day | month,
-  not_in?: day | month
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -57907,8 +57904,8 @@ await corsair.chargebee.api.itemPrices.list({});
 {
   is?: active | archived | deleted,
   is_not?: active | archived | deleted,
-  in?: active | archived | deleted,
-  not_in?: active | archived | deleted
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -57950,8 +57947,8 @@ await corsair.chargebee.api.itemPrices.list({});
 {
   is?: day | week | month | year,
   is_not?: day | week | month | year,
-  in?: day | week | month | year,
-  not_in?: day | week | month | year
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -57977,8 +57974,8 @@ await corsair.chargebee.api.itemPrices.list({});
 {
   is?: web | app_store | play_store,
   is_not?: web | app_store | play_store,
-  in?: web | app_store | play_store,
-  not_in?: web | app_store | play_store
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -58974,8 +58971,8 @@ await corsair.chargebee.api.items.list({});
 {
   is?: plan | addon | charge,
   is_not?: plan | addon | charge,
-  in?: plan | addon | charge,
-  not_in?: plan | addon | charge
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -58997,8 +58994,8 @@ await corsair.chargebee.api.items.list({});
 {
   is?: all | restricted,
   is_not?: all | restricted,
-  in?: all | restricted,
-  not_in?: all | restricted
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -59009,8 +59006,8 @@ await corsair.chargebee.api.items.list({});
 {
   is?: active | archived | deleted,
   is_not?: active | archived | deleted,
-  in?: active | archived | deleted,
-  not_in?: active | archived | deleted
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -59069,8 +59066,8 @@ await corsair.chargebee.api.items.list({});
 {
   is?: sum_of_usages | last_usage | max_usage,
   is_not?: sum_of_usages | last_usage | max_usage,
-  in?: sum_of_usages | last_usage | max_usage,
-  not_in?: sum_of_usages | last_usage | max_usage
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -59081,8 +59078,8 @@ await corsair.chargebee.api.items.list({});
 {
   is?: web | app_store | play_store,
   is_not?: web | app_store | play_store,
-  in?: web | app_store | play_store,
-  not_in?: web | app_store | play_store
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -59123,8 +59120,8 @@ await corsair.chargebee.api.items.list({});
   type?: {
     is?: fixed,
     is_not?: fixed,
-    in?: fixed,
-    not_in?: fixed
+    in?: string,
+    not_in?: string
   }
 }
 ```
@@ -59255,8 +59252,8 @@ await corsair.chargebee.api.items.listAttachedItems({ itemId: 'silver' });
 {
   is?: recommended | mandatory | optional,
   is_not?: recommended | mandatory | optional,
-  in?: recommended | mandatory | optional,
-  not_in?: recommended | mandatory | optional
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -59267,8 +59264,8 @@ await corsair.chargebee.api.items.listAttachedItems({ itemId: 'silver' });
 {
   is?: plan | addon | charge,
   is_not?: plan | addon | charge,
-  in?: plan | addon | charge,
-  not_in?: plan | addon | charge
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -59279,8 +59276,8 @@ await corsair.chargebee.api.items.listAttachedItems({ itemId: 'silver' });
 {
   is?: subscription_creation | subscription_trial_start | plan_activation | subscription_activation | contract_termination | on_demand,
   is_not?: subscription_creation | subscription_trial_start | plan_activation | subscription_activation | contract_termination | on_demand,
-  in?: subscription_creation | subscription_trial_start | plan_activation | subscription_activation | contract_termination | on_demand,
-  not_in?: subscription_creation | subscription_trial_start | plan_activation | subscription_activation | contract_termination | on_demand
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -60681,7 +60678,7 @@ await corsair.chargebee.api.ledgerOperations.list({
 ```ts
 {
   is?: allocation | capture | authorize | release_authorization | capture_authorization | expiry | void | rollover | adjustment | overdraft_settlement,
-  in?: allocation | capture | authorize | release_authorization | capture_authorization | expiry | void | rollover | adjustment | overdraft_settlement
+  in?: string
 }
 ```
 </Accordion>
@@ -61784,8 +61781,8 @@ await corsair.chargebee.api.omnichannelOneTimeOrders.list({});
 {
   is?: apple_app_store | google_play_store | roku | amazon_app_store,
   is_not?: apple_app_store | google_play_store | roku | amazon_app_store,
-  in?: apple_app_store | google_play_store | roku | amazon_app_store,
-  not_in?: apple_app_store | google_play_store | roku | amazon_app_store
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -62076,8 +62073,8 @@ await corsair.chargebee.api.omnichannelSubscriptions.list({});
 {
   is?: apple_app_store | google_play_store | roku | amazon_app_store,
   is_not?: apple_app_store | google_play_store | roku | amazon_app_store,
-  in?: apple_app_store | google_play_store | roku | amazon_app_store,
-  not_in?: apple_app_store | google_play_store | roku | amazon_app_store
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -62162,8 +62159,8 @@ await corsair.chargebee.api.omnichannelSubscriptions.list({});
   status?: {
     is?: active | expired | cancelled | in_dunning | in_grace_period | paused,
     is_not?: active | expired | cancelled | in_dunning | in_grace_period | paused,
-    in?: active | expired | cancelled | in_dunning | in_grace_period | paused,
-    not_in?: active | expired | cancelled | in_dunning | in_grace_period | paused
+    in?: string,
+    not_in?: string
   },
   item_id_at_source?: {
     is?: string,
@@ -63930,8 +63927,8 @@ await corsair.chargebee.api.orders.list({});
 {
   is?: new | processing | complete | cancelled | voided | queued | awaiting_shipment | on_hold | delivered | shipped | partially_delivered | returned,
   is_not?: new | processing | complete | cancelled | voided | queued | awaiting_shipment | on_hold | delivered | shipped | partially_delivered | returned,
-  in?: new | processing | complete | cancelled | voided | queued | awaiting_shipment | on_hold | delivered | shipped | partially_delivered | returned,
-  not_in?: new | processing | complete | cancelled | voided | queued | awaiting_shipment | on_hold | delivered | shipped | partially_delivered | returned
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -63966,8 +63963,8 @@ await corsair.chargebee.api.orders.list({});
 {
   is?: manual | system_generated,
   is_not?: manual | system_generated,
-  in?: manual | system_generated,
-  not_in?: manual | system_generated
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -64026,8 +64023,8 @@ await corsair.chargebee.api.orders.list({});
 {
   is?: fully_resent | partially_resent,
   is_not?: fully_resent | partially_resent,
-  in?: fully_resent | partially_resent,
-  not_in?: fully_resent | partially_resent
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -68897,8 +68894,8 @@ await corsair.chargebee.api.paymentSources.list({});
 {
   is?: card | paypal_express_checkout | amazon_payments | direct_debit | generic | alipay | unionpay | apple_pay | wechat_pay | ideal | google_pay | sofort | bancontact | giropay | dotpay | upi | netbanking_emandates | venmo | pay_to | faster_payments | sepa_instant_transfer | automated_bank_transfer | klarna_pay_now | online_banking_poland | payconiq_by_bancontact | electronic_payment_standard | kbc_payment_button | pay_by_bank | trustly | stablecoin | kakao_pay | naver_pay | revolut_pay | cash_app_pay | twint | go_pay | grab_pay | pay_co | after_pay | swish | payme | pix | klarna | alipay_hk | paypay | gcash | south_korean_cards | paynow | bizum | promptpay | dana | touch_n_go | tamara | qpay | ovo | momo | mercado_pago | nequi | nupay | picpay | thai_qr | blik | fpx | wero | p24 | affirm_pay | rakuten_pay,
   is_not?: card | paypal_express_checkout | amazon_payments | direct_debit | generic | alipay | unionpay | apple_pay | wechat_pay | ideal | google_pay | sofort | bancontact | giropay | dotpay | upi | netbanking_emandates | venmo | pay_to | faster_payments | sepa_instant_transfer | automated_bank_transfer | klarna_pay_now | online_banking_poland | payconiq_by_bancontact | electronic_payment_standard | kbc_payment_button | pay_by_bank | trustly | stablecoin | kakao_pay | naver_pay | revolut_pay | cash_app_pay | twint | go_pay | grab_pay | pay_co | after_pay | swish | payme | pix | klarna | alipay_hk | paypay | gcash | south_korean_cards | paynow | bizum | promptpay | dana | touch_n_go | tamara | qpay | ovo | momo | mercado_pago | nequi | nupay | picpay | thai_qr | blik | fpx | wero | p24 | affirm_pay | rakuten_pay,
-  in?: card | paypal_express_checkout | amazon_payments | direct_debit | generic | alipay | unionpay | apple_pay | wechat_pay | ideal | google_pay | sofort | bancontact | giropay | dotpay | upi | netbanking_emandates | venmo | pay_to | faster_payments | sepa_instant_transfer | automated_bank_transfer | klarna_pay_now | online_banking_poland | payconiq_by_bancontact | electronic_payment_standard | kbc_payment_button | pay_by_bank | trustly | stablecoin | kakao_pay | naver_pay | revolut_pay | cash_app_pay | twint | go_pay | grab_pay | pay_co | after_pay | swish | payme | pix | klarna | alipay_hk | paypay | gcash | south_korean_cards | paynow | bizum | promptpay | dana | touch_n_go | tamara | qpay | ovo | momo | mercado_pago | nequi | nupay | picpay | thai_qr | blik | fpx | wero | p24 | affirm_pay | rakuten_pay,
-  not_in?: card | paypal_express_checkout | amazon_payments | direct_debit | generic | alipay | unionpay | apple_pay | wechat_pay | ideal | google_pay | sofort | bancontact | giropay | dotpay | upi | netbanking_emandates | venmo | pay_to | faster_payments | sepa_instant_transfer | automated_bank_transfer | klarna_pay_now | online_banking_poland | payconiq_by_bancontact | electronic_payment_standard | kbc_payment_button | pay_by_bank | trustly | stablecoin | kakao_pay | naver_pay | revolut_pay | cash_app_pay | twint | go_pay | grab_pay | pay_co | after_pay | swish | payme | pix | klarna | alipay_hk | paypay | gcash | south_korean_cards | paynow | bizum | promptpay | dana | touch_n_go | tamara | qpay | ovo | momo | mercado_pago | nequi | nupay | picpay | thai_qr | blik | fpx | wero | p24 | affirm_pay | rakuten_pay
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -68909,8 +68906,8 @@ await corsair.chargebee.api.paymentSources.list({});
 {
   is?: valid | expiring | expired | invalid | pending_verification,
   is_not?: valid | expiring | expired | invalid | pending_verification,
-  in?: valid | expiring | expired | invalid | pending_verification,
-  not_in?: valid | expiring | expired | invalid | pending_verification
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -70777,8 +70774,8 @@ await corsair.chargebee.api.pc2MigrationItemPrices.list({});
 {
   is?: plan | addon,
   is_not?: plan | addon,
-  in?: plan | addon,
-  not_in?: plan | addon
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -72388,8 +72385,8 @@ await corsair.chargebee.api.plans.list({});
 {
   is?: day | week | month | year,
   is_not?: day | week | month | year,
-  in?: day | week | month | year,
-  not_in?: day | week | month | year
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -72416,8 +72413,8 @@ await corsair.chargebee.api.plans.list({});
 {
   is?: day | month,
   is_not?: day | month,
-  in?: day | month,
-  not_in?: day | month
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -72428,8 +72425,8 @@ await corsair.chargebee.api.plans.list({});
 {
   is?: all | restricted,
   is_not?: all | restricted,
-  in?: all | restricted,
-  not_in?: all | restricted
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -72449,8 +72446,8 @@ await corsair.chargebee.api.plans.list({});
 {
   is?: flat_fee | per_unit | tiered | volume | stairstep,
   is_not?: flat_fee | per_unit | tiered | volume | stairstep,
-  in?: flat_fee | per_unit | tiered | volume | stairstep,
-  not_in?: flat_fee | per_unit | tiered | volume | stairstep
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -72461,8 +72458,8 @@ await corsair.chargebee.api.plans.list({});
 {
   is?: active | archived | deleted,
   is_not?: active | archived | deleted,
-  in?: active | archived | deleted,
-  not_in?: active | archived | deleted
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -72498,8 +72495,8 @@ await corsair.chargebee.api.plans.list({});
 {
   is?: web | app_store | play_store,
   is_not?: web | app_store | play_store,
-  in?: web | app_store | play_store,
-  not_in?: web | app_store | play_store
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -73496,8 +73493,8 @@ await corsair.chargebee.api.priceRamps.list({});
 {
   is?: active | archived,
   is_not?: active | archived,
-  in?: active | archived,
-  not_in?: active | archived
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -73918,8 +73915,8 @@ await corsair.chargebee.api.priceVariants.list({});
 {
   is?: active | archived,
   is_not?: active | archived,
-  in?: active | archived,
-  not_in?: active | archived
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -74744,8 +74741,8 @@ await corsair.chargebee.api.products.list({});
 {
   is?: active | inactive,
   is_not?: active | inactive,
-  in?: active | inactive,
-  not_in?: active | inactive
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -74924,8 +74921,8 @@ await corsair.chargebee.api.products.listVariants({ productId: 'example' });
 {
   is?: active | inactive,
   is_not?: active | inactive,
-  in?: active | inactive,
-  not_in?: active | inactive
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -75701,8 +75698,8 @@ await corsair.chargebee.api.promotionalCredits.list({});
 {
   is?: increment | decrement,
   is_not?: increment | decrement,
-  in?: increment | decrement,
-  not_in?: increment | decrement
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -82951,8 +82948,8 @@ await corsair.chargebee.api.quotes.list({});
 {
   is?: open | accepted | declined | invoiced | closed | pending_approval | approval_rejected | proposed | voided | expired,
   is_not?: open | accepted | declined | invoiced | closed | pending_approval | approval_rejected | proposed | voided | expired,
-  in?: open | accepted | declined | invoiced | closed | pending_approval | approval_rejected | proposed | voided | expired,
-  not_in?: open | accepted | declined | invoiced | closed | pending_approval | approval_rejected | proposed | voided | expired
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -85286,7 +85283,7 @@ await corsair.chargebee.api.ramps.list({
 ```ts
 {
   is?: scheduled | succeeded | failed | draft,
-  in?: scheduled | succeeded | failed | draft
+  in?: string
 }
 ```
 </Accordion>
@@ -86332,8 +86329,8 @@ await corsair.chargebee.api.siteMigrationDetails.list({});
 {
   is?: customer | subscription | invoice | credit_note | transaction | order,
   is_not?: customer | subscription | invoice | credit_note | transaction | order,
-  in?: customer | subscription | invoice | credit_note | transaction | order,
-  not_in?: customer | subscription | invoice | credit_note | transaction | order
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -86344,8 +86341,8 @@ await corsair.chargebee.api.siteMigrationDetails.list({});
 {
   is?: moved_in | moved_out | moving_out,
   is_not?: moved_in | moved_out | moving_out,
-  in?: moved_in | moved_out | moving_out,
-  not_in?: moved_in | moved_out | moving_out
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -98059,8 +98056,8 @@ await corsair.chargebee.api.subscriptions.list({});
 {
   is?: future | in_trial | active | non_renewing | paused | cancelled | transferred,
   is_not?: future | in_trial | active | non_renewing | paused | cancelled | transferred,
-  in?: future | in_trial | active | non_renewing | paused | cancelled | transferred,
-  not_in?: future | in_trial | active | non_renewing | paused | cancelled | transferred
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -98071,8 +98068,8 @@ await corsair.chargebee.api.subscriptions.list({});
 {
   is?: not_paid | no_card | fraud_review_failed | non_compliant_eu_customer | tax_calculation_failed | currency_incompatible_with_gateway | non_compliant_customer,
   is_not?: not_paid | no_card | fraud_review_failed | non_compliant_eu_customer | tax_calculation_failed | currency_incompatible_with_gateway | non_compliant_customer,
-  in?: not_paid | no_card | fraud_review_failed | non_compliant_eu_customer | tax_calculation_failed | currency_incompatible_with_gateway | non_compliant_customer,
-  not_in?: not_paid | no_card | fraud_review_failed | non_compliant_eu_customer | tax_calculation_failed | currency_incompatible_with_gateway | non_compliant_customer,
+  in?: string,
+  not_in?: string,
   is_present?: true | false
 }
 ```
@@ -98183,8 +98180,8 @@ await corsair.chargebee.api.subscriptions.list({});
 {
   is?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom,
   is_not?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom,
-  in?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom,
-  not_in?: no_preference | cash | check | bank_transfer | ach_credit | sepa_credit | boleto | us_automated_bank_transfer | eu_automated_bank_transfer | uk_automated_bank_transfer | jp_automated_bank_transfer | mx_automated_bank_transfer | custom
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -98232,8 +98229,8 @@ await corsair.chargebee.api.subscriptions.list({});
 {
   is?: web | app_store | play_store,
   is_not?: web | app_store | play_store,
-  in?: web | app_store | play_store,
-  not_in?: web | app_store | play_store
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -111002,8 +110999,8 @@ await corsair.chargebee.api.transactions.list({});
 {
   is?: card | cash | check | chargeback | bank_transfer | amazon_payments | paypal_express_checkout | direct_debit | alipay | unionpay | apple_pay | wechat_pay | ach_credit | sepa_credit | ideal | google_pay | sofort | bancontact | giropay | dotpay | other | upi | netbanking_emandates | custom | boleto | venmo | pay_to | faster_payments | sepa_instant_transfer | automated_bank_transfer | klarna_pay_now | online_banking_poland | payconiq_by_bancontact | electronic_payment_standard | kbc_payment_button | pay_by_bank | trustly | stablecoin | kakao_pay | naver_pay | revolut_pay | cash_app_pay | pix | twint | go_pay | grab_pay | pay_co | after_pay | swish | payme | klarna | alipay_hk | paypay | gcash | south_korean_cards | paynow | bizum | promptpay | dana | touch_n_go | tamara | qpay | ovo | momo | mercado_pago | nequi | nupay | picpay | thai_qr | blik | fpx | wero | p24 | affirm_pay | rakuten_pay,
   is_not?: card | cash | check | chargeback | bank_transfer | amazon_payments | paypal_express_checkout | direct_debit | alipay | unionpay | apple_pay | wechat_pay | ach_credit | sepa_credit | ideal | google_pay | sofort | bancontact | giropay | dotpay | other | upi | netbanking_emandates | custom | boleto | venmo | pay_to | faster_payments | sepa_instant_transfer | automated_bank_transfer | klarna_pay_now | online_banking_poland | payconiq_by_bancontact | electronic_payment_standard | kbc_payment_button | pay_by_bank | trustly | stablecoin | kakao_pay | naver_pay | revolut_pay | cash_app_pay | pix | twint | go_pay | grab_pay | pay_co | after_pay | swish | payme | klarna | alipay_hk | paypay | gcash | south_korean_cards | paynow | bizum | promptpay | dana | touch_n_go | tamara | qpay | ovo | momo | mercado_pago | nequi | nupay | picpay | thai_qr | blik | fpx | wero | p24 | affirm_pay | rakuten_pay,
-  in?: card | cash | check | chargeback | bank_transfer | amazon_payments | paypal_express_checkout | direct_debit | alipay | unionpay | apple_pay | wechat_pay | ach_credit | sepa_credit | ideal | google_pay | sofort | bancontact | giropay | dotpay | other | upi | netbanking_emandates | custom | boleto | venmo | pay_to | faster_payments | sepa_instant_transfer | automated_bank_transfer | klarna_pay_now | online_banking_poland | payconiq_by_bancontact | electronic_payment_standard | kbc_payment_button | pay_by_bank | trustly | stablecoin | kakao_pay | naver_pay | revolut_pay | cash_app_pay | pix | twint | go_pay | grab_pay | pay_co | after_pay | swish | payme | klarna | alipay_hk | paypay | gcash | south_korean_cards | paynow | bizum | promptpay | dana | touch_n_go | tamara | qpay | ovo | momo | mercado_pago | nequi | nupay | picpay | thai_qr | blik | fpx | wero | p24 | affirm_pay | rakuten_pay,
-  not_in?: card | cash | check | chargeback | bank_transfer | amazon_payments | paypal_express_checkout | direct_debit | alipay | unionpay | apple_pay | wechat_pay | ach_credit | sepa_credit | ideal | google_pay | sofort | bancontact | giropay | dotpay | other | upi | netbanking_emandates | custom | boleto | venmo | pay_to | faster_payments | sepa_instant_transfer | automated_bank_transfer | klarna_pay_now | online_banking_poland | payconiq_by_bancontact | electronic_payment_standard | kbc_payment_button | pay_by_bank | trustly | stablecoin | kakao_pay | naver_pay | revolut_pay | cash_app_pay | pix | twint | go_pay | grab_pay | pay_co | after_pay | swish | payme | klarna | alipay_hk | paypay | gcash | south_korean_cards | paynow | bizum | promptpay | dana | touch_n_go | tamara | qpay | ovo | momo | mercado_pago | nequi | nupay | picpay | thai_qr | blik | fpx | wero | p24 | affirm_pay | rakuten_pay
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -111014,8 +111011,8 @@ await corsair.chargebee.api.transactions.list({});
 {
   is?: chargebee | chargebee_payments | adyen | stripe | wepay | braintree | authorize_net | paypal_pro | pin | eway | eway_rapid | worldpay | balanced_payments | beanstream | bluepay | elavon | first_data_global | hdfc | migs | nmi | ogone | paymill | paypal_payflow_pro | sage_pay | tco | wirecard | amazon_payments | paypal_express_checkout | gocardless | orbital | moneris_us | moneris | bluesnap | cybersource | vantiv | checkout_com | paypal | ingenico_direct | exact | mollie | quickbooks | razorpay | global_payments | bank_of_america | ecentric | metrics_global | windcave | pay_com | ebanx | dlocal | nuvei | solidgate | paystack | jp_morgan | deutsche_bank | ezidebit | twikey | tempus | moyasar | payway | payu | not_applicable,
   is_not?: chargebee | chargebee_payments | adyen | stripe | wepay | braintree | authorize_net | paypal_pro | pin | eway | eway_rapid | worldpay | balanced_payments | beanstream | bluepay | elavon | first_data_global | hdfc | migs | nmi | ogone | paymill | paypal_payflow_pro | sage_pay | tco | wirecard | amazon_payments | paypal_express_checkout | gocardless | orbital | moneris_us | moneris | bluesnap | cybersource | vantiv | checkout_com | paypal | ingenico_direct | exact | mollie | quickbooks | razorpay | global_payments | bank_of_america | ecentric | metrics_global | windcave | pay_com | ebanx | dlocal | nuvei | solidgate | paystack | jp_morgan | deutsche_bank | ezidebit | twikey | tempus | moyasar | payway | payu | not_applicable,
-  in?: chargebee | chargebee_payments | adyen | stripe | wepay | braintree | authorize_net | paypal_pro | pin | eway | eway_rapid | worldpay | balanced_payments | beanstream | bluepay | elavon | first_data_global | hdfc | migs | nmi | ogone | paymill | paypal_payflow_pro | sage_pay | tco | wirecard | amazon_payments | paypal_express_checkout | gocardless | orbital | moneris_us | moneris | bluesnap | cybersource | vantiv | checkout_com | paypal | ingenico_direct | exact | mollie | quickbooks | razorpay | global_payments | bank_of_america | ecentric | metrics_global | windcave | pay_com | ebanx | dlocal | nuvei | solidgate | paystack | jp_morgan | deutsche_bank | ezidebit | twikey | tempus | moyasar | payway | payu | not_applicable,
-  not_in?: chargebee | chargebee_payments | adyen | stripe | wepay | braintree | authorize_net | paypal_pro | pin | eway | eway_rapid | worldpay | balanced_payments | beanstream | bluepay | elavon | first_data_global | hdfc | migs | nmi | ogone | paymill | paypal_payflow_pro | sage_pay | tco | wirecard | amazon_payments | paypal_express_checkout | gocardless | orbital | moneris_us | moneris | bluesnap | cybersource | vantiv | checkout_com | paypal | ingenico_direct | exact | mollie | quickbooks | razorpay | global_payments | bank_of_america | ecentric | metrics_global | windcave | pay_com | ebanx | dlocal | nuvei | solidgate | paystack | jp_morgan | deutsche_bank | ezidebit | twikey | tempus | moyasar | payway | payu | not_applicable
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -111062,8 +111059,8 @@ await corsair.chargebee.api.transactions.list({});
 {
   is?: authorization | payment | refund | payment_reversal,
   is_not?: authorization | payment | refund | payment_reversal,
-  in?: authorization | payment | refund | payment_reversal,
-  not_in?: authorization | payment | refund | payment_reversal
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -111116,8 +111113,8 @@ await corsair.chargebee.api.transactions.list({});
 {
   is?: in_progress | success | voided | failure | timeout | needs_attention | late_failure,
   is_not?: in_progress | success | voided | failure | timeout | needs_attention | late_failure,
-  in?: in_progress | success | voided | failure | timeout | needs_attention | late_failure,
-  not_in?: in_progress | success | voided | failure | timeout | needs_attention | late_failure
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>
@@ -113629,8 +113626,8 @@ await corsair.chargebee.api.usages.list({});
 {
   is?: admin_console | api | bulk_operation,
   is_not?: admin_console | api | bulk_operation,
-  in?: admin_console | api | bulk_operation,
-  not_in?: admin_console | api | bulk_operation
+  in?: string,
+  not_in?: string
 }
 ```
 </Accordion>

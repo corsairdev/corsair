@@ -144,6 +144,16 @@ export function baseUrlOf(ctx: ChargebeeCallContext, site?: string): string {
 	return configured.replace(/\/+$/, '');
 }
 
+/**
+ * The base for a call. The stored site is read only when no `baseUrl` is set,
+ * so a proxy keeps working when the account store can't be read.
+ */
+export async function baseFor(ctx: ChargebeeCallContext): Promise<string> {
+	return ctx.options.baseUrl?.trim()
+		? baseUrlOf(ctx)
+		: baseUrlOf(ctx, await siteOf(ctx));
+}
+
 function configFor(
 	base: string,
 	key: string,
@@ -167,8 +177,9 @@ function configFor(
 }
 
 /**
- * Core retries a 429 three times, honouring `Retry-After` (seconds or an
- * HTTP date), with a backoff of 1, 2 and 4 seconds when the header is missing.
+ * Core retries a 429 three times, honouring a `Retry-After` given in seconds,
+ * with a backoff of 1, 2 and 4 seconds when the header is missing. Core reads
+ * only the seconds form; an HTTP date gets the backoff.
  */
 export const CHARGEBEE_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
@@ -210,7 +221,7 @@ export async function makeChargebeeRequest(
 	if (!ctx.key) {
 		throw new AuthMissingError('chargebee', 'api_key');
 	}
-	const base = baseUrlOf(ctx, await siteOf(ctx));
+	const base = await baseFor(ctx);
 	const config = configFor(
 		base,
 		ctx.key,
@@ -440,6 +451,17 @@ function sentStrings(request: ApiError['request']): SentString[] {
 			});
 			return;
 		}
+		if (
+			typeof URLSearchParams !== 'undefined' &&
+			value instanceof URLSearchParams
+		) {
+			// A form body: each field by its key, so `email` or `password`
+			// keys keep their secret handling.
+			value.forEach((inner, key) => {
+				visit(inner, depth + 1, secret || SECRET_KEY.test(key));
+			});
+			return;
+		}
 		if (value instanceof Uint8Array || value instanceof ArrayBuffer) return;
 		if (typeof value === 'object') {
 			for (const [key, inner] of Object.entries(value)) {
@@ -598,11 +620,17 @@ export function chargebeeRequestUrl(
 	return `${base}/${path.replace(/^\/+/, '')}${parts.length > 0 ? `?${parts.join('&')}` : ''}`;
 }
 
-function retryAfterMs(value: string | null): number | undefined {
+export function retryAfterMs(
+	value: string | null,
+	now = Date.now(),
+): number | undefined {
 	if (!value) return undefined;
-	const seconds = Number.parseInt(value, 10);
+	const text = value.trim();
 	// An explicit wait is kept as sent, as core does; only the fallback is capped.
-	return Number.isNaN(seconds) ? undefined : Math.max(seconds, 0) * 1000;
+	if (/^\d+$/.test(text)) return Number.parseInt(text, 10) * 1000;
+	// The HTTP-date form: wait until then.
+	const at = Date.parse(text);
+	return Number.isNaN(at) ? undefined : Math.max(at - now, 0);
 }
 
 /**
@@ -624,7 +652,7 @@ export async function makeChargebeeHeaderPagedRequest(
 	if (options.method !== 'GET' || options.body !== undefined) {
 		throw new Error('Chargebee header paging is for GET routes only');
 	}
-	const base = baseUrlOf(ctx, await siteOf(ctx));
+	const base = await baseFor(ctx);
 	const config = configFor(
 		base,
 		ctx.key,

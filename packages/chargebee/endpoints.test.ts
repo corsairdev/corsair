@@ -1,10 +1,12 @@
 import { ApiError } from 'corsair/http';
 import {
+	baseFor,
 	baseUrlOf,
 	CHARGEBEE_API_BASE,
 	chargebeeApiBase,
 	chargebeeErrorMessage,
 	makeChargebeeRequest,
+	retryAfterMs,
 	withoutRequestData,
 } from './client';
 import { chargebeeEndpointsNested } from './endpoints/catalog';
@@ -280,6 +282,40 @@ describe('requests', () => {
 		).toBe('http://localhost:8283');
 	});
 
+	it('skips the stored site when a baseUrl is set', async () => {
+		const getSite = jest.fn(() => Promise.reject(new Error('store down')));
+		await expect(
+			baseFor({
+				key: KEY,
+				options: { baseUrl: 'https://proxy.example.com' },
+				keys: { get_site: getSite },
+			}),
+		).resolves.toBe('https://proxy.example.com');
+		expect(getSite).not.toHaveBeenCalled();
+	});
+
+	it('sends a multi-value list filter in its bracketed form', async () => {
+		reply(200, { list: [] });
+		await endpointFor('invoices.list')(ctx(), {
+			status: { in: '[paid,posted]' },
+		});
+		expect(decodeURIComponent(String(calls[0]?.url))).toContain(
+			'status[in]=[paid,posted]',
+		);
+		await expect(
+			endpointFor('invoices.list')(ctx(), { status: { in: '[paid,nope]' } }),
+		).rejects.toThrow();
+	});
+
+	it('reads Retry-After as seconds or an HTTP date', () => {
+		const now = Date.parse('2026-11-28T10:00:00Z');
+		expect(retryAfterMs('7', now)).toBe(7000);
+		expect(retryAfterMs('Sat, 28 Nov 2026 10:00:05 GMT', now)).toBe(5000);
+		expect(retryAfterMs('Sat, 28 Nov 2026 09:00:00 GMT', now)).toBe(0);
+		expect(retryAfterMs('soon', now)).toBeUndefined();
+		expect(retryAfterMs(null, now)).toBeUndefined();
+	});
+
 	it('reads the site from the plugin option before the stored field', async () => {
 		reply(200, { list: [] });
 		await endpointFor('customers.list')(ctx({ site: 'other-test' }), {});
@@ -387,6 +423,16 @@ describe('responses', () => {
 		expect(items.next_offset).toBe('1');
 	});
 
+	it('takes the empty 202 of an async email send', async () => {
+		reply(202, undefined);
+		await expect(
+			endpointFor('invoices.sendEmail')(ctx(), {
+				invoiceId: 'inv_1',
+				prefer: 'respond-async',
+			}),
+		).resolves.toEqual({ success: true });
+	});
+
 	it('refuses an object route that answers a list', async () => {
 		const operation = chargebeeOperations.find(
 			(o) =>
@@ -421,6 +467,30 @@ describe('errors', () => {
 		expect(JSON.stringify(api.body)).not.toContain('echoed secret');
 		expect(api.request.headers).toBeUndefined();
 		expect(JSON.stringify(api.request)).not.toContain(KEY);
+	});
+
+	it('scrubs values sent in a form body', () => {
+		const error = new ApiError(
+			{
+				method: 'POST',
+				url: '/customers',
+				body: new URLSearchParams({
+					email: 'ada@example.test',
+					company: 'Acme Labs',
+				}),
+			},
+			{
+				url: `${CHARGEBEE_API_BASE}/customers`,
+				ok: false,
+				status: 400,
+				statusText: 'Bad Request',
+				body: { message: 'Invalid email ada@example.test for Acme Labs' },
+			},
+			'x',
+		);
+		const text = JSON.stringify(withoutRequestData(error, KEY).body);
+		expect(text).not.toContain('ada@example.test');
+		expect(text).not.toContain('Acme Labs');
 	});
 
 	it('scrubs sent strings and the key from the error body', () => {

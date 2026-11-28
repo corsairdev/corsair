@@ -3117,7 +3117,6 @@ export const chargebeeEndpointMeta = {
 	},
 	'invoices.writeOff': {
 		riskLevel: 'destructive',
-		irreversible: true,
 		description:
 			'Write off an invoice. Write off the specified invoice. Use this operation to mark invoices as settled when they remain unpaid after multiple attempts to collect payment. #### Reverse a write-off You can reverse the write-off by removing the linked credit note.',
 	},
