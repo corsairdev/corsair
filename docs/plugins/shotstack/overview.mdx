@@ -4,23 +4,25 @@ sidebarTitle: "Overview"
 description: "Cloud video editing and rendering: build a timeline as JSON, render video, image, GIF or audio, manage templates, generate AI assets, ingest source files and serve hosted assets."
 ---
 
-Use **Shotstack** through Corsair: one client, typed API calls.
+Use **Shotstack** through Corsair: one client, typed API calls, and incoming webhooks.
 
 Shotstack renders a video, image, GIF or audio file from a JSON timeline. `renders.create` queues the render and returns a render id at once; `renders.get` reports progress until status is `done` or `failed`. Templates store an edit with placeholders, AI generation and file ingestion poll the same way, and the Serve API returns the durable CDN URLs.
 
-- **Keys.** Create one at [app.shotstack.io](https://app.shotstack.io/register) and open API Keys under the account menu (top right). Each account gets a Production key and a free Sandbox key. This plugin always calls the production paths (`/edit/v1`, `/ingest/v1`, `/serve/v1`); sandbox keys work only on the `/stage` paths, which the plugin does not expose, so store the Production key here.
-- **Credits.** Renders spend credits: new accounts get 10 free production credits (about 10 minutes of video), and sandbox renders are watermarked and still need a credit balance. Quote an AI generation first with `generations.quote`. Sandbox renders also need at least 1 credit on the account, and generation is charged in sandbox too.
+- **Keys.** Create an account at [app.shotstack.io](https://app.shotstack.io/register) and open API Keys. Each account gets a Production key (the `/edit/v1`, `/ingest/v1`, `/serve/v1` paths) and a free Sandbox key (the `/stage` paths, watermarked output). Store either one. Set the account's `environment` to `v1` or `stage` (or the `environment` plugin option); left unset, the plugin tries production first, switches to the sandbox when production refuses the key, and remembers the answer.
+- **Credits.** Production renders spend credits: new accounts get 10 free credits (about 10 minutes of video). Sandbox renders are free but watermarked and still need a credit balance on the account. AI generation is charged on the sandbox too: quote it first with `generations.quote`.
+- **Callbacks.** Pass `callback` on `renders.create`, `templates.render` or `sources.fetch` and Shotstack POSTs the result there: the `render`, `source` and `serve` (hosted copy ready) webhooks. Shotstack does not sign callbacks, so the plugin looks each one up with the account's key and answers with the API's own status and URL; a callback for an id the account doesn't have is refused. `verifyWebhooks: false` turns the lookup off.
 - **The render URL expires.** `renders.get` returns `response.url`, a temporary download link that dies 24 hours after the render. For a permanent link, read the CDN URL from `assets.getByRenderId` (or `https://cdn.shotstack.io/...`).
 - **Long jobs.** `renders.create`, `templates.render`, `generations.create` and `sources.fetch` start work that runs after the call returns. Poll the matching get operation until the status is `done` (or `ready` for sources) or `failed`. Shotstack sends no cancel operation, and a render cannot be deleted once queued. A render takes roughly 20 seconds per minute of output video.
 - **Retries.** Rate limits are per key in a fixed 60-second window: edit 300 requests per minute, serve 600, ingest 300 (halved on sandbox). Over the limit the API answers 429 and the plugin retries up to three times with backoff, honouring a Retry-After header when one is sent. 5xx answers are replayed only for reads, and for `generations.create` when an `idempotencyKey` was sent: retrying with the same key returns the job it first created instead of generating and billing again.
 - **Merged renders.** `renders.get` sends `data: false` by default; pass `data: true` to include the full timeline echo in `response.data`, and `merged: true` with it to include the merged edit.
 - **Uploads.** `uploads.create` returns a signed S3 URL; PUT the bytes to it within one hour and the file appears as an ingest source. The binary upload goes to S3 directly, not through the plugin.
-- **Responses.** Output fields are typed from Shotstack's OpenAPI specs and were not verified against live responses (no key during the build): a field Shotstack adds or omits cannot fail a call, but a renamed field would pass unnoticed.
+- **Responses.** Output fields are typed from Shotstack's OpenAPI spec (v1.27.0) and checked against live sandbox calls. Fields Shotstack adds pass through, and status values it adds are kept as strings. `templates.update` answers with a message only (no id), and Shotstack refuses an update without the edit, so `template` is required.
 - **Deletes.** `templates.delete`, `sources.delete` and `assets.delete` are permanent; there is no undo and no trash.
 
 **What you get:**
 
 - 23 typed API operations
+- 3 incoming webhook event types
 
 ## Setup
 
@@ -127,11 +129,20 @@ await tenant.shotstack.api.templates.render({
 
 See the full list on the [API](/plugins/shotstack/api) page.
 
+## Webhooks
+
+This plugin registers **3** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/shotstack/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
 ## What's next
 
 <CardGroup cols={2}>
   <Card title="API reference" href="/plugins/shotstack/api">
     Every `shotstack.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/shotstack/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
   </Card>
   <Card title="Connect / OAuth" href="/management/connect">
     createLink, Hub delivery, and tenant connect flows.

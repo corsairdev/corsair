@@ -5492,7 +5492,8 @@
                 "pages": [
                   "plugins/shotstack/overview",
                   "plugins/shotstack/api",
-                  "plugins/shotstack/database"
+                  "plugins/shotstack/database",
+                  "plugins/shotstack/webhooks"
                 ]
               },
               {

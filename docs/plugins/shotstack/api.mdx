@@ -61,7 +61,7 @@ await corsair.shotstack.api.assets.get({ id: 'a4482cbf-e321-42a2-ac8b-947d268868
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `owner` | `string` | Yes | — |
-| `status` | `importing \| ready \| failed \| deleted` | Yes | — |
+| `status` | `importing \| ready \| failed \| deleted \| string` | Yes | importing, ready, failed or deleted. |
 | `region` | `string \| null` | No | — |
 | `renderId` | `string \| null` | No | — |
 | `providerId` | `string \| null` | No | — |
@@ -107,7 +107,7 @@ await corsair.shotstack.api.assets.getByRenderId({ id: '2abd5c11-0f3d-4c6d-ba20-
 {
   id: string,
   owner: string,
-  status: importing | ready | failed | deleted,
+  status: importing | ready | failed | deleted | string,
   region?: string | null,
   renderId?: string | null,
   providerId?: string | null,
@@ -128,9 +128,9 @@ await corsair.shotstack.api.assets.getByRenderId({ id: '2abd5c11-0f3d-4c6d-ba20-
 
 `assets.transfer`
 
-Copy a hosted file to external destinations such as S3, Google Cloud Storage, Mux, Vimeo or Google Drive.
+Copy a file to external destinations such as Shotstack hosting, S3, Google Cloud Storage, Mux, Vimeo or Google Drive (set up under Integrations in the dashboard). Answers queued; the copy runs afterwards.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.shotstack.api.assets.transfer({ url: 'https://s3.amazonaws.com/my-bucket/video.mp4', id: '018e8937-5015-75ee-aab6-03f214981133', destinations: [{ provider: 'shotstack' }] });
@@ -163,7 +163,7 @@ await corsair.shotstack.api.assets.transfer({ url: 'https://s3.amazonaws.com/my-
 |------|------|----------|-------------|
 | `id` | `string \| null` | No | — |
 | `owner` | `string \| null` | No | — |
-| `status` | `queued \| failed \| null` | No | — |
+| `status` | `queued \| failed \| string \| null` | No | — |
 | `created` | `string \| null` | No | — |
 
 
@@ -178,7 +178,7 @@ await corsair.shotstack.api.assets.transfer({ url: 'https://s3.amazonaws.com/my-
 
 Generate an image, video or audio asset from a prompt with an AI model; spends generation credits. Follow it with generations.get until status is done or failed. Pass idempotencyKey to make retries safe.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.shotstack.api.generations.create({ asset: { type: 'image', prompt: 'A lighthouse on a rocky coast at sunset' }, idempotencyKey: 'my-job-42' });
@@ -214,7 +214,7 @@ await corsair.shotstack.api.generations.create({ asset: { type: 'image', prompt:
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `status` | `queued \| processing \| done \| failed` | Yes | — |
+| `status` | `queued \| processing \| done \| failed \| string` | Yes | queued, processing, then done or failed. |
 | `url` | `string \| null` | No | — |
 | `error` | `string \| null` | No | — |
 
@@ -247,7 +247,7 @@ await corsair.shotstack.api.generations.get({ id: '8a1f2c3d-4e5b-5a6c-9d7e-1f2a3
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `status` | `queued \| processing \| done \| failed` | Yes | — |
+| `status` | `queued \| processing \| done \| failed \| string` | Yes | queued, processing, then done or failed. |
 | `url` | `string \| null` | No | — |
 | `error` | `string \| null` | No | — |
 
@@ -295,15 +295,20 @@ await corsair.shotstack.api.generations.getModel({ id: 'seedance-2.0-text-to-vid
 
 `generations.listModels`
 
-List the generation models available to this account, each with the asset type it generates.
+List the generation models available to this account, each with the asset type it generates and whether the plan includes it. Pass expand: 'options' to include each model's option schema.
 
 **Risk:** `read`
 
 ```ts
-await corsair.shotstack.api.generations.listModels({});
+await corsair.shotstack.api.generations.listModels({ expand: 'options' });
 ```
 
-**Input:** _empty object_
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expand` | `options` | No | 'options' to include each model's option schema; left out by default. |
+
 
 
 **Output**
@@ -420,9 +425,9 @@ await corsair.shotstack.api.media.probe({ url: 'https://shotstack-assets.s3.amaz
 
 `renders.create`
 
-Queue a video, image, GIF or audio render of a JSON timeline; spends credits. Follow it with renders.get until status is done or failed.
+Queue a video, image, GIF or audio render of a JSON timeline; spends credits on production (sandbox renders are watermarked). Follow it with renders.get until status is done or failed, or pass a callback URL.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.shotstack.api.renders.create({ timeline: { tracks: [{ clips: [{ asset: { type: 'title', text: 'Hello', color: '#ffffff' }, start: 0, length: 3 }] }] }, output: { format: 'mp4', resolution: 'sd' } });
@@ -460,7 +465,26 @@ await corsair.shotstack.api.renders.create({ timeline: { tracks: [{ clips: [{ as
   size?: {
     width: number,
     height: number
-  }
+  },
+  fps?: number,
+  scaleTo?: 1080 | preview | mobile | sd | hd | 4k,
+  quality?: verylow | low | medium | high | veryhigh,
+  repeat?: boolean,
+  mute?: boolean,
+  range?: {
+    start?: number,
+    length?: number
+  },
+  poster?: {
+    capture: number
+  },
+  thumbnail?: {
+    capture: number,
+    scale?: number
+  },
+  destinations?: {
+    provider: string
+  }[]
 }
 ```
 </Accordion>
@@ -539,7 +563,7 @@ await corsair.shotstack.api.renders.get({ id: '2abd5c11-0f3d-4c6d-ba20-235fc9b8e
 {
   id: string,
   owner: string,
-  status: queued | fetching | preprocessing | rendering | generating | saving | done | failed,
+  status: queued | fetching | preprocessing | rendering | generating | saving | done | failed | string,
   plan?: string | null,
   error?: string | null,
   duration?: number | null,
@@ -590,9 +614,9 @@ await corsair.shotstack.api.sources.delete({ id: 'zzytey4v-32km-kq1z-aftr-3kcuqi
 
 `sources.fetch`
 
-Fetch a file from a URL into Shotstack storage so the Edit API can use it; follow it with sources.get until status is ready.
+Fetch a file from a URL into Shotstack storage so the Edit API can use it; renditions and transcriptions in outputs spend credits. Follow it with sources.get until status is ready, or pass a callback URL.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.shotstack.api.sources.fetch({ url: 'https://github.com/shotstack/test-media/raw/main/captioning/scott-ko.mp4' });
@@ -662,7 +686,7 @@ await corsair.shotstack.api.sources.get({ id: 'zzytey4v-32km-kq1z-aftr-3kcuqi0br
 | `owner` | `string` | Yes | — |
 | `input` | `string \| null` | No | — |
 | `source` | `string \| null` | No | — |
-| `status` | `queued \| importing \| ready \| failed \| deleted \| overwritten \| null` | No | — |
+| `status` | `queued \| importing \| ready \| failed \| deleted \| overwritten \| string \| null` | No | queued, importing, then ready or failed; deleted or overwritten later. |
 | `outputs` | `Record<string, any> \| null` | No | — |
 | `width` | `number \| null` | No | — |
 | `height` | `number \| null` | No | — |
@@ -705,7 +729,7 @@ await corsair.shotstack.api.sources.list({});
   owner: string,
   input?: string | null,
   source?: string | null,
-  status?: queued | importing | ready | failed | deleted | overwritten | null,
+  status?: queued | importing | ready | failed | deleted | overwritten | string | null,
   outputs?: Record<string, any> | null,
   width?: number | null,
   height?: number | null,
@@ -760,7 +784,26 @@ await corsair.shotstack.api.templates.create({ name: 'My lower third', template:
     size?: {
       width: number,
       height: number
-    }
+    },
+    fps?: number,
+    scaleTo?: 1080 | preview | mobile | sd | hd | 4k,
+    quality?: verylow | low | medium | high | veryhigh,
+    repeat?: boolean,
+    mute?: boolean,
+    range?: {
+      start?: number,
+      length?: number
+    },
+    poster?: {
+      capture: number
+    },
+    thumbnail?: {
+      capture: number,
+      scale?: number
+    },
+    destinations?: {
+      provider: string
+    }[]
   },
   merge?: {
     find: string,
@@ -819,7 +862,14 @@ await corsair.shotstack.api.templates.delete({ id: 'f5493c17-d01f-445c-bb49-535f
 
 
 
-**Output:** _empty object_
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `response` | `Record<string, any> \| null` | No | — |
+
 
 
 ---
@@ -920,7 +970,7 @@ await corsair.shotstack.api.templates.list({});
 
 Queue a render of a saved template with placeholder values merged in; spends credits. Poll renders.get for the result.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.shotstack.api.templates.render({ id: 'f5493c17-d01f-445c-bb49-535fae65f219', merge: [{ find: 'NAME', replace: 'Jane' }] });
@@ -980,7 +1030,7 @@ Overwrite a saved template with a new name or edit.
 **Risk:** `write`
 
 ```ts
-await corsair.shotstack.api.templates.update({ id: 'f5493c17-d01f-445c-bb49-535fae65f219', name: 'My renamed template' });
+await corsair.shotstack.api.templates.update({ id: 'f5493c17-d01f-445c-bb49-535fae65f219', name: 'My renamed template', template: { timeline: { tracks: [{ clips: [{ asset: { type: 'title', text: '{{NAME}}' }, start: 0, length: 3 }] }] }, output: { format: 'mp4', resolution: 'hd' } } });
 ```
 
 **Input**
@@ -989,7 +1039,7 @@ await corsair.shotstack.api.templates.update({ id: 'f5493c17-d01f-445c-bb49-535f
 |------|------|----------|-------------|
 | `id` | `string` | Yes | The id the create call returned (a UUID). |
 | `name` | `string` | Yes | The new template name. |
-| `template` | `object` | No | The replacement edit. |
+| `template` | `object` | Yes | The replacement edit (timeline and output); required by the API. |
 
 <AccordionGroup>
 <Accordion title="template full type">
@@ -1008,7 +1058,26 @@ await corsair.shotstack.api.templates.update({ id: 'f5493c17-d01f-445c-bb49-535f
     size?: {
       width: number,
       height: number
-    }
+    },
+    fps?: number,
+    scaleTo?: 1080 | preview | mobile | sd | hd | 4k,
+    quality?: verylow | low | medium | high | veryhigh,
+    repeat?: boolean,
+    mute?: boolean,
+    range?: {
+      start?: number,
+      length?: number
+    },
+    poster?: {
+      capture: number
+    },
+    thumbnail?: {
+      capture: number,
+      scale?: number
+    },
+    destinations?: {
+      provider: string
+    }[]
   },
   merge?: {
     find: string,
@@ -1036,8 +1105,8 @@ await corsair.shotstack.api.templates.update({ id: 'f5493c17-d01f-445c-bb49-535f
 
 ```ts
 {
-  message: string,
-  id: string
+  message?: string | null,
+  id?: string | null
 }
 ```
 </Accordion>
