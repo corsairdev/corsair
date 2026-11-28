@@ -701,6 +701,14 @@
                 ]
               },
               {
+                "group": "Baserow",
+                "pages": [
+                  "plugins/baserow/overview",
+                  "plugins/baserow/api",
+                  "plugins/baserow/database"
+                ]
+              },
+              {
                 "group": "Basin",
                 "pages": [
                   "plugins/basin/overview",
