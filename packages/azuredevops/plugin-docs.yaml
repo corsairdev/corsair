@@ -1,0 +1,2030 @@
+# Display copy for the generated docs and the catalog, plus one call
+# example per operation. Generated with the plugin from Azure DevOps's OpenAPI spec;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: Azure DevOps
+domain: dev.azure.com
+description: "Azure DevOps Services: repositories, pull requests, work items, builds, pipelines, releases, artifacts, test plans, wikis, users and permissions (1002 operations)."
+recommendedAuth: api_key
+overviewNote: |
+  Create a personal access token in Azure DevOps (User settings > Personal access tokens) with the scopes you need, and connect it with the organization name (`fabrikam` for `dev.azure.com/fabrikam`). Things to know before you write:
+
+  - **Hosts.** Most routes live on `dev.azure.com/<organization>`. Releases are on `vsrm.dev.azure.com`, artifact feeds on `feeds.` and `pkgs.dev.azure.com`, users and groups on `vssps.` and `vsaex.dev.azure.com`, audit on `auditservice.`, search on `almsearch.`, test results on `vstmr.dev.azure.com`. The plugin picks the host per operation.
+  - **API versions.** Each operation sends the api-version Microsoft documents it at (7.1, or 7.1-preview.N for preview APIs).
+  - **Work items** are created and updated with a JSON Patch list in `body`: `[{ "op": "add", "path": "/fields/System.Title", "value": "..." }]`.
+  - **Paging.** List routes that page with a continuation token return `{ items, nextCursor }`; pass `nextCursor` back as `continuationToken`. Others take `$top` and `$skip`.
+  - **What costs money or acts.** Queuing builds and running pipelines use pipeline minutes; adding users or raising access levels can add paid licences; completing a pull request merges it; service connections hold credentials. These and every delete are `destructive`.
+  - **New organizations.** Creating an organization now asks for an Azure subscription (seen 2026-11-28), and an Azure free account needs a card and a phone number.
+examples:
+  read:
+    path: core.projects.list
+    title: List projects
+    args: {"$top": 20}
+  write:
+    path: wit.workItems.create
+    title: Create a work item
+    args: {"project": "Fabrikam-Fiber", "type": "Task", "body": [{"op": "add", "path": "/fields/System.Title", "value": "Write the release notes"}]}
+apiExamples:
+  account.accounts.list:
+    args: {}
+  approvalsAndChecks.approvals.get:
+    args: {"project": "Fabrikam-Fiber", "approvalId": "example"}
+  approvalsAndChecks.approvals.query:
+    args: {"project": "Fabrikam-Fiber"}
+  approvalsAndChecks.approvals.update:
+    args: {"project": "Fabrikam-Fiber", "body": [{}]}
+  approvalsAndChecks.checkConfigurations.add:
+    args: {"project": "Fabrikam-Fiber"}
+  approvalsAndChecks.checkConfigurations.delete:
+    args: {"project": "Fabrikam-Fiber", "id": 1}
+  approvalsAndChecks.checkConfigurations.get:
+    args: {"project": "Fabrikam-Fiber", "id": 1}
+  approvalsAndChecks.checkConfigurations.list:
+    args: {"project": "Fabrikam-Fiber"}
+  approvalsAndChecks.checkConfigurations.query:
+    args: {"project": "Fabrikam-Fiber", "body": [{}]}
+  approvalsAndChecks.checkConfigurations.update:
+    args: {"project": "Fabrikam-Fiber", "id": 1}
+  approvalsAndChecks.checkEvaluations.evaluate:
+    args: {"project": "Fabrikam-Fiber"}
+  approvalsAndChecks.checkEvaluations.get:
+    args: {"project": "Fabrikam-Fiber", "checkSuiteId": "example"}
+  approvalsAndChecks.pipelinePermissions.get:
+    args: {"project": "Fabrikam-Fiber", "resourceType": "example", "resourceId": "example"}
+  approvalsAndChecks.pipelinePermissions.updatePipelinePermisionsForResource:
+    args: {"project": "Fabrikam-Fiber", "resourceType": "example", "resourceId": "example"}
+  approvalsAndChecks.pipelinePermissions.updatePipelinePermisionsForResources:
+    args: {"project": "Fabrikam-Fiber", "body": [{}]}
+  artifacts.artifactDetails.getBadge:
+    args: {"feedId": "fabrikam-packages", "packageId": "example", "project": "Fabrikam-Fiber"}
+  artifacts.artifactDetails.getPackage:
+    args: {"feedId": "fabrikam-packages", "packageId": "example", "project": "Fabrikam-Fiber"}
+  artifacts.artifactDetails.getPackageVersion:
+    args: {"feedId": "fabrikam-packages", "packageId": "example", "packageVersionId": "example", "project": "Fabrikam-Fiber"}
+  artifacts.artifactDetails.getPackageVersionProvenance:
+    args: {"feedId": "fabrikam-packages", "packageId": "example", "packageVersionId": "example", "project": "Fabrikam-Fiber"}
+  artifacts.artifactDetails.getPackageVersions:
+    args: {"feedId": "fabrikam-packages", "packageId": "example", "project": "Fabrikam-Fiber"}
+  artifacts.artifactDetails.getPackages:
+    args: {"feedId": "fabrikam-packages", "project": "Fabrikam-Fiber"}
+  artifacts.artifactDetails.queryPackageMetrics:
+    args: {"feedId": "fabrikam-packages", "project": "Fabrikam-Fiber"}
+  artifacts.artifactDetails.queryPackageVersionMetrics:
+    args: {"feedId": "fabrikam-packages", "packageId": "example", "project": "Fabrikam-Fiber"}
+  artifacts.changeTracking.getFeedChange:
+    args: {"feedId": "fabrikam-packages", "project": "Fabrikam-Fiber"}
+  artifacts.changeTracking.getFeedChanges:
+    args: {"project": "Fabrikam-Fiber"}
+  artifacts.changeTracking.getPackageChanges:
+    args: {"feedId": "fabrikam-packages", "project": "Fabrikam-Fiber"}
+  artifacts.feedManagement.createFeed:
+    args: {"project": "Fabrikam-Fiber"}
+  artifacts.feedManagement.createFeedView:
+    args: {"feedId": "fabrikam-packages", "project": "Fabrikam-Fiber"}
+  artifacts.feedManagement.deleteFeed:
+    args: {"feedId": "fabrikam-packages", "project": "Fabrikam-Fiber"}
+  artifacts.feedManagement.deleteFeedView:
+    args: {"feedId": "fabrikam-packages", "viewId": "example", "project": "Fabrikam-Fiber"}
+  artifacts.feedManagement.getFeed:
+    args: {"feedId": "fabrikam-packages", "project": "Fabrikam-Fiber"}
+  artifacts.feedManagement.getFeedPermissions:
+    args: {"feedId": "fabrikam-packages", "project": "Fabrikam-Fiber"}
+  artifacts.feedManagement.getFeedView:
+    args: {"feedId": "fabrikam-packages", "viewId": "example", "project": "Fabrikam-Fiber"}
+  artifacts.feedManagement.getFeedViews:
+    args: {"feedId": "fabrikam-packages", "project": "Fabrikam-Fiber"}
+  artifacts.feedManagement.getFeeds:
+    args: {"project": "Fabrikam-Fiber"}
+  artifacts.feedManagement.setFeedPermissions:
+    args: {"feedId": "fabrikam-packages", "project": "Fabrikam-Fiber", "body": [{}]}
+  artifacts.feedManagement.updateFeed:
+    args: {"feedId": "fabrikam-packages", "project": "Fabrikam-Fiber"}
+  artifacts.feedManagement.updateFeedView:
+    args: {"feedId": "fabrikam-packages", "viewId": "example", "project": "Fabrikam-Fiber"}
+  artifacts.feedRecycleBin.list:
+    args: {"project": "Fabrikam-Fiber"}
+  artifacts.feedRecycleBin.permanentDeleteFeed:
+    args: {"feedId": "fabrikam-packages", "project": "Fabrikam-Fiber"}
+  artifacts.feedRecycleBin.restoreDeletedFeed:
+    args: {"feedId": "fabrikam-packages", "project": "Fabrikam-Fiber", "body": [{}]}
+  artifacts.provenance.createSession:
+    args: {"protocol": "example", "project": "Fabrikam-Fiber"}
+  artifacts.recycleBin.emptyRecycleBin:
+    args: {"feedId": "fabrikam-packages", "project": "Fabrikam-Fiber"}
+  artifacts.recycleBin.getRecycleBinPackage:
+    args: {"feedId": "fabrikam-packages", "packageId": "example", "project": "Fabrikam-Fiber"}
+  artifacts.recycleBin.getRecycleBinPackageVersion:
+    args: {"feedId": "fabrikam-packages", "packageId": "example", "packageVersionId": "example", "project": "Fabrikam-Fiber"}
+  artifacts.recycleBin.getRecycleBinPackageVersions:
+    args: {"feedId": "fabrikam-packages", "packageId": "example", "project": "Fabrikam-Fiber"}
+  artifacts.recycleBin.getRecycleBinPackages:
+    args: {"feedId": "fabrikam-packages", "project": "Fabrikam-Fiber"}
+  artifacts.retentionPolicies.deleteRetentionPolicy:
+    args: {"feedId": "fabrikam-packages", "project": "Fabrikam-Fiber"}
+  artifacts.retentionPolicies.getRetentionPolicy:
+    args: {"feedId": "fabrikam-packages", "project": "Fabrikam-Fiber"}
+  artifacts.retentionPolicies.setRetentionPolicy:
+    args: {"feedId": "fabrikam-packages", "project": "Fabrikam-Fiber"}
+  artifacts.serviceSettings.getGlobalPermissions:
+    args: {}
+  artifacts.serviceSettings.setGlobalPermissions:
+    args: {"body": [{}]}
+  artifactsPackageTypes.maven.deletePackageVersion:
+    args: {"feed": "example", "groupId": "example", "artifactId": "example", "version": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.maven.deletePackageVersionFromRecycleBin:
+    args: {"feed": "example", "groupId": "example", "artifactId": "example", "version": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.maven.downloadPackage:
+    args: {"feedId": "fabrikam-packages", "groupId": "example", "artifactId": "example", "version": "example", "fileName": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.maven.getPackageVersion:
+    args: {"feed": "example", "groupId": "example", "artifactId": "example", "version": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.maven.getPackageVersionFromRecycleBin:
+    args: {"feed": "example", "groupId": "example", "artifactId": "example", "version": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.maven.getUpstreamingBehavior:
+    args: {"feed": "example", "groupId": "example", "artifactId": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.maven.restorePackageVersionFromRecycleBin:
+    args: {"feed": "example", "groupId": "example", "artifactId": "example", "version": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.maven.setUpstreamingBehavior:
+    args: {"feed": "example", "groupId": "example", "artifactId": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.maven.updatePackageVersion:
+    args: {"feed": "example", "groupId": "example", "artifactId": "example", "version": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.maven.updatePackageVersions:
+    args: {"feedId": "fabrikam-packages", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.maven.updateRecycleBinPackages:
+    args: {"feed": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.npm.deletePackageVersionFromRecycleBin:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.npm.deleteScopedPackageVersionFromRecycleBin:
+    args: {"feedId": "fabrikam-packages", "packageScope": "example", "unscopedPackageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.npm.downloadPackage:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.npm.downloadScopedPackage:
+    args: {"feedId": "fabrikam-packages", "packageScope": "example", "unscopedPackageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.npm.getPackageReadme:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.npm.getPackageUpstreamingBehavior:
+    args: {"feedId": "fabrikam-packages", "packageScope": "example", "unscopedPackageName": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.npm.getPackageVersion:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.npm.getPackageVersionFromRecycleBin:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.npm.getScopedPackageReadme:
+    args: {"feedId": "fabrikam-packages", "packageScope": "example", "unscopedPackageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.npm.getScopedPackageUpstreamingBehavior:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.npm.getScopedPackageVersion:
+    args: {"feedId": "fabrikam-packages", "packageScope": "example", "unscopedPackageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.npm.getScopedPackageVersionFromRecycleBin:
+    args: {"feedId": "fabrikam-packages", "packageScope": "example", "unscopedPackageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.npm.restorePackageVersionFromRecycleBin:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.npm.restoreScopedPackageVersionFromRecycleBin:
+    args: {"feedId": "fabrikam-packages", "packageScope": "example", "unscopedPackageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.npm.setScopedUpstreamingBehavior:
+    args: {"feedId": "fabrikam-packages", "packageScope": "example", "unscopedPackageName": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.npm.setUpstreamingBehavior:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.npm.unpublishPackage:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.npm.unpublishScopedPackage:
+    args: {"feedId": "fabrikam-packages", "packageScope": "example", "unscopedPackageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.npm.updatePackage:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.npm.updatePackages:
+    args: {"feedId": "fabrikam-packages", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.npm.updateRecycleBinPackages:
+    args: {"feedId": "fabrikam-packages", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.npm.updateScopedPackage:
+    args: {"feedId": "fabrikam-packages", "packageScope": "example", "unscopedPackageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.nuGet.deletePackageVersion:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.nuGet.deletePackageVersionFromRecycleBin:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.nuGet.downloadPackage:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.nuGet.getPackageVersion:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.nuGet.getPackageVersionFromRecycleBin:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.nuGet.getUpstreamingBehavior:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.nuGet.restorePackageVersionFromRecycleBin:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.nuGet.setUpstreamingBehavior:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.nuGet.updatePackageVersion:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.nuGet.updatePackageVersions:
+    args: {"feedId": "fabrikam-packages", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.nuGet.updateRecycleBinPackageVersions:
+    args: {"feedId": "fabrikam-packages", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.python.deletePackageVersion:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.python.deletePackageVersionFromRecycleBin:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.python.downloadPackage:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "fileName": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.python.getPackageVersion:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.python.getPackageVersionFromRecycleBin:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.python.getUpstreamingBehavior:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.python.restorePackageVersionFromRecycleBin:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.python.setUpstreamingBehavior:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.python.updatePackageVersion:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.python.updatePackageVersions:
+    args: {"feedId": "fabrikam-packages", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.python.updateRecycleBinPackageVersions:
+    args: {"feedId": "fabrikam-packages", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.universal.deletePackageVersion:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.universal.deletePackageVersionFromRecycleBin:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.universal.getPackageVersion:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.universal.getPackageVersionFromRecycleBin:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.universal.restorePackageVersionFromRecycleBin:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.universal.updatePackageVersion:
+    args: {"feedId": "fabrikam-packages", "packageName": "example", "packageVersion": "example", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.universal.updatePackageVersions:
+    args: {"feedId": "fabrikam-packages", "project": "Fabrikam-Fiber"}
+  artifactsPackageTypes.universal.updateRecycleBinPackageVersions:
+    args: {"feedId": "fabrikam-packages", "project": "Fabrikam-Fiber"}
+  audit.actions.list:
+    args: {}
+  audit.auditLog.query:
+    args: {}
+  audit.downloadLog.downloadLog:
+    args: {"format": "example"}
+  audit.streams.create:
+    args: {"daysToBackfill": 1}
+  audit.streams.delete:
+    args: {"streamId": 1}
+  audit.streams.queryAllStreams:
+    args: {}
+  audit.streams.queryStreamById:
+    args: {"streamId": 1}
+  audit.streams.updateStatus:
+    args: {"streamId": 1, "status": "unknown"}
+  audit.streams.updateStream:
+    args: {}
+  build.artifacts.create:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391}
+  build.artifacts.list:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391}
+  build.attachments.get:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391, "timelineId": "example", "recordId": "example", "type": "example", "name": "example"}
+  build.attachments.list:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391, "type": "example"}
+  build.authorizedresources.authorizeProjectResources:
+    args: {"project": "Fabrikam-Fiber", "body": [{}]}
+  build.authorizedresources.list:
+    args: {"project": "Fabrikam-Fiber"}
+  build.badge.get:
+    args: {"project": "Fabrikam-Fiber", "definitionId": 12}
+  build.badge.getBuildBadgeData:
+    args: {"project": "Fabrikam-Fiber", "repoType": "example"}
+  build.builds.delete:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391}
+  build.builds.get:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391}
+  build.builds.getBuildChanges:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391}
+  build.builds.getBuildLog:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391, "logId": 1}
+  build.builds.getBuildLogs:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391}
+  build.builds.getBuildWorkItemsRefs:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391}
+  build.builds.getBuildWorkItemsRefsFromCommits:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391, "body": ["example"]}
+  build.builds.getChangesBetweenBuilds:
+    args: {"project": "Fabrikam-Fiber"}
+  build.builds.getRetentionLeasesForBuild:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391}
+  build.builds.getWorkItemsBetweenBuilds:
+    args: {"project": "Fabrikam-Fiber", "fromBuildId": 1, "toBuildId": 1}
+  build.builds.list:
+    args: {"project": "Fabrikam-Fiber"}
+  build.builds.queue:
+    args: {"project": "Fabrikam-Fiber"}
+  build.builds.updateBuild:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391}
+  build.builds.updateBuilds:
+    args: {"project": "Fabrikam-Fiber", "body": [{}]}
+  build.controllers.get:
+    args: {"controllerId": 1}
+  build.controllers.list:
+    args: {}
+  build.definitions.create:
+    args: {"project": "Fabrikam-Fiber"}
+  build.definitions.delete:
+    args: {"project": "Fabrikam-Fiber", "definitionId": 12}
+  build.definitions.get:
+    args: {"project": "Fabrikam-Fiber", "definitionId": 12}
+  build.definitions.getDefinitionRevisions:
+    args: {"project": "Fabrikam-Fiber", "definitionId": 12}
+  build.definitions.list:
+    args: {"project": "Fabrikam-Fiber"}
+  build.definitions.restoreDefinition:
+    args: {"project": "Fabrikam-Fiber", "definitionId": 12, "deleted": true}
+  build.definitions.update:
+    args: {"project": "Fabrikam-Fiber", "definitionId": 12}
+  build.folders.create:
+    args: {"project": "Fabrikam-Fiber", "path": "example"}
+  build.folders.delete:
+    args: {"project": "Fabrikam-Fiber", "path": "example"}
+  build.folders.list:
+    args: {"project": "Fabrikam-Fiber", "path": "example"}
+  build.folders.update:
+    args: {"project": "Fabrikam-Fiber", "path": "example"}
+  build.generalSettings.get:
+    args: {"project": "Fabrikam-Fiber"}
+  build.generalSettings.update:
+    args: {"project": "Fabrikam-Fiber"}
+  build.history.get:
+    args: {}
+  build.latest.get:
+    args: {"project": "Fabrikam-Fiber", "definition": "example"}
+  build.leases.add:
+    args: {"project": "Fabrikam-Fiber", "body": [{}]}
+  build.leases.delete:
+    args: {"project": "Fabrikam-Fiber", "ids": "example"}
+  build.leases.get:
+    args: {"project": "Fabrikam-Fiber", "leaseId": 1}
+  build.leases.getRetentionLeasesByMinimalRetentionLeases:
+    args: {"project": "Fabrikam-Fiber", "leasesToFetch": "example"}
+  build.leases.update:
+    args: {"project": "Fabrikam-Fiber", "leaseId": 1}
+  build.metrics.getDefinitionMetrics:
+    args: {"project": "Fabrikam-Fiber", "definitionId": 12}
+  build.metrics.getProjectMetrics:
+    args: {"project": "Fabrikam-Fiber", "metricAggregationType": "example"}
+  build.options.list:
+    args: {"project": "Fabrikam-Fiber"}
+  build.properties.getBuildProperties:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391}
+  build.properties.getDefinitionProperties:
+    args: {"project": "Fabrikam-Fiber", "definitionId": 12}
+  build.properties.updateBuildProperties:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391, "body": [{}]}
+  build.properties.updateDefinitionProperties:
+    args: {"project": "Fabrikam-Fiber", "definitionId": 12, "body": [{}]}
+  build.report.get:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391}
+  build.resourceUsage.get:
+    args: {}
+  build.resources.authorizeDefinitionResources:
+    args: {"project": "Fabrikam-Fiber", "definitionId": 12, "body": [{}]}
+  build.resources.list:
+    args: {"project": "Fabrikam-Fiber", "definitionId": 12}
+  build.retention.get:
+    args: {"project": "Fabrikam-Fiber"}
+  build.retention.update:
+    args: {"project": "Fabrikam-Fiber"}
+  build.settings.get:
+    args: {"project": "Fabrikam-Fiber"}
+  build.settings.update:
+    args: {"project": "Fabrikam-Fiber"}
+  build.sourceProviders.getFileContents:
+    args: {"project": "Fabrikam-Fiber", "providerName": "example"}
+  build.sourceProviders.getPathContents:
+    args: {"project": "Fabrikam-Fiber", "providerName": "example"}
+  build.sourceProviders.getPullRequest:
+    args: {"project": "Fabrikam-Fiber", "providerName": "example", "pullRequestId": "22"}
+  build.sourceProviders.list:
+    args: {"project": "Fabrikam-Fiber"}
+  build.sourceProviders.listBranches:
+    args: {"project": "Fabrikam-Fiber", "providerName": "example"}
+  build.sourceProviders.listRepositories:
+    args: {"project": "Fabrikam-Fiber", "providerName": "example"}
+  build.sourceProviders.listWebhooks:
+    args: {"project": "Fabrikam-Fiber", "providerName": "example"}
+  build.sourceProviders.restoreWebhooks:
+    args: {"project": "Fabrikam-Fiber", "providerName": "example", "body": ["example"]}
+  build.stages.update:
+    args: {"buildId": 391, "stageRefName": "example", "project": "Fabrikam-Fiber"}
+  build.status.get:
+    args: {"project": "Fabrikam-Fiber", "definition": "example"}
+  build.tags.addBuildTag:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391, "tag": "example"}
+  build.tags.addBuildTags:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391, "body": ["example"]}
+  build.tags.addDefinitionTag:
+    args: {"project": "Fabrikam-Fiber", "definitionId": 12, "tag": "example"}
+  build.tags.addDefinitionTags:
+    args: {"project": "Fabrikam-Fiber", "definitionId": 12, "body": ["example"]}
+  build.tags.deleteBuildTag:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391, "tag": "example"}
+  build.tags.deleteDefinitionTag:
+    args: {"project": "Fabrikam-Fiber", "definitionId": 12, "tag": "example"}
+  build.tags.deleteTag:
+    args: {"project": "Fabrikam-Fiber", "tag": "example"}
+  build.tags.getBuildTags:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391}
+  build.tags.getDefinitionTags:
+    args: {"project": "Fabrikam-Fiber", "definitionId": 12}
+  build.tags.getTags:
+    args: {"project": "Fabrikam-Fiber"}
+  build.tags.updateBuildTags:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391}
+  build.tags.updateDefinitionTags:
+    args: {"project": "Fabrikam-Fiber", "definitionId": 12}
+  build.templates.delete:
+    args: {"project": "Fabrikam-Fiber", "templateId": "example"}
+  build.templates.get:
+    args: {"project": "Fabrikam-Fiber", "templateId": "example"}
+  build.templates.list:
+    args: {"project": "Fabrikam-Fiber"}
+  build.templates.saveTemplate:
+    args: {"project": "Fabrikam-Fiber", "templateId": "example"}
+  build.timeline.get:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391, "timelineId": "example"}
+  build.yaml.get:
+    args: {"project": "Fabrikam-Fiber", "definitionId": 12}
+  core.avatar.removeProjectAvatar:
+    args: {"projectId": "example"}
+  core.avatar.setProjectAvatar:
+    args: {"projectId": "example"}
+  core.categorizedTeams.get:
+    args: {"projectId": "example"}
+  core.processes.get:
+    args: {"processId": "example"}
+  core.processes.list:
+    args: {}
+  core.projects.create:
+    args: {}
+  core.projects.delete:
+    args: {"projectId": "example"}
+  core.projects.get:
+    args: {"projectId": "example"}
+  core.projects.getProjectProperties:
+    args: {"projectId": "example"}
+  core.projects.list:
+    args: {"$top": 20}
+  core.projects.setProjectProperties:
+    args: {"projectId": "example", "body": [{}]}
+  core.projects.update:
+    args: {"projectId": "example"}
+  core.teams.create:
+    args: {"projectId": "example"}
+  core.teams.delete:
+    args: {"projectId": "example", "teamId": "example"}
+  core.teams.get:
+    args: {"projectId": "example", "teamId": "example"}
+  core.teams.getAllTeams:
+    args: {}
+  core.teams.getTeamMembersWithExtendedProperties:
+    args: {"projectId": "example", "teamId": "example"}
+  core.teams.getTeams:
+    args: {"projectId": "example"}
+  core.teams.update:
+    args: {"projectId": "example", "teamId": "example"}
+  dashboard.dashboards.create:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team"}
+  dashboard.dashboards.delete:
+    args: {"project": "Fabrikam-Fiber", "dashboardId": "example", "team": "Fabrikam-Fiber Team"}
+  dashboard.dashboards.get:
+    args: {"project": "Fabrikam-Fiber", "dashboardId": "example", "team": "Fabrikam-Fiber Team"}
+  dashboard.dashboards.list:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team"}
+  dashboard.dashboards.replaceDashboard:
+    args: {"project": "Fabrikam-Fiber", "dashboardId": "example", "team": "Fabrikam-Fiber Team"}
+  dashboard.dashboards.replaceDashboards:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team"}
+  dashboard.widgetTypes.getWidgetMetadata:
+    args: {"contributionId": "example", "project": "Fabrikam-Fiber"}
+  dashboard.widgetTypes.getWidgetTypes:
+    args: {"$scope": "collection_User", "project": "Fabrikam-Fiber"}
+  dashboard.widgets.create:
+    args: {"project": "Fabrikam-Fiber", "dashboardId": "example", "team": "Fabrikam-Fiber Team"}
+  dashboard.widgets.delete:
+    args: {"project": "Fabrikam-Fiber", "dashboardId": "example", "widgetId": "example", "team": "Fabrikam-Fiber Team"}
+  dashboard.widgets.getWidget:
+    args: {"project": "Fabrikam-Fiber", "dashboardId": "example", "widgetId": "example", "team": "Fabrikam-Fiber Team"}
+  dashboard.widgets.getWidgets:
+    args: {"project": "Fabrikam-Fiber", "dashboardId": "example", "team": "Fabrikam-Fiber Team"}
+  dashboard.widgets.replaceWidget:
+    args: {"project": "Fabrikam-Fiber", "dashboardId": "example", "widgetId": "example", "team": "Fabrikam-Fiber Team"}
+  dashboard.widgets.replaceWidgets:
+    args: {"project": "Fabrikam-Fiber", "dashboardId": "example", "team": "Fabrikam-Fiber Team", "body": [{}]}
+  dashboard.widgets.updateWidget:
+    args: {"project": "Fabrikam-Fiber", "dashboardId": "example", "widgetId": "example", "team": "Fabrikam-Fiber Team"}
+  dashboard.widgets.updateWidgets:
+    args: {"project": "Fabrikam-Fiber", "dashboardId": "example", "team": "Fabrikam-Fiber Team", "body": [{}]}
+  distributedTask.agentclouds.add:
+    args: {}
+  distributedTask.agentclouds.delete:
+    args: {"agentCloudId": 1}
+  distributedTask.agentclouds.get:
+    args: {"agentCloudId": 1}
+  distributedTask.agentclouds.list:
+    args: {}
+  distributedTask.agentclouds.update:
+    args: {"agentCloudId": 1}
+  distributedTask.agentcloudtypes.list:
+    args: {}
+  distributedTask.agents.add:
+    args: {"poolId": 1}
+  distributedTask.agents.delete:
+    args: {"poolId": 1, "agentId": 1}
+  distributedTask.agents.getPoolPermission:
+    args: {"poolId": 1, "agentId": 1, "isCheckPermissions": true}
+  distributedTask.agents.list:
+    args: {"poolId": 1}
+  distributedTask.agents.replaceAgent:
+    args: {"poolId": 1, "agentId": 1}
+  distributedTask.agents.update:
+    args: {"poolId": 1, "agentId": 1}
+  distributedTask.deploymentgroups.add:
+    args: {"project": "Fabrikam-Fiber"}
+  distributedTask.deploymentgroups.delete:
+    args: {"project": "Fabrikam-Fiber", "deploymentGroupId": 1}
+  distributedTask.deploymentgroups.get:
+    args: {"project": "Fabrikam-Fiber", "deploymentGroupId": 1}
+  distributedTask.deploymentgroups.list:
+    args: {"project": "Fabrikam-Fiber"}
+  distributedTask.deploymentgroups.update:
+    args: {"project": "Fabrikam-Fiber", "deploymentGroupId": 1}
+  distributedTask.elasticpoollogs.list:
+    args: {"poolId": 1}
+  distributedTask.elasticpools.create:
+    args: {"poolName": "example"}
+  distributedTask.elasticpools.get:
+    args: {"poolId": 1}
+  distributedTask.elasticpools.list:
+    args: {}
+  distributedTask.elasticpools.update:
+    args: {"poolId": 1}
+  distributedTask.environmentdeploymentRecords.list:
+    args: {"project": "Fabrikam-Fiber", "environmentId": 1}
+  distributedTask.environments.add:
+    args: {"project": "Fabrikam-Fiber"}
+  distributedTask.environments.delete:
+    args: {"project": "Fabrikam-Fiber", "environmentId": 1}
+  distributedTask.environments.get:
+    args: {"project": "Fabrikam-Fiber", "environmentId": 1}
+  distributedTask.environments.list:
+    args: {"project": "Fabrikam-Fiber"}
+  distributedTask.environments.update:
+    args: {"project": "Fabrikam-Fiber", "environmentId": 1}
+  distributedTask.events.postEvent:
+    args: {"scopeIdentifier": "example", "hubName": "example", "planId": "example"}
+  distributedTask.kubernetes.add:
+    args: {"project": "Fabrikam-Fiber", "environmentId": 1}
+  distributedTask.kubernetes.delete:
+    args: {"project": "Fabrikam-Fiber", "environmentId": 1, "resourceId": 1}
+  distributedTask.kubernetes.get:
+    args: {"project": "Fabrikam-Fiber", "environmentId": 1, "resourceId": 1}
+  distributedTask.logs.appendLogContent:
+    args: {"scopeIdentifier": "example", "hubName": "example", "planId": "example", "logId": 1, "file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  distributedTask.logs.create:
+    args: {"scopeIdentifier": "example", "hubName": "example", "planId": "example"}
+  distributedTask.nodes.list:
+    args: {"poolId": 1}
+  distributedTask.nodes.update:
+    args: {"poolId": 1, "elasticNodeId": 1}
+  distributedTask.oidctoken.create:
+    args: {"scopeIdentifier": "example", "hubName": "example", "planId": "example", "jobId": "example"}
+  distributedTask.pools.add:
+    args: {}
+  distributedTask.pools.delete:
+    args: {"poolId": 1}
+  distributedTask.pools.get:
+    args: {"poolId": 1}
+  distributedTask.pools.getAgentPoolsByIds:
+    args: {"poolIds": "example"}
+  distributedTask.pools.update:
+    args: {"poolId": 1}
+  distributedTask.queues.add:
+    args: {"project": "Fabrikam-Fiber"}
+  distributedTask.queues.delete:
+    args: {"queueId": 1, "project": "Fabrikam-Fiber"}
+  distributedTask.queues.get:
+    args: {"queueId": 1, "project": "Fabrikam-Fiber"}
+  distributedTask.queues.getAgentQueuesForPools:
+    args: {"poolIds": "example", "project": "Fabrikam-Fiber"}
+  distributedTask.records.update:
+    args: {"scopeIdentifier": "example", "hubName": "example", "planId": "example", "timelineId": "example"}
+  distributedTask.requests.list:
+    args: {"agentCloudId": 1}
+  distributedTask.targets.delete:
+    args: {"project": "Fabrikam-Fiber", "deploymentGroupId": 1, "targetId": 1}
+  distributedTask.targets.get:
+    args: {"project": "Fabrikam-Fiber", "deploymentGroupId": 1, "targetId": 1}
+  distributedTask.targets.list:
+    args: {"project": "Fabrikam-Fiber", "deploymentGroupId": 1}
+  distributedTask.targets.update:
+    args: {"project": "Fabrikam-Fiber", "deploymentGroupId": 1, "body": [{}]}
+  distributedTask.taskgroups.add:
+    args: {"project": "Fabrikam-Fiber"}
+  distributedTask.taskgroups.delete:
+    args: {"project": "Fabrikam-Fiber", "taskGroupId": "example"}
+  distributedTask.taskgroups.list:
+    args: {"project": "Fabrikam-Fiber", "taskGroupId": "example"}
+  distributedTask.taskgroups.update:
+    args: {"project": "Fabrikam-Fiber", "taskGroupId": "example"}
+  distributedTask.variablegroups.add:
+    args: {}
+  distributedTask.variablegroups.delete:
+    args: {"groupId": 1, "projectIds": "example"}
+  distributedTask.variablegroups.get:
+    args: {"project": "Fabrikam-Fiber", "groupId": 1}
+  distributedTask.variablegroups.getVariableGroupsById:
+    args: {"project": "Fabrikam-Fiber", "groupIds": "example"}
+  distributedTask.variablegroups.shareVariableGroup:
+    args: {"variableGroupId": 1, "body": [{}]}
+  distributedTask.variablegroups.update:
+    args: {"groupId": 1}
+  distributedTask.yamlschema.get:
+    args: {}
+  extensionManagement.installedExtensions.get:
+    args: {"publisherName": "example", "extensionName": "example"}
+  extensionManagement.installedExtensions.installExtensionByName:
+    args: {"publisherName": "example", "extensionName": "example", "version": "example"}
+  extensionManagement.installedExtensions.list:
+    args: {}
+  extensionManagement.installedExtensions.uninstallExtensionByName:
+    args: {"publisherName": "example", "extensionName": "example"}
+  extensionManagement.installedExtensions.update:
+    args: {}
+  favorite.favorites.createFavorite:
+    args: {}
+  favorite.favorites.deleteFavoriteById:
+    args: {"favoriteId": "example", "artifactType": "example", "artifactScopeType": "example"}
+  favorite.favorites.getFavoriteById:
+    args: {"favoriteId": "example", "artifactScopeType": "example", "artifactType": "example"}
+  favorite.favorites.getFavorites:
+    args: {}
+  git.annotatedTags.create:
+    args: {"project": "Fabrikam-Fiber", "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719"}
+  git.annotatedTags.get:
+    args: {"project": "Fabrikam-Fiber", "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "objectId": "example"}
+  git.blobs.getBlob:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "sha1": "example", "project": "Fabrikam-Fiber"}
+  git.blobs.getBlobsZip:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber", "body": ["example"]}
+  git.cherryPicks.create:
+    args: {"project": "Fabrikam-Fiber", "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719"}
+  git.cherryPicks.getCherryPick:
+    args: {"project": "Fabrikam-Fiber", "cherryPickId": 1, "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719"}
+  git.cherryPicks.getCherryPickForRefName:
+    args: {"project": "Fabrikam-Fiber", "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "refName": "example"}
+  git.commits.get:
+    args: {"commitId": "example", "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber"}
+  git.commits.getChanges:
+    args: {"commitId": "example", "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber"}
+  git.commits.getCommitsBatch:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber"}
+  git.commits.getPushCommits:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pushId": 1, "project": "Fabrikam-Fiber"}
+  git.diffs.get:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber"}
+  git.forks.createForkSyncRequest:
+    args: {"repositoryNameOrId": "fabrikam-web", "project": "Fabrikam-Fiber"}
+  git.forks.getForkSyncRequest:
+    args: {"repositoryNameOrId": "fabrikam-web", "forkSyncOperationId": 1, "project": "Fabrikam-Fiber"}
+  git.forks.getForkSyncRequests:
+    args: {"repositoryNameOrId": "fabrikam-web", "project": "Fabrikam-Fiber"}
+  git.forks.list:
+    args: {"repositoryNameOrId": "fabrikam-web", "collectionId": "example", "project": "Fabrikam-Fiber"}
+  git.importRequests.create:
+    args: {"project": "Fabrikam-Fiber", "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719"}
+  git.importRequests.get:
+    args: {"project": "Fabrikam-Fiber", "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "importRequestId": 1}
+  git.importRequests.query:
+    args: {"project": "Fabrikam-Fiber", "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719"}
+  git.importRequests.update:
+    args: {"project": "Fabrikam-Fiber", "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "importRequestId": 1}
+  git.items.getItemsBatch:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber"}
+  git.items.list:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber"}
+  git.mergeBases.list:
+    args: {"repositoryNameOrId": "fabrikam-web", "commitId": "example", "otherCommitId": "example", "project": "Fabrikam-Fiber"}
+  git.merges.create:
+    args: {"project": "Fabrikam-Fiber", "repositoryNameOrId": "fabrikam-web"}
+  git.merges.get:
+    args: {"project": "Fabrikam-Fiber", "repositoryNameOrId": "fabrikam-web", "mergeOperationId": 1}
+  git.policyConfigurations.get:
+    args: {"project": "Fabrikam-Fiber"}
+  git.pullRequestAttachments.create:
+    args: {"fileName": "example", "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "project": "Fabrikam-Fiber", "file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  git.pullRequestAttachments.delete:
+    args: {"fileName": "example", "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "project": "Fabrikam-Fiber"}
+  git.pullRequestAttachments.get:
+    args: {"fileName": "example", "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "project": "Fabrikam-Fiber"}
+  git.pullRequestAttachments.list:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "project": "Fabrikam-Fiber"}
+  git.pullRequestCommentLikes.create:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "threadId": 1, "commentId": 1, "project": "Fabrikam-Fiber"}
+  git.pullRequestCommentLikes.delete:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "threadId": 1, "commentId": 1, "project": "Fabrikam-Fiber"}
+  git.pullRequestCommentLikes.list:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "threadId": 1, "commentId": 1, "project": "Fabrikam-Fiber"}
+  git.pullRequestCommits.getPullRequestCommits:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "project": "Fabrikam-Fiber"}
+  git.pullRequestCommits.getPullRequestIterationCommits:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "iterationId": 1, "project": "Fabrikam-Fiber"}
+  git.pullRequestIterationChanges.get:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "iterationId": 1, "project": "Fabrikam-Fiber"}
+  git.pullRequestIterationStatuses.create:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "iterationId": 1, "project": "Fabrikam-Fiber"}
+  git.pullRequestIterationStatuses.delete:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "iterationId": 1, "statusId": 1, "project": "Fabrikam-Fiber"}
+  git.pullRequestIterationStatuses.get:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "iterationId": 1, "statusId": 1, "project": "Fabrikam-Fiber"}
+  git.pullRequestIterationStatuses.list:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "iterationId": 1, "project": "Fabrikam-Fiber"}
+  git.pullRequestIterationStatuses.update:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "iterationId": 1, "project": "Fabrikam-Fiber", "body": [{}]}
+  git.pullRequestIterations.get:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "iterationId": 1, "project": "Fabrikam-Fiber"}
+  git.pullRequestIterations.list:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "project": "Fabrikam-Fiber"}
+  git.pullRequestLabels.create:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "project": "Fabrikam-Fiber"}
+  git.pullRequestLabels.delete:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "labelIdOrName": "example", "project": "Fabrikam-Fiber"}
+  git.pullRequestLabels.get:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "labelIdOrName": "example", "project": "Fabrikam-Fiber"}
+  git.pullRequestLabels.list:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "project": "Fabrikam-Fiber"}
+  git.pullRequestProperties.list:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "project": "Fabrikam-Fiber"}
+  git.pullRequestProperties.update:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "project": "Fabrikam-Fiber", "body": [{}]}
+  git.pullRequestQuery.get:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber"}
+  git.pullRequestReviewers.createPullRequestReviewer:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "reviewerId": "example", "project": "Fabrikam-Fiber"}
+  git.pullRequestReviewers.createPullRequestReviewers:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "project": "Fabrikam-Fiber", "body": [{}]}
+  git.pullRequestReviewers.createUnmaterializedPullRequestReviewer:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "project": "Fabrikam-Fiber"}
+  git.pullRequestReviewers.delete:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "reviewerId": "example", "project": "Fabrikam-Fiber"}
+  git.pullRequestReviewers.get:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "reviewerId": "example", "project": "Fabrikam-Fiber"}
+  git.pullRequestReviewers.list:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "project": "Fabrikam-Fiber"}
+  git.pullRequestReviewers.updatePullRequestReviewer:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "reviewerId": "example", "project": "Fabrikam-Fiber"}
+  git.pullRequestReviewers.updatePullRequestReviewers:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "project": "Fabrikam-Fiber", "body": [{}]}
+  git.pullRequestShare.sharePullRequest:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "project": "Fabrikam-Fiber"}
+  git.pullRequestStatuses.create:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "project": "Fabrikam-Fiber"}
+  git.pullRequestStatuses.delete:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "statusId": 1, "project": "Fabrikam-Fiber"}
+  git.pullRequestStatuses.get:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "statusId": 1, "project": "Fabrikam-Fiber"}
+  git.pullRequestStatuses.list:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "project": "Fabrikam-Fiber"}
+  git.pullRequestStatuses.update:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "project": "Fabrikam-Fiber", "body": [{}]}
+  git.pullRequestThreadComments.create:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "threadId": 1, "project": "Fabrikam-Fiber"}
+  git.pullRequestThreadComments.delete:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "threadId": 1, "commentId": 1, "project": "Fabrikam-Fiber"}
+  git.pullRequestThreadComments.get:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "threadId": 1, "commentId": 1, "project": "Fabrikam-Fiber"}
+  git.pullRequestThreadComments.list:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "threadId": 1, "project": "Fabrikam-Fiber"}
+  git.pullRequestThreadComments.update:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "threadId": 1, "commentId": 1, "project": "Fabrikam-Fiber"}
+  git.pullRequestThreads.create:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "project": "Fabrikam-Fiber"}
+  git.pullRequestThreads.get:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "threadId": 1, "project": "Fabrikam-Fiber"}
+  git.pullRequestThreads.list:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "project": "Fabrikam-Fiber"}
+  git.pullRequestThreads.update:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "threadId": 1, "project": "Fabrikam-Fiber"}
+  git.pullRequestWorkItems.list:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "project": "Fabrikam-Fiber"}
+  git.pullRequests.create:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber"}
+  git.pullRequests.getPullRequest:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "project": "Fabrikam-Fiber"}
+  git.pullRequests.getPullRequestById:
+    args: {"pullRequestId": 22, "project": "Fabrikam-Fiber"}
+  git.pullRequests.getPullRequests:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber"}
+  git.pullRequests.getPullRequestsByProject:
+    args: {"project": "Fabrikam-Fiber"}
+  git.pullRequests.update:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pullRequestId": 22, "project": "Fabrikam-Fiber"}
+  git.pushes.create:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber"}
+  git.pushes.get:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "pushId": 1, "project": "Fabrikam-Fiber"}
+  git.pushes.list:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber"}
+  git.refs.list:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber"}
+  git.refs.updateRef:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "filter": "example", "project": "Fabrikam-Fiber"}
+  git.refs.updateRefs:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber", "body": [{}]}
+  git.refsFavorites.create:
+    args: {"project": "Fabrikam-Fiber"}
+  git.refsFavorites.delete:
+    args: {"project": "Fabrikam-Fiber", "favoriteId": 1}
+  git.refsFavorites.get:
+    args: {"project": "Fabrikam-Fiber", "favoriteId": 1}
+  git.refsFavorites.list:
+    args: {"project": "Fabrikam-Fiber"}
+  git.repositories.create:
+    args: {"project": "Fabrikam-Fiber"}
+  git.repositories.delete:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber"}
+  git.repositories.deleteRepositoryFromRecycleBin:
+    args: {"project": "Fabrikam-Fiber", "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719"}
+  git.repositories.getDeletedRepositories:
+    args: {"project": "Fabrikam-Fiber"}
+  git.repositories.getRecycleBinRepositories:
+    args: {"project": "Fabrikam-Fiber"}
+  git.repositories.getRepository:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber"}
+  git.repositories.list:
+    args: {"project": "Fabrikam-Fiber"}
+  git.repositories.restoreRepositoryFromRecycleBin:
+    args: {"project": "Fabrikam-Fiber", "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719"}
+  git.repositories.update:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber"}
+  git.reverts.create:
+    args: {"project": "Fabrikam-Fiber", "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719"}
+  git.reverts.getRevert:
+    args: {"project": "Fabrikam-Fiber", "revertId": 1, "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719"}
+  git.reverts.getRevertForRefName:
+    args: {"project": "Fabrikam-Fiber", "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "refName": "example"}
+  git.stats.list:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber"}
+  git.statuses.create:
+    args: {"commitId": "example", "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber"}
+  git.statuses.list:
+    args: {"commitId": "example", "repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber"}
+  git.suggestions.list:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "project": "Fabrikam-Fiber"}
+  git.trees.get:
+    args: {"repositoryId": "3411ebc1-d5aa-464f-9615-0b527bc66719", "sha1": "example", "project": "Fabrikam-Fiber"}
+  graph.avatars.delete:
+    args: {"subjectDescriptor": "example"}
+  graph.avatars.get:
+    args: {"subjectDescriptor": "example"}
+  graph.avatars.setAvatar:
+    args: {"subjectDescriptor": "example"}
+  graph.descriptors.get:
+    args: {"storageKey": "example"}
+  graph.groups.create:
+    args: {}
+  graph.groups.delete:
+    args: {"groupDescriptor": "example"}
+  graph.groups.get:
+    args: {"groupDescriptor": "example"}
+  graph.groups.list:
+    args: {}
+  graph.groups.update:
+    args: {"groupDescriptor": "example", "body": [{}]}
+  graph.membershipStates.get:
+    args: {"subjectDescriptor": "example"}
+  graph.memberships.add:
+    args: {"subjectDescriptor": "example", "containerDescriptor": "example"}
+  graph.memberships.get:
+    args: {"subjectDescriptor": "example", "containerDescriptor": "example"}
+  graph.memberships.list:
+    args: {"subjectDescriptor": "example"}
+  graph.memberships.removeMembership:
+    args: {"subjectDescriptor": "example", "containerDescriptor": "example"}
+  graph.providerInfo.get:
+    args: {"userDescriptor": "example"}
+  graph.requestAccess.requestAccess:
+    args: {}
+  graph.servicePrincipals.create:
+    args: {}
+  graph.servicePrincipals.delete:
+    args: {"servicePrincipalDescriptor": "example"}
+  graph.servicePrincipals.get:
+    args: {"servicePrincipalDescriptor": "example"}
+  graph.servicePrincipals.list:
+    args: {}
+  graph.storageKeys.get:
+    args: {"subjectDescriptor": "example"}
+  graph.subjectLookup.lookupSubjects:
+    args: {}
+  graph.subjectQuery.query:
+    args: {}
+  graph.users.create:
+    args: {}
+  graph.users.delete:
+    args: {"userDescriptor": "example"}
+  graph.users.get:
+    args: {"userDescriptor": "example"}
+  graph.users.list:
+    args: {}
+  graph.users.update:
+    args: {"userDescriptor": "example"}
+  hooks.consumers.get:
+    args: {"consumerId": "example"}
+  hooks.consumers.getConsumerAction:
+    args: {"consumerId": "example", "consumerActionId": "example"}
+  hooks.consumers.list:
+    args: {}
+  hooks.consumers.listConsumerActions:
+    args: {"consumerId": "example"}
+  hooks.diagnostics.get:
+    args: {"subscriptionId": "example"}
+  hooks.diagnostics.update:
+    args: {"subscriptionId": "example"}
+  hooks.notifications.create:
+    args: {}
+  hooks.notifications.get:
+    args: {"subscriptionId": "example", "notificationId": 1}
+  hooks.notifications.list:
+    args: {"subscriptionId": "example"}
+  hooks.notifications.query:
+    args: {}
+  hooks.publishers.get:
+    args: {"publisherId": "example"}
+  hooks.publishers.getEventType:
+    args: {"publisherId": "example", "eventTypeId": "example"}
+  hooks.publishers.list:
+    args: {}
+  hooks.publishers.listEventTypes:
+    args: {"publisherId": "example"}
+  hooks.publishers.queryInputValues:
+    args: {"publisherId": "example"}
+  hooks.publishers.queryPublishers:
+    args: {}
+  hooks.subscriptions.create:
+    args: {}
+  hooks.subscriptions.createSubscriptionsQuery:
+    args: {}
+  hooks.subscriptions.delete:
+    args: {"subscriptionId": "example"}
+  hooks.subscriptions.get:
+    args: {"subscriptionId": "example"}
+  hooks.subscriptions.list:
+    args: {}
+  hooks.subscriptions.replaceSubscription:
+    args: {"subscriptionId": "example"}
+  ims.identities.readIdentities:
+    args: {}
+  memberEntitlementManagement.groupEntitlements.add:
+    args: {}
+  memberEntitlementManagement.groupEntitlements.delete:
+    args: {"groupId": "example"}
+  memberEntitlementManagement.groupEntitlements.get:
+    args: {"groupId": "example"}
+  memberEntitlementManagement.groupEntitlements.list:
+    args: {}
+  memberEntitlementManagement.groupEntitlements.update:
+    args: {"groupId": "example", "body": [{}]}
+  memberEntitlementManagement.memberEntitlements.searchMemberEntitlements:
+    args: {}
+  memberEntitlementManagement.members.add:
+    args: {"groupId": "example", "memberId": "example"}
+  memberEntitlementManagement.members.get:
+    args: {"groupId": "example"}
+  memberEntitlementManagement.members.removeMemberFromGroup:
+    args: {"groupId": "example", "memberId": "example"}
+  memberEntitlementManagement.servicePrincipalEntitlements.add:
+    args: {}
+  memberEntitlementManagement.servicePrincipalEntitlements.delete:
+    args: {"servicePrincipalId": "example"}
+  memberEntitlementManagement.servicePrincipalEntitlements.get:
+    args: {"servicePrincipalId": "example"}
+  memberEntitlementManagement.servicePrincipalEntitlements.updateServicePrincipalEntitlement:
+    args: {"servicePrincipalId": "example", "body": [{}]}
+  memberEntitlementManagement.servicePrincipalEntitlements.updateServicePrincipalEntitlements:
+    args: {"body": [{}]}
+  memberEntitlementManagement.userEntitlementSummary.get:
+    args: {}
+  memberEntitlementManagement.userEntitlements.add:
+    args: {}
+  memberEntitlementManagement.userEntitlements.delete:
+    args: {"userId": "example"}
+  memberEntitlementManagement.userEntitlements.get:
+    args: {"userId": "example"}
+  memberEntitlementManagement.userEntitlements.searchUserEntitlements:
+    args: {}
+  memberEntitlementManagement.userEntitlements.updateUserEntitlement:
+    args: {"userId": "example", "body": [{}]}
+  memberEntitlementManagement.userEntitlements.updateUserEntitlements:
+    args: {"body": [{}]}
+  notification.diagnosticLogs.list:
+    args: {"source": "example", "entryId": "example"}
+  notification.diagnostics.get:
+    args: {"subscriptionId": "example"}
+  notification.diagnostics.update:
+    args: {"subscriptionId": "example"}
+  notification.eventTypes.get:
+    args: {"eventType": "example"}
+  notification.eventTypes.list:
+    args: {}
+  notification.settings.get:
+    args: {}
+  notification.settings.update:
+    args: {}
+  notification.subscribers.get:
+    args: {"subscriberId": "example"}
+  notification.subscribers.update:
+    args: {"subscriberId": "example"}
+  notification.subscriptions.create:
+    args: {}
+  notification.subscriptions.delete:
+    args: {"subscriptionId": "example"}
+  notification.subscriptions.get:
+    args: {"subscriptionId": "example"}
+  notification.subscriptions.getSubscriptionTemplates:
+    args: {}
+  notification.subscriptions.list:
+    args: {}
+  notification.subscriptions.query:
+    args: {}
+  notification.subscriptions.update:
+    args: {"subscriptionId": "example"}
+  notification.subscriptions.updateSubscriptionUserSettings:
+    args: {"subscriptionId": "example", "userId": "example"}
+  operations.operations.get:
+    args: {"operationId": "example"}
+  permissionsReport.permissionsReport.create:
+    args: {}
+  permissionsReport.permissionsReport.get:
+    args: {"id": "1"}
+  permissionsReport.permissionsReport.list:
+    args: {}
+  permissionsReport.permissionsReportDownload.download:
+    args: {"id": "1"}
+  pipelines.artifacts.get:
+    args: {"project": "Fabrikam-Fiber", "pipelineId": 1, "runId": 1, "artifactName": "example"}
+  pipelines.logs.get:
+    args: {"project": "Fabrikam-Fiber", "pipelineId": 1, "runId": 1, "logId": 1}
+  pipelines.logs.list:
+    args: {"project": "Fabrikam-Fiber", "pipelineId": 1, "runId": 1}
+  pipelines.pipelines.create:
+    args: {"project": "Fabrikam-Fiber"}
+  pipelines.pipelines.get:
+    args: {"project": "Fabrikam-Fiber", "pipelineId": 1}
+  pipelines.pipelines.list:
+    args: {"project": "Fabrikam-Fiber"}
+  pipelines.preview.preview:
+    args: {"project": "Fabrikam-Fiber", "pipelineId": 1}
+  pipelines.runs.get:
+    args: {"project": "Fabrikam-Fiber", "pipelineId": 1, "runId": 1}
+  pipelines.runs.list:
+    args: {"project": "Fabrikam-Fiber", "pipelineId": 1}
+  pipelines.runs.runPipeline:
+    args: {"project": "Fabrikam-Fiber", "pipelineId": 1}
+  policy.configurations.create:
+    args: {"project": "Fabrikam-Fiber"}
+  policy.configurations.delete:
+    args: {"project": "Fabrikam-Fiber", "configurationId": 1}
+  policy.configurations.get:
+    args: {"project": "Fabrikam-Fiber", "configurationId": 1}
+  policy.configurations.list:
+    args: {"project": "Fabrikam-Fiber"}
+  policy.configurations.update:
+    args: {"project": "Fabrikam-Fiber", "configurationId": 1}
+  policy.evaluations.get:
+    args: {"project": "Fabrikam-Fiber", "evaluationId": "example"}
+  policy.evaluations.list:
+    args: {"project": "Fabrikam-Fiber", "artifactId": "example"}
+  policy.evaluations.requeuePolicyEvaluation:
+    args: {"project": "Fabrikam-Fiber", "evaluationId": "example"}
+  policy.revisions.get:
+    args: {"project": "Fabrikam-Fiber", "configurationId": 1, "revisionId": 1}
+  policy.revisions.list:
+    args: {"project": "Fabrikam-Fiber", "configurationId": 1}
+  policy.types.get:
+    args: {"project": "Fabrikam-Fiber", "typeId": "example"}
+  policy.types.list:
+    args: {"project": "Fabrikam-Fiber"}
+  processadmin.behaviors.list:
+    args: {"processId": "example"}
+  processadmin.processes.exportProcessTemplate:
+    args: {"id": "1"}
+  processadmin.processes.importProcessTemplate:
+    args: {"file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  processadmin.processes.importProcessTemplateStatus:
+    args: {"id": "1"}
+  processes.behaviors.create:
+    args: {"processId": "example"}
+  processes.behaviors.delete:
+    args: {"processId": "example", "behaviorRefName": "example"}
+  processes.behaviors.get:
+    args: {"processId": "example", "behaviorRefName": "example"}
+  processes.behaviors.list:
+    args: {"processId": "example"}
+  processes.behaviors.update:
+    args: {"processId": "example", "behaviorRefName": "example"}
+  processes.controls.create:
+    args: {"processId": "example", "witRefName": "example", "groupId": "example"}
+  processes.controls.moveControlToGroup:
+    args: {"processId": "example", "witRefName": "example", "groupId": "example", "controlId": "example"}
+  processes.controls.removeControlFromGroup:
+    args: {"processId": "example", "witRefName": "example", "groupId": "example", "controlId": "example"}
+  processes.controls.update:
+    args: {"processId": "example", "witRefName": "example", "groupId": "example", "controlId": "example"}
+  processes.fields.add:
+    args: {"processId": "example", "witRefName": "example"}
+  processes.fields.get:
+    args: {"processId": "example", "witRefName": "example", "fieldRefName": "example"}
+  processes.fields.list:
+    args: {"processId": "example", "witRefName": "example"}
+  processes.fields.removeWorkItemTypeField:
+    args: {"processId": "example", "witRefName": "example", "fieldRefName": "example"}
+  processes.fields.update:
+    args: {"processId": "example", "witRefName": "example", "fieldRefName": "example"}
+  processes.groups.add:
+    args: {"processId": "example", "witRefName": "example", "pageId": "example", "sectionId": "example"}
+  processes.groups.moveGroupToSection:
+    args: {"processId": "example", "witRefName": "example", "pageId": "example", "sectionId": "example", "groupId": "example", "removeFromSectionId": "example"}
+  processes.groups.removeGroup:
+    args: {"processId": "example", "witRefName": "example", "pageId": "example", "sectionId": "example", "groupId": "example"}
+  processes.groups.update:
+    args: {"processId": "example", "witRefName": "example", "pageId": "example", "sectionId": "example", "groupId": "example"}
+  processes.layout.get:
+    args: {"processId": "example", "witRefName": "example"}
+  processes.lists.create:
+    args: {}
+  processes.lists.delete:
+    args: {"listId": "example"}
+  processes.lists.get:
+    args: {"listId": "example"}
+  processes.lists.list:
+    args: {}
+  processes.lists.update:
+    args: {"listId": "example"}
+  processes.pages.add:
+    args: {"processId": "example", "witRefName": "example"}
+  processes.pages.removePage:
+    args: {"processId": "example", "witRefName": "example", "pageId": "example"}
+  processes.pages.update:
+    args: {"processId": "example", "witRefName": "example"}
+  processes.processes.create:
+    args: {}
+  processes.processes.delete:
+    args: {"processTypeId": "example"}
+  processes.processes.editProcess:
+    args: {"processTypeId": "example"}
+  processes.processes.get:
+    args: {"processTypeId": "example"}
+  processes.processes.list:
+    args: {}
+  processes.rules.add:
+    args: {"processId": "example", "witRefName": "example"}
+  processes.rules.delete:
+    args: {"processId": "example", "witRefName": "example", "ruleId": "example"}
+  processes.rules.get:
+    args: {"processId": "example", "witRefName": "example", "ruleId": "example"}
+  processes.rules.list:
+    args: {"processId": "example", "witRefName": "example"}
+  processes.rules.update:
+    args: {"processId": "example", "witRefName": "example", "ruleId": "example"}
+  processes.states.create:
+    args: {"processId": "example", "witRefName": "example"}
+  processes.states.delete:
+    args: {"processId": "example", "witRefName": "example", "stateId": "example"}
+  processes.states.get:
+    args: {"processId": "example", "witRefName": "example", "stateId": "example"}
+  processes.states.hideStateDefinition:
+    args: {"processId": "example", "witRefName": "example", "stateId": "example"}
+  processes.states.list:
+    args: {"processId": "example", "witRefName": "example"}
+  processes.states.update:
+    args: {"processId": "example", "witRefName": "example", "stateId": "example"}
+  processes.systemControls.delete:
+    args: {"processId": "example", "witRefName": "example", "controlId": "example"}
+  processes.systemControls.list:
+    args: {"processId": "example", "witRefName": "example"}
+  processes.systemControls.update:
+    args: {"processId": "example", "witRefName": "example", "controlId": "example"}
+  processes.workItemTypes.create:
+    args: {"processId": "example"}
+  processes.workItemTypes.delete:
+    args: {"processId": "example", "witRefName": "example"}
+  processes.workItemTypes.get:
+    args: {"processId": "example", "witRefName": "example"}
+  processes.workItemTypes.list:
+    args: {"processId": "example"}
+  processes.workItemTypes.update:
+    args: {"processId": "example", "witRefName": "example"}
+  processes.workItemTypesBehaviors.add:
+    args: {"processId": "example", "witRefNameForBehaviors": "example"}
+  processes.workItemTypesBehaviors.get:
+    args: {"processId": "example", "witRefNameForBehaviors": "example", "behaviorRefName": "example"}
+  processes.workItemTypesBehaviors.list:
+    args: {"processId": "example", "witRefNameForBehaviors": "example"}
+  processes.workItemTypesBehaviors.removeBehaviorFromWorkItemType:
+    args: {"processId": "example", "witRefNameForBehaviors": "example", "behaviorRefName": "example"}
+  processes.workItemTypesBehaviors.update:
+    args: {"processId": "example", "witRefNameForBehaviors": "example"}
+  profile.profiles.get:
+    args: {"id": "1"}
+  release.approvals.list:
+    args: {"project": "Fabrikam-Fiber"}
+  release.approvals.update:
+    args: {"project": "Fabrikam-Fiber", "approvalId": 1}
+  release.attachments.getReleaseTaskAttachmentContent:
+    args: {"project": "Fabrikam-Fiber", "releaseId": 1, "environmentId": 1, "attemptId": 1, "planId": "example", "timelineId": "example", "recordId": "example", "type": "example", "name": "example"}
+  release.attachments.getReleaseTaskAttachments:
+    args: {"project": "Fabrikam-Fiber", "releaseId": 1, "environmentId": 1, "attemptId": 1, "planId": "example", "type": "example"}
+  release.attachments.getTaskAttachmentContent:
+    args: {"project": "Fabrikam-Fiber", "releaseId": 1, "environmentId": 1, "attemptId": 1, "timelineId": "example", "recordId": "example", "type": "example", "name": "example"}
+  release.attachments.getTaskAttachments:
+    args: {"project": "Fabrikam-Fiber", "releaseId": 1, "environmentId": 1, "attemptId": 1, "timelineId": "example", "type": "example"}
+  release.definitions.create:
+    args: {"project": "Fabrikam-Fiber"}
+  release.definitions.delete:
+    args: {"project": "Fabrikam-Fiber", "definitionId": 12}
+  release.definitions.get:
+    args: {"project": "Fabrikam-Fiber", "definitionId": 12}
+  release.definitions.getDefinitionRevision:
+    args: {"project": "Fabrikam-Fiber", "definitionId": 12, "revision": 1}
+  release.definitions.getReleaseDefinitionHistory:
+    args: {"project": "Fabrikam-Fiber", "definitionId": 12}
+  release.definitions.list:
+    args: {"project": "Fabrikam-Fiber"}
+  release.definitions.update:
+    args: {"project": "Fabrikam-Fiber"}
+  release.deployments.list:
+    args: {"project": "Fabrikam-Fiber"}
+  release.folders.create:
+    args: {"project": "Fabrikam-Fiber", "path": "example"}
+  release.folders.delete:
+    args: {"project": "Fabrikam-Fiber", "path": "example"}
+  release.folders.list:
+    args: {"project": "Fabrikam-Fiber", "path": "example"}
+  release.folders.update:
+    args: {"project": "Fabrikam-Fiber", "path": "example"}
+  release.gates.update:
+    args: {"project": "Fabrikam-Fiber", "gateStepId": 1}
+  release.manualInterventions.get:
+    args: {"project": "Fabrikam-Fiber", "releaseId": 1, "manualInterventionId": 1}
+  release.manualInterventions.list:
+    args: {"project": "Fabrikam-Fiber", "releaseId": 1}
+  release.manualInterventions.update:
+    args: {"project": "Fabrikam-Fiber", "releaseId": 1, "manualInterventionId": 1}
+  release.releases.create:
+    args: {"project": "Fabrikam-Fiber"}
+  release.releases.getLogs:
+    args: {"project": "Fabrikam-Fiber", "releaseId": 1}
+  release.releases.getReleaseEnvironment:
+    args: {"project": "Fabrikam-Fiber", "releaseId": 1, "environmentId": 1}
+  release.releases.getReleaseRevision:
+    args: {"project": "Fabrikam-Fiber", "releaseId": 1, "definitionSnapshotRevision": 1}
+  release.releases.getTaskLog:
+    args: {"project": "Fabrikam-Fiber", "releaseId": 1, "environmentId": 1, "releaseDeployPhaseId": 1, "taskId": 1}
+  release.releases.list:
+    args: {"project": "Fabrikam-Fiber"}
+  release.releases.updateRelease:
+    args: {"project": "Fabrikam-Fiber", "releaseId": 1}
+  release.releases.updateReleaseEnvironment:
+    args: {"project": "Fabrikam-Fiber", "releaseId": 1, "environmentId": 1}
+  release.releases.updateReleaseResource:
+    args: {"project": "Fabrikam-Fiber", "releaseId": 1}
+  search.codeSearchResults.fetchCodeSearchResults:
+    args: {"project": "Fabrikam-Fiber"}
+  search.packageSearchResults.fetchPackageSearchResults:
+    args: {}
+  search.repositories.get:
+    args: {"project": "Fabrikam-Fiber", "repository": "example"}
+  search.tfvc.get:
+    args: {"project": "Fabrikam-Fiber"}
+  search.wikiSearchResults.fetchWikiSearchResults:
+    args: {"project": "Fabrikam-Fiber"}
+  search.workItemSearchResults.fetchWorkItemSearchResults:
+    args: {"project": "Fabrikam-Fiber"}
+  security.accessControlEntries.removeAccessControlEntries:
+    args: {"securityNamespaceId": "example"}
+  security.accessControlEntries.setAccessControlEntries:
+    args: {"securityNamespaceId": "example"}
+  security.accessControlLists.query:
+    args: {"securityNamespaceId": "example"}
+  security.accessControlLists.removeAccessControlLists:
+    args: {"securityNamespaceId": "example"}
+  security.accessControlLists.setAccessControlLists:
+    args: {"securityNamespaceId": "example"}
+  security.permissions.hasPermissions:
+    args: {"securityNamespaceId": "example", "permissions": 1}
+  security.permissions.hasPermissionsBatch:
+    args: {}
+  security.permissions.removePermission:
+    args: {"securityNamespaceId": "example", "descriptor": "example", "permissions": 1}
+  security.securityNamespaces.query:
+    args: {"securityNamespaceId": "example"}
+  securityRoles.roleassignments.list:
+    args: {"scopeId": "example", "resourceId": "example"}
+  securityRoles.roleassignments.removeRoleAssignment:
+    args: {"scopeId": "example", "resourceId": "example", "identityId": "example"}
+  securityRoles.roleassignments.removeRoleAssignments:
+    args: {"scopeId": "example", "resourceId": "example", "body": ["example"]}
+  securityRoles.roleassignments.setRoleAssignment:
+    args: {"scopeId": "example", "resourceId": "example", "identityId": "example"}
+  securityRoles.roleassignments.setRoleAssignments:
+    args: {"scopeId": "example", "resourceId": "example", "body": [{}]}
+  securityRoles.roledefinitions.list:
+    args: {"scopeId": "example"}
+  serviceEndpoint.endpointproxy.query:
+    args: {"project": "Fabrikam-Fiber"}
+  serviceEndpoint.endpoints.create:
+    args: {}
+  serviceEndpoint.endpoints.delete:
+    args: {"endpointId": "example", "projectIds": "example"}
+  serviceEndpoint.endpoints.get:
+    args: {"project": "Fabrikam-Fiber", "endpointId": "example"}
+  serviceEndpoint.endpoints.getServiceEndpointsByNames:
+    args: {"project": "Fabrikam-Fiber", "endpointNames": "example"}
+  serviceEndpoint.endpoints.getServiceEndpointsWithRefreshedAuthentication:
+    args: {"project": "Fabrikam-Fiber", "endpointIds": "example", "body": [{}]}
+  serviceEndpoint.endpoints.shareServiceEndpoint:
+    args: {"endpointId": "example", "body": [{}]}
+  serviceEndpoint.endpoints.updateServiceEndpoint:
+    args: {"endpointId": "example"}
+  serviceEndpoint.endpoints.updateServiceEndpoints:
+    args: {"body": [{}]}
+  serviceEndpoint.executionhistory.list:
+    args: {"project": "Fabrikam-Fiber", "endpointId": "example"}
+  serviceEndpoint.types.list:
+    args: {}
+  status.health.get:
+    args: {}
+  symbol.availability.checkAvailability:
+    args: {}
+  symbol.client.get:
+    args: {"clientType": "example"}
+  symbol.contents.get:
+    args: {"requestId": "example", "debugEntryId": "example"}
+  symbol.requests.createRequests:
+    args: {}
+  symbol.requests.createRequestsRequestIdDebugEntries:
+    args: {"requestId": "example", "collection": "example"}
+  symbol.requests.deleteRequestsRequestId:
+    args: {"requestId": "example"}
+  symbol.requests.deleteRequestsRequestName:
+    args: {"requestName": "example"}
+  symbol.requests.getRequestsRequestId:
+    args: {"requestId": "example"}
+  symbol.requests.getRequestsRequestName:
+    args: {"requestName": "example"}
+  symbol.requests.updateRequestsRequestId:
+    args: {"requestId": "example"}
+  symbol.requests.updateRequestsRequestName:
+    args: {"requestName": "example"}
+  symbol.symsrv.get:
+    args: {"debugEntryClientKey": "example"}
+  test.attachments.createTestResultAttachment:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "testCaseResultId": 1}
+  test.attachments.createTestRunAttachment:
+    args: {"project": "Fabrikam-Fiber", "runId": 1}
+  test.attachments.getTestResultAttachmentZip:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "testCaseResultId": 1, "attachmentId": 1}
+  test.attachments.getTestResultAttachments:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "testCaseResultId": 1}
+  test.attachments.getTestRunAttachmentZip:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "attachmentId": 1}
+  test.attachments.getTestRunAttachments:
+    args: {"project": "Fabrikam-Fiber", "runId": 1}
+  test.codeCoverage.getBuildCodeCoverage:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391, "flags": 1}
+  test.codeCoverage.getTestRunCodeCoverage:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "flags": 1}
+  test.iterations.get:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "testCaseResultId": 1, "iterationId": 1}
+  test.iterations.list:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "testCaseResultId": 1}
+  test.points.getPoint:
+    args: {"project": "Fabrikam-Fiber", "planId": 1, "suiteId": 1, "pointIds": 1}
+  test.points.getPointsByQuery:
+    args: {"project": "Fabrikam-Fiber"}
+  test.points.list:
+    args: {"project": "Fabrikam-Fiber", "planId": 1, "suiteId": 1}
+  test.points.update:
+    args: {"project": "Fabrikam-Fiber", "planId": 1, "suiteId": 1, "pointIds": "example"}
+  test.resultRetentionSettings.get:
+    args: {"project": "Fabrikam-Fiber"}
+  test.resultRetentionSettings.update:
+    args: {"project": "Fabrikam-Fiber"}
+  test.results.add:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "body": [{}]}
+  test.results.get:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "testCaseResultId": 1}
+  test.results.list:
+    args: {"project": "Fabrikam-Fiber", "runId": 1}
+  test.results.update:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "body": [{}]}
+  test.runs.create:
+    args: {"project": "Fabrikam-Fiber"}
+  test.runs.delete:
+    args: {"project": "Fabrikam-Fiber", "runId": 1}
+  test.runs.getTestRunById:
+    args: {"project": "Fabrikam-Fiber", "runId": 1}
+  test.runs.getTestRunStatistics:
+    args: {"project": "Fabrikam-Fiber", "runId": 1}
+  test.runs.list:
+    args: {"project": "Fabrikam-Fiber"}
+  test.runs.update:
+    args: {"project": "Fabrikam-Fiber", "runId": 1}
+  test.session.create:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team"}
+  test.session.list:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team"}
+  test.session.update:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team"}
+  test.testCases.delete:
+    args: {"project": "Fabrikam-Fiber", "testCaseId": 1}
+  test.testHistory.query:
+    args: {"project": "Fabrikam-Fiber"}
+  test.testSuites.add:
+    args: {"project": "Fabrikam-Fiber", "planId": 1, "suiteId": 1, "testCaseIds": "example"}
+  test.testSuites.get:
+    args: {"project": "Fabrikam-Fiber", "planId": 1, "suiteId": 1, "testCaseIds": 1}
+  test.testSuites.list:
+    args: {"project": "Fabrikam-Fiber", "planId": 1, "suiteId": 1}
+  test.testSuites.removeTestCasesFromSuiteUrl:
+    args: {"project": "Fabrikam-Fiber", "planId": 1, "suiteId": 1, "testCaseIds": "example"}
+  test.testSuites.update:
+    args: {"project": "Fabrikam-Fiber", "planId": 1, "suiteId": 1, "testCaseIds": "example"}
+  testPlan.configurations.create:
+    args: {"project": "Fabrikam-Fiber"}
+  testPlan.configurations.delete:
+    args: {"project": "Fabrikam-Fiber", "testConfiguartionId": 1}
+  testPlan.configurations.get:
+    args: {"project": "Fabrikam-Fiber", "testConfigurationId": 1}
+  testPlan.configurations.list:
+    args: {"project": "Fabrikam-Fiber"}
+  testPlan.configurations.update:
+    args: {"project": "Fabrikam-Fiber", "testConfiguartionId": 1}
+  testPlan.suiteTestCase.add:
+    args: {"project": "Fabrikam-Fiber", "planId": 1, "suiteId": 1, "body": [{}]}
+  testPlan.suiteTestCase.getTestCase:
+    args: {"project": "Fabrikam-Fiber", "planId": 1, "suiteId": 1, "testCaseId": "example"}
+  testPlan.suiteTestCase.getTestCaseList:
+    args: {"project": "Fabrikam-Fiber", "planId": 1, "suiteId": 1}
+  testPlan.suiteTestCase.removeTestCasesListFromSuite:
+    args: {"project": "Fabrikam-Fiber", "planId": 1, "suiteId": 1, "testIds": "example"}
+  testPlan.suiteTestCase.update:
+    args: {"project": "Fabrikam-Fiber", "planId": 1, "suiteId": 1, "body": [{}]}
+  testPlan.testCaseClone.cloneTestCase:
+    args: {"project": "Fabrikam-Fiber"}
+  testPlan.testCaseClone.get:
+    args: {"project": "Fabrikam-Fiber", "cloneOperationId": 1}
+  testPlan.testCases.delete:
+    args: {"project": "Fabrikam-Fiber", "testCaseId": 1}
+  testPlan.testPlanClone.cloneTestPlan:
+    args: {"project": "Fabrikam-Fiber"}
+  testPlan.testPlanClone.get:
+    args: {"project": "Fabrikam-Fiber", "cloneOperationId": 1}
+  testPlan.testPlans.create:
+    args: {"project": "Fabrikam-Fiber"}
+  testPlan.testPlans.delete:
+    args: {"project": "Fabrikam-Fiber", "planId": 1}
+  testPlan.testPlans.get:
+    args: {"project": "Fabrikam-Fiber", "planId": 1}
+  testPlan.testPlans.list:
+    args: {"project": "Fabrikam-Fiber"}
+  testPlan.testPlans.update:
+    args: {"project": "Fabrikam-Fiber", "planId": 1}
+  testPlan.testPoint.getPoints:
+    args: {"project": "Fabrikam-Fiber", "planId": 1, "suiteId": 1, "pointId": "example"}
+  testPlan.testPoint.update:
+    args: {"project": "Fabrikam-Fiber", "planId": 1, "suiteId": 1, "body": [{}]}
+  testPlan.testSuiteClone.cloneTestSuite:
+    args: {"project": "Fabrikam-Fiber"}
+  testPlan.testSuiteClone.get:
+    args: {"project": "Fabrikam-Fiber", "cloneOperationId": 1}
+  testPlan.testSuiteEntry.list:
+    args: {"project": "Fabrikam-Fiber", "suiteId": 1}
+  testPlan.testSuiteEntry.reorderSuiteEntries:
+    args: {"project": "Fabrikam-Fiber", "suiteId": 1, "body": [{}]}
+  testPlan.testSuites.create:
+    args: {"project": "Fabrikam-Fiber", "planId": 1}
+  testPlan.testSuites.delete:
+    args: {"project": "Fabrikam-Fiber", "planId": 1, "suiteId": 1}
+  testPlan.testSuites.get:
+    args: {"project": "Fabrikam-Fiber", "planId": 1, "suiteId": 1}
+  testPlan.testSuites.getSuitesByTestCaseId:
+    args: {"testCaseId": 1}
+  testPlan.testSuites.getTestSuitesForPlan:
+    args: {"project": "Fabrikam-Fiber", "planId": 1}
+  testPlan.testSuites.update:
+    args: {"project": "Fabrikam-Fiber", "planId": 1, "suiteId": 1}
+  testPlan.variables.create:
+    args: {"project": "Fabrikam-Fiber"}
+  testPlan.variables.delete:
+    args: {"project": "Fabrikam-Fiber", "testVariableId": 1}
+  testPlan.variables.get:
+    args: {"project": "Fabrikam-Fiber", "testVariableId": 1}
+  testPlan.variables.list:
+    args: {"project": "Fabrikam-Fiber"}
+  testPlan.variables.update:
+    args: {"project": "Fabrikam-Fiber", "testVariableId": 1}
+  testResults.attachments.createTestResultAttachment:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "testCaseResultId": 1}
+  testResults.attachments.createTestRunAttachment:
+    args: {"project": "Fabrikam-Fiber", "runId": 1}
+  testResults.attachments.deleteTestResultAttachment:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "testCaseResultId": 1, "attachmentId": 1}
+  testResults.attachments.deleteTestRunAttachment:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "attachmentId": 1}
+  testResults.attachments.getTestResultAttachmentZip:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "testCaseResultId": 1, "attachmentId": 1}
+  testResults.attachments.getTestResultAttachments:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "testCaseResultId": 1}
+  testResults.attachments.getTestRunAttachmentZip:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "attachmentId": 1}
+  testResults.attachments.getTestRunAttachments:
+    args: {"project": "Fabrikam-Fiber", "runId": 1}
+  testResults.bugs.list:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "testCaseResultId": 1}
+  testResults.codecoverage.get:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391}
+  testResults.codecoverage.getTestRunCodeCoverage:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "flags": 1}
+  testResults.codecoverage.update:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391}
+  testResults.filecoverage.get:
+    args: {"project": "Fabrikam-Fiber"}
+  testResults.history.query:
+    args: {"project": "Fabrikam-Fiber"}
+  testResults.messageLogs.list:
+    args: {"project": "Fabrikam-Fiber", "runId": 1}
+  testResults.metrics.get:
+    args: {"project": "Fabrikam-Fiber", "pipelineId": 1}
+  testResults.resultDocument.publishTestResultDocument:
+    args: {"project": "Fabrikam-Fiber", "runId": 1}
+  testResults.resultMetaData.query:
+    args: {"project": "Fabrikam-Fiber", "body": ["example"]}
+  testResults.resultMetaData.update:
+    args: {"project": "Fabrikam-Fiber", "testCaseReferenceId": 1}
+  testResults.resultTrendByBuild.query:
+    args: {"project": "Fabrikam-Fiber"}
+  testResults.resultTrendByRelease.query:
+    args: {"project": "Fabrikam-Fiber"}
+  testResults.resultdetailsbybuild.get:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391}
+  testResults.resultdetailsbyrelease.get:
+    args: {"project": "Fabrikam-Fiber", "releaseId": 1, "releaseEnvId": 1}
+  testResults.resultgroupsbybuild.list:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391, "publishContext": "example"}
+  testResults.resultgroupsbyrelease.list:
+    args: {"project": "Fabrikam-Fiber", "releaseId": 1, "publishContext": "example"}
+  testResults.results.add:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "body": [{}]}
+  testResults.results.getTestResultById:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "testResultId": 1}
+  testResults.results.getTestResults:
+    args: {"project": "Fabrikam-Fiber", "runId": 1}
+  testResults.results.getTestResultsByQuery:
+    args: {"project": "Fabrikam-Fiber"}
+  testResults.results.getTestResultsByQueryWiql:
+    args: {"project": "Fabrikam-Fiber"}
+  testResults.results.update:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "body": [{}]}
+  testResults.resultsbybuild.list:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391}
+  testResults.resultsbypipeline.list:
+    args: {"project": "Fabrikam-Fiber", "pipelineId": 1}
+  testResults.resultsbyrelease.list:
+    args: {"project": "Fabrikam-Fiber", "releaseId": 1}
+  testResults.resultsgroupDetails.testResultsGroupDetails:
+    args: {"project": "Fabrikam-Fiber", "pipelineId": 1}
+  testResults.resultsummarybybuild.query:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391}
+  testResults.resultsummarybypipeline.query:
+    args: {"project": "Fabrikam-Fiber", "pipelineId": 1}
+  testResults.resultsummarybyrelease.queryTestResultsReportForRelease:
+    args: {"project": "Fabrikam-Fiber", "releaseId": 1, "releaseEnvId": 1}
+  testResults.resultsummarybyrelease.queryTestResultsSummaryForReleases:
+    args: {"project": "Fabrikam-Fiber", "body": [{}]}
+  testResults.resultsummarybyrequirement.query:
+    args: {"project": "Fabrikam-Fiber"}
+  testResults.runs.create:
+    args: {"project": "Fabrikam-Fiber"}
+  testResults.runs.delete:
+    args: {"project": "Fabrikam-Fiber", "runId": 1}
+  testResults.runs.get:
+    args: {"project": "Fabrikam-Fiber", "runId": 1}
+  testResults.runs.list:
+    args: {"project": "Fabrikam-Fiber"}
+  testResults.runs.update:
+    args: {"project": "Fabrikam-Fiber", "runId": 1}
+  testResults.runsummary.get:
+    args: {"project": "Fabrikam-Fiber", "runId": 1}
+  testResults.settings.get:
+    args: {"project": "Fabrikam-Fiber"}
+  testResults.settings.update:
+    args: {"project": "Fabrikam-Fiber"}
+  testResults.similarTestResults.list:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "testResultId": 1, "testSubResultId": 1}
+  testResults.statistics.get:
+    args: {"project": "Fabrikam-Fiber", "runId": 1}
+  testResults.status.get:
+    args: {"project": "Fabrikam-Fiber", "definition": "example"}
+  testResults.tags.getTestTagsForBuild:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391}
+  testResults.tags.update:
+    args: {"project": "Fabrikam-Fiber", "runId": 1}
+  testResults.tagsummary.getTestTagSummaryForBuild:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391}
+  testResults.testHistory.query:
+    args: {"project": "Fabrikam-Fiber"}
+  testResults.testattachments.createBuildAttachmentInLogStore:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391}
+  testResults.testattachments.createTestRunLogStoreAttachment:
+    args: {"project": "Fabrikam-Fiber", "runId": 1}
+  testResults.testattachments.delete:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "filename": "example"}
+  testResults.testattachments.list:
+    args: {"project": "Fabrikam-Fiber", "runId": 1}
+  testResults.testfailuretype.create:
+    args: {"project": "Fabrikam-Fiber"}
+  testResults.testfailuretype.delete:
+    args: {"project": "Fabrikam-Fiber", "failureTypeId": 1}
+  testResults.testfailuretype.list:
+    args: {"project": "Fabrikam-Fiber"}
+  testResults.testlog.getTestLogsForBuild:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391, "type": "generalAttachment"}
+  testResults.testlog.getTestResultLogs:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "resultId": 1, "type": "generalAttachment"}
+  testResults.testlog.getTestRunLogs:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "type": "generalAttachment"}
+  testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForBuildLog:
+    args: {"project": "Fabrikam-Fiber", "build": 1, "type": "generalAttachment", "filePath": "example"}
+  testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForResultLog:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "resultId": 1, "type": "generalAttachment", "filePath": "example"}
+  testResults.testlogstoreendpoint.getTestLogStoreEndpointDetailsForRunLog:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "type": "generalAttachment", "filePath": "example"}
+  testResults.testlogstoreendpoint.testLogStoreEndpointDetailsForBuild:
+    args: {"project": "Fabrikam-Fiber", "buildId": 391, "testLogStoreOperationType": "read"}
+  testResults.testlogstoreendpoint.testLogStoreEndpointDetailsForResult:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "resultId": 1, "subResultId": 1, "filePath": "example", "type": "generalAttachment"}
+  testResults.testlogstoreendpoint.testLogStoreEndpointDetailsForRun:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "testLogStoreOperationType": "read"}
+  testResults.testsettings.create:
+    args: {"project": "Fabrikam-Fiber"}
+  testResults.testsettings.delete:
+    args: {"project": "Fabrikam-Fiber", "testSettingsId": 1}
+  testResults.testsettings.get:
+    args: {"project": "Fabrikam-Fiber", "testSettingsId": 1}
+  testResults.workitems.add:
+    args: {"project": "Fabrikam-Fiber"}
+  testResults.workitems.delete:
+    args: {"project": "Fabrikam-Fiber", "testName": "example", "workItemId": 1}
+  testResults.workitems.list:
+    args: {"project": "Fabrikam-Fiber", "runId": 1, "testCaseResultId": 1}
+  testResults.workitems.queryTestResultWorkItems:
+    args: {"project": "Fabrikam-Fiber", "workItemCategory": "example"}
+  tfvc.branches.getBranchRefs:
+    args: {"scopePath": "example", "project": "Fabrikam-Fiber"}
+  tfvc.changesets.create:
+    args: {"project": "Fabrikam-Fiber"}
+  tfvc.changesets.get:
+    args: {"id": 1, "project": "Fabrikam-Fiber"}
+  tfvc.changesets.getBatchedChangesets:
+    args: {}
+  tfvc.changesets.getChangesetChanges:
+    args: {"id": 1}
+  tfvc.changesets.getChangesetWorkItems:
+    args: {"id": 1}
+  tfvc.changesets.getChangesets:
+    args: {"project": "Fabrikam-Fiber"}
+  tfvc.items.getItemsBatch:
+    args: {"project": "Fabrikam-Fiber"}
+  tfvc.items.list:
+    args: {"project": "Fabrikam-Fiber"}
+  tfvc.labels.get:
+    args: {"labelId": "example", "project": "Fabrikam-Fiber"}
+  tfvc.labels.getLabelItems:
+    args: {"labelId": "example"}
+  tfvc.labels.list:
+    args: {"project": "Fabrikam-Fiber"}
+  tfvc.shelvesets.get:
+    args: {"shelvesetId": "example"}
+  tfvc.shelvesets.getShelvesetChanges:
+    args: {"shelvesetId": "example"}
+  tfvc.shelvesets.getShelvesetWorkItems:
+    args: {"shelvesetId": "example"}
+  tokenAdmin.personalAccessTokens.list:
+    args: {"subjectDescriptor": "example"}
+  tokenAdmin.revocationRules.create:
+    args: {}
+  tokenAdmin.revocations.revokeAuthorizations:
+    args: {"body": [{}]}
+  tokens.pats.create:
+    args: {}
+  tokens.pats.get:
+    args: {"authorizationId": "example"}
+  tokens.pats.revoke:
+    args: {"authorizationId": "example"}
+  tokens.pats.update:
+    args: {}
+  wiki.attachments.create:
+    args: {"project": "Fabrikam-Fiber", "wikiIdentifier": "example", "name": "example", "file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  wiki.pageMoves.create:
+    args: {"project": "Fabrikam-Fiber", "wikiIdentifier": "example"}
+  wiki.pageStats.get:
+    args: {"project": "Fabrikam-Fiber", "wikiIdentifier": "example", "pageId": 1}
+  wiki.pages.createOrUpdate:
+    args: {"project": "Fabrikam-Fiber", "wikiIdentifier": "example", "path": "example"}
+  wiki.pages.deletePage:
+    args: {"project": "Fabrikam-Fiber", "wikiIdentifier": "example", "path": "example"}
+  wiki.pages.deletePageById:
+    args: {"project": "Fabrikam-Fiber", "wikiIdentifier": "example", "id": 1}
+  wiki.pages.getPage:
+    args: {"project": "Fabrikam-Fiber", "wikiIdentifier": "example"}
+  wiki.pages.getPageById:
+    args: {"project": "Fabrikam-Fiber", "wikiIdentifier": "example", "id": 1}
+  wiki.pages.update:
+    args: {"project": "Fabrikam-Fiber", "wikiIdentifier": "example", "id": 1}
+  wiki.pagesBatch.get:
+    args: {"project": "Fabrikam-Fiber", "wikiIdentifier": "example"}
+  wiki.wikis.create:
+    args: {"project": "Fabrikam-Fiber"}
+  wiki.wikis.delete:
+    args: {"wikiIdentifier": "example", "project": "Fabrikam-Fiber"}
+  wiki.wikis.get:
+    args: {"wikiIdentifier": "example", "project": "Fabrikam-Fiber"}
+  wiki.wikis.list:
+    args: {"project": "Fabrikam-Fiber"}
+  wiki.wikis.update:
+    args: {"wikiIdentifier": "example", "project": "Fabrikam-Fiber"}
+  wit.accountMyWorkRecentActivity.list:
+    args: {}
+  wit.artifactLinkTypes.list:
+    args: {}
+  wit.artifactUriQuery.query:
+    args: {"project": "Fabrikam-Fiber"}
+  wit.attachments.create:
+    args: {"project": "Fabrikam-Fiber", "file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  wit.attachments.get:
+    args: {"id": "1", "project": "Fabrikam-Fiber"}
+  wit.attachments.uploadChunk:
+    args: {"id": "1", "project": "Fabrikam-Fiber", "file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  wit.classificationNodes.createOrUpdate:
+    args: {"project": "Fabrikam-Fiber", "structureGroup": "areas", "path": "example"}
+  wit.classificationNodes.delete:
+    args: {"project": "Fabrikam-Fiber", "structureGroup": "areas", "path": "example"}
+  wit.classificationNodes.get:
+    args: {"project": "Fabrikam-Fiber", "structureGroup": "areas", "path": "example"}
+  wit.classificationNodes.getRootNodes:
+    args: {"project": "Fabrikam-Fiber"}
+  wit.classificationNodes.update:
+    args: {"project": "Fabrikam-Fiber", "structureGroup": "areas", "path": "example"}
+  wit.commentReactionsEngagedUsers.list:
+    args: {"project": "Fabrikam-Fiber", "workItemId": 1, "commentId": 1, "reactionType": "like"}
+  wit.comments.addComment:
+    args: {"project": "Fabrikam-Fiber", "workItemId": 1}
+  wit.comments.delete:
+    args: {"project": "Fabrikam-Fiber", "workItemId": 1, "commentId": 1}
+  wit.comments.getComment:
+    args: {"project": "Fabrikam-Fiber", "workItemId": 1, "commentId": 1}
+  wit.comments.getCommentsBatch:
+    args: {"project": "Fabrikam-Fiber", "workItemId": 1, "ids": "example"}
+  wit.comments.updateComment:
+    args: {"project": "Fabrikam-Fiber", "workItemId": 1, "commentId": 1}
+  wit.commentsReactions.create:
+    args: {"project": "Fabrikam-Fiber", "workItemId": 1, "commentId": 1, "reactionType": "like"}
+  wit.commentsReactions.delete:
+    args: {"project": "Fabrikam-Fiber", "workItemId": 1, "commentId": 1, "reactionType": "like"}
+  wit.commentsReactions.list:
+    args: {"project": "Fabrikam-Fiber", "workItemId": 1, "commentId": 1}
+  wit.commentsVersions.get:
+    args: {"project": "Fabrikam-Fiber", "workItemId": 1, "commentId": 1, "version": 1}
+  wit.commentsVersions.list:
+    args: {"project": "Fabrikam-Fiber", "workItemId": 1, "commentId": 1}
+  wit.fields.create:
+    args: {"project": "Fabrikam-Fiber"}
+  wit.fields.delete:
+    args: {"fieldNameOrRefName": "example", "project": "Fabrikam-Fiber"}
+  wit.fields.get:
+    args: {"fieldNameOrRefName": "example", "project": "Fabrikam-Fiber"}
+  wit.fields.list:
+    args: {"project": "Fabrikam-Fiber"}
+  wit.fields.update:
+    args: {"fieldNameOrRefName": "example", "project": "Fabrikam-Fiber"}
+  wit.projectProcessMigration.migrateProjectsProcess:
+    args: {"project": "Fabrikam-Fiber"}
+  wit.queries.create:
+    args: {"project": "Fabrikam-Fiber", "query": "example"}
+  wit.queries.delete:
+    args: {"project": "Fabrikam-Fiber", "query": "example"}
+  wit.queries.get:
+    args: {"project": "Fabrikam-Fiber", "query": "example"}
+  wit.queries.getQueriesBatch:
+    args: {"project": "Fabrikam-Fiber"}
+  wit.queries.list:
+    args: {"project": "Fabrikam-Fiber"}
+  wit.queries.update:
+    args: {"project": "Fabrikam-Fiber", "query": "example"}
+  wit.recyclebin.destroyWorkItem:
+    args: {"id": 1, "project": "Fabrikam-Fiber"}
+  wit.recyclebin.get:
+    args: {"id": 1, "project": "Fabrikam-Fiber"}
+  wit.recyclebin.getDeletedWorkItemShallowReferences:
+    args: {"project": "Fabrikam-Fiber"}
+  wit.recyclebin.restoreWorkItem:
+    args: {"id": 1, "project": "Fabrikam-Fiber"}
+  wit.reportingWorkItemLinks.get:
+    args: {"project": "Fabrikam-Fiber"}
+  wit.reportingWorkItemRevisions.readReportingRevisionsGet:
+    args: {"project": "Fabrikam-Fiber"}
+  wit.reportingWorkItemRevisions.readReportingRevisionsPost:
+    args: {"project": "Fabrikam-Fiber"}
+  wit.revisions.get:
+    args: {"id": 1, "revisionNumber": 1, "project": "Fabrikam-Fiber"}
+  wit.revisions.list:
+    args: {"id": 1, "project": "Fabrikam-Fiber"}
+  wit.sendMail.sendMail:
+    args: {"project": "Fabrikam-Fiber"}
+  wit.tags.delete:
+    args: {"project": "Fabrikam-Fiber", "tagIdOrName": "example"}
+  wit.tags.get:
+    args: {"project": "Fabrikam-Fiber", "tagIdOrName": "example"}
+  wit.tags.list:
+    args: {"project": "Fabrikam-Fiber"}
+  wit.tags.update:
+    args: {"project": "Fabrikam-Fiber", "tagIdOrName": "example"}
+  wit.tempQueries.create:
+    args: {"project": "Fabrikam-Fiber"}
+  wit.templates.create:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team"}
+  wit.templates.delete:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team", "templateId": "example"}
+  wit.templates.get:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team", "templateId": "example"}
+  wit.templates.list:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team"}
+  wit.templates.replaceTemplate:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team", "templateId": "example"}
+  wit.updates.get:
+    args: {"id": 1, "updateNumber": 1, "project": "Fabrikam-Fiber"}
+  wit.updates.list:
+    args: {"id": 1, "project": "Fabrikam-Fiber"}
+  wit.wiql.queryById:
+    args: {"id": "1", "project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team"}
+  wit.wiql.queryByWiql:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team"}
+  wit.workItemIcons.get:
+    args: {"icon": "example"}
+  wit.workItemIcons.list:
+    args: {}
+  wit.workItemRelationTypes.get:
+    args: {"relation": "example"}
+  wit.workItemRelationTypes.list:
+    args: {}
+  wit.workItemRevisionsDiscussions.readReportingDiscussions:
+    args: {"project": "Fabrikam-Fiber"}
+  wit.workItemTransitions.list:
+    args: {"ids": "example"}
+  wit.workItemTypeCategories.get:
+    args: {"project": "Fabrikam-Fiber", "category": "example"}
+  wit.workItemTypeCategories.list:
+    args: {"project": "Fabrikam-Fiber"}
+  wit.workItemTypeStates.list:
+    args: {"project": "Fabrikam-Fiber", "type": "example"}
+  wit.workItemTypes.get:
+    args: {"project": "Fabrikam-Fiber", "type": "example"}
+  wit.workItemTypes.list:
+    args: {"project": "Fabrikam-Fiber"}
+  wit.workItemTypesField.get:
+    args: {"project": "Fabrikam-Fiber", "type": "example", "field": "example"}
+  wit.workItemTypesField.list:
+    args: {"project": "Fabrikam-Fiber", "type": "example"}
+  wit.workItems.create:
+    args: {"project": "Fabrikam-Fiber", "type": "Task", "body": [{"op": "add", "path": "/fields/System.Title", "value": "Write the release notes"}]}
+  wit.workItems.delete:
+    args: {"id": 1, "project": "Fabrikam-Fiber"}
+  wit.workItems.deleteWorkItems:
+    args: {"project": "Fabrikam-Fiber"}
+  wit.workItems.getWorkItem:
+    args: {"id": 1, "project": "Fabrikam-Fiber"}
+  wit.workItems.getWorkItemTemplate:
+    args: {"project": "Fabrikam-Fiber", "type": "example"}
+  wit.workItems.getWorkItemsBatch:
+    args: {"project": "Fabrikam-Fiber"}
+  wit.workItems.list:
+    args: {"ids": "example", "project": "Fabrikam-Fiber"}
+  wit.workItems.update:
+    args: {"id": 1, "project": "Fabrikam-Fiber", "body": [{}]}
+  work.backlogconfiguration.get:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team"}
+  work.backlogs.getBacklog:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team", "id": "1"}
+  work.backlogs.getBacklogLevelWorkItems:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team", "backlogId": "example"}
+  work.backlogs.list:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team"}
+  work.boardcolumns.list:
+    args: {"project": "Fabrikam-Fiber"}
+  work.boardparents.list:
+    args: {"project": "Fabrikam-Fiber", "childBacklogContextCategoryRefName": "example", "workitemIds": "example", "team": "Fabrikam-Fiber Team"}
+  work.boardrows.list:
+    args: {"project": "Fabrikam-Fiber"}
+  work.boards.get:
+    args: {"project": "Fabrikam-Fiber", "id": "1", "team": "Fabrikam-Fiber Team"}
+  work.boards.list:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team"}
+  work.boards.setBoardOptions:
+    args: {"project": "Fabrikam-Fiber", "id": "1", "team": "Fabrikam-Fiber Team"}
+  work.boardusersettings.get:
+    args: {"project": "Fabrikam-Fiber", "board": "example", "team": "Fabrikam-Fiber Team"}
+  work.boardusersettings.update:
+    args: {"project": "Fabrikam-Fiber", "board": "example", "team": "Fabrikam-Fiber Team"}
+  work.capacities.getCapacitiesWithIdentityRefAndTotals:
+    args: {"project": "Fabrikam-Fiber", "iterationId": "example", "team": "Fabrikam-Fiber Team"}
+  work.capacities.getCapacityWithIdentityRef:
+    args: {"project": "Fabrikam-Fiber", "iterationId": "example", "teamMemberId": "example", "team": "Fabrikam-Fiber Team"}
+  work.capacities.replaceCapacitiesWithIdentityRef:
+    args: {"project": "Fabrikam-Fiber", "iterationId": "example", "team": "Fabrikam-Fiber Team", "body": [{}]}
+  work.capacities.update:
+    args: {"project": "Fabrikam-Fiber", "iterationId": "example", "teamMemberId": "example", "team": "Fabrikam-Fiber Team"}
+  work.cardrulesettings.get:
+    args: {"project": "Fabrikam-Fiber", "board": "example", "team": "Fabrikam-Fiber Team"}
+  work.cardrulesettings.updateBoardCardRuleSettings:
+    args: {"project": "Fabrikam-Fiber", "board": "example", "team": "Fabrikam-Fiber Team"}
+  work.cardrulesettings.updateTaskboardCardRuleSettings:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team"}
+  work.cardsettings.get:
+    args: {"project": "Fabrikam-Fiber", "board": "example", "team": "Fabrikam-Fiber Team"}
+  work.cardsettings.updateBoardCardSettings:
+    args: {"project": "Fabrikam-Fiber", "board": "example", "team": "Fabrikam-Fiber Team"}
+  work.cardsettings.updateTaskboardCardSettings:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team"}
+  work.chartimages.getBoardChartImage:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team", "board": "example", "name": "example"}
+  work.chartimages.getIterationChartImage:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team", "iterationId": "example", "name": "example"}
+  work.chartimages.getIterationsChartImage:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team", "name": "example"}
+  work.charts.get:
+    args: {"project": "Fabrikam-Fiber", "board": "example", "name": "example", "team": "Fabrikam-Fiber Team"}
+  work.charts.list:
+    args: {"project": "Fabrikam-Fiber", "board": "example", "team": "Fabrikam-Fiber Team"}
+  work.charts.update:
+    args: {"project": "Fabrikam-Fiber", "board": "example", "name": "example", "team": "Fabrikam-Fiber Team"}
+  work.columns.list:
+    args: {"project": "Fabrikam-Fiber", "board": "example", "team": "Fabrikam-Fiber Team"}
+  work.columns.update:
+    args: {"project": "Fabrikam-Fiber", "board": "example", "team": "Fabrikam-Fiber Team", "body": [{}]}
+  work.deliverytimeline.get:
+    args: {"project": "Fabrikam-Fiber", "id": "1"}
+  work.iterationcapacities.get:
+    args: {"project": "Fabrikam-Fiber", "iterationId": "example"}
+  work.iterations.delete:
+    args: {"project": "Fabrikam-Fiber", "id": "1", "team": "Fabrikam-Fiber Team"}
+  work.iterations.get:
+    args: {"project": "Fabrikam-Fiber", "id": "1", "team": "Fabrikam-Fiber Team"}
+  work.iterations.getIterationWorkItems:
+    args: {"project": "Fabrikam-Fiber", "iterationId": "example", "team": "Fabrikam-Fiber Team"}
+  work.iterations.list:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team"}
+  work.iterations.postTeamIteration:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team"}
+  work.plans.create:
+    args: {"project": "Fabrikam-Fiber"}
+  work.plans.delete:
+    args: {"project": "Fabrikam-Fiber", "id": "1"}
+  work.plans.get:
+    args: {"project": "Fabrikam-Fiber", "id": "1"}
+  work.plans.list:
+    args: {"project": "Fabrikam-Fiber"}
+  work.plans.update:
+    args: {"project": "Fabrikam-Fiber", "id": "1"}
+  work.processconfiguration.get:
+    args: {"project": "Fabrikam-Fiber"}
+  work.rows.list:
+    args: {"project": "Fabrikam-Fiber", "board": "example", "team": "Fabrikam-Fiber Team"}
+  work.rows.update:
+    args: {"project": "Fabrikam-Fiber", "board": "example", "team": "Fabrikam-Fiber Team", "body": [{}]}
+  work.taskboardColumns.get:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team"}
+  work.taskboardColumns.update:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team", "body": [{}]}
+  work.taskboardWorkItems.list:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team", "iterationId": "example"}
+  work.taskboardWorkItems.update:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team", "iterationId": "example", "workItemId": 1}
+  work.teamdaysoff.get:
+    args: {"project": "Fabrikam-Fiber", "iterationId": "example", "team": "Fabrikam-Fiber Team"}
+  work.teamdaysoff.update:
+    args: {"project": "Fabrikam-Fiber", "iterationId": "example", "team": "Fabrikam-Fiber Team"}
+  work.teamfieldvalues.get:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team"}
+  work.teamfieldvalues.update:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team"}
+  work.teamsettings.get:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team"}
+  work.teamsettings.update:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team"}
+  work.workitemsorder.reorderBacklogWorkItems:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team"}
+  work.workitemsorder.reorderIterationWorkItems:
+    args: {"project": "Fabrikam-Fiber", "team": "Fabrikam-Fiber Team", "iterationId": "example"}
