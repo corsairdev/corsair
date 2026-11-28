@@ -1429,33 +1429,32 @@ await corsair.freshbooks.api.billPayments.delete({ billPaymentId: '7766' });
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `bill_payment` | `object \| null` | No | — |
+**Output:** `object`
 
 <AccordionGroup>
-<Accordion title="bill_payment full type">
+<Accordion title="Output full type">
 
 ```ts
 {
-  amount?: {
-    amount?: any | null,
-    code?: any | null
-  } | null,
-  billid?: any | null,
-  id?: any | null,
-  matched_with_expense?: any | null,
-  note?: any | null,
-  paid_date?: any | null,
-  payment_type?: any | null,
-  vis_state?: any | null
-} | null
+  bill_payment?: {
+    amount?: {
+      amount?: any | null,
+      code?: any | null
+    } | null,
+    billid?: any | null,
+    id?: any | null,
+    matched_with_expense?: any | null,
+    note?: any | null,
+    paid_date?: any | null,
+    payment_type?: any | null,
+    vis_state?: any | null
+  } | null
+} | {
+  success: true
+}
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -1942,94 +1941,93 @@ await corsair.freshbooks.api.bills.delete({ billId: '6677' });
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `bill` | `object \| null` | No | — |
+**Output:** `object`
 
 <AccordionGroup>
-<Accordion title="bill full type">
+<Accordion title="Output full type">
 
 ```ts
 {
-  amount?: {
-    amount?: any | null,
-    code?: any | null
-  } | null,
-  attachment?: any | null,
-  bill_number?: any | null,
-  bill_payments?: any[] | null,
-  created_at?: any | null,
-  currency_code?: any | null,
-  due_date?: any | null,
-  due_offset_days?: any | null,
-  id?: any | null,
-  issue_date?: any | null,
-  language?: any | null,
-  lines?: {
+  bill?: {
     amount?: {
       amount?: any | null,
       code?: any | null
     } | null,
-    category?: {
-      category?: any | null,
-      categoryid?: any | null,
-      created_at?: any | null,
-      id?: any | null,
-      is_cogs?: any | null,
-      is_editable?: any | null,
-      parentid?: any | null,
-      updated_at?: any | null,
-      vis_state?: any | null
-    } | null,
-    description?: any | null,
+    attachment?: any | null,
+    bill_number?: any | null,
+    bill_payments?: any[] | null,
+    created_at?: any | null,
+    currency_code?: any | null,
+    due_date?: any | null,
+    due_offset_days?: any | null,
     id?: any | null,
-    list_index?: any | null,
-    quantity?: any | null,
-    tax_amount1?: any | null,
-    tax_amount2?: any | null,
-    tax_authorityid1?: any | null,
-    tax_authorityid2?: any | null,
-    tax_name1?: any | null,
-    tax_name2?: any | null,
-    tax_percent1?: any | null,
-    tax_percent2?: any | null,
+    issue_date?: any | null,
+    language?: any | null,
+    lines?: {
+      amount?: {
+        amount?: any | null,
+        code?: any | null
+      } | null,
+      category?: {
+        category?: any | null,
+        categoryid?: any | null,
+        created_at?: any | null,
+        id?: any | null,
+        is_cogs?: any | null,
+        is_editable?: any | null,
+        parentid?: any | null,
+        updated_at?: any | null,
+        vis_state?: any | null
+      } | null,
+      description?: any | null,
+      id?: any | null,
+      list_index?: any | null,
+      quantity?: any | null,
+      tax_amount1?: any | null,
+      tax_amount2?: any | null,
+      tax_authorityid1?: any | null,
+      tax_authorityid2?: any | null,
+      tax_name1?: any | null,
+      tax_name2?: any | null,
+      tax_percent1?: any | null,
+      tax_percent2?: any | null,
+      total_amount?: {
+        amount?: any | null,
+        code?: any | null
+      } | null,
+      unit_cost?: {
+        amount?: any | null,
+        code?: any | null
+      } | null
+    }[] | null,
+    outstanding?: {
+      amount?: any | null,
+      code?: any | null
+    } | null,
+    overall_category?: any | null,
+    overall_description?: any | null,
+    paid?: {
+      amount?: any | null,
+      code?: any | null
+    } | null,
+    status?: any | null,
+    tax_amount?: {
+      amount?: any | null,
+      code?: any | null
+    } | null,
     total_amount?: {
       amount?: any | null,
       code?: any | null
     } | null,
-    unit_cost?: {
-      amount?: any | null,
-      code?: any | null
-    } | null
-  }[] | null,
-  outstanding?: {
-    amount?: any | null,
-    code?: any | null
-  } | null,
-  overall_category?: any | null,
-  overall_description?: any | null,
-  paid?: {
-    amount?: any | null,
-    code?: any | null
-  } | null,
-  status?: any | null,
-  tax_amount?: {
-    amount?: any | null,
-    code?: any | null
-  } | null,
-  total_amount?: {
-    amount?: any | null,
-    code?: any | null
-  } | null,
-  updated_at?: any | null,
-  vis_state?: any | null
-} | null
+    updated_at?: any | null,
+    vis_state?: any | null
+  } | null
+} | {
+  success: true
+}
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -2495,45 +2493,44 @@ await corsair.freshbooks.api.billVendors.delete({ vendorId: '5566' });
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `bill_vendor` | `object \| null` | No | — |
+**Output:** `object`
 
 <AccordionGroup>
-<Accordion title="bill_vendor full type">
+<Accordion title="Output full type">
 
 ```ts
 {
-  account_number?: any | null,
-  city?: any | null,
-  country?: any | null,
-  created_at?: any | null,
-  currency_code?: any | null,
-  is_1099?: any | null,
-  language?: any | null,
-  outstanding_balance?: any[] | null,
-  overdue_balance?: any[] | null,
-  phone?: any | null,
-  postal_code?: any | null,
-  primary_contact_email?: any | null,
-  primary_contact_first_name?: any | null,
-  primary_contact_last_name?: any | null,
-  province?: any | null,
-  street?: any | null,
-  street2?: any | null,
-  tax_defaults?: any[] | null,
-  updated_at?: any | null,
-  vendor_name?: any | null,
-  vendorid?: any | null,
-  vis_state?: any | null,
-  website?: any | null
-} | null
+  bill_vendor?: {
+    account_number?: any | null,
+    city?: any | null,
+    country?: any | null,
+    created_at?: any | null,
+    currency_code?: any | null,
+    is_1099?: any | null,
+    language?: any | null,
+    outstanding_balance?: any[] | null,
+    overdue_balance?: any[] | null,
+    phone?: any | null,
+    postal_code?: any | null,
+    primary_contact_email?: any | null,
+    primary_contact_first_name?: any | null,
+    primary_contact_last_name?: any | null,
+    province?: any | null,
+    street?: any | null,
+    street2?: any | null,
+    tax_defaults?: any[] | null,
+    updated_at?: any | null,
+    vendor_name?: any | null,
+    vendorid?: any | null,
+    vis_state?: any | null,
+    website?: any | null
+  } | null
+} | {
+  success: true
+}
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -3560,71 +3557,70 @@ await corsair.freshbooks.api.clients.delete({ clientId: '31006' });
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `client` | `object \| null` | No | — |
+**Output:** `object`
 
 <AccordionGroup>
-<Accordion title="client full type">
+<Accordion title="Output full type">
 
 ```ts
 {
-  accounting_systemid?: any | null,
-  allow_late_fees?: any | null,
-  allow_late_notifications?: any | null,
-  bus_phone?: any | null,
-  company_industry?: any | null,
-  company_size?: any | null,
-  currency_code?: any | null,
-  direct_link_token?: any | null,
-  email?: any | null,
-  fax?: any | null,
-  fname?: any | null,
-  has_retainer?: any | null,
-  home_phone?: any | null,
-  id?: any | null,
-  language?: any | null,
-  last_activity?: any | null,
-  last_login?: any | null,
-  level?: any | null,
-  lname?: any | null,
-  mob_phone?: any | null,
-  note?: any | null,
-  notified?: any | null,
-  num_logins?: any | null,
-  organization?: any | null,
-  p_city?: any | null,
-  p_code?: any | null,
-  p_country?: any | null,
-  p_province?: any | null,
-  p_street?: any | null,
-  p_street2?: any | null,
-  pref_email?: any | null,
-  pref_gmail?: any | null,
-  retainer_id?: any | null,
-  role?: any | null,
-  s_city?: any | null,
-  s_code?: any | null,
-  s_country?: any | null,
-  s_province?: any | null,
-  s_street?: any | null,
-  s_street2?: any | null,
-  signup_date?: any | null,
-  statement_token?: any | null,
-  subdomain?: any | null,
-  updated?: any | null,
-  userid?: any | null,
-  username?: any | null,
-  vat_name?: any | null,
-  vat_number?: any | null,
-  vis_state?: any | null
-} | null
+  client?: {
+    accounting_systemid?: any | null,
+    allow_late_fees?: any | null,
+    allow_late_notifications?: any | null,
+    bus_phone?: any | null,
+    company_industry?: any | null,
+    company_size?: any | null,
+    currency_code?: any | null,
+    direct_link_token?: any | null,
+    email?: any | null,
+    fax?: any | null,
+    fname?: any | null,
+    has_retainer?: any | null,
+    home_phone?: any | null,
+    id?: any | null,
+    language?: any | null,
+    last_activity?: any | null,
+    last_login?: any | null,
+    level?: any | null,
+    lname?: any | null,
+    mob_phone?: any | null,
+    note?: any | null,
+    notified?: any | null,
+    num_logins?: any | null,
+    organization?: any | null,
+    p_city?: any | null,
+    p_code?: any | null,
+    p_country?: any | null,
+    p_province?: any | null,
+    p_street?: any | null,
+    p_street2?: any | null,
+    pref_email?: any | null,
+    pref_gmail?: any | null,
+    retainer_id?: any | null,
+    role?: any | null,
+    s_city?: any | null,
+    s_code?: any | null,
+    s_country?: any | null,
+    s_province?: any | null,
+    s_street?: any | null,
+    s_street2?: any | null,
+    signup_date?: any | null,
+    statement_token?: any | null,
+    subdomain?: any | null,
+    updated?: any | null,
+    userid?: any | null,
+    username?: any | null,
+    vat_name?: any | null,
+    vat_number?: any | null,
+    vis_state?: any | null
+  } | null
+} | {
+  success: true
+}
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -4179,63 +4175,62 @@ await corsair.freshbooks.api.creditNotes.delete({ creditId: '30947' });
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `credit_note` | `object \| null` | No | — |
+**Output:** `object`
 
 <AccordionGroup>
-<Accordion title="credit_note full type">
+<Accordion title="Output full type">
 
 ```ts
 {
-  accounting_systemid?: any | null,
-  amount?: {
-    amount?: any | null,
-    code?: any | null
-  } | null,
-  city?: any | null,
-  clientid?: any | null,
-  code?: any | null,
-  country?: any | null,
-  create_date?: any | null,
-  credit_number?: any | null,
-  credit_type?: any | null,
-  creditid?: any | null,
-  currency_code?: any | null,
-  current_organization?: any | null,
-  description?: any | null,
-  display_status?: any | null,
-  dispute_status?: any | null,
-  ext_archive?: any | null,
-  fname?: any | null,
-  id?: any | null,
-  language?: any | null,
-  last_order_status?: any | null,
-  lname?: any | null,
-  notes?: any | null,
-  organization?: any | null,
-  paid?: {
-    amount?: any | null,
-    code?: any | null
-  } | null,
-  payment_status?: any | null,
-  province?: any | null,
-  sentid?: any | null,
-  status?: any | null,
-  street?: any | null,
-  street2?: any | null,
-  template?: any | null,
-  terms?: any | null,
-  vat_name?: any | null,
-  vat_number?: any | null,
-  vis_state?: any | null
-} | null
+  credit_note?: {
+    accounting_systemid?: any | null,
+    amount?: {
+      amount?: any | null,
+      code?: any | null
+    } | null,
+    city?: any | null,
+    clientid?: any | null,
+    code?: any | null,
+    country?: any | null,
+    create_date?: any | null,
+    credit_number?: any | null,
+    credit_type?: any | null,
+    creditid?: any | null,
+    currency_code?: any | null,
+    current_organization?: any | null,
+    description?: any | null,
+    display_status?: any | null,
+    dispute_status?: any | null,
+    ext_archive?: any | null,
+    fname?: any | null,
+    id?: any | null,
+    language?: any | null,
+    last_order_status?: any | null,
+    lname?: any | null,
+    notes?: any | null,
+    organization?: any | null,
+    paid?: {
+      amount?: any | null,
+      code?: any | null
+    } | null,
+    payment_status?: any | null,
+    province?: any | null,
+    sentid?: any | null,
+    status?: any | null,
+    street?: any | null,
+    street2?: any | null,
+    template?: any | null,
+    terms?: any | null,
+    vat_name?: any | null,
+    vat_number?: any | null,
+    vis_state?: any | null
+  } | null
+} | {
+  success: true
+}
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -4807,71 +4802,70 @@ await corsair.freshbooks.api.estimates.delete({ estimateId: '11223' });
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `estimate` | `object \| null` | No | — |
+**Output:** `object`
 
 <AccordionGroup>
-<Accordion title="estimate full type">
+<Accordion title="Output full type">
 
 ```ts
 {
-  accepted?: any | null,
-  accounting_systemid?: any | null,
-  address?: any | null,
-  amount?: {
-    amount?: any | null,
-    code?: any | null
-  } | null,
-  city?: any | null,
-  code?: any | null,
-  country?: any | null,
-  create_date?: any | null,
-  created_at?: any | null,
-  currency_code?: any | null,
-  current_organization?: any | null,
-  customerid?: any | null,
-  description?: any | null,
-  discount_total?: {
-    amount?: any | null,
-    code?: any | null
-  } | null,
-  discount_value?: any | null,
-  display_status?: any | null,
-  estimate_number?: any | null,
-  estimateid?: any | null,
-  ext_archive?: any | null,
-  fname?: any | null,
-  id?: any | null,
-  invoiced?: any | null,
-  language?: any | null,
-  lname?: any | null,
-  notes?: any | null,
-  organization?: any | null,
-  ownerid?: any | null,
-  po_number?: any | null,
-  province?: any | null,
-  reply_status?: any | null,
-  require_client_signature?: any | null,
-  rich_proposal?: any | null,
-  sentid?: any | null,
-  status?: any | null,
-  street?: any | null,
-  street2?: any | null,
-  template?: any | null,
-  terms?: any | null,
-  ui_status?: any | null,
-  updated?: any | null,
-  vat_name?: any | null,
-  vat_number?: any | null,
-  vis_state?: any | null
-} | null
+  estimate?: {
+    accepted?: any | null,
+    accounting_systemid?: any | null,
+    address?: any | null,
+    amount?: {
+      amount?: any | null,
+      code?: any | null
+    } | null,
+    city?: any | null,
+    code?: any | null,
+    country?: any | null,
+    create_date?: any | null,
+    created_at?: any | null,
+    currency_code?: any | null,
+    current_organization?: any | null,
+    customerid?: any | null,
+    description?: any | null,
+    discount_total?: {
+      amount?: any | null,
+      code?: any | null
+    } | null,
+    discount_value?: any | null,
+    display_status?: any | null,
+    estimate_number?: any | null,
+    estimateid?: any | null,
+    ext_archive?: any | null,
+    fname?: any | null,
+    id?: any | null,
+    invoiced?: any | null,
+    language?: any | null,
+    lname?: any | null,
+    notes?: any | null,
+    organization?: any | null,
+    ownerid?: any | null,
+    po_number?: any | null,
+    province?: any | null,
+    reply_status?: any | null,
+    require_client_signature?: any | null,
+    rich_proposal?: any | null,
+    sentid?: any | null,
+    status?: any | null,
+    street?: any | null,
+    street2?: any | null,
+    template?: any | null,
+    terms?: any | null,
+    ui_status?: any | null,
+    updated?: any | null,
+    vat_name?: any | null,
+    vat_number?: any | null,
+    vis_state?: any | null
+  } | null
+} | {
+  success: true
+}
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -5795,64 +5789,63 @@ await corsair.freshbooks.api.expenses.delete({ expenseId: '99881' });
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `expense` | `object \| null` | No | — |
+**Output:** `object`
 
 <AccordionGroup>
-<Accordion title="expense full type">
+<Accordion title="Output full type">
 
 ```ts
 {
-  account_name?: any | null,
-  accountid?: any | null,
-  accounting_systemid?: any | null,
-  amount?: {
-    amount?: any | null,
-    code?: any | null
-  } | null,
-  background_jobid?: any | null,
-  bank_name?: any | null,
-  categoryid?: any | null,
-  clientid?: any | null,
-  compounded_tax?: any | null,
-  date?: any | null,
-  expenseid?: any | null,
-  ext_invoiceid?: any | null,
-  ext_systemid?: any | null,
-  from_bulk_import?: any | null,
-  has_receipt?: any | null,
-  id?: any | null,
-  include_receipt?: any | null,
-  invoiceid?: any | null,
-  is_cogs?: any | null,
-  isduplicate?: any | null,
-  markup_percent?: any | null,
-  notes?: any | null,
-  profileid?: any | null,
-  projectid?: any | null,
-  staffid?: any | null,
-  status?: any | null,
-  taxAmount1?: {
-    amount?: any | null,
-    code?: any | null
-  } | null,
-  taxAmount2?: any | null,
-  taxName1?: any | null,
-  taxName2?: any | null,
-  taxPercent1?: any | null,
-  taxPercent2?: any | null,
-  transactionid?: any | null,
-  updated?: any | null,
-  vendor?: any | null,
-  vis_state?: any | null
-} | null
+  expense?: {
+    account_name?: any | null,
+    accountid?: any | null,
+    accounting_systemid?: any | null,
+    amount?: {
+      amount?: any | null,
+      code?: any | null
+    } | null,
+    background_jobid?: any | null,
+    bank_name?: any | null,
+    categoryid?: any | null,
+    clientid?: any | null,
+    compounded_tax?: any | null,
+    date?: any | null,
+    expenseid?: any | null,
+    ext_invoiceid?: any | null,
+    ext_systemid?: any | null,
+    from_bulk_import?: any | null,
+    has_receipt?: any | null,
+    id?: any | null,
+    include_receipt?: any | null,
+    invoiceid?: any | null,
+    is_cogs?: any | null,
+    isduplicate?: any | null,
+    markup_percent?: any | null,
+    notes?: any | null,
+    profileid?: any | null,
+    projectid?: any | null,
+    staffid?: any | null,
+    status?: any | null,
+    taxAmount1?: {
+      amount?: any | null,
+      code?: any | null
+    } | null,
+    taxAmount2?: any | null,
+    taxName1?: any | null,
+    taxName2?: any | null,
+    taxPercent1?: any | null,
+    taxPercent2?: any | null,
+    transactionid?: any | null,
+    updated?: any | null,
+    vendor?: any | null,
+    vis_state?: any | null
+  } | null
+} | {
+  success: true
+}
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -6818,72 +6811,71 @@ await corsair.freshbooks.api.invoiceProfiles.delete({ invoiceProfileId: '4321' }
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `invoice_profile` | `object \| null` | No | — |
+**Output:** `object`
 
 <AccordionGroup>
-<Accordion title="invoice_profile full type">
+<Accordion title="Output full type">
 
 ```ts
 {
-  accounting_systemid?: any | null,
-  address?: any | null,
-  amount?: {
-    amount?: any | null,
-    code?: any | null
-  } | null,
-  auto_bill?: any | null,
-  bill_gateway?: any | null,
-  city?: any | null,
-  code?: any | null,
-  country?: any | null,
-  create_date?: any | null,
-  currency_code?: any | null,
-  customerid?: any | null,
-  description?: any | null,
-  disable?: any | null,
-  discount_total?: {
-    amount?: any | null,
-    code?: any | null
-  } | null,
-  discount_value?: any | null,
-  due_offset_days?: any | null,
-  ext_archive?: any | null,
-  fname?: any | null,
-  frequency?: any | null,
-  id?: any | null,
-  include_unbilled_time?: any | null,
-  language?: any | null,
-  lname?: any | null,
-  notes?: any | null,
-  numberRecurring?: any | null,
-  occurrences_to_date?: any | null,
-  organization?: any | null,
-  ownerid?: any | null,
-  payment_details?: any | null,
-  po_number?: any | null,
-  profileid?: any | null,
-  province?: any | null,
-  require_auto_bill?: any | null,
-  retainer_id?: any | null,
-  send_email?: any | null,
-  send_gmail?: any | null,
-  street?: any | null,
-  street2?: any | null,
-  terms?: any | null,
-  total_accrued_revenue?: any | null,
-  updated?: any | null,
-  vat_name?: any | null,
-  vat_number?: any | null,
-  vis_state?: any | null
-} | null
+  invoice_profile?: {
+    accounting_systemid?: any | null,
+    address?: any | null,
+    amount?: {
+      amount?: any | null,
+      code?: any | null
+    } | null,
+    auto_bill?: any | null,
+    bill_gateway?: any | null,
+    city?: any | null,
+    code?: any | null,
+    country?: any | null,
+    create_date?: any | null,
+    currency_code?: any | null,
+    customerid?: any | null,
+    description?: any | null,
+    disable?: any | null,
+    discount_total?: {
+      amount?: any | null,
+      code?: any | null
+    } | null,
+    discount_value?: any | null,
+    due_offset_days?: any | null,
+    ext_archive?: any | null,
+    fname?: any | null,
+    frequency?: any | null,
+    id?: any | null,
+    include_unbilled_time?: any | null,
+    language?: any | null,
+    lname?: any | null,
+    notes?: any | null,
+    numberRecurring?: any | null,
+    occurrences_to_date?: any | null,
+    organization?: any | null,
+    ownerid?: any | null,
+    payment_details?: any | null,
+    po_number?: any | null,
+    profileid?: any | null,
+    province?: any | null,
+    require_auto_bill?: any | null,
+    retainer_id?: any | null,
+    send_email?: any | null,
+    send_gmail?: any | null,
+    street?: any | null,
+    street2?: any | null,
+    terms?: any | null,
+    total_accrued_revenue?: any | null,
+    updated?: any | null,
+    vat_name?: any | null,
+    vat_number?: any | null,
+    vis_state?: any | null
+  } | null
+} | {
+  success: true
+}
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -7380,96 +7372,95 @@ await corsair.freshbooks.api.invoices.delete({ invoiceId: '987654' });
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `invoice` | `object \| null` | No | — |
+**Output:** `object`
 
 <AccordionGroup>
-<Accordion title="invoice full type">
+<Accordion title="Output full type">
 
 ```ts
 {
-  accountid?: any | null,
-  accounting_systemid?: any | null,
-  address?: any | null,
-  amount?: {
-    amount?: any | null,
-    code?: any | null
-  } | null,
-  auto_bill?: any | null,
-  autobill_status?: any | null,
-  basecampid?: any | null,
-  city?: any | null,
-  code?: any | null,
-  country?: any | null,
-  create_date?: any | null,
-  created_at?: any | null,
-  currency_code?: any | null,
-  current_organization?: any | null,
-  customerid?: any | null,
-  date_paid?: any | null,
-  deposit_amount?: any | null,
-  deposit_percentage?: any | null,
-  deposit_status?: any | null,
-  description?: any | null,
-  discount_description?: any | null,
-  discount_total?: {
-    amount?: any | null,
-    code?: any | null
-  } | null,
-  discount_value?: any | null,
-  display_status?: any | null,
-  dispute_status?: any | null,
-  due_date?: any | null,
-  due_offset_days?: any | null,
-  estimateid?: any | null,
-  ext_archive?: any | null,
-  fname?: any | null,
-  fulfillment_date?: any | null,
-  generation_date?: any | null,
-  gmail?: any | null,
-  id?: any | null,
-  invoice_number?: any | null,
-  invoiceid?: any | null,
-  language?: any | null,
-  last_order_status?: any | null,
-  lname?: any | null,
-  notes?: any | null,
-  organization?: any | null,
-  outstanding?: {
-    amount?: any | null,
-    code?: any | null
-  } | null,
-  ownerid?: any | null,
-  paid?: {
-    amount?: any | null,
-    code?: any | null
-  } | null,
-  parent?: any | null,
-  payment_details?: any | null,
-  payment_status?: any | null,
-  po_number?: any | null,
-  province?: any | null,
-  return_uri?: any | null,
-  sentid?: any | null,
-  show_attachments?: any | null,
-  status?: any | null,
-  street?: any | null,
-  street2?: any | null,
-  template?: any | null,
-  terms?: any | null,
-  updated?: any | null,
-  v3_status?: any | null,
-  vat_name?: any | null,
-  vat_number?: any | null,
-  vis_state?: any | null
-} | null
+  invoice?: {
+    accountid?: any | null,
+    accounting_systemid?: any | null,
+    address?: any | null,
+    amount?: {
+      amount?: any | null,
+      code?: any | null
+    } | null,
+    auto_bill?: any | null,
+    autobill_status?: any | null,
+    basecampid?: any | null,
+    city?: any | null,
+    code?: any | null,
+    country?: any | null,
+    create_date?: any | null,
+    created_at?: any | null,
+    currency_code?: any | null,
+    current_organization?: any | null,
+    customerid?: any | null,
+    date_paid?: any | null,
+    deposit_amount?: any | null,
+    deposit_percentage?: any | null,
+    deposit_status?: any | null,
+    description?: any | null,
+    discount_description?: any | null,
+    discount_total?: {
+      amount?: any | null,
+      code?: any | null
+    } | null,
+    discount_value?: any | null,
+    display_status?: any | null,
+    dispute_status?: any | null,
+    due_date?: any | null,
+    due_offset_days?: any | null,
+    estimateid?: any | null,
+    ext_archive?: any | null,
+    fname?: any | null,
+    fulfillment_date?: any | null,
+    generation_date?: any | null,
+    gmail?: any | null,
+    id?: any | null,
+    invoice_number?: any | null,
+    invoiceid?: any | null,
+    language?: any | null,
+    last_order_status?: any | null,
+    lname?: any | null,
+    notes?: any | null,
+    organization?: any | null,
+    outstanding?: {
+      amount?: any | null,
+      code?: any | null
+    } | null,
+    ownerid?: any | null,
+    paid?: {
+      amount?: any | null,
+      code?: any | null
+    } | null,
+    parent?: any | null,
+    payment_details?: any | null,
+    payment_status?: any | null,
+    po_number?: any | null,
+    province?: any | null,
+    return_uri?: any | null,
+    sentid?: any | null,
+    show_attachments?: any | null,
+    status?: any | null,
+    street?: any | null,
+    street2?: any | null,
+    template?: any | null,
+    terms?: any | null,
+    updated?: any | null,
+    v3_status?: any | null,
+    vat_name?: any | null,
+    vat_number?: any | null,
+    vis_state?: any | null
+  } | null
+} | {
+  success: true
+}
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -8429,37 +8420,36 @@ await corsair.freshbooks.api.items.delete({ itemId: '3344' });
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `item` | `object \| null` | No | — |
+**Output:** `object`
 
 <AccordionGroup>
-<Accordion title="item full type">
+<Accordion title="Output full type">
 
 ```ts
 {
-  accounting_systemid?: any | null,
-  description?: any | null,
-  id?: any | null,
-  inventory?: any | null,
-  itemid?: any | null,
-  name?: any | null,
-  qty?: any | null,
-  tax1?: any | null,
-  tax2?: any | null,
-  unit_cost?: {
-    amount?: any | null,
-    code?: any | null
-  } | null,
-  updated?: any | null,
-  vis_state?: any | null
-} | null
+  item?: {
+    accounting_systemid?: any | null,
+    description?: any | null,
+    id?: any | null,
+    inventory?: any | null,
+    itemid?: any | null,
+    name?: any | null,
+    qty?: any | null,
+    tax1?: any | null,
+    tax2?: any | null,
+    unit_cost?: {
+      amount?: any | null,
+      code?: any | null
+    } | null,
+    updated?: any | null,
+    vis_state?: any | null
+  } | null
+} | {
+  success: true
+}
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -9915,42 +9905,41 @@ await corsair.freshbooks.api.payments.delete({ paymentId: '55667' });
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `payment` | `object \| null` | No | — |
+**Output:** `object`
 
 <AccordionGroup>
-<Accordion title="payment full type">
+<Accordion title="Output full type">
 
 ```ts
 {
-  accounting_systemid?: any | null,
-  amount?: {
-    amount?: any | null,
-    code?: any | null
-  } | null,
-  clientid?: any | null,
-  creditid?: any | null,
-  date?: any | null,
-  from_credit?: any | null,
-  gateway?: any | null,
-  id?: any | null,
-  invoiceid?: any | null,
-  logid?: any | null,
-  note?: any | null,
-  orderid?: any | null,
-  overpaymentid?: any | null,
-  transactionid?: any | null,
-  type?: any | null,
-  updated?: any | null,
-  vis_state?: any | null
-} | null
+  payment?: {
+    accounting_systemid?: any | null,
+    amount?: {
+      amount?: any | null,
+      code?: any | null
+    } | null,
+    clientid?: any | null,
+    creditid?: any | null,
+    date?: any | null,
+    from_credit?: any | null,
+    gateway?: any | null,
+    id?: any | null,
+    invoiceid?: any | null,
+    logid?: any | null,
+    note?: any | null,
+    orderid?: any | null,
+    overpaymentid?: any | null,
+    transactionid?: any | null,
+    type?: any | null,
+    updated?: any | null,
+    vis_state?: any | null
+  } | null
+} | {
+  success: true
+}
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -11689,35 +11678,34 @@ await corsair.freshbooks.api.retainers.delete({ retainerId: '501' });
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `retainer` | `object \| null` | No | — |
+**Output:** `object`
 
 <AccordionGroup>
-<Accordion title="retainer full type">
+<Accordion title="Output full type">
 
 ```ts
 {
-  id?: any | null,
-  business_id?: any | null,
-  system_id?: any | null,
-  invoice_profile_id?: any | null,
-  client_user_id?: any | null,
-  start_date?: any | null,
-  next_period_start_date?: any | null,
-  fee?: any | null,
-  excess_rate?: any | null,
-  budgeted_time?: any | null,
-  active?: any | null,
-  created_at?: any | null,
-  updated_at?: any | null
-} | null
+  retainer?: {
+    id?: any | null,
+    business_id?: any | null,
+    system_id?: any | null,
+    invoice_profile_id?: any | null,
+    client_user_id?: any | null,
+    start_date?: any | null,
+    next_period_start_date?: any | null,
+    fee?: any | null,
+    excess_rate?: any | null,
+    budgeted_time?: any | null,
+    active?: any | null,
+    created_at?: any | null,
+    updated_at?: any | null
+  } | null
+} | {
+  success: true
+}
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -12231,53 +12219,52 @@ await corsair.freshbooks.api.staff.delete({ staffId: '1' });
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `staff` | `object \| null` | No | — |
+**Output:** `object`
 
 <AccordionGroup>
-<Accordion title="staff full type">
+<Accordion title="Output full type">
 
 ```ts
 {
-  accounting_systemid?: any | null,
-  api_token?: any | null,
-  bus_phone?: any | null,
-  currency_code?: any | null,
-  display_name?: any | null,
-  email?: any | null,
-  fax?: any | null,
-  fname?: any | null,
-  home_phone?: any | null,
-  id?: any | null,
-  language?: any | null,
-  last_login?: any | null,
-  level?: any | null,
-  lname?: any | null,
-  mob_phone?: any | null,
-  note?: any | null,
-  num_logins?: any | null,
-  organization?: any | null,
-  p_city?: any | null,
-  p_code?: any | null,
-  p_country?: any | null,
-  p_province?: any | null,
-  p_street?: any | null,
-  p_street2?: any | null,
-  rate?: any | null,
-  role?: any | null,
-  signup_date?: any | null,
-  updated?: any | null,
-  userid?: any | null,
-  username?: any | null,
-  vis_state?: any | null
-} | null
+  staff?: {
+    accounting_systemid?: any | null,
+    api_token?: any | null,
+    bus_phone?: any | null,
+    currency_code?: any | null,
+    display_name?: any | null,
+    email?: any | null,
+    fax?: any | null,
+    fname?: any | null,
+    home_phone?: any | null,
+    id?: any | null,
+    language?: any | null,
+    last_login?: any | null,
+    level?: any | null,
+    lname?: any | null,
+    mob_phone?: any | null,
+    note?: any | null,
+    num_logins?: any | null,
+    organization?: any | null,
+    p_city?: any | null,
+    p_code?: any | null,
+    p_country?: any | null,
+    p_province?: any | null,
+    p_street?: any | null,
+    p_street2?: any | null,
+    rate?: any | null,
+    role?: any | null,
+    signup_date?: any | null,
+    updated?: any | null,
+    userid?: any | null,
+    username?: any | null,
+    vis_state?: any | null
+  } | null
+} | {
+  success: true
+}
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -12673,37 +12660,36 @@ await corsair.freshbooks.api.tasks.delete({ taskId: '2233' });
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `task` | `object \| null` | No | — |
+**Output:** `object`
 
 <AccordionGroup>
-<Accordion title="task full type">
+<Accordion title="Output full type">
 
 ```ts
 {
-  billable?: any | null,
-  description?: any | null,
-  id?: any | null,
-  name?: any | null,
-  rate?: {
-    amount?: any | null,
-    code?: any | null
-  } | null,
-  taskid?: any | null,
-  tax1?: any | null,
-  tax2?: any | null,
-  tdesc?: any | null,
-  tname?: any | null,
-  updated?: any | null,
-  vis_state?: any | null
-} | null
+  task?: {
+    billable?: any | null,
+    description?: any | null,
+    id?: any | null,
+    name?: any | null,
+    rate?: {
+      amount?: any | null,
+      code?: any | null
+    } | null,
+    taskid?: any | null,
+    tax1?: any | null,
+    tax2?: any | null,
+    tdesc?: any | null,
+    tname?: any | null,
+    updated?: any | null,
+    vis_state?: any | null
+  } | null
+} | {
+  success: true
+}
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---

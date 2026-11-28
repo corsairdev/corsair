@@ -3768,21 +3768,25 @@ export type FreshBooksOperationOutputs = {
 			vis_state?: FreshBooksJsonValue | null;
 		} | null;
 	};
-	'billPayments.delete': {
-		bill_payment?: {
-			amount?: {
-				amount?: FreshBooksJsonValue | null;
-				code?: FreshBooksJsonValue | null;
-			} | null;
-			billid?: FreshBooksJsonValue | null;
-			id?: FreshBooksJsonValue | null;
-			matched_with_expense?: FreshBooksJsonValue | null;
-			note?: FreshBooksJsonValue | null;
-			paid_date?: FreshBooksJsonValue | null;
-			payment_type?: FreshBooksJsonValue | null;
-			vis_state?: FreshBooksJsonValue | null;
-		} | null;
-	};
+	'billPayments.delete':
+		| {
+				bill_payment?: {
+					amount?: {
+						amount?: FreshBooksJsonValue | null;
+						code?: FreshBooksJsonValue | null;
+					} | null;
+					billid?: FreshBooksJsonValue | null;
+					id?: FreshBooksJsonValue | null;
+					matched_with_expense?: FreshBooksJsonValue | null;
+					note?: FreshBooksJsonValue | null;
+					paid_date?: FreshBooksJsonValue | null;
+					payment_type?: FreshBooksJsonValue | null;
+					vis_state?: FreshBooksJsonValue | null;
+				} | null;
+		  }
+		| {
+				/** FreshBooks accepted the call; it answered with no body. */ success: true;
+		  };
 	'billPayments.get': {
 		bill_payment?: {
 			amount?: {
@@ -3859,33 +3863,37 @@ export type FreshBooksOperationOutputs = {
 			website?: FreshBooksJsonValue | null;
 		} | null;
 	};
-	'billVendors.delete': {
-		bill_vendor?: {
-			account_number?: FreshBooksJsonValue | null;
-			city?: FreshBooksJsonValue | null;
-			country?: FreshBooksJsonValue | null;
-			created_at?: FreshBooksJsonValue | null;
-			currency_code?: FreshBooksJsonValue | null;
-			is_1099?: FreshBooksJsonValue | null;
-			language?: FreshBooksJsonValue | null;
-			outstanding_balance?: Array<FreshBooksJsonValue> | null;
-			overdue_balance?: Array<FreshBooksJsonValue> | null;
-			phone?: FreshBooksJsonValue | null;
-			postal_code?: FreshBooksJsonValue | null;
-			primary_contact_email?: FreshBooksJsonValue | null;
-			primary_contact_first_name?: FreshBooksJsonValue | null;
-			primary_contact_last_name?: FreshBooksJsonValue | null;
-			province?: FreshBooksJsonValue | null;
-			street?: FreshBooksJsonValue | null;
-			street2?: FreshBooksJsonValue | null;
-			tax_defaults?: Array<FreshBooksJsonValue> | null;
-			updated_at?: FreshBooksJsonValue | null;
-			vendor_name?: FreshBooksJsonValue | null;
-			vendorid?: FreshBooksJsonValue | null;
-			vis_state?: FreshBooksJsonValue | null;
-			website?: FreshBooksJsonValue | null;
-		} | null;
-	};
+	'billVendors.delete':
+		| {
+				bill_vendor?: {
+					account_number?: FreshBooksJsonValue | null;
+					city?: FreshBooksJsonValue | null;
+					country?: FreshBooksJsonValue | null;
+					created_at?: FreshBooksJsonValue | null;
+					currency_code?: FreshBooksJsonValue | null;
+					is_1099?: FreshBooksJsonValue | null;
+					language?: FreshBooksJsonValue | null;
+					outstanding_balance?: Array<FreshBooksJsonValue> | null;
+					overdue_balance?: Array<FreshBooksJsonValue> | null;
+					phone?: FreshBooksJsonValue | null;
+					postal_code?: FreshBooksJsonValue | null;
+					primary_contact_email?: FreshBooksJsonValue | null;
+					primary_contact_first_name?: FreshBooksJsonValue | null;
+					primary_contact_last_name?: FreshBooksJsonValue | null;
+					province?: FreshBooksJsonValue | null;
+					street?: FreshBooksJsonValue | null;
+					street2?: FreshBooksJsonValue | null;
+					tax_defaults?: Array<FreshBooksJsonValue> | null;
+					updated_at?: FreshBooksJsonValue | null;
+					vendor_name?: FreshBooksJsonValue | null;
+					vendorid?: FreshBooksJsonValue | null;
+					vis_state?: FreshBooksJsonValue | null;
+					website?: FreshBooksJsonValue | null;
+				} | null;
+		  }
+		| {
+				/** FreshBooks accepted the call; it answered with no body. */ success: true;
+		  };
 	'billVendors.get': {
 		bill_vendor?: {
 			account_number?: FreshBooksJsonValue | null;
@@ -4138,82 +4146,86 @@ export type FreshBooksOperationOutputs = {
 			vis_state?: FreshBooksJsonValue | null;
 		} | null;
 	};
-	'bills.delete': {
-		bill?: {
-			amount?: {
-				amount?: FreshBooksJsonValue | null;
-				code?: FreshBooksJsonValue | null;
-			} | null;
-			attachment?: FreshBooksJsonValue | null;
-			bill_number?: FreshBooksJsonValue | null;
-			bill_payments?: Array<FreshBooksJsonValue> | null;
-			created_at?: FreshBooksJsonValue | null;
-			currency_code?: FreshBooksJsonValue | null;
-			due_date?: FreshBooksJsonValue | null;
-			due_offset_days?: FreshBooksJsonValue | null;
-			id?: FreshBooksJsonValue | null;
-			issue_date?: FreshBooksJsonValue | null;
-			language?: FreshBooksJsonValue | null;
-			lines?: Array<{
-				amount?: {
-					amount?: FreshBooksJsonValue | null;
-					code?: FreshBooksJsonValue | null;
-				} | null;
-				category?: {
-					category?: FreshBooksJsonValue | null;
-					categoryid?: FreshBooksJsonValue | null;
+	'bills.delete':
+		| {
+				bill?: {
+					amount?: {
+						amount?: FreshBooksJsonValue | null;
+						code?: FreshBooksJsonValue | null;
+					} | null;
+					attachment?: FreshBooksJsonValue | null;
+					bill_number?: FreshBooksJsonValue | null;
+					bill_payments?: Array<FreshBooksJsonValue> | null;
 					created_at?: FreshBooksJsonValue | null;
+					currency_code?: FreshBooksJsonValue | null;
+					due_date?: FreshBooksJsonValue | null;
+					due_offset_days?: FreshBooksJsonValue | null;
 					id?: FreshBooksJsonValue | null;
-					is_cogs?: FreshBooksJsonValue | null;
-					is_editable?: FreshBooksJsonValue | null;
-					parentid?: FreshBooksJsonValue | null;
+					issue_date?: FreshBooksJsonValue | null;
+					language?: FreshBooksJsonValue | null;
+					lines?: Array<{
+						amount?: {
+							amount?: FreshBooksJsonValue | null;
+							code?: FreshBooksJsonValue | null;
+						} | null;
+						category?: {
+							category?: FreshBooksJsonValue | null;
+							categoryid?: FreshBooksJsonValue | null;
+							created_at?: FreshBooksJsonValue | null;
+							id?: FreshBooksJsonValue | null;
+							is_cogs?: FreshBooksJsonValue | null;
+							is_editable?: FreshBooksJsonValue | null;
+							parentid?: FreshBooksJsonValue | null;
+							updated_at?: FreshBooksJsonValue | null;
+							vis_state?: FreshBooksJsonValue | null;
+						} | null;
+						description?: FreshBooksJsonValue | null;
+						id?: FreshBooksJsonValue | null;
+						list_index?: FreshBooksJsonValue | null;
+						quantity?: FreshBooksJsonValue | null;
+						tax_amount1?: FreshBooksJsonValue | null;
+						tax_amount2?: FreshBooksJsonValue | null;
+						tax_authorityid1?: FreshBooksJsonValue | null;
+						tax_authorityid2?: FreshBooksJsonValue | null;
+						tax_name1?: FreshBooksJsonValue | null;
+						tax_name2?: FreshBooksJsonValue | null;
+						tax_percent1?: FreshBooksJsonValue | null;
+						tax_percent2?: FreshBooksJsonValue | null;
+						total_amount?: {
+							amount?: FreshBooksJsonValue | null;
+							code?: FreshBooksJsonValue | null;
+						} | null;
+						unit_cost?: {
+							amount?: FreshBooksJsonValue | null;
+							code?: FreshBooksJsonValue | null;
+						} | null;
+					}> | null;
+					outstanding?: {
+						amount?: FreshBooksJsonValue | null;
+						code?: FreshBooksJsonValue | null;
+					} | null;
+					overall_category?: FreshBooksJsonValue | null;
+					overall_description?: FreshBooksJsonValue | null;
+					paid?: {
+						amount?: FreshBooksJsonValue | null;
+						code?: FreshBooksJsonValue | null;
+					} | null;
+					status?: FreshBooksJsonValue | null;
+					tax_amount?: {
+						amount?: FreshBooksJsonValue | null;
+						code?: FreshBooksJsonValue | null;
+					} | null;
+					total_amount?: {
+						amount?: FreshBooksJsonValue | null;
+						code?: FreshBooksJsonValue | null;
+					} | null;
 					updated_at?: FreshBooksJsonValue | null;
 					vis_state?: FreshBooksJsonValue | null;
 				} | null;
-				description?: FreshBooksJsonValue | null;
-				id?: FreshBooksJsonValue | null;
-				list_index?: FreshBooksJsonValue | null;
-				quantity?: FreshBooksJsonValue | null;
-				tax_amount1?: FreshBooksJsonValue | null;
-				tax_amount2?: FreshBooksJsonValue | null;
-				tax_authorityid1?: FreshBooksJsonValue | null;
-				tax_authorityid2?: FreshBooksJsonValue | null;
-				tax_name1?: FreshBooksJsonValue | null;
-				tax_name2?: FreshBooksJsonValue | null;
-				tax_percent1?: FreshBooksJsonValue | null;
-				tax_percent2?: FreshBooksJsonValue | null;
-				total_amount?: {
-					amount?: FreshBooksJsonValue | null;
-					code?: FreshBooksJsonValue | null;
-				} | null;
-				unit_cost?: {
-					amount?: FreshBooksJsonValue | null;
-					code?: FreshBooksJsonValue | null;
-				} | null;
-			}> | null;
-			outstanding?: {
-				amount?: FreshBooksJsonValue | null;
-				code?: FreshBooksJsonValue | null;
-			} | null;
-			overall_category?: FreshBooksJsonValue | null;
-			overall_description?: FreshBooksJsonValue | null;
-			paid?: {
-				amount?: FreshBooksJsonValue | null;
-				code?: FreshBooksJsonValue | null;
-			} | null;
-			status?: FreshBooksJsonValue | null;
-			tax_amount?: {
-				amount?: FreshBooksJsonValue | null;
-				code?: FreshBooksJsonValue | null;
-			} | null;
-			total_amount?: {
-				amount?: FreshBooksJsonValue | null;
-				code?: FreshBooksJsonValue | null;
-			} | null;
-			updated_at?: FreshBooksJsonValue | null;
-			vis_state?: FreshBooksJsonValue | null;
-		} | null;
-	};
+		  }
+		| {
+				/** FreshBooks accepted the call; it answered with no body. */ success: true;
+		  };
 	'bills.get': {
 		bill?: {
 			amount?: {
@@ -4560,59 +4572,63 @@ export type FreshBooksOperationOutputs = {
 			vis_state?: FreshBooksJsonValue | null;
 		} | null;
 	};
-	'clients.delete': {
-		client?: {
-			accounting_systemid?: FreshBooksJsonValue | null;
-			allow_late_fees?: FreshBooksJsonValue | null;
-			allow_late_notifications?: FreshBooksJsonValue | null;
-			bus_phone?: FreshBooksJsonValue | null;
-			company_industry?: FreshBooksJsonValue | null;
-			company_size?: FreshBooksJsonValue | null;
-			currency_code?: FreshBooksJsonValue | null;
-			direct_link_token?: FreshBooksJsonValue | null;
-			email?: FreshBooksJsonValue | null;
-			fax?: FreshBooksJsonValue | null;
-			fname?: FreshBooksJsonValue | null;
-			has_retainer?: FreshBooksJsonValue | null;
-			home_phone?: FreshBooksJsonValue | null;
-			id?: FreshBooksJsonValue | null;
-			language?: FreshBooksJsonValue | null;
-			last_activity?: FreshBooksJsonValue | null;
-			last_login?: FreshBooksJsonValue | null;
-			level?: FreshBooksJsonValue | null;
-			lname?: FreshBooksJsonValue | null;
-			mob_phone?: FreshBooksJsonValue | null;
-			note?: FreshBooksJsonValue | null;
-			notified?: FreshBooksJsonValue | null;
-			num_logins?: FreshBooksJsonValue | null;
-			organization?: FreshBooksJsonValue | null;
-			p_city?: FreshBooksJsonValue | null;
-			p_code?: FreshBooksJsonValue | null;
-			p_country?: FreshBooksJsonValue | null;
-			p_province?: FreshBooksJsonValue | null;
-			p_street?: FreshBooksJsonValue | null;
-			p_street2?: FreshBooksJsonValue | null;
-			pref_email?: FreshBooksJsonValue | null;
-			pref_gmail?: FreshBooksJsonValue | null;
-			retainer_id?: FreshBooksJsonValue | null;
-			role?: FreshBooksJsonValue | null;
-			s_city?: FreshBooksJsonValue | null;
-			s_code?: FreshBooksJsonValue | null;
-			s_country?: FreshBooksJsonValue | null;
-			s_province?: FreshBooksJsonValue | null;
-			s_street?: FreshBooksJsonValue | null;
-			s_street2?: FreshBooksJsonValue | null;
-			signup_date?: FreshBooksJsonValue | null;
-			statement_token?: FreshBooksJsonValue | null;
-			subdomain?: FreshBooksJsonValue | null;
-			updated?: FreshBooksJsonValue | null;
-			userid?: FreshBooksJsonValue | null;
-			username?: FreshBooksJsonValue | null;
-			vat_name?: FreshBooksJsonValue | null;
-			vat_number?: FreshBooksJsonValue | null;
-			vis_state?: FreshBooksJsonValue | null;
-		} | null;
-	};
+	'clients.delete':
+		| {
+				client?: {
+					accounting_systemid?: FreshBooksJsonValue | null;
+					allow_late_fees?: FreshBooksJsonValue | null;
+					allow_late_notifications?: FreshBooksJsonValue | null;
+					bus_phone?: FreshBooksJsonValue | null;
+					company_industry?: FreshBooksJsonValue | null;
+					company_size?: FreshBooksJsonValue | null;
+					currency_code?: FreshBooksJsonValue | null;
+					direct_link_token?: FreshBooksJsonValue | null;
+					email?: FreshBooksJsonValue | null;
+					fax?: FreshBooksJsonValue | null;
+					fname?: FreshBooksJsonValue | null;
+					has_retainer?: FreshBooksJsonValue | null;
+					home_phone?: FreshBooksJsonValue | null;
+					id?: FreshBooksJsonValue | null;
+					language?: FreshBooksJsonValue | null;
+					last_activity?: FreshBooksJsonValue | null;
+					last_login?: FreshBooksJsonValue | null;
+					level?: FreshBooksJsonValue | null;
+					lname?: FreshBooksJsonValue | null;
+					mob_phone?: FreshBooksJsonValue | null;
+					note?: FreshBooksJsonValue | null;
+					notified?: FreshBooksJsonValue | null;
+					num_logins?: FreshBooksJsonValue | null;
+					organization?: FreshBooksJsonValue | null;
+					p_city?: FreshBooksJsonValue | null;
+					p_code?: FreshBooksJsonValue | null;
+					p_country?: FreshBooksJsonValue | null;
+					p_province?: FreshBooksJsonValue | null;
+					p_street?: FreshBooksJsonValue | null;
+					p_street2?: FreshBooksJsonValue | null;
+					pref_email?: FreshBooksJsonValue | null;
+					pref_gmail?: FreshBooksJsonValue | null;
+					retainer_id?: FreshBooksJsonValue | null;
+					role?: FreshBooksJsonValue | null;
+					s_city?: FreshBooksJsonValue | null;
+					s_code?: FreshBooksJsonValue | null;
+					s_country?: FreshBooksJsonValue | null;
+					s_province?: FreshBooksJsonValue | null;
+					s_street?: FreshBooksJsonValue | null;
+					s_street2?: FreshBooksJsonValue | null;
+					signup_date?: FreshBooksJsonValue | null;
+					statement_token?: FreshBooksJsonValue | null;
+					subdomain?: FreshBooksJsonValue | null;
+					updated?: FreshBooksJsonValue | null;
+					userid?: FreshBooksJsonValue | null;
+					username?: FreshBooksJsonValue | null;
+					vat_name?: FreshBooksJsonValue | null;
+					vat_number?: FreshBooksJsonValue | null;
+					vis_state?: FreshBooksJsonValue | null;
+				} | null;
+		  }
+		| {
+				/** FreshBooks accepted the call; it answered with no body. */ success: true;
+		  };
 	'clients.get': {
 		client?: {
 			accounting_systemid?: FreshBooksJsonValue | null;
@@ -4827,51 +4843,55 @@ export type FreshBooksOperationOutputs = {
 			vis_state?: FreshBooksJsonValue | null;
 		} | null;
 	};
-	'creditNotes.delete': {
-		credit_note?: {
-			accounting_systemid?: FreshBooksJsonValue | null;
-			amount?: {
-				amount?: FreshBooksJsonValue | null;
-				code?: FreshBooksJsonValue | null;
-			} | null;
-			city?: FreshBooksJsonValue | null;
-			clientid?: FreshBooksJsonValue | null;
-			code?: FreshBooksJsonValue | null;
-			country?: FreshBooksJsonValue | null;
-			create_date?: FreshBooksJsonValue | null;
-			credit_number?: FreshBooksJsonValue | null;
-			credit_type?: FreshBooksJsonValue | null;
-			creditid?: FreshBooksJsonValue | null;
-			currency_code?: FreshBooksJsonValue | null;
-			current_organization?: FreshBooksJsonValue | null;
-			description?: FreshBooksJsonValue | null;
-			display_status?: FreshBooksJsonValue | null;
-			dispute_status?: FreshBooksJsonValue | null;
-			ext_archive?: FreshBooksJsonValue | null;
-			fname?: FreshBooksJsonValue | null;
-			id?: FreshBooksJsonValue | null;
-			language?: FreshBooksJsonValue | null;
-			last_order_status?: FreshBooksJsonValue | null;
-			lname?: FreshBooksJsonValue | null;
-			notes?: FreshBooksJsonValue | null;
-			organization?: FreshBooksJsonValue | null;
-			paid?: {
-				amount?: FreshBooksJsonValue | null;
-				code?: FreshBooksJsonValue | null;
-			} | null;
-			payment_status?: FreshBooksJsonValue | null;
-			province?: FreshBooksJsonValue | null;
-			sentid?: FreshBooksJsonValue | null;
-			status?: FreshBooksJsonValue | null;
-			street?: FreshBooksJsonValue | null;
-			street2?: FreshBooksJsonValue | null;
-			template?: FreshBooksJsonValue | null;
-			terms?: FreshBooksJsonValue | null;
-			vat_name?: FreshBooksJsonValue | null;
-			vat_number?: FreshBooksJsonValue | null;
-			vis_state?: FreshBooksJsonValue | null;
-		} | null;
-	};
+	'creditNotes.delete':
+		| {
+				credit_note?: {
+					accounting_systemid?: FreshBooksJsonValue | null;
+					amount?: {
+						amount?: FreshBooksJsonValue | null;
+						code?: FreshBooksJsonValue | null;
+					} | null;
+					city?: FreshBooksJsonValue | null;
+					clientid?: FreshBooksJsonValue | null;
+					code?: FreshBooksJsonValue | null;
+					country?: FreshBooksJsonValue | null;
+					create_date?: FreshBooksJsonValue | null;
+					credit_number?: FreshBooksJsonValue | null;
+					credit_type?: FreshBooksJsonValue | null;
+					creditid?: FreshBooksJsonValue | null;
+					currency_code?: FreshBooksJsonValue | null;
+					current_organization?: FreshBooksJsonValue | null;
+					description?: FreshBooksJsonValue | null;
+					display_status?: FreshBooksJsonValue | null;
+					dispute_status?: FreshBooksJsonValue | null;
+					ext_archive?: FreshBooksJsonValue | null;
+					fname?: FreshBooksJsonValue | null;
+					id?: FreshBooksJsonValue | null;
+					language?: FreshBooksJsonValue | null;
+					last_order_status?: FreshBooksJsonValue | null;
+					lname?: FreshBooksJsonValue | null;
+					notes?: FreshBooksJsonValue | null;
+					organization?: FreshBooksJsonValue | null;
+					paid?: {
+						amount?: FreshBooksJsonValue | null;
+						code?: FreshBooksJsonValue | null;
+					} | null;
+					payment_status?: FreshBooksJsonValue | null;
+					province?: FreshBooksJsonValue | null;
+					sentid?: FreshBooksJsonValue | null;
+					status?: FreshBooksJsonValue | null;
+					street?: FreshBooksJsonValue | null;
+					street2?: FreshBooksJsonValue | null;
+					template?: FreshBooksJsonValue | null;
+					terms?: FreshBooksJsonValue | null;
+					vat_name?: FreshBooksJsonValue | null;
+					vat_number?: FreshBooksJsonValue | null;
+					vis_state?: FreshBooksJsonValue | null;
+				} | null;
+		  }
+		| {
+				/** FreshBooks accepted the call; it answered with no body. */ success: true;
+		  };
 	'creditNotes.get': {
 		credit_note?: {
 			accounting_systemid?: FreshBooksJsonValue | null;
@@ -5117,59 +5137,63 @@ export type FreshBooksOperationOutputs = {
 			vis_state?: FreshBooksJsonValue | null;
 		} | null;
 	};
-	'estimates.delete': {
-		estimate?: {
-			accepted?: FreshBooksJsonValue | null;
-			accounting_systemid?: FreshBooksJsonValue | null;
-			address?: FreshBooksJsonValue | null;
-			amount?: {
-				amount?: FreshBooksJsonValue | null;
-				code?: FreshBooksJsonValue | null;
-			} | null;
-			city?: FreshBooksJsonValue | null;
-			code?: FreshBooksJsonValue | null;
-			country?: FreshBooksJsonValue | null;
-			create_date?: FreshBooksJsonValue | null;
-			created_at?: FreshBooksJsonValue | null;
-			currency_code?: FreshBooksJsonValue | null;
-			current_organization?: FreshBooksJsonValue | null;
-			customerid?: FreshBooksJsonValue | null;
-			description?: FreshBooksJsonValue | null;
-			discount_total?: {
-				amount?: FreshBooksJsonValue | null;
-				code?: FreshBooksJsonValue | null;
-			} | null;
-			discount_value?: FreshBooksJsonValue | null;
-			display_status?: FreshBooksJsonValue | null;
-			estimate_number?: FreshBooksJsonValue | null;
-			estimateid?: FreshBooksJsonValue | null;
-			ext_archive?: FreshBooksJsonValue | null;
-			fname?: FreshBooksJsonValue | null;
-			id?: FreshBooksJsonValue | null;
-			invoiced?: FreshBooksJsonValue | null;
-			language?: FreshBooksJsonValue | null;
-			lname?: FreshBooksJsonValue | null;
-			notes?: FreshBooksJsonValue | null;
-			organization?: FreshBooksJsonValue | null;
-			ownerid?: FreshBooksJsonValue | null;
-			po_number?: FreshBooksJsonValue | null;
-			province?: FreshBooksJsonValue | null;
-			reply_status?: FreshBooksJsonValue | null;
-			require_client_signature?: FreshBooksJsonValue | null;
-			rich_proposal?: FreshBooksJsonValue | null;
-			sentid?: FreshBooksJsonValue | null;
-			status?: FreshBooksJsonValue | null;
-			street?: FreshBooksJsonValue | null;
-			street2?: FreshBooksJsonValue | null;
-			template?: FreshBooksJsonValue | null;
-			terms?: FreshBooksJsonValue | null;
-			ui_status?: FreshBooksJsonValue | null;
-			updated?: FreshBooksJsonValue | null;
-			vat_name?: FreshBooksJsonValue | null;
-			vat_number?: FreshBooksJsonValue | null;
-			vis_state?: FreshBooksJsonValue | null;
-		} | null;
-	};
+	'estimates.delete':
+		| {
+				estimate?: {
+					accepted?: FreshBooksJsonValue | null;
+					accounting_systemid?: FreshBooksJsonValue | null;
+					address?: FreshBooksJsonValue | null;
+					amount?: {
+						amount?: FreshBooksJsonValue | null;
+						code?: FreshBooksJsonValue | null;
+					} | null;
+					city?: FreshBooksJsonValue | null;
+					code?: FreshBooksJsonValue | null;
+					country?: FreshBooksJsonValue | null;
+					create_date?: FreshBooksJsonValue | null;
+					created_at?: FreshBooksJsonValue | null;
+					currency_code?: FreshBooksJsonValue | null;
+					current_organization?: FreshBooksJsonValue | null;
+					customerid?: FreshBooksJsonValue | null;
+					description?: FreshBooksJsonValue | null;
+					discount_total?: {
+						amount?: FreshBooksJsonValue | null;
+						code?: FreshBooksJsonValue | null;
+					} | null;
+					discount_value?: FreshBooksJsonValue | null;
+					display_status?: FreshBooksJsonValue | null;
+					estimate_number?: FreshBooksJsonValue | null;
+					estimateid?: FreshBooksJsonValue | null;
+					ext_archive?: FreshBooksJsonValue | null;
+					fname?: FreshBooksJsonValue | null;
+					id?: FreshBooksJsonValue | null;
+					invoiced?: FreshBooksJsonValue | null;
+					language?: FreshBooksJsonValue | null;
+					lname?: FreshBooksJsonValue | null;
+					notes?: FreshBooksJsonValue | null;
+					organization?: FreshBooksJsonValue | null;
+					ownerid?: FreshBooksJsonValue | null;
+					po_number?: FreshBooksJsonValue | null;
+					province?: FreshBooksJsonValue | null;
+					reply_status?: FreshBooksJsonValue | null;
+					require_client_signature?: FreshBooksJsonValue | null;
+					rich_proposal?: FreshBooksJsonValue | null;
+					sentid?: FreshBooksJsonValue | null;
+					status?: FreshBooksJsonValue | null;
+					street?: FreshBooksJsonValue | null;
+					street2?: FreshBooksJsonValue | null;
+					template?: FreshBooksJsonValue | null;
+					terms?: FreshBooksJsonValue | null;
+					ui_status?: FreshBooksJsonValue | null;
+					updated?: FreshBooksJsonValue | null;
+					vat_name?: FreshBooksJsonValue | null;
+					vat_number?: FreshBooksJsonValue | null;
+					vis_state?: FreshBooksJsonValue | null;
+				} | null;
+		  }
+		| {
+				/** FreshBooks accepted the call; it answered with no body. */ success: true;
+		  };
 	'estimates.get': {
 		estimate?: {
 			accepted?: FreshBooksJsonValue | null;
@@ -5535,52 +5559,56 @@ export type FreshBooksOperationOutputs = {
 			vis_state?: FreshBooksJsonValue | null;
 		} | null;
 	};
-	'expenses.delete': {
-		expense?: {
-			account_name?: FreshBooksJsonValue | null;
-			accountid?: FreshBooksJsonValue | null;
-			accounting_systemid?: FreshBooksJsonValue | null;
-			amount?: {
-				amount?: FreshBooksJsonValue | null;
-				code?: FreshBooksJsonValue | null;
-			} | null;
-			background_jobid?: FreshBooksJsonValue | null;
-			bank_name?: FreshBooksJsonValue | null;
-			categoryid?: FreshBooksJsonValue | null;
-			clientid?: FreshBooksJsonValue | null;
-			compounded_tax?: FreshBooksJsonValue | null;
-			date?: FreshBooksJsonValue | null;
-			expenseid?: FreshBooksJsonValue | null;
-			ext_invoiceid?: FreshBooksJsonValue | null;
-			ext_systemid?: FreshBooksJsonValue | null;
-			from_bulk_import?: FreshBooksJsonValue | null;
-			has_receipt?: FreshBooksJsonValue | null;
-			id?: FreshBooksJsonValue | null;
-			include_receipt?: FreshBooksJsonValue | null;
-			invoiceid?: FreshBooksJsonValue | null;
-			is_cogs?: FreshBooksJsonValue | null;
-			isduplicate?: FreshBooksJsonValue | null;
-			markup_percent?: FreshBooksJsonValue | null;
-			notes?: FreshBooksJsonValue | null;
-			profileid?: FreshBooksJsonValue | null;
-			projectid?: FreshBooksJsonValue | null;
-			staffid?: FreshBooksJsonValue | null;
-			status?: FreshBooksJsonValue | null;
-			taxAmount1?: {
-				amount?: FreshBooksJsonValue | null;
-				code?: FreshBooksJsonValue | null;
-			} | null;
-			taxAmount2?: FreshBooksJsonValue | null;
-			taxName1?: FreshBooksJsonValue | null;
-			taxName2?: FreshBooksJsonValue | null;
-			taxPercent1?: FreshBooksJsonValue | null;
-			taxPercent2?: FreshBooksJsonValue | null;
-			transactionid?: FreshBooksJsonValue | null;
-			updated?: FreshBooksJsonValue | null;
-			vendor?: FreshBooksJsonValue | null;
-			vis_state?: FreshBooksJsonValue | null;
-		} | null;
-	};
+	'expenses.delete':
+		| {
+				expense?: {
+					account_name?: FreshBooksJsonValue | null;
+					accountid?: FreshBooksJsonValue | null;
+					accounting_systemid?: FreshBooksJsonValue | null;
+					amount?: {
+						amount?: FreshBooksJsonValue | null;
+						code?: FreshBooksJsonValue | null;
+					} | null;
+					background_jobid?: FreshBooksJsonValue | null;
+					bank_name?: FreshBooksJsonValue | null;
+					categoryid?: FreshBooksJsonValue | null;
+					clientid?: FreshBooksJsonValue | null;
+					compounded_tax?: FreshBooksJsonValue | null;
+					date?: FreshBooksJsonValue | null;
+					expenseid?: FreshBooksJsonValue | null;
+					ext_invoiceid?: FreshBooksJsonValue | null;
+					ext_systemid?: FreshBooksJsonValue | null;
+					from_bulk_import?: FreshBooksJsonValue | null;
+					has_receipt?: FreshBooksJsonValue | null;
+					id?: FreshBooksJsonValue | null;
+					include_receipt?: FreshBooksJsonValue | null;
+					invoiceid?: FreshBooksJsonValue | null;
+					is_cogs?: FreshBooksJsonValue | null;
+					isduplicate?: FreshBooksJsonValue | null;
+					markup_percent?: FreshBooksJsonValue | null;
+					notes?: FreshBooksJsonValue | null;
+					profileid?: FreshBooksJsonValue | null;
+					projectid?: FreshBooksJsonValue | null;
+					staffid?: FreshBooksJsonValue | null;
+					status?: FreshBooksJsonValue | null;
+					taxAmount1?: {
+						amount?: FreshBooksJsonValue | null;
+						code?: FreshBooksJsonValue | null;
+					} | null;
+					taxAmount2?: FreshBooksJsonValue | null;
+					taxName1?: FreshBooksJsonValue | null;
+					taxName2?: FreshBooksJsonValue | null;
+					taxPercent1?: FreshBooksJsonValue | null;
+					taxPercent2?: FreshBooksJsonValue | null;
+					transactionid?: FreshBooksJsonValue | null;
+					updated?: FreshBooksJsonValue | null;
+					vendor?: FreshBooksJsonValue | null;
+					vis_state?: FreshBooksJsonValue | null;
+				} | null;
+		  }
+		| {
+				/** FreshBooks accepted the call; it answered with no body. */ success: true;
+		  };
 	'expenses.get': {
 		expense?: {
 			account_name?: FreshBooksJsonValue | null;
@@ -5910,60 +5938,64 @@ export type FreshBooksOperationOutputs = {
 			vis_state?: FreshBooksJsonValue | null;
 		} | null;
 	};
-	'invoiceProfiles.delete': {
-		invoice_profile?: {
-			accounting_systemid?: FreshBooksJsonValue | null;
-			address?: FreshBooksJsonValue | null;
-			amount?: {
-				amount?: FreshBooksJsonValue | null;
-				code?: FreshBooksJsonValue | null;
-			} | null;
-			auto_bill?: FreshBooksJsonValue | null;
-			bill_gateway?: FreshBooksJsonValue | null;
-			city?: FreshBooksJsonValue | null;
-			code?: FreshBooksJsonValue | null;
-			country?: FreshBooksJsonValue | null;
-			create_date?: FreshBooksJsonValue | null;
-			currency_code?: FreshBooksJsonValue | null;
-			customerid?: FreshBooksJsonValue | null;
-			description?: FreshBooksJsonValue | null;
-			disable?: FreshBooksJsonValue | null;
-			discount_total?: {
-				amount?: FreshBooksJsonValue | null;
-				code?: FreshBooksJsonValue | null;
-			} | null;
-			discount_value?: FreshBooksJsonValue | null;
-			due_offset_days?: FreshBooksJsonValue | null;
-			ext_archive?: FreshBooksJsonValue | null;
-			fname?: FreshBooksJsonValue | null;
-			frequency?: FreshBooksJsonValue | null;
-			id?: FreshBooksJsonValue | null;
-			include_unbilled_time?: FreshBooksJsonValue | null;
-			language?: FreshBooksJsonValue | null;
-			lname?: FreshBooksJsonValue | null;
-			notes?: FreshBooksJsonValue | null;
-			numberRecurring?: FreshBooksJsonValue | null;
-			occurrences_to_date?: FreshBooksJsonValue | null;
-			organization?: FreshBooksJsonValue | null;
-			ownerid?: FreshBooksJsonValue | null;
-			payment_details?: FreshBooksJsonValue | null;
-			po_number?: FreshBooksJsonValue | null;
-			profileid?: FreshBooksJsonValue | null;
-			province?: FreshBooksJsonValue | null;
-			require_auto_bill?: FreshBooksJsonValue | null;
-			retainer_id?: FreshBooksJsonValue | null;
-			send_email?: FreshBooksJsonValue | null;
-			send_gmail?: FreshBooksJsonValue | null;
-			street?: FreshBooksJsonValue | null;
-			street2?: FreshBooksJsonValue | null;
-			terms?: FreshBooksJsonValue | null;
-			total_accrued_revenue?: FreshBooksJsonValue | null;
-			updated?: FreshBooksJsonValue | null;
-			vat_name?: FreshBooksJsonValue | null;
-			vat_number?: FreshBooksJsonValue | null;
-			vis_state?: FreshBooksJsonValue | null;
-		} | null;
-	};
+	'invoiceProfiles.delete':
+		| {
+				invoice_profile?: {
+					accounting_systemid?: FreshBooksJsonValue | null;
+					address?: FreshBooksJsonValue | null;
+					amount?: {
+						amount?: FreshBooksJsonValue | null;
+						code?: FreshBooksJsonValue | null;
+					} | null;
+					auto_bill?: FreshBooksJsonValue | null;
+					bill_gateway?: FreshBooksJsonValue | null;
+					city?: FreshBooksJsonValue | null;
+					code?: FreshBooksJsonValue | null;
+					country?: FreshBooksJsonValue | null;
+					create_date?: FreshBooksJsonValue | null;
+					currency_code?: FreshBooksJsonValue | null;
+					customerid?: FreshBooksJsonValue | null;
+					description?: FreshBooksJsonValue | null;
+					disable?: FreshBooksJsonValue | null;
+					discount_total?: {
+						amount?: FreshBooksJsonValue | null;
+						code?: FreshBooksJsonValue | null;
+					} | null;
+					discount_value?: FreshBooksJsonValue | null;
+					due_offset_days?: FreshBooksJsonValue | null;
+					ext_archive?: FreshBooksJsonValue | null;
+					fname?: FreshBooksJsonValue | null;
+					frequency?: FreshBooksJsonValue | null;
+					id?: FreshBooksJsonValue | null;
+					include_unbilled_time?: FreshBooksJsonValue | null;
+					language?: FreshBooksJsonValue | null;
+					lname?: FreshBooksJsonValue | null;
+					notes?: FreshBooksJsonValue | null;
+					numberRecurring?: FreshBooksJsonValue | null;
+					occurrences_to_date?: FreshBooksJsonValue | null;
+					organization?: FreshBooksJsonValue | null;
+					ownerid?: FreshBooksJsonValue | null;
+					payment_details?: FreshBooksJsonValue | null;
+					po_number?: FreshBooksJsonValue | null;
+					profileid?: FreshBooksJsonValue | null;
+					province?: FreshBooksJsonValue | null;
+					require_auto_bill?: FreshBooksJsonValue | null;
+					retainer_id?: FreshBooksJsonValue | null;
+					send_email?: FreshBooksJsonValue | null;
+					send_gmail?: FreshBooksJsonValue | null;
+					street?: FreshBooksJsonValue | null;
+					street2?: FreshBooksJsonValue | null;
+					terms?: FreshBooksJsonValue | null;
+					total_accrued_revenue?: FreshBooksJsonValue | null;
+					updated?: FreshBooksJsonValue | null;
+					vat_name?: FreshBooksJsonValue | null;
+					vat_number?: FreshBooksJsonValue | null;
+					vis_state?: FreshBooksJsonValue | null;
+				} | null;
+		  }
+		| {
+				/** FreshBooks accepted the call; it answered with no body. */ success: true;
+		  };
 	'invoiceProfiles.get': {
 		invoice_profile?: {
 			accounting_systemid?: FreshBooksJsonValue | null;
@@ -6208,84 +6240,88 @@ export type FreshBooksOperationOutputs = {
 			vis_state?: FreshBooksJsonValue | null;
 		} | null;
 	};
-	'invoices.delete': {
-		invoice?: {
-			accountid?: FreshBooksJsonValue | null;
-			accounting_systemid?: FreshBooksJsonValue | null;
-			address?: FreshBooksJsonValue | null;
-			amount?: {
-				amount?: FreshBooksJsonValue | null;
-				code?: FreshBooksJsonValue | null;
-			} | null;
-			auto_bill?: FreshBooksJsonValue | null;
-			autobill_status?: FreshBooksJsonValue | null;
-			basecampid?: FreshBooksJsonValue | null;
-			city?: FreshBooksJsonValue | null;
-			code?: FreshBooksJsonValue | null;
-			country?: FreshBooksJsonValue | null;
-			create_date?: FreshBooksJsonValue | null;
-			created_at?: FreshBooksJsonValue | null;
-			currency_code?: FreshBooksJsonValue | null;
-			current_organization?: FreshBooksJsonValue | null;
-			customerid?: FreshBooksJsonValue | null;
-			date_paid?: FreshBooksJsonValue | null;
-			deposit_amount?: FreshBooksJsonValue | null;
-			deposit_percentage?: FreshBooksJsonValue | null;
-			deposit_status?: FreshBooksJsonValue | null;
-			description?: FreshBooksJsonValue | null;
-			discount_description?: FreshBooksJsonValue | null;
-			discount_total?: {
-				amount?: FreshBooksJsonValue | null;
-				code?: FreshBooksJsonValue | null;
-			} | null;
-			discount_value?: FreshBooksJsonValue | null;
-			display_status?: FreshBooksJsonValue | null;
-			dispute_status?: FreshBooksJsonValue | null;
-			due_date?: FreshBooksJsonValue | null;
-			due_offset_days?: FreshBooksJsonValue | null;
-			estimateid?: FreshBooksJsonValue | null;
-			ext_archive?: FreshBooksJsonValue | null;
-			fname?: FreshBooksJsonValue | null;
-			fulfillment_date?: FreshBooksJsonValue | null;
-			generation_date?: FreshBooksJsonValue | null;
-			gmail?: FreshBooksJsonValue | null;
-			id?: FreshBooksJsonValue | null;
-			invoice_number?: FreshBooksJsonValue | null;
-			invoiceid?: FreshBooksJsonValue | null;
-			language?: FreshBooksJsonValue | null;
-			last_order_status?: FreshBooksJsonValue | null;
-			lname?: FreshBooksJsonValue | null;
-			notes?: FreshBooksJsonValue | null;
-			organization?: FreshBooksJsonValue | null;
-			outstanding?: {
-				amount?: FreshBooksJsonValue | null;
-				code?: FreshBooksJsonValue | null;
-			} | null;
-			ownerid?: FreshBooksJsonValue | null;
-			paid?: {
-				amount?: FreshBooksJsonValue | null;
-				code?: FreshBooksJsonValue | null;
-			} | null;
-			parent?: FreshBooksJsonValue | null;
-			payment_details?: FreshBooksJsonValue | null;
-			payment_status?: FreshBooksJsonValue | null;
-			po_number?: FreshBooksJsonValue | null;
-			province?: FreshBooksJsonValue | null;
-			return_uri?: FreshBooksJsonValue | null;
-			sentid?: FreshBooksJsonValue | null;
-			show_attachments?: FreshBooksJsonValue | null;
-			status?: FreshBooksJsonValue | null;
-			street?: FreshBooksJsonValue | null;
-			street2?: FreshBooksJsonValue | null;
-			template?: FreshBooksJsonValue | null;
-			terms?: FreshBooksJsonValue | null;
-			updated?: FreshBooksJsonValue | null;
-			v3_status?: FreshBooksJsonValue | null;
-			vat_name?: FreshBooksJsonValue | null;
-			vat_number?: FreshBooksJsonValue | null;
-			vis_state?: FreshBooksJsonValue | null;
-		} | null;
-	};
+	'invoices.delete':
+		| {
+				invoice?: {
+					accountid?: FreshBooksJsonValue | null;
+					accounting_systemid?: FreshBooksJsonValue | null;
+					address?: FreshBooksJsonValue | null;
+					amount?: {
+						amount?: FreshBooksJsonValue | null;
+						code?: FreshBooksJsonValue | null;
+					} | null;
+					auto_bill?: FreshBooksJsonValue | null;
+					autobill_status?: FreshBooksJsonValue | null;
+					basecampid?: FreshBooksJsonValue | null;
+					city?: FreshBooksJsonValue | null;
+					code?: FreshBooksJsonValue | null;
+					country?: FreshBooksJsonValue | null;
+					create_date?: FreshBooksJsonValue | null;
+					created_at?: FreshBooksJsonValue | null;
+					currency_code?: FreshBooksJsonValue | null;
+					current_organization?: FreshBooksJsonValue | null;
+					customerid?: FreshBooksJsonValue | null;
+					date_paid?: FreshBooksJsonValue | null;
+					deposit_amount?: FreshBooksJsonValue | null;
+					deposit_percentage?: FreshBooksJsonValue | null;
+					deposit_status?: FreshBooksJsonValue | null;
+					description?: FreshBooksJsonValue | null;
+					discount_description?: FreshBooksJsonValue | null;
+					discount_total?: {
+						amount?: FreshBooksJsonValue | null;
+						code?: FreshBooksJsonValue | null;
+					} | null;
+					discount_value?: FreshBooksJsonValue | null;
+					display_status?: FreshBooksJsonValue | null;
+					dispute_status?: FreshBooksJsonValue | null;
+					due_date?: FreshBooksJsonValue | null;
+					due_offset_days?: FreshBooksJsonValue | null;
+					estimateid?: FreshBooksJsonValue | null;
+					ext_archive?: FreshBooksJsonValue | null;
+					fname?: FreshBooksJsonValue | null;
+					fulfillment_date?: FreshBooksJsonValue | null;
+					generation_date?: FreshBooksJsonValue | null;
+					gmail?: FreshBooksJsonValue | null;
+					id?: FreshBooksJsonValue | null;
+					invoice_number?: FreshBooksJsonValue | null;
+					invoiceid?: FreshBooksJsonValue | null;
+					language?: FreshBooksJsonValue | null;
+					last_order_status?: FreshBooksJsonValue | null;
+					lname?: FreshBooksJsonValue | null;
+					notes?: FreshBooksJsonValue | null;
+					organization?: FreshBooksJsonValue | null;
+					outstanding?: {
+						amount?: FreshBooksJsonValue | null;
+						code?: FreshBooksJsonValue | null;
+					} | null;
+					ownerid?: FreshBooksJsonValue | null;
+					paid?: {
+						amount?: FreshBooksJsonValue | null;
+						code?: FreshBooksJsonValue | null;
+					} | null;
+					parent?: FreshBooksJsonValue | null;
+					payment_details?: FreshBooksJsonValue | null;
+					payment_status?: FreshBooksJsonValue | null;
+					po_number?: FreshBooksJsonValue | null;
+					province?: FreshBooksJsonValue | null;
+					return_uri?: FreshBooksJsonValue | null;
+					sentid?: FreshBooksJsonValue | null;
+					show_attachments?: FreshBooksJsonValue | null;
+					status?: FreshBooksJsonValue | null;
+					street?: FreshBooksJsonValue | null;
+					street2?: FreshBooksJsonValue | null;
+					template?: FreshBooksJsonValue | null;
+					terms?: FreshBooksJsonValue | null;
+					updated?: FreshBooksJsonValue | null;
+					v3_status?: FreshBooksJsonValue | null;
+					vat_name?: FreshBooksJsonValue | null;
+					vat_number?: FreshBooksJsonValue | null;
+					vis_state?: FreshBooksJsonValue | null;
+				} | null;
+		  }
+		| {
+				/** FreshBooks accepted the call; it answered with no body. */ success: true;
+		  };
 	'invoices.downloadPdf': FileOutput;
 	'invoices.get': {
 		invoice?: {
@@ -6794,25 +6830,29 @@ export type FreshBooksOperationOutputs = {
 			vis_state?: FreshBooksJsonValue | null;
 		} | null;
 	};
-	'items.delete': {
-		item?: {
-			accounting_systemid?: FreshBooksJsonValue | null;
-			description?: FreshBooksJsonValue | null;
-			id?: FreshBooksJsonValue | null;
-			inventory?: FreshBooksJsonValue | null;
-			itemid?: FreshBooksJsonValue | null;
-			name?: FreshBooksJsonValue | null;
-			qty?: FreshBooksJsonValue | null;
-			tax1?: FreshBooksJsonValue | null;
-			tax2?: FreshBooksJsonValue | null;
-			unit_cost?: {
-				amount?: FreshBooksJsonValue | null;
-				code?: FreshBooksJsonValue | null;
-			} | null;
-			updated?: FreshBooksJsonValue | null;
-			vis_state?: FreshBooksJsonValue | null;
-		} | null;
-	};
+	'items.delete':
+		| {
+				item?: {
+					accounting_systemid?: FreshBooksJsonValue | null;
+					description?: FreshBooksJsonValue | null;
+					id?: FreshBooksJsonValue | null;
+					inventory?: FreshBooksJsonValue | null;
+					itemid?: FreshBooksJsonValue | null;
+					name?: FreshBooksJsonValue | null;
+					qty?: FreshBooksJsonValue | null;
+					tax1?: FreshBooksJsonValue | null;
+					tax2?: FreshBooksJsonValue | null;
+					unit_cost?: {
+						amount?: FreshBooksJsonValue | null;
+						code?: FreshBooksJsonValue | null;
+					} | null;
+					updated?: FreshBooksJsonValue | null;
+					vis_state?: FreshBooksJsonValue | null;
+				} | null;
+		  }
+		| {
+				/** FreshBooks accepted the call; it answered with no body. */ success: true;
+		  };
 	'items.get': {
 		item?: {
 			accounting_systemid?: FreshBooksJsonValue | null;
@@ -7132,30 +7172,34 @@ export type FreshBooksOperationOutputs = {
 			vis_state?: FreshBooksJsonValue | null;
 		} | null;
 	};
-	'payments.delete': {
-		payment?: {
-			accounting_systemid?: FreshBooksJsonValue | null;
-			amount?: {
-				amount?: FreshBooksJsonValue | null;
-				code?: FreshBooksJsonValue | null;
-			} | null;
-			clientid?: FreshBooksJsonValue | null;
-			creditid?: FreshBooksJsonValue | null;
-			date?: FreshBooksJsonValue | null;
-			from_credit?: FreshBooksJsonValue | null;
-			gateway?: FreshBooksJsonValue | null;
-			id?: FreshBooksJsonValue | null;
-			invoiceid?: FreshBooksJsonValue | null;
-			logid?: FreshBooksJsonValue | null;
-			note?: FreshBooksJsonValue | null;
-			orderid?: FreshBooksJsonValue | null;
-			overpaymentid?: FreshBooksJsonValue | null;
-			transactionid?: FreshBooksJsonValue | null;
-			type?: FreshBooksJsonValue | null;
-			updated?: FreshBooksJsonValue | null;
-			vis_state?: FreshBooksJsonValue | null;
-		} | null;
-	};
+	'payments.delete':
+		| {
+				payment?: {
+					accounting_systemid?: FreshBooksJsonValue | null;
+					amount?: {
+						amount?: FreshBooksJsonValue | null;
+						code?: FreshBooksJsonValue | null;
+					} | null;
+					clientid?: FreshBooksJsonValue | null;
+					creditid?: FreshBooksJsonValue | null;
+					date?: FreshBooksJsonValue | null;
+					from_credit?: FreshBooksJsonValue | null;
+					gateway?: FreshBooksJsonValue | null;
+					id?: FreshBooksJsonValue | null;
+					invoiceid?: FreshBooksJsonValue | null;
+					logid?: FreshBooksJsonValue | null;
+					note?: FreshBooksJsonValue | null;
+					orderid?: FreshBooksJsonValue | null;
+					overpaymentid?: FreshBooksJsonValue | null;
+					transactionid?: FreshBooksJsonValue | null;
+					type?: FreshBooksJsonValue | null;
+					updated?: FreshBooksJsonValue | null;
+					vis_state?: FreshBooksJsonValue | null;
+				} | null;
+		  }
+		| {
+				/** FreshBooks accepted the call; it answered with no body. */ success: true;
+		  };
 	'payments.get': {
 		payment?: {
 			accounting_systemid?: FreshBooksJsonValue | null;
@@ -7799,23 +7843,27 @@ export type FreshBooksOperationOutputs = {
 			updated_at?: FreshBooksJsonValue | null;
 		} | null;
 	};
-	'retainers.delete': {
-		retainer?: {
-			id?: FreshBooksJsonValue | null;
-			business_id?: FreshBooksJsonValue | null;
-			system_id?: FreshBooksJsonValue | null;
-			invoice_profile_id?: FreshBooksJsonValue | null;
-			client_user_id?: FreshBooksJsonValue | null;
-			start_date?: FreshBooksJsonValue | null;
-			next_period_start_date?: FreshBooksJsonValue | null;
-			fee?: FreshBooksJsonValue | null;
-			excess_rate?: FreshBooksJsonValue | null;
-			budgeted_time?: FreshBooksJsonValue | null;
-			active?: FreshBooksJsonValue | null;
-			created_at?: FreshBooksJsonValue | null;
-			updated_at?: FreshBooksJsonValue | null;
-		} | null;
-	};
+	'retainers.delete':
+		| {
+				retainer?: {
+					id?: FreshBooksJsonValue | null;
+					business_id?: FreshBooksJsonValue | null;
+					system_id?: FreshBooksJsonValue | null;
+					invoice_profile_id?: FreshBooksJsonValue | null;
+					client_user_id?: FreshBooksJsonValue | null;
+					start_date?: FreshBooksJsonValue | null;
+					next_period_start_date?: FreshBooksJsonValue | null;
+					fee?: FreshBooksJsonValue | null;
+					excess_rate?: FreshBooksJsonValue | null;
+					budgeted_time?: FreshBooksJsonValue | null;
+					active?: FreshBooksJsonValue | null;
+					created_at?: FreshBooksJsonValue | null;
+					updated_at?: FreshBooksJsonValue | null;
+				} | null;
+		  }
+		| {
+				/** FreshBooks accepted the call; it answered with no body. */ success: true;
+		  };
 	'retainers.get': {
 		retainer?: {
 			id?: FreshBooksJsonValue | null;
@@ -7897,41 +7945,45 @@ export type FreshBooksOperationOutputs = {
 	'services.getRate': Record<string, FreshBooksJsonValue>;
 	'services.list': Record<string, FreshBooksJsonValue>;
 	'services.updateRate': Record<string, FreshBooksJsonValue>;
-	'staff.delete': {
-		staff?: {
-			accounting_systemid?: FreshBooksJsonValue | null;
-			api_token?: FreshBooksJsonValue | null;
-			bus_phone?: FreshBooksJsonValue | null;
-			currency_code?: FreshBooksJsonValue | null;
-			display_name?: FreshBooksJsonValue | null;
-			email?: FreshBooksJsonValue | null;
-			fax?: FreshBooksJsonValue | null;
-			fname?: FreshBooksJsonValue | null;
-			home_phone?: FreshBooksJsonValue | null;
-			id?: FreshBooksJsonValue | null;
-			language?: FreshBooksJsonValue | null;
-			last_login?: FreshBooksJsonValue | null;
-			level?: FreshBooksJsonValue | null;
-			lname?: FreshBooksJsonValue | null;
-			mob_phone?: FreshBooksJsonValue | null;
-			note?: FreshBooksJsonValue | null;
-			num_logins?: FreshBooksJsonValue | null;
-			organization?: FreshBooksJsonValue | null;
-			p_city?: FreshBooksJsonValue | null;
-			p_code?: FreshBooksJsonValue | null;
-			p_country?: FreshBooksJsonValue | null;
-			p_province?: FreshBooksJsonValue | null;
-			p_street?: FreshBooksJsonValue | null;
-			p_street2?: FreshBooksJsonValue | null;
-			rate?: FreshBooksJsonValue | null;
-			role?: FreshBooksJsonValue | null;
-			signup_date?: FreshBooksJsonValue | null;
-			updated?: FreshBooksJsonValue | null;
-			userid?: FreshBooksJsonValue | null;
-			username?: FreshBooksJsonValue | null;
-			vis_state?: FreshBooksJsonValue | null;
-		} | null;
-	};
+	'staff.delete':
+		| {
+				staff?: {
+					accounting_systemid?: FreshBooksJsonValue | null;
+					api_token?: FreshBooksJsonValue | null;
+					bus_phone?: FreshBooksJsonValue | null;
+					currency_code?: FreshBooksJsonValue | null;
+					display_name?: FreshBooksJsonValue | null;
+					email?: FreshBooksJsonValue | null;
+					fax?: FreshBooksJsonValue | null;
+					fname?: FreshBooksJsonValue | null;
+					home_phone?: FreshBooksJsonValue | null;
+					id?: FreshBooksJsonValue | null;
+					language?: FreshBooksJsonValue | null;
+					last_login?: FreshBooksJsonValue | null;
+					level?: FreshBooksJsonValue | null;
+					lname?: FreshBooksJsonValue | null;
+					mob_phone?: FreshBooksJsonValue | null;
+					note?: FreshBooksJsonValue | null;
+					num_logins?: FreshBooksJsonValue | null;
+					organization?: FreshBooksJsonValue | null;
+					p_city?: FreshBooksJsonValue | null;
+					p_code?: FreshBooksJsonValue | null;
+					p_country?: FreshBooksJsonValue | null;
+					p_province?: FreshBooksJsonValue | null;
+					p_street?: FreshBooksJsonValue | null;
+					p_street2?: FreshBooksJsonValue | null;
+					rate?: FreshBooksJsonValue | null;
+					role?: FreshBooksJsonValue | null;
+					signup_date?: FreshBooksJsonValue | null;
+					updated?: FreshBooksJsonValue | null;
+					userid?: FreshBooksJsonValue | null;
+					username?: FreshBooksJsonValue | null;
+					vis_state?: FreshBooksJsonValue | null;
+				} | null;
+		  }
+		| {
+				/** FreshBooks accepted the call; it answered with no body. */ success: true;
+		  };
 	'staff.get': {
 		staff?: {
 			accounting_systemid?: FreshBooksJsonValue | null;
@@ -8078,25 +8130,29 @@ export type FreshBooksOperationOutputs = {
 			vis_state?: FreshBooksJsonValue | null;
 		} | null;
 	};
-	'tasks.delete': {
-		task?: {
-			billable?: FreshBooksJsonValue | null;
-			description?: FreshBooksJsonValue | null;
-			id?: FreshBooksJsonValue | null;
-			name?: FreshBooksJsonValue | null;
-			rate?: {
-				amount?: FreshBooksJsonValue | null;
-				code?: FreshBooksJsonValue | null;
-			} | null;
-			taskid?: FreshBooksJsonValue | null;
-			tax1?: FreshBooksJsonValue | null;
-			tax2?: FreshBooksJsonValue | null;
-			tdesc?: FreshBooksJsonValue | null;
-			tname?: FreshBooksJsonValue | null;
-			updated?: FreshBooksJsonValue | null;
-			vis_state?: FreshBooksJsonValue | null;
-		} | null;
-	};
+	'tasks.delete':
+		| {
+				task?: {
+					billable?: FreshBooksJsonValue | null;
+					description?: FreshBooksJsonValue | null;
+					id?: FreshBooksJsonValue | null;
+					name?: FreshBooksJsonValue | null;
+					rate?: {
+						amount?: FreshBooksJsonValue | null;
+						code?: FreshBooksJsonValue | null;
+					} | null;
+					taskid?: FreshBooksJsonValue | null;
+					tax1?: FreshBooksJsonValue | null;
+					tax2?: FreshBooksJsonValue | null;
+					tdesc?: FreshBooksJsonValue | null;
+					tname?: FreshBooksJsonValue | null;
+					updated?: FreshBooksJsonValue | null;
+					vis_state?: FreshBooksJsonValue | null;
+				} | null;
+		  }
+		| {
+				/** FreshBooks accepted the call; it answered with no body. */ success: true;
+		  };
 	'tasks.get': {
 		task?: {
 			billable?: FreshBooksJsonValue | null;

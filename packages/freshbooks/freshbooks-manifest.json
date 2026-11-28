@@ -1555,6 +1555,7 @@
       "summary": "Delete a payment made on a bill (sets vis_state to 1). FreshBooks keeps it: an update with vis_state 0 restores it",
       "request": "none",
       "response": "json",
+      "emptyOk": true,
       "fixedBody": {
         "bill_payment": {
           "vis_state": 1
@@ -1976,6 +1977,7 @@
       "summary": "Delete a bill vendor (sets vis_state to 1). FreshBooks keeps it: an update with vis_state 0 restores it",
       "request": "none",
       "response": "json",
+      "emptyOk": true,
       "fixedBody": {
         "bill_vendor": {
           "vis_state": 1
@@ -2754,6 +2756,7 @@
       "summary": "Delete a bill from a vendor (sets vis_state to 1). FreshBooks keeps it: an update with vis_state 0 restores it",
       "request": "none",
       "response": "json",
+      "emptyOk": true,
       "fixedBody": {
         "bill": {
           "vis_state": 1
@@ -4250,6 +4253,7 @@
       "summary": "Delete a client (sets vis_state to 1). FreshBooks keeps it: an update with vis_state 0 restores it",
       "request": "none",
       "response": "json",
+      "emptyOk": true,
       "fixedBody": {
         "client": {
           "vis_state": 1
@@ -5031,6 +5035,7 @@
       "summary": "Delete a credit note (goodwill, prepayment or refund credit) (sets vis_state to 1). FreshBooks keeps it: an update with vis_state 0 restores it",
       "request": "none",
       "response": "json",
+      "emptyOk": true,
       "fixedBody": {
         "credit_note": {
           "vis_state": 1
@@ -5809,6 +5814,7 @@
       "summary": "Delete a estimate (sets vis_state to 1). FreshBooks keeps it: an update with vis_state 0 restores it",
       "request": "none",
       "response": "json",
+      "emptyOk": true,
       "fixedBody": {
         "estimate": {
           "vis_state": 1
@@ -7007,6 +7013,7 @@
       "summary": "Delete a expense (sets vis_state to 1). FreshBooks keeps it: an update with vis_state 0 restores it",
       "request": "none",
       "response": "json",
+      "emptyOk": true,
       "fixedBody": {
         "expense": {
           "vis_state": 1
@@ -8291,6 +8298,7 @@
       "summary": "Delete a recurring invoice profile (sets vis_state to 1). FreshBooks keeps it: an update with vis_state 0 restores it",
       "request": "none",
       "response": "json",
+      "emptyOk": true,
       "fixedBody": {
         "invoice_profile": {
           "vis_state": 1
@@ -9004,6 +9012,7 @@
       "summary": "Delete a invoice (sets vis_state to 1). FreshBooks keeps it: an update with vis_state 0 restores it",
       "request": "none",
       "response": "json",
+      "emptyOk": true,
       "fixedBody": {
         "invoice": {
           "vis_state": 1
@@ -10302,6 +10311,7 @@
       "summary": "Delete a item (sets vis_state to 1). FreshBooks keeps it: an update with vis_state 0 restores it",
       "request": "none",
       "response": "json",
+      "emptyOk": true,
       "fixedBody": {
         "item": {
           "vis_state": 1
@@ -12229,6 +12239,7 @@
       "summary": "Delete a payment record (sets vis_state to 1). FreshBooks keeps it: an update with vis_state 0 restores it",
       "request": "none",
       "response": "json",
+      "emptyOk": true,
       "fixedBody": {
         "payment": {
           "vis_state": 1
@@ -14693,6 +14704,7 @@
       "summary": "Delete a retainer (sets vis_state to 1; retainers.undelete restores it)",
       "request": "none",
       "response": "json",
+      "emptyOk": true,
       "fixedBody": {
         "retainer": {
           "vis_state": 1
@@ -15353,6 +15365,7 @@
       "summary": "Delete a staff record (sets vis_state to 1)",
       "request": "none",
       "response": "json",
+      "emptyOk": true,
       "fixedBody": {
         "staff": {
           "vis_state": 1
@@ -15856,6 +15869,7 @@
       "summary": "Delete a billable task (sets vis_state to 1). FreshBooks keeps it: an update with vis_state 0 restores it",
       "request": "none",
       "response": "json",
+      "emptyOk": true,
       "fixedBody": {
         "task": {
           "vis_state": 1
