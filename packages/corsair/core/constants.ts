@@ -784,6 +784,7 @@ export const BaseProviders = [
 	'veriphone',
 	'vestaboard',
 	'virustotal',
+	'vpndetection',
 	'waboxapp',
 	'wachete',
 	'waiverfile',
@@ -1604,6 +1605,7 @@ export const ProviderDisplayNames = {
 	veriphone: 'Veriphone',
 	vestaboard: 'Vestaboard',
 	virustotal: 'VirusTotal',
+	vpndetection: 'VPNDetection',
 	waboxapp: 'Waboxapp',
 	wachete: 'Wachete',
 	waiverfile: 'WaiverFile',
@@ -2431,6 +2433,7 @@ export type AllProviders =
 	| 'veriphone'
 	| 'vestaboard'
 	| 'virustotal'
+	| 'vpndetection'
 	| 'waboxapp'
 	| 'wachete'
 	| 'waiverfile'

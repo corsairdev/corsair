@@ -1,0 +1,1179 @@
+---
+title: "VPNDetection API reference"
+sidebarTitle: "API"
+description: "API reference for the VPNDetection plugin in Corsair: every `vpndetection.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### identity
+
+`account.identity`
+
+Read the identity behind the credential: user, organization and current scopes (needs an OAuth token with account.read).
+
+**Risk:** `read`
+
+```ts
+await corsair.vpndetection.api.account.identity({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rc` | `string` | Yes | — |
+| `user` | `object` | No | — |
+| `org` | `object` | No | — |
+| `credential` | `object` | No | — |
+| `scopes` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: string,
+  fullname?: string,
+  email?: string
+}
+```
+</Accordion>
+
+<Accordion title="org full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="credential full type">
+
+```ts
+{
+  kind: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Api Keys
+
+### create
+
+`apiKeys.create`
+
+Create an API key and return its secret once (needs an OAuth token with apikeys.manage).
+
+**Risk:** `write`
+
+```ts
+await corsair.vpndetection.api.apiKeys.create({ name: 'ci', allowedScopes: ['ip.lookup'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | A name for the key, shown in the console. |
+| `allowedScopes` | `(ip.lookup \| db.download)[]` | No | What the key may do. Omit for both. |
+
+Needs an OAuth token with `apikeys.manage`. The answer carries the new secret once; read it back later with `apiKeys.reveal`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rc` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `key` | `string` | Yes | — |
+| `key_prefix` | `string` | No | — |
+| `allowed_cidrs` | `string[]` | No | — |
+| `allowed_scopes` | `string[]` | No | — |
+
+
+
+---
+
+### list
+
+`apiKeys.list`
+
+List the organization's API keys without their secrets (needs an OAuth token with apikeys.read).
+
+**Risk:** `read`
+
+```ts
+await corsair.vpndetection.api.apiKeys.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rc` | `string` | Yes | — |
+| `keys` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="keys full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  key_prefix?: string,
+  created?: string,
+  expires?: string | null,
+  last_used_at?: string | null,
+  revoked_at?: string | null,
+  allowed_cidrs?: string[],
+  allowed_scopes?: string[],
+  retrievable?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reveal
+
+`apiKeys.reveal`
+
+Read back an existing API key's secret (needs an OAuth token with apikeys.reveal).
+
+**Risk:** `destructive`
+
+```ts
+await corsair.vpndetection.api.apiKeys.reveal({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The key ID from apiKeys.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rc` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+
+
+
+---
+
+### revoke
+
+`apiKeys.revoke`
+
+Revoke an API key so it stops working; it stays listed with revoked_at (needs apikeys.manage).
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.vpndetection.api.apiKeys.revoke({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The key ID from apiKeys.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rc` | `string` | Yes | — |
+
+
+
+---
+
+### rotate
+
+`apiKeys.rotate`
+
+Replace the secret behind an API key; the old secret stops working at once (needs apikeys.manage and apikeys.reveal).
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.vpndetection.api.apiKeys.rotate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The key ID from apiKeys.list. |
+
+The old secret stops working at once and the new one comes back in the answer.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rc` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `key` | `string` | Yes | — |
+| `key_prefix` | `string` | No | — |
+| `allowed_cidrs` | `string[]` | No | — |
+| `allowed_scopes` | `string[]` | No | — |
+
+
+
+---
+
+## Databases
+
+### checksum
+
+`databases.checksum`
+
+Read the MD5, SHA-1, SHA-256 and SHA-512 checksums of one published database file.
+
+**Risk:** `read`
+
+```ts
+await corsair.vpndetection.api.databases.checksum({ id: 'tor_ip_v1', format: 'csvgz' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | A versioned database ID from databases.list `versions[].id`, e.g. `tor_ip_v1`. |
+| `format` | `csvgz \| mmdb` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `format` | `string` | Yes | — |
+| `checksums` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="checksums full type">
+
+```ts
+{
+  md5?: string,
+  sha1?: string,
+  sha256?: string,
+  sha512?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### download
+
+`databases.download`
+
+Get a time-limited download link for one database version and format, or one build by name; the file itself is not fetched.
+
+**Risk:** `read`
+
+```ts
+await corsair.vpndetection.api.databases.download({ id: 'tor_ip_v1', format: 'mmdb' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | A versioned database ID from databases.list `versions[].id`, e.g. `tor_ip_v1`. |
+| `format` | `csvgz \| mmdb` | Yes | `csvgz` or `mmdb`. The `_provider` catalogs come as `csvgz` only. |
+| `build` | `string` | No | One build by the name a database.updated webhook gives it (kept 7 days). Omit for the live build. |
+
+Returns `{ url }`: the time-limited object-storage link the API redirects to. The redirect is not followed, so no file is downloaded; fetch `url` yourself. A database the organization holds no license for answers 403 `NOT_LICENSED`; a format a database is not built in answers 400 `INVALID_FORMAT`; a `build` older than 7 days answers 410 `BUILD_GONE`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Time-limited link to the file on object storage; it only has to be valid when the download starts. |
+
+
+
+---
+
+### downloads
+
+`databases.downloads`
+
+List the organization's recent database download attempts, newest first, refusals included.
+
+**Risk:** `read`
+
+```ts
+await corsair.vpndetection.api.databases.downloads({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | How many recent attempts to return, newest first. |
+
+Recent download attempts for the organization, refusals included, newest first.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `downloads` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="downloads full type">
+
+```ts
+{
+  dataset_id: string,
+  format?: string,
+  outcome?: string,
+  sample?: boolean,
+  open?: boolean,
+  bytes?: number | null,
+  http_status?: number | null,
+  apikey_id?: string | null,
+  client_ip?: string | null,
+  user_agent?: string | null,
+  created?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`databases.list`
+
+List every database the organization can see with its license standing, versions and formats (needs a key with db.download).
+
+**Risk:** `read`
+
+```ts
+await corsair.vpndetection.api.databases.list({});
+```
+
+**Input:** _empty object_
+
+Every database family with the organization's license `standing` (`licensed`, `expired`, `unlicensed`) and its versions. Pass a `versions[].id` (e.g. `tor_ip_v1`) to the other `databases.*` routes. Every organization holds a license to the Open databases (Tor, relay).
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `databases` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="databases full type">
+
+```ts
+{
+  base: string,
+  name?: string,
+  summary?: string,
+  license_type?: string | null,
+  starts?: string | null,
+  expires?: string | null,
+  renews_at?: string | null,
+  notice_due_at?: string | null,
+  in_term?: boolean,
+  standing?: string,
+  open?: boolean,
+  versions?: {
+    id: string,
+    version?: number,
+    summary?: string,
+    formats?: {
+      format: string,
+      bytes?: number | null
+    }[],
+    sample_formats?: string[]
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### metadata
+
+`databases.metadata`
+
+Read a database version's last update, entry count and column schema without downloading it.
+
+**Risk:** `read`
+
+```ts
+await corsair.vpndetection.api.databases.metadata({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | A versioned database ID from databases.list `versions[].id`, e.g. `tor_ip_v1`. |
+
+The version's update frequency, last update, entry count and column schema per format, without a license.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `update_freq` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `entries` | `number` | No | — |
+| `schema` | `any` | No | — |
+| `sample` | `any` | No | — |
+| `size` | `Record<string, any>` | No | — |
+| `sample_size` | `Record<string, any>` | No | — |
+| `sample_entries` | `number` | No | — |
+
+
+
+---
+
+## Entitlement
+
+### get
+
+`entitlement.get`
+
+Read the plan behind the key and the requests used against its quota in the current window.
+
+**Risk:** `read`
+
+```ts
+await corsair.vpndetection.api.entitlement.get({});
+```
+
+**Input:** _empty object_
+
+The plan behind the key (`free` is named Unlimited) and the requests used against its quota between `window_start` and `window_end`.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_id` | `string` | Yes | — |
+| `apikey` | `object` | No | — |
+| `plan` | `object` | Yes | — |
+| `usage` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="apikey full type">
+
+```ts
+{
+  id: string,
+  expires?: string | null,
+  allowed_cidrs?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="plan full type">
+
+```ts
+{
+  key: string,
+  name?: string,
+  tier?: string
+}
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  requests: number,
+  quota?: number | null,
+  hard_limit?: number | null,
+  window_start?: string,
+  window_end?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ip
+
+### batch
+
+`ip.batch`
+
+Classify up to 1000 IP addresses in one call (a paid plan; a free key answers a batch of one); per-address failures come back in errors.
+
+**Risk:** `read`
+
+```ts
+await corsair.vpndetection.api.ip.batch({ ips: ['185.65.135.230', '185.220.101.1'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ips` | `string[]` | Yes | 1 to 1000 addresses. Each distinct string is one lookup; a string that is not an address comes back in `errors` as a 400. |
+| `userAgents` | `Record<string, string>` | No | Each address's User-Agent, keyed by the string as it appears in `ips`. Never kept. |
+
+Up to 1000 strings in `ips`; each distinct string costs what one lookup costs. Both maps in the answer are keyed by the string as sent: `results` holds the answers, `errors` the strings that could not be answered (a non-address is a 400 there). Each answer is saved to `lookups` like a single lookup. The free plan answers a batch of one address and refuses anything larger with 402.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object` | Yes | — |
+| `errors` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+Record<string, {
+  ip: string,
+  is_vpn: boolean,
+  is_tor?: boolean,
+  is_relay?: boolean,
+  is_bogon?: boolean,
+  is_anycast?: boolean,
+  is_hosting?: boolean,
+  is_cdn?: boolean,
+  is_bot?: boolean,
+  is_resproxy?: boolean,
+  is_dcproxy?: boolean,
+  is_mobproxy?: boolean,
+  is_pubproxy?: boolean,
+  is_carrier?: boolean,
+  is_satellite?: boolean,
+  is_ssh?: boolean,
+  is_smtp?: boolean,
+  is_web?: boolean,
+  is_dns_resolver?: boolean,
+  is_bittorrent?: boolean,
+  vpn?: {
+    provider?: string,
+    provider_name?: string,
+    confidence?: string,
+    first_seen?: string,
+    last_seen?: string,
+    method?: string
+  },
+  hosting?: {
+    provider?: string,
+    provider_name?: string,
+    confidence?: string,
+    first_seen?: string,
+    last_seen?: string
+  },
+  tor?: {
+    provider?: string,
+    provider_name?: string,
+    confidence?: string,
+    first_seen?: string,
+    last_seen?: string
+  },
+  relay?: {
+    provider?: string,
+    provider_name?: string,
+    confidence?: string,
+    first_seen?: string,
+    last_seen?: string
+  },
+  cdn?: {
+    provider?: string,
+    provider_name?: string,
+    confidence?: string,
+    first_seen?: string,
+    last_seen?: string
+  },
+  bot?: {
+    provider?: string,
+    provider_name?: string,
+    confidence?: string,
+    first_seen?: string,
+    last_seen?: string,
+    agents?: string[],
+    categories?: string[],
+    verified?: boolean,
+    identity?: string,
+    verified_by?: string
+  },
+  resproxy?: {
+    provider?: string,
+    provider_name?: string,
+    confidence?: string,
+    first_seen?: string,
+    last_seen?: string,
+    hits?: number,
+    hits_days_pct?: number,
+    providers_num?: number
+  },
+  dcproxy?: {
+    provider?: string,
+    provider_name?: string,
+    confidence?: string,
+    first_seen?: string,
+    last_seen?: string,
+    hits?: number,
+    hits_days_pct?: number,
+    providers_num?: number
+  },
+  mobproxy?: {
+    provider?: string,
+    provider_name?: string,
+    confidence?: string,
+    first_seen?: string,
+    last_seen?: string,
+    hits?: number,
+    hits_days_pct?: number,
+    providers_num?: number
+  },
+  pubproxy?: {
+  },
+  carrier?: {
+  },
+  satellite?: {
+  },
+  ssh?: {
+  },
+  smtp?: {
+  },
+  web?: {
+  }[],
+  dns_resolver?: {
+  },
+  bittorrent?: {
+  },
+  location?: {
+    continent?: string,
+    continent_name?: string,
+    country?: string,
+    country_name?: string,
+    timezone?: string,
+    currency_code?: string,
+    currency_name?: string,
+    currency_symbol?: string,
+    flag_emoji?: string,
+    flag_unicode?: string,
+    region?: string,
+    region_code?: string,
+    city?: string,
+    postal_code?: string,
+    latitude?: number,
+    longitude?: number,
+    accuracy_radius?: number,
+    geoname_id?: string,
+    dma_code?: string,
+    last_changed?: string
+  },
+  asn?: {
+    asn?: number,
+    name?: string,
+    domain?: string,
+    type?: string,
+    prefix?: string,
+    country?: string,
+    rpki_status?: string
+  },
+  company?: {
+  },
+  hostname?: string,
+  abuse?: {
+  },
+  user_agent?: {
+  },
+  trial_expired?: boolean,
+  cap_reached?: boolean
+}>
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+Record<string, {
+  status?: number,
+  error?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### lookup
+
+`ip.lookup`
+
+Check whether an IP address is a VPN, a Tor node or a privacy relay, with its country and ASN; omit ip for the caller's own address.
+
+**Risk:** `read`
+
+```ts
+await corsair.vpndetection.api.ip.lookup({ ip: '185.65.135.230' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string \| string` | No | IPv4 or IPv6 address. Omit it and the service looks up the caller address. |
+| `userAgent` | `string` | No | The visitor's User-Agent. With every field, the answer then carries `user_agent` with a verdict on it. Never kept. |
+
+Omit `ip` and the service looks up the caller address. Only `ip` and `is_vpn` are always present. A keyless or free-plan answer usually also carries `is_tor`, `is_relay`, `is_bogon`, `is_anycast`, `tor`, `relay`, `location`, `asn` and `hostname`, and a paid plan or a trial adds the other `is_*` flags and their detail objects; any field the plan does not include is absent, so test for presence. A lookup with an explicit `ip` is saved to the `lookups` table under that address, replacing the previous row for it; a lookup without `ip` is returned but not saved, and a failed save does not fail the lookup. Anything but an IPv4 or IPv6 address in `ip` is refused before the request. `userAgent` adds a verdict on the visitor's User-Agent and is never kept.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string` | Yes | — |
+| `is_vpn` | `boolean` | Yes | — |
+| `is_tor` | `boolean` | No | — |
+| `is_relay` | `boolean` | No | — |
+| `is_bogon` | `boolean` | No | — |
+| `is_anycast` | `boolean` | No | — |
+| `is_hosting` | `boolean` | No | — |
+| `is_cdn` | `boolean` | No | — |
+| `is_bot` | `boolean` | No | — |
+| `is_resproxy` | `boolean` | No | — |
+| `is_dcproxy` | `boolean` | No | — |
+| `is_mobproxy` | `boolean` | No | — |
+| `is_pubproxy` | `boolean` | No | — |
+| `is_carrier` | `boolean` | No | — |
+| `is_satellite` | `boolean` | No | — |
+| `is_ssh` | `boolean` | No | — |
+| `is_smtp` | `boolean` | No | — |
+| `is_web` | `boolean` | No | — |
+| `is_dns_resolver` | `boolean` | No | — |
+| `is_bittorrent` | `boolean` | No | — |
+| `vpn` | `object` | No | — |
+| `hosting` | `object` | No | — |
+| `tor` | `object` | No | — |
+| `relay` | `object` | No | — |
+| `cdn` | `object` | No | — |
+| `bot` | `object` | No | — |
+| `resproxy` | `object` | No | — |
+| `dcproxy` | `object` | No | — |
+| `mobproxy` | `object` | No | — |
+| `pubproxy` | `object` | No | — |
+| `carrier` | `object` | No | — |
+| `satellite` | `object` | No | — |
+| `ssh` | `object` | No | — |
+| `smtp` | `object` | No | — |
+| `web` | `object[]` | No | — |
+| `dns_resolver` | `object` | No | — |
+| `bittorrent` | `object` | No | — |
+| `location` | `object` | No | — |
+| `asn` | `object` | No | — |
+| `company` | `object` | No | — |
+| `hostname` | `string` | No | — |
+| `abuse` | `object` | No | — |
+| `user_agent` | `object` | No | — |
+| `trial_expired` | `boolean` | No | — |
+| `cap_reached` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="vpn full type">
+
+```ts
+{
+  provider?: string,
+  provider_name?: string,
+  confidence?: string,
+  first_seen?: string,
+  last_seen?: string,
+  method?: string
+}
+```
+</Accordion>
+
+<Accordion title="hosting full type">
+
+```ts
+{
+  provider?: string,
+  provider_name?: string,
+  confidence?: string,
+  first_seen?: string,
+  last_seen?: string
+}
+```
+</Accordion>
+
+<Accordion title="tor full type">
+
+```ts
+{
+  provider?: string,
+  provider_name?: string,
+  confidence?: string,
+  first_seen?: string,
+  last_seen?: string
+}
+```
+</Accordion>
+
+<Accordion title="relay full type">
+
+```ts
+{
+  provider?: string,
+  provider_name?: string,
+  confidence?: string,
+  first_seen?: string,
+  last_seen?: string
+}
+```
+</Accordion>
+
+<Accordion title="cdn full type">
+
+```ts
+{
+  provider?: string,
+  provider_name?: string,
+  confidence?: string,
+  first_seen?: string,
+  last_seen?: string
+}
+```
+</Accordion>
+
+<Accordion title="bot full type">
+
+```ts
+{
+  provider?: string,
+  provider_name?: string,
+  confidence?: string,
+  first_seen?: string,
+  last_seen?: string,
+  agents?: string[],
+  categories?: string[],
+  verified?: boolean,
+  identity?: string,
+  verified_by?: string
+}
+```
+</Accordion>
+
+<Accordion title="resproxy full type">
+
+```ts
+{
+  provider?: string,
+  provider_name?: string,
+  confidence?: string,
+  first_seen?: string,
+  last_seen?: string,
+  hits?: number,
+  hits_days_pct?: number,
+  providers_num?: number
+}
+```
+</Accordion>
+
+<Accordion title="dcproxy full type">
+
+```ts
+{
+  provider?: string,
+  provider_name?: string,
+  confidence?: string,
+  first_seen?: string,
+  last_seen?: string,
+  hits?: number,
+  hits_days_pct?: number,
+  providers_num?: number
+}
+```
+</Accordion>
+
+<Accordion title="mobproxy full type">
+
+```ts
+{
+  provider?: string,
+  provider_name?: string,
+  confidence?: string,
+  first_seen?: string,
+  last_seen?: string,
+  hits?: number,
+  hits_days_pct?: number,
+  providers_num?: number
+}
+```
+</Accordion>
+
+<Accordion title="pubproxy full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="carrier full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="satellite full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="ssh full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="smtp full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="web full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="dns_resolver full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="bittorrent full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="location full type">
+
+```ts
+{
+  continent?: string,
+  continent_name?: string,
+  country?: string,
+  country_name?: string,
+  timezone?: string,
+  currency_code?: string,
+  currency_name?: string,
+  currency_symbol?: string,
+  flag_emoji?: string,
+  flag_unicode?: string,
+  region?: string,
+  region_code?: string,
+  city?: string,
+  postal_code?: string,
+  latitude?: number,
+  longitude?: number,
+  accuracy_radius?: number,
+  geoname_id?: string,
+  dma_code?: string,
+  last_changed?: string
+}
+```
+</Accordion>
+
+<Accordion title="asn full type">
+
+```ts
+{
+  asn?: number,
+  name?: string,
+  domain?: string,
+  type?: string,
+  prefix?: string,
+  country?: string,
+  rpki_status?: string
+}
+```
+</Accordion>
+
+<Accordion title="company full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="abuse full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="user_agent full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organization
+
+### get
+
+`organization.get`
+
+Read the credential's organization (needs an OAuth token with org.read).
+
+**Risk:** `read`
+
+```ts
+await corsair.vpndetection.api.organization.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rc` | `string` | Yes | — |
+| `org` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="org full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  created?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMembers
+
+`organization.listMembers`
+
+List the organization's members (needs an OAuth token with org.read).
+
+**Risk:** `read`
+
+```ts
+await corsair.vpndetection.api.organization.listMembers({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rc` | `string` | Yes | — |
+
+
+
+---
+
