@@ -2634,6 +2634,15 @@
                 ]
               },
               {
+                "group": "Ghost",
+                "pages": [
+                  "plugins/ghost/overview",
+                  "plugins/ghost/api",
+                  "plugins/ghost/database",
+                  "plugins/ghost/webhooks"
+                ]
+              },
+              {
                 "group": "Gigasheet",
                 "pages": [
                   "plugins/gigasheet/overview",

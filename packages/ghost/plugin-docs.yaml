@@ -1,0 +1,190 @@
+# Display copy for the generated docs and the catalog, plus one call
+# example per operation. Generated with the plugin from Ghost's OpenAPI spec;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: Ghost
+domain: ghost.org
+description: "Publish with Ghost: posts, pages, tags, members, newsletters, tiers, offers, staff, uploads, themes and webhooks, plus the read-only Content API (82 operations)."
+recommendedAuth: api_key
+overviewNote: |
+  In Ghost Admin, open Settings > Integrations > Add custom integration. Connect its **Admin API key** (`<id>:<secret>`) with the site URL; add its **Content API key** as well to use the `content.*` operations. Things to know before you write:
+
+  - **Plans.** Self-hosted Ghost has the whole API. On Ghost(Pro), custom integrations come with the Publisher plan and up, not Starter; the Content API works on every plan.
+  - **Bodies.** Pass the fields of one object (`title`, `html`, `status`...); the plugin sends them in Ghost's `{ "posts": [ ... ] }` format. Ghost stores content as Lexical: send `html` with `source: "html"` to have Ghost convert it.
+  - **Edits** need the `updated_at` you last read: a stale value answers 409, so two edits never overwrite each other.
+  - **Publishing and email.** `status: "published"` puts a post on the live site. Updating a post to published with the `newsletter` query value emails it to members, which can't be taken back. Both are marked `destructive`.
+  - **Staff.** An integration key can list users and roles and send invites; editing or deleting a staff user needs a staff access token of an Administrator.
+  - **Webhooks.** Ghost signs each delivery with HMAC-SHA256 of the raw body plus a timestamp, in `X-Ghost-Signature: sha256=<hex>, t=<ms>`, using the webhook's secret. The plugin checks it before handling post, page, tag, member and site events.
+examples:
+  read:
+    path: posts.list
+    title: List posts
+    args: {}
+  write:
+    path: posts.create
+    title: Create a draft from HTML
+    args: {"title": "Release notes", "html": "<p>What changed this week.</p>", "source": "html", "status": "draft"}
+apiExamples:
+  content.authors.get:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  content.authors.getBySlug:
+    args: {"slug": "welcome"}
+  content.authors.list:
+    args: {}
+  content.pages.get:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  content.pages.getBySlug:
+    args: {"slug": "welcome"}
+  content.pages.list:
+    args: {}
+  content.posts.get:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  content.posts.getBySlug:
+    args: {"slug": "welcome"}
+  content.posts.list:
+    args: {}
+  content.settings.get:
+    args: {}
+  content.tags.get:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  content.tags.getBySlug:
+    args: {"slug": "welcome"}
+  content.tags.list:
+    args: {}
+  content.tiers.list:
+    args: {}
+  files.upload:
+    args: {"file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  images.upload:
+    args: {"file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  invites.create:
+    args: {"role_id": "example", "email": "ada@example.com"}
+  invites.delete:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  invites.list:
+    args: {}
+  labels.create:
+    args: {"name": "casper"}
+  labels.delete:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  labels.get:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  labels.getBySlug:
+    args: {"slug": "welcome"}
+  labels.list:
+    args: {}
+  labels.update:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  media.upload:
+    args: {"file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  members.create:
+    args: {"email": "ada@example.com", "name": "Ada", "labels": ["vip"]}
+  members.customFields.create:
+    args: {"name": "casper", "type": "short_text"}
+  members.customFields.delete:
+    args: {"key": "company"}
+  members.customFields.get:
+    args: {"key": "company"}
+  members.customFields.list:
+    args: {}
+  members.customFields.reorder:
+    args: {"members_metafields": [{"key": "company"}]}
+  members.customFields.update:
+    args: {"key": "company"}
+  members.delete:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  members.get:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  members.list:
+    args: {}
+  members.update:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  newsletters.create:
+    args: {"name": "casper"}
+  newsletters.get:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  newsletters.list:
+    args: {}
+  newsletters.update:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  offers.create:
+    args: {}
+  offers.get:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  offers.list:
+    args: {}
+  offers.update:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  pages.copy:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  pages.create:
+    args: {"title": "example"}
+  pages.delete:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  pages.get:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  pages.getBySlug:
+    args: {"slug": "welcome"}
+  pages.list:
+    args: {}
+  pages.update:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  posts.copy:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  posts.create:
+    args: {"title": "Release notes", "html": "<p>What changed this week.</p>", "source": "html", "status": "draft"}
+  posts.delete:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  posts.get:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  posts.getBySlug:
+    args: {"slug": "welcome"}
+  posts.list:
+    args: {}
+  posts.update:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  roles.list:
+    args: {}
+  site.get:
+    args: {}
+  tags.create:
+    args: {"name": "casper"}
+  tags.delete:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  tags.get:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  tags.getBySlug:
+    args: {"slug": "welcome"}
+  tags.list:
+    args: {}
+  tags.update:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  themes.activate:
+    args: {"name": "casper"}
+  themes.upload:
+    args: {"file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  tiers.create:
+    args: {"name": "casper"}
+  tiers.get:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  tiers.list:
+    args: {}
+  tiers.update:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  users.delete:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  users.get:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  users.getByEmail:
+    args: {"email": "ada@example.com"}
+  users.getBySlug:
+    args: {"slug": "welcome"}
+  users.list:
+    args: {}
+  users.update:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  webhooks.create:
+    args: {"event": "post.published", "target_url": "https://example.com/hooks/ghost"}
+  webhooks.delete:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
+  webhooks.update:
+    args: {"id": "6b0a3e9ebfdd6d00010042b1"}
