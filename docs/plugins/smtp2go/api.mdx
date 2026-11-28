@@ -1606,7 +1606,7 @@ await corsair.smtp2go.api.email.send({ sender: 'John Smith <john@example.com>', 
 | `attachments` | `object[]` | No | — |
 | `inlines` | `object[]` | No | Inline images referenced by the HTML body via cid: URLs. |
 | `template_id` | `string` | No | — |
-| `template_data` | `string` | No | Template variables as a JSON-encoded string. |
+| `template_data` | `Record<string, any> \| string` | No | Template variables, e.g. &#123; name: "Ada" &#125; (a JSON-encoded string is accepted too). |
 | `schedule` | `string` | No | Schedule the send, in `YYYY-MM-DD HH:mm:ss +ZZZZ` format, less than 3 days out. |
 | `fastaccept` | `boolean` | No | Accept the message without delivery results; defaults to false, which waits for per-recipient outcomes. |
 
@@ -1670,7 +1670,7 @@ rather than the status code.
 {
   succeeded?: number | null,
   failed?: number | null,
-  failures?: Record<string, any>[] | null,
+  failures?: (string | Record<string, any>)[] | null,
   email_id?: string | null,
   schedule_id?: string | null
 }
@@ -1733,7 +1733,7 @@ a bare array with one entry per message, carrying an `email_id`, or a
     mimetype?: string
   }[],
   template_id?: string,
-  template_data?: string,
+  template_data?: Record<string, any> | string,
   schedule?: string,
   fastaccept?: boolean
 }[]
@@ -1775,14 +1775,14 @@ Send one pre-encoded MIME message, with the same per-recipient succeeded/failed 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.smtp2go.api.email.sendMime({ mime_email: 'MIME-Version: 1.0\r\nSubject: hi\r\n...', fastaccept: true });
+await corsair.smtp2go.api.email.sendMime({ mime_email: 'RnJvbTogam9obkBleGFtcGxlLmNvbQ0KVG86IGphbmVAZXhhbXBsZS5jb20NClN1YmplY3Q6IEhpDQpNSU1FLVZlcnNpb246IDEuMA0KQ29udGVudC1UeXBlOiB0ZXh0L3BsYWluOyBjaGFyc2V0PXV0Zi04DQoNCkhlbGxvIGZyb20gU01UUDJHTy4=', fastaccept: true });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `mime_email` | `string` | Yes | A complete pre-encoded MIME message. |
+| `mime_email` | `string` | Yes | A complete MIME message (From, To, Subject headers and body), Base64-encoded. |
 | `schedule` | `string` | No | Schedule the send, in `YYYY-MM-DD HH:mm:ss +ZZZZ` format, less than 3 days out. |
 | `fastaccept` | `boolean` | No | Accept the message without delivery results; defaults to false, which waits for per-recipient outcomes. |
 
@@ -1805,7 +1805,7 @@ accounting as `email.send`.
 {
   succeeded?: number | null,
   failed?: number | null,
-  failures?: Record<string, any>[] | null,
+  failures?: (string | Record<string, any>)[] | null,
   email_id?: string | null,
   schedule_id?: string | null
 }

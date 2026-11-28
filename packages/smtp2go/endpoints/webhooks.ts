@@ -41,7 +41,8 @@ export const add: Smtp2goEndpoints['webhooksAdd'] = (ctx, input) =>
 			replayable: false,
 		}),
 		{
-			log: (parsed) => ({ url: parsed.url }),
+			// The host only: a path or query can carry a secret.
+			log: (parsed) => ({ host: safeHost(parsed.url) }),
 		},
 	);
 
@@ -82,3 +83,11 @@ export const remove: Smtp2goEndpoints['webhooksRemove'] = (ctx, input) =>
 			log: (parsed) => ({ webhookId: parsed.id }),
 		},
 	);
+
+function safeHost(url: string): string | undefined {
+	try {
+		return new URL(url).host;
+	} catch {
+		return undefined;
+	}
+}

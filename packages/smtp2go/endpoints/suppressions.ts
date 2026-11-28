@@ -39,9 +39,7 @@ export const add: Smtp2goEndpoints['suppressionsAdd'] = (ctx, input) =>
 			body: pickBody(parsed),
 			replayable: false,
 		}),
-		{
-			log: (parsed) => ({ emailAddress: parsed.email_address }),
-		},
+		{},
 	);
 
 export const remove: Smtp2goEndpoints['suppressionsRemove'] = (ctx, input) =>
@@ -58,7 +56,5 @@ export const remove: Smtp2goEndpoints['suppressionsRemove'] = (ctx, input) =>
 			body: pickBody(parsed),
 			replayable: false,
 		}),
-		{
-			log: (parsed) => ({ emailAddress: parsed.email_address }),
-		},
+		{},
 	);

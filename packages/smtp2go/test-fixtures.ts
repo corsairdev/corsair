@@ -19,7 +19,8 @@ export const sendPartialFailure = {
 	data: {
 		succeeded: 1,
 		failed: 1,
-		failures: [{ email_address: 'bad@example.com', error: 'rejected' }],
+		// The v3 reference types failures as strings.
+		failures: ['bad@example.com: rejected'],
 		email_id: '1u0SwL-B9zBpi9ffUq-JAB2',
 	},
 };

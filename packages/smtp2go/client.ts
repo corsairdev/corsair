@@ -171,12 +171,18 @@ export class Smtp2goTransportError extends Error {
 	readonly method: string;
 	readonly path: string;
 
-	constructor(method: string, path: string, cause: unknown) {
-		const message =
+	constructor(method: string, path: string, cause: unknown, key?: string) {
+		const raw =
 			cause instanceof Error || cause instanceof DOMException
 				? cause.message
 				: 'SMTP2GO request failed before a response';
-		super(message, { cause });
+		// A key Headers refuses (a newline in it) makes fetch throw a message
+		// that quotes it: scrub it, and keep a cause only when it is clean.
+		const leaks = Boolean(key) && raw.includes(String(key));
+		super(
+			leaks ? raw.split(String(key)).join('[REDACTED]') : raw,
+			leaks ? undefined : { cause },
+		);
 		this.name = 'Smtp2goTransportError';
 		this.method = method;
 		this.path = path;
@@ -255,6 +261,6 @@ export async function makeSmtp2goRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) throw withoutRequestData(error);
-		throw new Smtp2goTransportError(method, path, error);
+		throw new Smtp2goTransportError(method, path, error, ctx.key);
 	}
 }

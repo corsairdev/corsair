@@ -113,9 +113,12 @@ const MessageFieldsSchema = {
 		.describe('Inline images referenced by the HTML body via cid: URLs.'),
 	template_id: z.string().optional(),
 	template_data: z
-		.string()
+		// unknown: template variables are whatever the template uses.
+		.union([z.record(z.string(), z.unknown()), z.string()])
 		.optional()
-		.describe('Template variables as a JSON-encoded string.'),
+		.describe(
+			'Template variables, e.g. { name: "Ada" } (a JSON-encoded string is accepted too).',
+		),
 	schedule: z
 		.string()
 		.optional()
@@ -147,8 +150,9 @@ const SendResultSchema = z
 				"Emails that failed to send. 0 means full success. Only returned when 'fastaccept' is false.",
 			),
 		failures: z
-			// unknown: the API does not document the per-failure entry shape.
-			.array(z.record(z.string(), z.unknown()))
+			// The v3 reference types entries as strings; objects are kept too.
+			// unknown: an object entry's shape is undocumented.
+			.array(z.union([z.string(), z.record(z.string(), z.unknown())]))
 			.nullish()
 			.describe('One entry per failed recipient, when fastaccept is false.'),
 		email_id: z.string().nullish().describe('The id of the accepted email.'),
@@ -179,7 +183,9 @@ const MimeSendInputSchema = z
 		mime_email: z
 			.string()
 			.min(1)
-			.describe('A complete pre-encoded MIME message.'),
+			.describe(
+				'A complete MIME message (From, To, Subject headers and body), Base64-encoded.',
+			),
 		schedule: MessageFieldsSchema.schedule,
 		fastaccept: MessageFieldsSchema.fastaccept,
 	})

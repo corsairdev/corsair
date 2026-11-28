@@ -1,3 +1,4 @@
+import { logEventFromContext } from 'corsair/core';
 import {
 	isSmtp2goAuthError,
 	Smtp2goEnvelopeError,
@@ -40,6 +41,7 @@ import {
 } from './test-fixtures';
 import {
 	captureError,
+	currentFetch,
 	endpoints,
 	errorResponse,
 	installFetchMock,
@@ -84,7 +86,44 @@ describe('output parsing per operation', () => {
 			text_body: 'hi',
 		});
 		expect(result.data.failed).toBe(1);
-		expect(result.data.failures).toHaveLength(1);
+		expect(result.data.failures).toEqual(['bad@example.com: rejected']);
+	});
+
+	it('email.send keeps template_data as an object in the body', async () => {
+		mockFetch(ok(sendPartialFailure));
+		await endpoints.email.send(makeCtx(), {
+			sender: 'a@example.com',
+			to: ['b@example.com'],
+			template_id: '1234',
+			template_data: { name: 'Ada', items: [1, 2] },
+		});
+		expect(
+			JSON.parse(String(currentFetch().mock.calls[0]?.[1]?.body)).template_data,
+		).toEqual({ name: 'Ada', items: [1, 2] });
+	});
+
+	it('suppression and webhook events carry no address or URL', async () => {
+		// logEventFromContext is mocked in this file: read what it was given.
+		const logEvent = jest.mocked(logEventFromContext);
+		logEvent.mockClear();
+		const ctx = makeCtx();
+		mockFetch(ok(suppressionAddOk));
+		await endpoints.suppressions.add(ctx, {
+			email_address: 'secret@example.com',
+		});
+		mockFetch(ok(suppressionRemoveOk));
+		await endpoints.suppressions.remove(ctx, {
+			email_address: 'secret@example.com',
+		});
+		mockFetch(ok(webhookAddOk));
+		await endpoints.webhooks.add(ctx, {
+			url: 'https://user:pass@example.com/hook?token=abc',
+		});
+		expect(logEvent).toHaveBeenCalledTimes(3);
+		const text = JSON.stringify(logEvent.mock.calls.map((call) => call[2]));
+		expect(text).not.toContain('secret@example.com');
+		expect(text).not.toContain('token=abc');
+		expect(text).not.toContain('user:pass');
 	});
 
 	it('email.sendMime parses the send accounting', async () => {

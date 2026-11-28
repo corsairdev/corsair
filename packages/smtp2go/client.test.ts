@@ -154,6 +154,20 @@ describe('error parsing', () => {
 		expect((error as Smtp2goTransportError).path).toBe('/stats/email_cycle');
 	});
 
+	it('keeps a key that Headers refuses out of the transport error', () => {
+		const key = 'api-ABCDEF\nINJECTED';
+		const error = new Smtp2goTransportError(
+			'POST',
+			'/stats/email_cycle',
+			new TypeError(`Headers.append: "${key}" is an invalid header value.`),
+			key,
+		);
+		expect(error.message).not.toContain(key);
+		expect(error.message).toContain('[REDACTED]');
+		expect(error.cause).toBeUndefined();
+		expect(inspect(error, { depth: 10 })).not.toContain('INJECTED');
+	});
+
 	it('redacts email addresses SMTP2GO echoes in an error', async () => {
 		mockFetch(
 			errorResponse(400, {
