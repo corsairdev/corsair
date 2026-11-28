@@ -436,11 +436,17 @@ const LinksCountInputSchema = z.object({
 
 export type LinksCountInput = z.input<typeof LinksCountInputSchema>;
 
-// A bare number per the spec; the grouped answer's row shape is undocumented,
-// so it passes through unpinned.
+// A bare number without groupBy. With groupBy Dub returns the grouped query
+// result directly: an array of rows such as { domain, _count } (see
+// apps/web/lib/api/links/get-links-count.ts), whose keys follow the groupBy.
 const LinksCountResponseSchema = z.union([
 	z.number(),
-	// unknown: the grouped count rows' shape is undocumented in the spec.
+	z.array(
+		z
+			.object({ _count: z.union([z.number(), z.object({}).loose()]).nullish() })
+			.loose(),
+	),
+	// unknown: kept for an object-shaped grouped answer.
 	z.record(z.string(), z.unknown()),
 ]);
 
@@ -485,10 +491,15 @@ export type LinksDeleteInput = z.input<typeof LinksDeleteInputSchema>;
 
 const DeletedLinkSchema = z.object({ id: z.string() }).loose();
 
-const LinksBulkCreateInputSchema = z
-	.array(LinkCreateBodySchema)
-	.min(1)
-	.max(100);
+// Dub's body is a bare array; the input wraps it in `links` because a tool
+// input has to be an object.
+const LinksBulkCreateInputSchema = z.object({
+	links: z
+		.array(LinkCreateBodySchema)
+		.min(1)
+		.max(100)
+		.describe('1-100 links to create, each with the links.create fields.'),
+});
 
 export type LinksBulkCreateInput = z.input<typeof LinksBulkCreateInputSchema>;
 

@@ -2057,7 +2057,8 @@
                 "pages": [
                   "plugins/dub/overview",
                   "plugins/dub/api",
-                  "plugins/dub/database"
+                  "plugins/dub/database",
+                  "plugins/dub/webhooks"
                 ]
               },
               {

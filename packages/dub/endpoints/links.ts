@@ -107,10 +107,10 @@ export const update: DubEndpoints['linksUpdate'] = (ctx, input) =>
 		}),
 	);
 
-// Dub documents upsert as idempotent create-or-update keyed on domain+key
-// (or externalId), so it is the one write this plugin allows to replay on a
-// 5xx. The partners program surface, commissions, payouts, discount codes,
-// bounties, messages and program applications are out of scope for v1.
+// Dub matches an upsert by the destination url within the workspace: an
+// existing link with that url is returned, or updated when other fields
+// differ (a different key renames its slug). Replaying the same body gives
+// the same result, so it may be retried after a 5xx.
 export const upsert: DubEndpoints['linksUpsert'] = (ctx, input) =>
 	call(
 		ctx,
@@ -191,7 +191,7 @@ export const bulkCreate: DubEndpoints['linksBulkCreate'] = (ctx, input) =>
 			output: Outputs.linksBulkCreate,
 		},
 		input,
-		(body) => ({ method: 'POST', path: '/links/bulk', body }),
+		({ links }) => ({ method: 'POST', path: '/links/bulk', body: links }),
 		{
 			log: (_, result) => ({
 				submitted: result.length,

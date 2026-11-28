@@ -249,6 +249,21 @@ describe('links', () => {
 		});
 	});
 
+	it('count accepts the grouped array Dub returns with groupBy', async () => {
+		respond([
+			{ domain: 'dub.sh', _count: 5 },
+			{ domain: 'acme.link', _count: 2 },
+		]);
+		await expect(invoke(Links.count, { groupBy: 'domain' })).resolves.toEqual([
+			{ domain: 'dub.sh', _count: 5 },
+			{ domain: 'acme.link', _count: 2 },
+		]);
+		respond([]);
+		await expect(invoke(Links.count, { groupBy: 'domain' })).resolves.toEqual(
+			[],
+		);
+	});
+
 	it('delete DELETEs the link id', async () => {
 		respond({ id: 'link_1KAP4CQ4Y1' });
 
@@ -265,10 +280,12 @@ describe('links', () => {
 	it('bulkCreate POSTs the array', async () => {
 		respond([link, linkError]);
 
-		const result = await invoke(Links.bulkCreate, [
-			{ url: 'https://dub.co', key: 'try' },
-			{ url: 'https://not-a-domain.example', key: 'taken' },
-		]);
+		const result = await invoke(Links.bulkCreate, {
+			links: [
+				{ url: 'https://dub.co', key: 'try' },
+				{ url: 'https://not-a-domain.example', key: 'taken' },
+			],
+		});
 
 		expect(lastRequest()).toMatchObject({
 			method: 'POST',
@@ -285,7 +302,7 @@ describe('links', () => {
 		const many = Array.from({ length: 101 }, (_, i) => ({
 			url: `https://p${i}.example`,
 		}));
-		await expect(invoke(Links.bulkCreate, many)).rejects.toThrow();
+		await expect(invoke(Links.bulkCreate, { links: many })).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
@@ -855,19 +872,21 @@ describe('error surfacing', () => {
 			invoke(Links.create, { url: 'https://dub.co' }),
 		).rejects.toMatchObject({
 			status: 409,
-			code: 'conflict',
+			body: { error: { code: 'conflict' } },
 			message: 'Dub 409 conflict: A link with this key already exists.',
 		});
 		expect(mockLog).not.toHaveBeenCalled();
 	});
 
 	it('surfaces a rate-limited analytics call', async () => {
-		respond(rateLimited, 429, { 'Retry-After': '2' });
+		// The first attempt and core's three retries.
+		for (let i = 0; i < 4; i++) {
+			respond(rateLimited, 429, { 'Retry-After': '0' });
+		}
 
 		await expect(invoke(Analytics.retrieve, {})).rejects.toMatchObject({
 			status: 429,
-			isRateLimit: true,
-			retryAfter: 2000,
+			body: { error: { code: 'rate_limit_exceeded' } },
 		});
 	});
 });

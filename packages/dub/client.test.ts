@@ -1,7 +1,10 @@
 import { inspect } from 'node:util';
+import { ApiError } from 'corsair/http';
 import {
-	DubAPIError,
+	DubTransportError,
 	describeDubError,
+	dubErrorCode,
+	isReplaySafe,
 	makeDubRequest,
 	segment,
 } from './client';
@@ -13,6 +16,7 @@ import {
 } from './test-fixtures';
 
 const API_KEY = 'dub_test_secret_key';
+const CTX = { key: API_KEY };
 
 let fetchMock: jest.SpyInstance;
 
@@ -35,15 +39,18 @@ function respond(
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(promise: Promise<unknown>): Promise<DubAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await promise.catch((e: unknown) => e);
-	expect(error).toBeInstanceOf(DubAPIError);
-	if (!(error instanceof DubAPIError)) throw error;
+	expect(error).toBeInstanceOf(ApiError);
+	if (!(error instanceof ApiError)) throw error;
 	return error;
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	// A call no test queued a response for fails here instead of reaching Dub.
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+		throw new Error('unmocked fetch in a unit test');
+	});
 });
 
 afterEach(() => {
@@ -54,7 +61,7 @@ describe('makeDubRequest', () => {
 	it('authenticates with a Bearer header against api.dub.co', async () => {
 		respond([link], 200);
 
-		const result = await makeDubRequest(API_KEY, {
+		const result = await makeDubRequest(CTX, {
 			method: 'GET',
 			path: '/links',
 			query: { domain: 'dub.sh', search: undefined },
@@ -71,7 +78,7 @@ describe('makeDubRequest', () => {
 	it('POSTs a JSON body with a JSON content type', async () => {
 		respond(link, 200);
 
-		await makeDubRequest(API_KEY, {
+		await makeDubRequest(CTX, {
 			method: 'POST',
 			path: '/links',
 			body: { url: 'https://dub.co', domain: 'dub.sh' },
@@ -90,7 +97,7 @@ describe('makeDubRequest', () => {
 	it('omits query params set to undefined', async () => {
 		respond([], 200);
 
-		await makeDubRequest(API_KEY, {
+		await makeDubRequest(CTX, {
 			method: 'GET',
 			path: '/links',
 			query: { showArchived: false, search: undefined },
@@ -104,93 +111,88 @@ describe('makeDubRequest', () => {
 		respond(unauthorized, 401);
 
 		const error = await failure(
-			makeDubRequest(API_KEY, { method: 'GET', path: '/links' }),
+			makeDubRequest(CTX, { method: 'GET', path: '/links' }),
 		);
 		expect(error.status).toBe(401);
-		expect(error.code).toBe('unauthorized');
+		expect(dubErrorCode(error)).toBe('unauthorized');
 		expect(error.message).toBe(
 			'Dub 401 unauthorized: Missing Authorization header.',
 		);
-		expect(error.isRateLimit).toBe(false);
 	});
 
-	it('reads a 400 bad_request envelope', async () => {
-		respond(errorEnvelope('bad_request', 'Invalid request body.'), 400);
+	it('reads a 400 bad_request envelope and keeps the method', async () => {
+		respond(errorEnvelope('bad_request', 'Invalid url.'), 400);
 
 		const error = await failure(
-			makeDubRequest(API_KEY, {
+			makeDubRequest(CTX, {
 				method: 'POST',
 				path: '/links',
-				body: {},
+				body: { url: 'nope' },
 			}),
 		);
 		expect(error.status).toBe(400);
-		expect(error.code).toBe('bad_request');
-		expect(error.idempotent).toBe(false);
+		expect(dubErrorCode(error)).toBe('bad_request');
+		expect(error.request.method).toBe('POST');
 	});
 
-	it('treats a 429 as a rate limit and reads Retry-After', async () => {
-		respond(rateLimited, 429, { 'Retry-After': '30' });
+	it('lets core retry a 429 three times, honouring Retry-After', async () => {
+		for (let i = 0; i < 4; i++) {
+			respond(rateLimited, 429, { 'Retry-After': '0' });
+		}
 
 		const error = await failure(
-			makeDubRequest(API_KEY, { method: 'GET', path: '/analytics' }),
+			makeDubRequest(CTX, { method: 'GET', path: '/analytics' }),
 		);
-		expect(error.isRateLimit).toBe(true);
-		expect(error.retryAfter).toBe(30_000);
-		expect(error.idempotent).toBe(true);
-		expect(fetchMock).toHaveBeenCalledTimes(1);
+		expect(error.status).toBe(429);
+		expect(dubErrorCode(error)).toBe('rate_limit_exceeded');
+		expect(fetchMock).toHaveBeenCalledTimes(4);
 	});
 
-	it('reads the body code of a non-429 rate limit', async () => {
-		respond(rateLimited, 503);
+	it('keeps customer data from the request body out of the error', async () => {
+		respond(errorEnvelope('conflict', 'Customer exists.'), 409);
 
 		const error = await failure(
-			makeDubRequest(API_KEY, { method: 'GET', path: '/links' }),
-		);
-		expect(error.isRateLimit).toBe(true);
-	});
-
-	it('marks a GET as replay-safe and a write as not', async () => {
-		respond(unauthorized, 401);
-		respond(unauthorized, 401);
-
-		const read = await failure(
-			makeDubRequest(API_KEY, { method: 'GET', path: '/links' }),
-		);
-		const write = await failure(
-			makeDubRequest(API_KEY, {
+			makeDubRequest(CTX, {
 				method: 'POST',
-				path: '/links',
-				body: { url: 'https://dub.co' },
+				path: '/track/lead',
+				body: { customerEmail: 'buyer@example.com' },
 			}),
 		);
-		expect(read.idempotent).toBe(true);
-		expect(write.idempotent).toBe(false);
+		expect(error.request.body).toBe('[REDACTED]');
+		expect(error.request.headers).toBeUndefined();
+		expect(inspect(error, { depth: 10 })).not.toContain('buyer@example.com');
 	});
 
-	it('marks upsert as replay-safe even though it is a write', async () => {
-		respond(unauthorized, 401);
+	it('never copies a body without the envelope into the message', async () => {
+		respond({ detail: 'buyer@example.com failed' }, 418);
 
 		const error = await failure(
-			makeDubRequest(API_KEY, {
-				method: 'PUT',
-				path: '/links/upsert',
-				body: { url: 'https://dub.co' },
-				idempotent: true,
-			}),
+			makeDubRequest(CTX, { method: 'GET', path: '/links' }),
 		);
-		expect(error.idempotent).toBe(true);
+		expect(error.message).not.toContain('buyer@example.com');
+		expect(JSON.stringify(error.body ?? null)).not.toContain('buyer');
 	});
 
-	it('wraps network failures and keeps the cause', async () => {
+	it('marks reads and upserts as replay-safe, other writes not', () => {
+		expect(isReplaySafe('GET', '/links')).toBe(true);
+		expect(isReplaySafe('PUT', '/links/upsert')).toBe(true);
+		expect(isReplaySafe('PUT', '/partners/links/upsert')).toBe(true);
+		expect(isReplaySafe('POST', '/links')).toBe(false);
+		expect(isReplaySafe('PATCH', '/links/abc')).toBe(false);
+	});
+
+	it('wraps network failures with the method and route, keeping the cause', async () => {
 		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
 
-		const error = await failure(
-			makeDubRequest(API_KEY, { method: 'GET', path: '/links' }),
-		);
+		const error = await makeDubRequest(CTX, {
+			method: 'GET',
+			path: '/links',
+		}).catch((e: unknown) => e);
+		expect(error).toBeInstanceOf(DubTransportError);
+		if (!(error instanceof DubTransportError)) throw error;
 		expect(error.message).toContain('fetch failed');
-		expect(error.status).toBeUndefined();
 		expect(error.method).toBe('GET');
+		expect(error.path).toBe('/links');
 		expect(error.cause).toBeInstanceOf(TypeError);
 	});
 
@@ -199,30 +201,25 @@ describe('makeDubRequest', () => {
 			new DOMException('The operation timed out', 'TimeoutError'),
 		);
 
-		const error = await failure(
-			makeDubRequest(API_KEY, {
-				method: 'POST',
-				path: '/track/lead',
-				body: {},
-			}),
-		);
-		expect(error.message).toContain('timed out');
-		expect(error.status).toBeUndefined();
-		expect(error.idempotent).toBe(false);
+		const error = await makeDubRequest(CTX, {
+			method: 'POST',
+			path: '/track/lead',
+			body: {},
+		}).catch((e: unknown) => e);
+		expect(error).toBeInstanceOf(DubTransportError);
+		expect((error as Error).message).toContain('timed out');
 	});
 
 	it('leaves the API key out of errors', async () => {
 		respond(unauthorized, 401);
 
 		const error = await failure(
-			makeDubRequest(API_KEY, { method: 'GET', path: '/links' }),
+			makeDubRequest(CTX, { method: 'GET', path: '/links' }),
 		);
 		expect(error.message).not.toContain(API_KEY);
-		expect(error.message).not.toContain('dub_test_secret');
 		expect(JSON.stringify(error)).not.toContain(API_KEY);
-		expect(error.cause).toBeUndefined();
 		// util.inspect prints enumerable properties, unlike JSON.stringify.
-		expect(inspect(error, { depth: 5 })).not.toContain(API_KEY);
+		expect(inspect(error, { depth: 10 })).not.toContain(API_KEY);
 	});
 });
 
@@ -244,5 +241,28 @@ describe('describeDubError', () => {
 describe('segment', () => {
 	it('encodes a value for one path segment', () => {
 		expect(segment('a/b?c')).toBe('a%2Fb%3Fc');
+	});
+});
+
+describe('redacting echoed input', () => {
+	beforeEach(() => {
+		fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+			throw new Error('unmocked fetch in a unit test');
+		});
+	});
+	afterEach(() => fetchMock.mockRestore());
+
+	it('removes an email address Dub echoes in its message', async () => {
+		respond(
+			errorEnvelope('unprocessable_entity', 'Invalid tag: alice@example.com'),
+			422,
+		);
+		const error = await failure(
+			makeDubRequest(CTX, { method: 'POST', path: '/links', body: {} }),
+		);
+		expect(error.message).toBe(
+			'Dub 422 unprocessable_entity: Invalid tag: [email]',
+		);
+		expect(JSON.stringify(error.body)).not.toContain('alice@example.com');
 	});
 });

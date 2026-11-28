@@ -1,5 +1,6 @@
 import type {
 	BindEndpoints,
+	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
@@ -9,6 +10,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import {
@@ -22,25 +24,48 @@ import {
 	Tags,
 	Track,
 } from './endpoints';
-import type { DubEndpointInputs, DubEndpointOutputs } from './endpoints/types';
+import type {
+	GeneratedEndpointInputs,
+	GeneratedEndpointOutputs,
+} from './endpoints/generated';
+import {
+	generatedEndpointGroups,
+	generatedEndpointMeta,
+	generatedSchemaEntries,
+} from './endpoints/generated';
+import type {
+	DubEndpointInputs as HandWrittenInputs,
+	DubEndpointOutputs as HandWrittenOutputs,
+} from './endpoints/types';
 import {
 	DubEndpointInputSchemas,
 	DubEndpointOutputSchemas,
 } from './endpoints/types';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { DubSchema } from './schema';
+import {
+	dubWebhookSchemas,
+	dubWebhooksNested,
+	isDubDelivery,
+} from './webhooks';
 
-// Scope note: v1 covers core link management, analytics, events, QR codes,
-// tags, domains, folders, conversion tracking and customers. Intentionally
-// excluded: the Dub Partners program surface (partners.*, programApplications,
-// commissions, payouts, discountCodes, bounties, messages,
-// tokens.embedReferrals), domains.register (it buys a domain) and
-// domains.status (a domain-shopping helper).
+export type DubEndpointInputs = HandWrittenInputs & GeneratedEndpointInputs;
+export type DubEndpointOutputs = HandWrittenOutputs & GeneratedEndpointOutputs;
+
+// Scope: Dub's whole public API (https://dub.co/openapi.json). The link,
+// analytics, events, QR, tag, domain, folder, tracking and customer
+// endpoints are hand-written; the Partners program (partners, program
+// applications, commissions, payouts, discount codes, bounties, messages,
+// embed tokens), domains.register, domains.checkStatus and track.open are
+// generated into endpoints/generated.ts by kits/plugin-gen/dub/gen.py.
 
 export type DubPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
+	/** The webhook's signing secret from Dub's webhook settings; overrides the stored webhook_signature. */
+	webhookSecret?: string;
 	hooks?: InternalDubPlugin['hooks'];
+	webhookHooks?: InternalDubPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof dubEndpointsNested>;
 };
@@ -53,6 +78,8 @@ export type DubContext = CorsairPluginContext<
 export type DubKeyBuilderContext = KeyBuilderContext<DubPluginOptions>;
 
 export type DubBoundEndpoints = BindEndpoints<typeof dubEndpointsNested>;
+
+export type DubBoundWebhooks = BindWebhooks<typeof dubWebhooksNested>;
 
 type DubEndpoint<K extends keyof DubEndpointOutputs> = CorsairEndpoint<
 	DubContext,
@@ -92,6 +119,8 @@ export type DubEndpoints = {
 	customersGet: DubEndpoint<'customersGet'>;
 	customersUpdate: DubEndpoint<'customersUpdate'>;
 	customersDelete: DubEndpoint<'customersDelete'>;
+} & {
+	[K in keyof GeneratedEndpointOutputs]: DubEndpoint<K>;
 };
 
 const dubEndpointsNested = {
@@ -127,6 +156,8 @@ const dubEndpointsNested = {
 		list: Domains.list,
 		update: Domains.update,
 		delete: Domains.remove,
+		register: generatedEndpointGroups.domains.register,
+		checkStatus: generatedEndpointGroups.domains.checkStatus,
 	},
 	folders: {
 		create: Folders.create,
@@ -137,6 +168,7 @@ const dubEndpointsNested = {
 	track: {
 		lead: Track.lead,
 		sale: Track.sale,
+		open: generatedEndpointGroups.track.open,
 	},
 	customers: {
 		list: Customers.list,
@@ -144,9 +176,18 @@ const dubEndpointsNested = {
 		update: Customers.update,
 		delete: Customers.remove,
 	},
+	partners: generatedEndpointGroups.partners,
+	programApplications: generatedEndpointGroups.programApplications,
+	discountCodes: generatedEndpointGroups.discountCodes,
+	commissions: generatedEndpointGroups.commissions,
+	payouts: generatedEndpointGroups.payouts,
+	embedTokens: generatedEndpointGroups.embedTokens,
+	bounties: generatedEndpointGroups.bounties,
+	messages: generatedEndpointGroups.messages,
 } as const;
 
 export const dubEndpointSchemas = {
+	...generatedSchemaEntries,
 	'links.create': {
 		input: DubEndpointInputSchemas.linksCreate,
 		output: DubEndpointOutputSchemas.linksCreate,
@@ -276,6 +317,7 @@ export const dubEndpointSchemas = {
 const defaultAuthType = 'api_key' as const;
 
 const dubEndpointMeta = {
+	...generatedEndpointMeta,
 	'links.create': {
 		riskLevel: 'write',
 		description:
@@ -298,7 +340,7 @@ const dubEndpointMeta = {
 	'links.upsert': {
 		riskLevel: 'write',
 		description:
-			'Idempotent create-or-update keyed on domain and slug (or externalId); safe to retry',
+			"Create a link, or return and update the existing link with the same destination url; a different key renames that link's slug, so use links.update to change one specific link",
 	},
 	'links.count': {
 		riskLevel: 'read',
@@ -397,13 +439,13 @@ const dubEndpointMeta = {
 		description: 'Permanently delete a folder; its links keep existing',
 	},
 	'track.lead': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		irreversible: true,
 		description:
 			'Record a lead conversion attributed to a click; there is no delete, so a tracked lead cannot be undone',
 	},
 	'track.sale': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		irreversible: true,
 		description:
 			'Record a sale conversion in cents attributed to a customer; invoiceId deduplicates, but a tracked sale cannot be undone',
@@ -430,11 +472,16 @@ const dubEndpointMeta = {
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof dubEndpointsNested>;
 
+const dubWebhookSchemaMap =
+	dubWebhookSchemas satisfies RequiredPluginWebhookSchemas<
+		typeof dubWebhooksNested
+	>;
+
 export type BaseDubPlugin<T extends DubPluginOptions> = CorsairPlugin<
 	'dub',
 	typeof DubSchema,
 	typeof dubEndpointsNested,
-	{},
+	typeof dubWebhooksNested,
 	T,
 	typeof defaultAuthType
 >;
@@ -455,13 +502,20 @@ export function dub<const T extends DubPluginOptions>(
 		schema: DubSchema,
 		options: options,
 		hooks: options.hooks,
+		webhookHooks: options.webhookHooks,
 		endpoints: dubEndpointsNested,
-		webhooks: {},
+		webhooks: dubWebhooksNested,
 		endpointMeta: dubEndpointMeta,
 		endpointSchemas: dubEndpointSchemas,
-		pluginWebhookMatcher: () => false,
+		webhookSchemas: dubWebhookSchemaMap,
+		pluginWebhookMatcher: isDubDelivery,
 		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		keyBuilder: async (ctx: DubKeyBuilderContext, source) => {
+			if (source === 'webhook') {
+				if (options.webhookSecret) return options.webhookSecret;
+				return (await ctx.keys.get_webhook_signature()) ?? '';
+			}
+
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -476,15 +530,16 @@ export function dub<const T extends DubPluginOptions>(
 	} satisfies InternalDubPlugin;
 }
 
-export { DubAPIError } from './client';
-
+export {
+	DubTransportError,
+	dubErrorCode,
+	withoutRequestData,
+} from './client';
 export type {
 	CustomersListResponse,
 	DubAnalyticsResponse,
 	DubCustomer,
 	DubDomain,
-	DubEndpointInputs,
-	DubEndpointOutputs,
 	DubEvent,
 	DubFolder,
 	DubLink,
@@ -501,3 +556,5 @@ export type {
 	TrackLeadInput,
 	TrackSaleInput,
 } from './endpoints/types';
+export type { DubWebhookEvent, DubWebhookPayload } from './webhooks';
+export { verifyDubWebhook } from './webhooks';

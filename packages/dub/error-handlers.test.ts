@@ -1,6 +1,7 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { ZodError } from 'zod';
-import { DubAPIError } from './client';
+import { DubTransportError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
 // Core runs handlers through the CorsairErrorHandler interface, whose match
@@ -33,22 +34,32 @@ async function strategy(error: Error) {
 function apiError(
 	status: number,
 	bodyCode?: string,
-	options: { retryAfter?: number; method?: string; idempotent?: boolean } = {},
+	options: { retryAfter?: number; method?: string; url?: string } = {},
 ) {
-	return new DubAPIError(`Dub ${status}: failed`, {
-		status,
-		code: bodyCode,
-		...options,
-	});
+	return new ApiError(
+		{
+			method: (options.method ?? 'GET') as 'GET',
+			url: options.url ?? '/links',
+		},
+		{
+			url: `https://api.dub.co${options.url ?? '/links'}`,
+			ok: false,
+			status,
+			statusText: 'failed',
+			body: bodyCode ? { error: { code: bodyCode, message: 'x' } } : undefined,
+		},
+		`Dub ${status}: failed`,
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 describe('Dub error handlers', () => {
 	it('retries an idempotent read whose connection dropped before reaching Dub', async () => {
-		const dropped = new DubAPIError('fetch failed', {
-			method: 'GET',
-			idempotent: true,
-			cause: new Error('socket hang up'),
-		});
+		const dropped = new DubTransportError(
+			'GET',
+			'/links',
+			new Error('socket hang up'),
+		);
 		expect(classify(dropped)).toBe('TRANSPORT_ERROR');
 		expect(await strategy(dropped)).toEqual({
 			maxRetries: 2,
@@ -57,35 +68,23 @@ describe('Dub error handlers', () => {
 	});
 
 	it('does not retry a write whose connection dropped', async () => {
-		const dropped = new DubAPIError('fetch failed', {
-			method: 'POST',
-			cause: new Error('socket hang up'),
-		});
+		const dropped = new DubTransportError(
+			'POST',
+			'/links',
+			new Error('socket hang up'),
+		);
 		expect(classify(dropped)).toBe('DEFAULT');
 	});
 
-	it('retries a 429 with backoff', async () => {
+	it('does not retry a 429 again after core already retried it', async () => {
 		const error = apiError(429);
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
-		expect(await strategy(error)).toEqual({
-			maxRetries: 3,
-			headersRetryAfterMs: undefined,
-			retryStrategy: 'exponential_backoff',
-		});
+		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
 	it('retries a body-code rate limit that arrives on another status', async () => {
 		const error = apiError(503, 'rate_limit_exceeded');
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
-	});
-
-	it('honours Retry-After when Dub sends one', async () => {
-		const error = apiError(429, 'rate_limit_exceeded', { retryAfter: 30_000 });
-		expect(await strategy(error)).toEqual({
-			maxRetries: 3,
-			headersRetryAfterMs: 30_000,
-			retryStrategy: 'exponential_backoff',
-		});
 	});
 
 	it.each([401])('does not retry a %i', async (status) => {
@@ -119,10 +118,7 @@ describe('Dub error handlers', () => {
 	});
 
 	it.each([500, 502, 503])('replays a read that got a %i', async (status) => {
-		const error = apiError(status, undefined, {
-			method: 'GET',
-			idempotent: true,
-		});
+		const error = apiError(status, undefined, { method: 'GET' });
 		expect(classify(error)).toBe('SERVER_ERROR');
 		expect(await strategy(error)).toEqual({
 			maxRetries: 2,
@@ -133,41 +129,38 @@ describe('Dub error handlers', () => {
 	it.each(['POST', 'PATCH', 'DELETE'])(
 		'does not replay a failed %s write, which Dub cannot deduplicate',
 		async (method) => {
-			const error = apiError(500, undefined, { method, idempotent: false });
-			expect(classify(error)).toBe('DEFAULT');
+			const error = apiError(500, undefined, { method });
+			expect(classify(error)).toBe('SERVER_ERROR');
 			expect(await strategy(error)).toEqual({ maxRetries: 0 });
 		},
 	);
 
-	it('replays links.upsert, the one idempotent write', async () => {
-		const error = apiError(500, undefined, {
-			method: 'PUT',
-			idempotent: true,
-		});
-		expect(classify(error)).toBe('SERVER_ERROR');
-	});
+	it.each(['/links/upsert', '/partners/links/upsert'])(
+		'replays %s, an idempotent write',
+		async (url) => {
+			const error = apiError(500, undefined, { method: 'PUT', url });
+			expect(classify(error)).toBe('SERVER_ERROR');
+			expect(await strategy(error)).toEqual({
+				maxRetries: 2,
+				retryStrategy: 'exponential_backoff',
+			});
+		},
+	);
 
 	it('does not replay a timed-out write', async () => {
 		const timeout = new Error('The operation timed out');
 		timeout.name = 'TimeoutError';
-		const error = new DubAPIError(timeout.message, {
-			cause: timeout,
-			method: 'POST',
-			idempotent: false,
-		});
+		const error = new DubTransportError('POST', '/track/lead', timeout);
 		expect(classify(error)).toBe('DEFAULT');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
 	it('matches the error envelope codes as well as statuses', () => {
-		// A handler only sees DubAPIError fields, so a code without a status
-		// (transport-free paths in tests) must still sort correctly.
-		expect(classify(new DubAPIError('x', { code: 'unauthorized' }))).toBe(
-			'AUTH_ERROR',
+		// A body code on an unrelated status still sorts by the code.
+		expect(classify(apiError(418, 'unauthorized'))).toBe('AUTH_ERROR');
+		expect(classify(apiError(418, 'unprocessable_entity'))).toBe(
+			'VALIDATION_ERROR',
 		);
-		expect(
-			classify(new DubAPIError('x', { code: 'unprocessable_entity' })),
-		).toBe('VALIDATION_ERROR');
 	});
 
 	it('falls back to DEFAULT for anything else', async () => {
@@ -203,7 +196,7 @@ describe('mergeErrorHandlers', () => {
 	it('lets a caller override a builtin key and keeps the rest', async () => {
 		const merged = mergeErrorHandlers(builtin, {
 			RATE_LIMIT_ERROR: {
-				match: (error: Error) => error instanceof DubAPIError,
+				match: (error: Error) => error instanceof ApiError,
 				handler: async () => ({ maxRetries: 9 }),
 			},
 		});
@@ -211,7 +204,7 @@ describe('mergeErrorHandlers', () => {
 			builtin.RATE_LIMIT_ERROR?.handler,
 		);
 		const decision = await merged.RATE_LIMIT_ERROR?.handler(
-			new DubAPIError('x', { status: 429 }),
+			apiError(429),
 			context,
 		);
 		expect(decision).toEqual({ maxRetries: 9 });
@@ -233,11 +226,11 @@ describe('mergeErrorHandlers', () => {
 		const merged = mergeErrorHandlers(builtin, {
 			OVERLOADED_ERROR: {
 				match: (error: Error) =>
-					error instanceof DubAPIError && error.status === 529,
+					error instanceof ApiError && error.status === 529,
 				handler: async () => ({ maxRetries: 1 }),
 			},
 		});
-		const error = new DubAPIError('overloaded', { status: 529 });
+		const error = apiError(529);
 		let ran: string | undefined;
 		for (const [name, entry] of Object.entries(merged)) {
 			if (entry?.match(error, context)) {
@@ -249,10 +242,7 @@ describe('mergeErrorHandlers', () => {
 	});
 
 	it('keeps envelope-driven matches working through real bodies', () => {
-		const error = new DubAPIError('Dub 401', {
-			status: 401,
-			code: 'unauthorized',
-		});
+		const error = apiError(401, 'unauthorized');
 		expect(handlers.AUTH_ERROR?.match(error, context)).toBe(true);
 		expect(handlers.RATE_LIMIT_ERROR?.match(error, context)).toBe(false);
 	});

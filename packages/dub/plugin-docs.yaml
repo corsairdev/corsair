@@ -1,5 +1,5 @@
 displayName: Dub
-description: Dub (dub.co) short links for Corsair - create, update, upsert and delete links, read click and conversion analytics and raw events, generate SVG QR codes, and manage tags, domains, folders and customers.
+description: Dub (dub.co) short links and partner programs - create, update, upsert and delete links, read click and conversion analytics and raw events, generate SVG QR codes, manage tags, domains, folders and customers, run the Partners program (partners, applications, commissions, payouts, discount codes, bounties, messages), and receive signed webhooks.
 domain: dub.co
 recommendedAuth: api_key
 overviewNote: |
@@ -12,18 +12,21 @@ overviewNote: |
     delete; `invoiceId` on `track.sale` is the only duplicate guard (one sale per invoice ID).
   - **Retries.** Dub rate limits per key (60-3000 requests/minute by plan, separate per-second
     caps on analytics). A 429 is retried up to three times, honouring `Retry-After`. Writes are
-    never replayed on a 5xx because Dub has no idempotency keys; `links.upsert` is the exception,
-    as it is create-or-update by domain and slug.
+    never replayed on a 5xx because Dub has no idempotency keys; `links.upsert` is the exception:
+    it matches the existing link by destination `url`, so replaying the same body gives the same
+    result. A different `key` on an existing url renames that link's slug.
   - **Paging.** `links.list` and `customers.list` page by cursor: pass `nextCursor` as
     `startingAfter`. `events.list`, `tags.list`, `domains.list` and `folders.list` page by page
     number, and a full last page leads to one empty page.
+  - **Plans.** On Dub's free plan, folders, conversion tracking (`track.*`), customers, `domains.checkStatus` and the whole Partners program (partners, program applications, commissions, payouts, discount codes, bounties, messages, embed tokens) answer 403 `forbidden` "Need higher plan", and the analytics routes answer 429 with `X-RateLimit-Limit: 0` (checked 11-28). Webhooks need the Business plan.
+  - **Webhooks.** Dub sends link, click, lead, sale, partner, commission, discount code and message events. Add the endpoint in the workspace's webhook settings and store its secret as the webhook signature; each delivery's `Dub-Signature` (an HMAC-SHA256 of the body) is checked.
   - **Analytics shapes.** `analytics.retrieve` returns a count object for `groupBy: 'count'` and
     an array of rows for every other groupBy.
-  - **QR codes.** `qr.get` returns the SVG document as a string. PNG is not exposed, and the
-    `logo` parameters need a paid plan.
-  - **Out of scope.** The Dub Partners program (partners, commissions, payouts, discount codes,
-    bounties, messages, program applications), `domains.register` (it buys a domain) and
-    `domains.status` are not exposed by this plugin.
+  - **QR codes.** `qr.get` returns the SVG document as a string. PNG is not exposed.
+  - **Partners program.** The partners, program applications, commissions, payouts, discount
+    codes, bounties, messages and embed token operations come straight from Dub's OpenAPI file.
+    The ones that pay, email or ban a partner are `destructive`. `domains.register` claims a
+    `.link` domain and is `destructive` too.
 examples:
   read:
     path: links.list
@@ -52,7 +55,7 @@ apiExamples:
   links.delete:
     call: "{ linkId: 'link_1KAP4CQ4Y1' }"
   links.bulkCreate:
-    call: "[{ url: 'https://dub.co', key: 'try' }, { url: 'https://dub.co/help', key: 'help' }]"
+    call: "{ links: [{ url: 'https://dub.co', key: 'try' }, { url: 'https://dub.co/help', key: 'help' }] }"
   links.bulkUpdate:
     call: "{ linkIds: ['link_1KAP4CQ4Y1'], data: { archived: true } }"
   links.bulkDelete:

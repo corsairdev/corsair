@@ -1,28 +1,34 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { DubAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { DubTransportError, dubErrorCode, isReplaySafe } from './client';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof DubAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 function codeOf(error: Error): string | undefined {
-	return error instanceof DubAPIError ? error.code : undefined;
+	return dubErrorCode(error);
+}
+
+function replaySafe(error: Error): boolean {
+	if (error instanceof ApiError) {
+		return isReplaySafe(error.request?.method, error.request?.url);
+	}
+	return (
+		error instanceof DubTransportError && isReplaySafe(error.method, error.path)
+	);
 }
 
 // Statuses and codes: https://dub.co/docs/api-reference/errors
 export const errorHandlers = {
 	// Standard endpoints allow 60-3000 requests/minute per key by plan;
-	// analytics endpoints have separate per-second caps. Dub answers 429 with
-	// code rate_limit_exceeded, and a gateway 429 carries no body, so both
-	// forms match here. A missing Retry-After falls back to the 1s/2s/4s backoff.
+	// analytics endpoints have separate per-second caps. Core's request() has
+	// already retried a 429 three times (honouring Retry-After) before a
+	// handler sees it, so retrying again would multiply the attempts.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => error instanceof DubAPIError && error.isRateLimit,
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs:
-				error instanceof DubAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		match: (error: Error) =>
+			statusOf(error) === 429 || codeOf(error) === 'rate_limit_exceeded',
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 401 unauthorized: missing or invalid key.
 	AUTH_ERROR: {
@@ -30,7 +36,8 @@ export const errorHandlers = {
 			statusOf(error) === 401 || codeOf(error) === 'unauthorized',
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 403 forbidden: the key lacks the permission this call needs.
+	// 403 forbidden: the key lacks the permission, or the plan lacks the
+	// feature (the Partners routes on a plan without Dub Partners).
 	PERMISSION_ERROR: {
 		match: (error: Error) =>
 			statusOf(error) === 403 || codeOf(error) === 'forbidden',
@@ -43,8 +50,7 @@ export const errorHandlers = {
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 400 bad_request, 404 not_found, 410 invite_expired and 422
-	// unprocessable_entity all answer a retry with the same body. Invite
-	// expiry belongs here rather than AUTH_ERROR: the account is fine.
+	// unprocessable_entity all answer a retry with the same body.
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
 			const status = statusOf(error);
@@ -63,30 +69,24 @@ export const errorHandlers = {
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// A dropped connection (reset, DNS, abort) never reached Dub, so replaying
-	// an idempotent request is safe; only GETs and links.upsert carry the flag.
+	// A dropped connection never reached Dub, so a read or an upsert can be
+	// replayed; any other write could land twice.
 	TRANSPORT_ERROR: {
 		match: (error: Error) =>
-			error instanceof DubAPIError &&
-			error.status === undefined &&
-			error.idempotent,
+			error instanceof DubTransportError && replaySafe(error),
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
-	// Dub documents no idempotency keys, so a 5xx write must not be replayed:
-	// it may have gone through. Reads are safe, and links.upsert is the one
-	// idempotent write (create-or-update by domain+key), so both replay here.
+	// Dub documents no idempotency keys, so a 5xx write may have gone
+	// through: only reads and upserts are replayed.
 	SERVER_ERROR: {
-		match: (error: Error) =>
-			error instanceof DubAPIError &&
-			error.idempotent &&
-			(error.status ?? 0) >= 500,
-		handler: async () => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		match: (error: Error) => (statusOf(error) ?? 0) >= 500,
+		handler: async (error: Error) =>
+			replaySafe(error)
+				? { maxRetries: 2, retryStrategy: 'exponential_backoff' as const }
+				: { maxRetries: 0 },
 	},
 	DEFAULT: {
 		match: () => true,

@@ -108,7 +108,5 @@ export const remove: DubEndpoints['customersDelete'] = (ctx, input) =>
 			method: 'DELETE',
 			path: `/customers/${segment(id)}`,
 		}),
-		{
-			log: ({ id }) => ({ id }),
-		},
+		{},
 	);

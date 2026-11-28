@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/dub",
   "version": "0.1.0",
-  "description": "Dub (dub.co) link management for Corsair: create, update and delete short links, read click and conversion analytics and events, generate QR codes, and manage tags, domains, folders and customers.",
+  "description": "Dub (dub.co) for Corsair: short links, analytics and events, QR codes, tags, domains, folders, customers, the Partners program, and signed webhooks.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
