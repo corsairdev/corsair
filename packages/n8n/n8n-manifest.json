@@ -13840,7 +13840,7 @@
             "properties": {
               "floor": {
                 "type": "string",
-                "enum": [false, "production", "all"],
+                "enum": ["off", "production", "all"],
                 "description": "Minimum execution-data redaction level enforced across the instance."
               }
             },
@@ -26753,7 +26753,7 @@
           "properties": {
             "floor": {
               "type": "string",
-              "enum": [false, "production", "all"],
+              "enum": ["off", "production", "all"],
               "description": "Minimum execution-data redaction level enforced across the instance."
             }
           },

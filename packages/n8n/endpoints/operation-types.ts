@@ -4153,7 +4153,7 @@ export type N8nOperationInputs = {
 		personalSpaceSharing: boolean;
 		redactionEnforcement: {
 			/** Minimum execution-data redaction level enforced across the instance. */
-			floor: false | 'production' | 'all';
+			floor: 'off' | 'production' | 'all';
 		};
 		/** Read-only usage count returned by GET. Ignored on write so a GET response can be sent back as a PUT body. */
 		publishedPersonalWorkflowsCount?: number;

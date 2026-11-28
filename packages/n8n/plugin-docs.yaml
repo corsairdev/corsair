@@ -355,7 +355,7 @@ apiExamples:
   settings.securityPolicy.get:
     args: {}
   settings.securityPolicy.update:
-    args: {"personalSpacePublishing": true, "personalSpaceSharing": true, "redactionEnforcement": {"floor": false}}
+    args: {"personalSpacePublishing": true, "personalSpaceSharing": true, "redactionEnforcement": {"floor": "off"}}
   sourceControl.getStatus:
     args: {"direction": "push"}
   sourceControl.pull:

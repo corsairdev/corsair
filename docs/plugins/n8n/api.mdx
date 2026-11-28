@@ -13875,7 +13875,7 @@ Set the security policy. Replace the instance security policy with the provided 
 await corsair.n8n.api.settings.securityPolicy.update({
 	personalSpacePublishing: true,
 	personalSpaceSharing: true,
-	redactionEnforcement: { floor: false },
+	redactionEnforcement: { floor: 'off' },
 });
 ```
 
@@ -13895,7 +13895,7 @@ await corsair.n8n.api.settings.securityPolicy.update({
 
 ```ts
 {
-  floor: false | production | all
+  floor: off | production | all
 }
 ```
 </Accordion>
