@@ -299,6 +299,7 @@ describeIfKey('chargebee live', () => {
 			const next = ((pick(page2, 'list') as unknown[]) ?? []).map((r) =>
 				pick(r, 'customer', 'id'),
 			);
+			expect(next.length).toBeGreaterThan(0);
 			expect(next.some((id) => firstIds.has(id))).toBe(false);
 		}
 		ids.currency = String(

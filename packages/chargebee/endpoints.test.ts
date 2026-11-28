@@ -416,11 +416,25 @@ describe('responses', () => {
 			limit: 1,
 		})) as { next_offset?: string };
 		expect(page.next_offset).toBe('["1795842313000","74209"]');
+		// The string goes back as offset unchanged.
+		reply(200, { list: [] });
+		await endpointFor('customers.list')(ctx(), {
+			limit: 1,
+			offset: page.next_offset,
+		});
+		expect(new URL(String(calls.at(-1)?.url)).searchParams.get('offset')).toBe(
+			'["1795842313000","74209"]',
+		);
 		reply(200, { list: [], next_offset: 1 });
 		const items = (await endpointFor('items.list')(ctx(), {})) as {
 			next_offset?: string;
 		};
 		expect(items.next_offset).toBe('1');
+		reply(200, { list: [] });
+		await endpointFor('items.list')(ctx(), { offset: items.next_offset });
+		expect(new URL(String(calls.at(-1)?.url)).searchParams.get('offset')).toBe(
+			'1',
+		);
 	});
 
 	it('takes the empty 202 of an async email send', async () => {
