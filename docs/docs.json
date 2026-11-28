@@ -861,6 +861,15 @@
                 ]
               },
               {
+                "group": "Boat",
+                "pages": [
+                  "plugins/boat/overview",
+                  "plugins/boat/api",
+                  "plugins/boat/database",
+                  "plugins/boat/webhooks"
+                ]
+              },
+              {
                 "group": "BoldSign",
                 "pages": [
                   "plugins/boldsign/overview",

@@ -1,0 +1,277 @@
+# Display copy for the generated docs and the catalog, plus one call
+# example per operation. Generated with the plugin from Boat's OpenAPI spec;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: Boat
+domain: boat.dev
+description: "Persistent Linux sandboxes for AI agents with Boat: create, stop, resume and fork sandboxes, run commands, read and write files, prompt integrated coding agents, expose ports and the desktop, save snapshots, and manage environments, credential profiles, API keys, webhooks, CI and telemetry (125 operations)."
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key with `boat api-key create <name>` or in the Boat dashboard. Keys start with `boat_` (older `box_` keys still work). Things to know before you write:
+
+  - **Which key.** An organization key works on the organization's sandboxes, environments, snapshots, limits and usage. Account settings (webhooks, API keys, credential profiles, CI, telemetry, AI proxy, secrets, repositories, caller address, data retention) answer 403 `api_key_org_forbidden` to it: use a personal account key there. A scoped key (`apiKeys.createScoped`) can be limited to some sandboxes, environments or actions.
+  - **Sandboxes bill while they run.** `sandboxes.create`, `fork`, `resume` and `recover` start a machine that bills until it stops (`ttlSeconds`, default one hour; `null` turns auto-stop off), so they are `destructive`. `sandboxes.stop` saves the disk and stops billing; a stopped sandbox reads as `archived`. Send `idempotencyKey` with create and fork to make a retry safe. A full start window answers 429 `rate_limited` and is not retried: `account.getLimits` shows `canStart` and what is left.
+  - **Commands and files** go to the sandbox machine. `sandboxes.commands.run` waits for the command (30 s by default, up to 600 s); start long jobs with `detached: true`, then read `commands.getStatus` or `commands.attach`. A call right after a start can answer 409 `sandbox_starting`: retry after a few seconds. File reads stop at 5 MiB (413); use `files.createDownloadUrl` for bigger files.
+  - **Integrated agents** (`sandboxes.agent.*`) run Codex, Claude Code, pi, OpenCode and other harnesses inside the sandbox with the model key or subscription connected on the dashboard, so a prompt spends that account's model usage. With no harness set up at all, prompts answer 409 `provider_not_configured`; a prompt to a provider that has no key is accepted and the run fails in the harness (`agent.getPrompt` shows `failed`).
+  - **Snapshots.** Every stop leaves a snapshot (`snapshots.*`, `sandboxes.snapshots.*`); a fork or resume starts from it. Saved snapshots (`savedSnapshots.*`, with share codes) need a paid plan: the free trial answers 403. A command in the first seconds after a fork or resume can answer 502 `sandbox_restoring` (it did not run): retry after 1-3 s.
+  - **Deletes** of sandboxes and snapshots take the id a second time as `confirm`, Boat's guard against deleting the wrong one.
+  - **Webhooks.** Boat posts sandbox lifecycle events (`sandbox.ready`, `hydrated`, `error`, `archived`, `degraded`, `recovered`) to endpoints made with `webhooks.create`, signed with HMAC-SHA256 (`X-Ascii-Signature`). The plugin checks the signature with the endpoint's `whsec_` secret.
+examples:
+  read:
+    path: sandboxes.list
+    title: List sandboxes
+    args: {}
+  write:
+    path: sandboxes.commands.run
+    title: Run a command in a sandbox
+    args: {"sandboxId": "bx_23456789", "command": "uname -a", "timeoutSeconds": 30}
+apiExamples:
+  account.getCallerAddress:
+    args: {}
+  account.getDataRetention:
+    args: {}
+  account.getLimits:
+    args: {}
+  account.getMe:
+    args: {}
+  account.updateDataRetention:
+    args: {}
+  aiProxy.get:
+    args: {}
+  aiProxy.getUsage:
+    args: {}
+  aiProxy.update:
+    args: {"enabled": true}
+  apiKeys.createScoped:
+    args: {}
+  apiKeys.getUsage:
+    args: {"apiKeyId": "example"}
+  apiKeys.list:
+    args: {}
+  apiKeys.revoke:
+    args: {"apiKeyId": "example"}
+  apiKeys.rotate:
+    args: {"apiKeyId": "example"}
+  ci.connectGithub:
+    args: {}
+  ci.getJob:
+    args: {"jobId": "example"}
+  ci.getJobLog:
+    args: {"jobId": "example"}
+  ci.getOverview:
+    args: {}
+  ci.setPublicRepos:
+    args: {"account": "example"}
+  credentialProfiles.accounts.add:
+    args: {"profile": "example", "credential": "anthropic-api-key", "value": "example"}
+  credentialProfiles.accounts.delete:
+    args: {"profile": "example", "credential": "anthropic-api-key", "account": "example"}
+  credentialProfiles.accounts.list:
+    args: {"profile": "example", "credential": "anthropic-api-key"}
+  credentialProfiles.accounts.switch:
+    args: {"profile": "example", "credential": "anthropic-api-key", "account": "example"}
+  credentialProfiles.create:
+    args: {"name": "example"}
+  credentialProfiles.customApis.delete:
+    args: {"profile": "default", "name": "STRIPE_KEY"}
+  credentialProfiles.customApis.set:
+    args: {"profile": "default", "name": "STRIPE_KEY", "value": "sk_test_example", "baseUrl": "https://api.stripe.com"}
+  credentialProfiles.delete:
+    args: {"profile": "example"}
+  credentialProfiles.deleteKey:
+    args: {"profile": "example", "credential": "anthropic-api-key"}
+  credentialProfiles.list:
+    args: {}
+  credentialProfiles.setKey:
+    args: {"profile": "example", "credential": "anthropic-api-key", "value": "example"}
+  credentialProfiles.update:
+    args: {"profile": "example"}
+  deletionOperations.get:
+    args: {"operationId": "bdop_0123456789abcdef0123456789abcdef"}
+  environments.addRepo:
+    args: {"environmentId": "1b6d1225-6394-45a2-ba97-dcb55758b552", "repositoryId": "example"}
+  environments.create:
+    args: {"name": "example"}
+  environments.delete:
+    args: {"environmentId": "1b6d1225-6394-45a2-ba97-dcb55758b552"}
+  environments.deleteRepo:
+    args: {"environmentId": "1b6d1225-6394-45a2-ba97-dcb55758b552", "repositoryId": "example"}
+  environments.deleteSecretFile:
+    args: {"environmentId": "1b6d1225-6394-45a2-ba97-dcb55758b552", "path": "notes.txt"}
+  environments.deleteVar:
+    args: {"environmentId": "1b6d1225-6394-45a2-ba97-dcb55758b552", "key": "example"}
+  environments.list:
+    args: {}
+  environments.setSecretFile:
+    args: {"environmentId": "1b6d1225-6394-45a2-ba97-dcb55758b552", "path": "notes.txt", "contents": "example"}
+  environments.setVar:
+    args: {"environmentId": "1b6d1225-6394-45a2-ba97-dcb55758b552", "key": "example", "value": "example"}
+  environments.update:
+    args: {"environmentId": "1b6d1225-6394-45a2-ba97-dcb55758b552"}
+  environments.upgradeSandboxes:
+    args: {"environmentId": "1b6d1225-6394-45a2-ba97-dcb55758b552"}
+  namedSnapshots.delete:
+    args: {"name": "example"}
+  namedSnapshots.get:
+    args: {"name": "example"}
+  namedSnapshots.list:
+    args: {}
+  namedSnapshots.save:
+    args: {"sandboxId": "bx_23456789", "name": "example"}
+  orgs.list:
+    args: {}
+  orgs.setActive:
+    args: {"org": "example"}
+  orgs.update:
+    args: {"org": "example"}
+  repos.list:
+    args: {}
+  repos.select:
+    args: {"repositoryId": "example"}
+  sandboxes.addSshKey:
+    args: {"sandboxId": "bx_23456789", "key": "example"}
+  sandboxes.agent.getPrompt:
+    args: {"sandboxId": "bx_23456789", "promptId": "example"}
+  sandboxes.agent.interrupt:
+    args: {"sandboxId": "bx_23456789"}
+  sandboxes.agent.listConversations:
+    args: {"sandboxId": "bx_23456789"}
+  sandboxes.agent.listEvents:
+    args: {"sandboxId": "bx_23456789"}
+  sandboxes.agent.prompt:
+    args: {"sandboxId": "bx_23456789", "provider": "codex", "prompt": "example"}
+  sandboxes.agent.steer:
+    args: {"sandboxId": "bx_23456789", "message": "example"}
+  sandboxes.commands.attach:
+    args: {"sandboxId": "bx_23456789", "processId": 1}
+  sandboxes.commands.get:
+    args: {"sandboxId": "bx_23456789", "commandId": "example"}
+  sandboxes.commands.getLogs:
+    args: {"sandboxId": "bx_23456789", "commandId": "example"}
+  sandboxes.commands.getStatus:
+    args: {"sandboxId": "bx_23456789", "processId": 1}
+  sandboxes.commands.listHistory:
+    args: {"sandboxId": "bx_23456789"}
+  sandboxes.commands.run:
+    args: {"sandboxId": "bx_23456789", "command": "uname -a", "timeoutSeconds": 30}
+  sandboxes.commands.stop:
+    args: {"sandboxId": "bx_23456789", "processId": 1}
+  sandboxes.create:
+    args: {"type": "small", "ttlSeconds": 1800, "labels": {"job": "nightly-build"}}
+  sandboxes.delete:
+    args: {"sandboxId": "bx_23456789", "confirm": "bx_23456789"}
+  sandboxes.downloadArtifact:
+    args: {"sandboxId": "bx_23456789", "path": "notes.txt"}
+  sandboxes.files.createDownloadUrl:
+    args: {"sandboxId": "bx_23456789", "path": "notes.txt"}
+  sandboxes.files.createFolder:
+    args: {"sandboxId": "bx_23456789", "path": "notes.txt"}
+  sandboxes.files.createUploadUrl:
+    args: {"sandboxId": "bx_23456789", "path": "notes.txt"}
+  sandboxes.files.delete:
+    args: {"sandboxId": "bx_23456789", "path": "notes.txt"}
+  sandboxes.files.find:
+    args: {"sandboxId": "bx_23456789", "pattern": "example"}
+  sandboxes.files.getInfo:
+    args: {"sandboxId": "bx_23456789", "path": "notes.txt"}
+  sandboxes.files.list:
+    args: {"sandboxId": "bx_23456789"}
+  sandboxes.files.move:
+    args: {"sandboxId": "bx_23456789", "source": "example", "destination": "example"}
+  sandboxes.files.read:
+    args: {"sandboxId": "bx_23456789", "path": "notes.txt"}
+  sandboxes.files.replace:
+    args: {"sandboxId": "bx_23456789", "paths": ["notes.txt"], "pattern": "example", "newValue": "example"}
+  sandboxes.files.search:
+    args: {"sandboxId": "bx_23456789", "pattern": "example"}
+  sandboxes.files.setPermissions:
+    args: {"sandboxId": "bx_23456789", "path": "notes.txt", "mode": "example"}
+  sandboxes.files.write:
+    args: {"sandboxId": "bx_23456789", "path": "notes.txt", "content": "example"}
+  sandboxes.fork:
+    args: {"sandboxId": "bx_23456789"}
+  sandboxes.get:
+    args: {"sandboxId": "bx_23456789"}
+  sandboxes.getAiUsage:
+    args: {"sandboxId": "bx_23456789"}
+  sandboxes.getDesktopUrl:
+    args: {"sandboxId": "bx_23456789"}
+  sandboxes.getNetworkPolicy:
+    args: {"sandboxId": "bx_23456789"}
+  sandboxes.getStop:
+    args: {"sandboxId": "bx_23456789", "stopId": "example"}
+  sandboxes.getUsage:
+    args: {"sandboxId": "bx_23456789"}
+  sandboxes.hostPort:
+    args: {"sandboxId": "bx_23456789", "port": 1}
+  sandboxes.list:
+    args: {}
+  sandboxes.listProcesses:
+    args: {"sandboxId": "bx_23456789"}
+  sandboxes.recover:
+    args: {"sandboxId": "bx_23456789"}
+  sandboxes.resume:
+    args: {"sandboxId": "bx_23456789"}
+  sandboxes.setAiAccess:
+    args: {"sandboxId": "bx_23456789", "blocked": true}
+  sandboxes.setNetworkPolicy:
+    args: {"sandboxId": "bx_23456789"}
+  sandboxes.share:
+    args: {"sandboxId": "bx_23456789"}
+  sandboxes.snapshots.deleteAll:
+    args: {"sandboxId": "bx_23456789", "confirm": "bx_23456789"}
+  sandboxes.snapshots.getLatest:
+    args: {"sandboxId": "bx_23456789"}
+  sandboxes.snapshots.list:
+    args: {"sandboxId": "bx_23456789"}
+  sandboxes.stop:
+    args: {"sandboxId": "bx_23456789"}
+  sandboxes.unshare:
+    args: {"sandboxId": "bx_23456789"}
+  sandboxes.update:
+    args: {"sandboxId": "bx_23456789"}
+  savedSnapshots.delete:
+    args: {"name": "example"}
+  savedSnapshots.get:
+    args: {"name": "example"}
+  savedSnapshots.list:
+    args: {}
+  savedSnapshots.save:
+    args: {"sandboxId": "bx_23456789", "name": "example"}
+  savedSnapshots.shares.create:
+    args: {"name": "example"}
+  savedSnapshots.shares.list:
+    args: {"name": "example"}
+  savedSnapshots.shares.revoke:
+    args: {"name": "example", "shareId": "example"}
+  secrets.get:
+    args: {}
+  secrets.update:
+    args: {}
+  snapshots.delete:
+    args: {"snapshotId": "snap_0123456789", "confirm": "snap_0123456789"}
+  snapshots.getDownload:
+    args: {"snapshotId": "example"}
+  snapshots.getFile:
+    args: {"snapshotId": "example"}
+  snapshots.getTree:
+    args: {"snapshotId": "example"}
+  snapshots.list:
+    args: {}
+  telemetry.delete:
+    args: {}
+  telemetry.get:
+    args: {}
+  telemetry.set:
+    args: {"endpoint": "example"}
+  webhooks.create:
+    args: {"name": "production", "url": "https://example.com/hooks/boat", "events": ["sandbox.ready", "sandbox.archived"]}
+  webhooks.delete:
+    args: {"webhookId": "wh_0123456789abcdef01234567"}
+  webhooks.get:
+    args: {"webhookId": "wh_0123456789abcdef01234567"}
+  webhooks.list:
+    args: {}
+  webhooks.rotateSecret:
+    args: {"webhookId": "wh_0123456789abcdef01234567"}
+  webhooks.update:
+    args: {"webhookId": "wh_0123456789abcdef01234567"}
