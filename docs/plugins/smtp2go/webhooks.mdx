@@ -1,0 +1,209 @@
+---
+title: "SMTP2GO webhooks"
+sidebarTitle: "Webhooks"
+description: "SMTP2GO incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The SMTP2GO plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/smtp2go/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `email`
+  - `event` (`email.event`)
+- `sms`
+  - `event` (`sms.event`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
+}
+```
+
+## Events
+
+## Email
+
+### Event
+
+`email.event`
+
+An email event: processed, delivered, open, click, bounce, spam, unsubscribe, resubscribe, reject (the "event" parameter)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | — |
+| `id` | `string \| number \| null` | No | — |
+| `email_id` | `string \| null` | No | — |
+| `message-id` | `string \| null` | No | — |
+| `time` | `string \| number \| null` | No | — |
+| `sendtime` | `string \| number \| null` | No | — |
+| `sender` | `string \| null` | No | — |
+| `from` | `string \| null` | No | — |
+| `from_address` | `string \| null` | No | — |
+| `from_name` | `string \| null` | No | — |
+| `rcpt` | `string \| null` | No | — |
+| `recipients` | `string \| string[] \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `auth` | `string \| null` | No | — |
+| `host` | `string \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `bounce` | `string \| null` | No | — |
+| `user-agent` | `string \| null` | No | — |
+| `read-secs` | `string \| number \| null` | No | — |
+| `client` | `string \| null` | No | — |
+| `client-device` | `string \| null` | No | — |
+| `client-os` | `string \| null` | No | — |
+| `geoip-country` | `string \| null` | No | — |
+| `srchost` | `string \| null` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  id?: string | number | null,
+  email_id?: string | null,
+  message-id?: string | null,
+  time?: string | number | null,
+  sendtime?: string | number | null,
+  sender?: string | null,
+  from?: string | null,
+  from_address?: string | null,
+  from_name?: string | null,
+  rcpt?: string | null,
+  recipients?: string | string[] | null,
+  subject?: string | null,
+  auth?: string | null,
+  host?: string | null,
+  message?: string | null,
+  bounce?: string | null,
+  user-agent?: string | null,
+  read-secs?: string | number | null,
+  client?: string | null,
+  client-device?: string | null,
+  client-os?: string | null,
+  geoip-country?: string | null,
+  srchost?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+smtp2go({
+    webhookHooks: {
+        email: {
+            event: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Sms
+
+### Event
+
+`sms.event`
+
+An SMS event: sms_sending, sms_submitted, sms_delivered, sms_failed, sms_rejected (the "event" parameter)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | — |
+| `id` | `string \| number \| null` | No | — |
+| `message_id` | `string \| null` | No | — |
+| `destination_number` | `string \| null` | No | — |
+| `source_number` | `string \| null` | No | — |
+| `sender_email` | `string \| null` | No | — |
+| `status_code` | `string \| number \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `retry_count` | `string \| number \| null` | No | — |
+| `received_timestamp` | `string \| number \| null` | No | — |
+| `submitted_timestamp` | `string \| number \| null` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  id?: string | number | null,
+  message_id?: string | null,
+  destination_number?: string | null,
+  source_number?: string | null,
+  sender_email?: string | null,
+  status_code?: string | number | null,
+  region?: string | null,
+  retry_count?: string | number | null,
+  received_timestamp?: string | number | null,
+  submitted_timestamp?: string | number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+smtp2go({
+    webhookHooks: {
+        sms: {
+            event: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

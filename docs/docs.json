@@ -5580,6 +5580,15 @@
                 ]
               },
               {
+                "group": "SMTP2GO",
+                "pages": [
+                  "plugins/smtp2go/overview",
+                  "plugins/smtp2go/api",
+                  "plugins/smtp2go/database",
+                  "plugins/smtp2go/webhooks"
+                ]
+              },
+              {
                 "group": "Snapchat",
                 "pages": [
                   "plugins/snapchat/overview",
