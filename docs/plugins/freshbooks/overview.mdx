@@ -1,0 +1,153 @@
+---
+title: "FreshBooks plugin"
+sidebarTitle: "Overview"
+description: "FreshBooks accounting: clients, invoices, estimates, payments, expenses, bills, items, taxes, projects, time tracking, team, reports, the ledger and webhook callbacks (191 operations), plus signed webhooks."
+---
+
+Use **FreshBooks** through Corsair: one client, typed API calls, and incoming webhooks.
+
+FreshBooks signs in with OAuth 2. Create an app at my.freshbooks.com/#/developer with an HTTPS redirect URI and the scopes this plugin asks for (`freshbooksOAuthScopes`), then connect the account through the OAuth flow. Access tokens last about 12 hours; refresh tokens are single-use and rotate on every refresh, and the plugin stores each new one. Things to know:
+
+- **Ids.** Accounting routes use the account id (like `LJArJ4`), projects and time tracking the numeric business id, ledger routes the business uuid. All three are on `users.me` (`business_memberships[].business`). Leave them out and the plugin reads them from users.me when the login belongs to one business, or set the `accountId`, `businessId` and `businessUuid` options.
+- **Bodies** keep FreshBooks' own shape: `{ client: { fname, email } }`, `{ invoice: { customerid, lines } }`.
+- **Deletes.** Most accounting deletes are soft (vis_state 1): an update with vis_state 0 restores them. `projects.delete`, `timeEntries.delete`, `taxes.delete` and `businesses.delete` remove the data.
+- **Email and money.** `invoices.sendEmail` and `estimates.sendEmail` email the client at once; payments, checkout links and gateway setup move or take money. They are marked `destructive`.
+- **Lists** page with `page` and `per_page` (FreshBooks caps a page at 100) and filter with `search` (sent as `search[<name>]=<value>`) and `include`.
+- **Webhooks.** `callbacks.create` registers one; FreshBooks then posts `callback.verify` with a verifier. Send it back with `callbacks.verify` and store it as the webhook secret (the `webhookSecret` option or the account's webhook_signature). Every later delivery of that callback is signed with it (X-FreshBooks-Hmac-SHA256), and the plugin checks the signature. Each callback has its own verifier, so with several callbacks on one URL store them all in that one value, separated by commas.
+
+**What you get:**
+
+- 191 typed API operations
+- 48 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/freshbooks better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/freshbooks better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/freshbooks better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/freshbooks better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { freshbooks } from '@corsair-dev/freshbooks';
+
+export const corsair = createCorsair({
+	plugins: [
+		freshbooks(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your FreshBooks OAuth app.
+
+```ts
+freshbooks()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'freshbooks',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List invoices**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.freshbooks.api.invoices.list({});
+```
+
+
+**Create a client**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.freshbooks.api.clients.create({
+	client: {
+		fname: 'Ada',
+		lname: 'Lovelace',
+		email: 'ada@example.com',
+		organization: 'Analytical Engines',
+	},
+});
+```
+
+
+See the full list on the [API](/plugins/freshbooks/api) page.
+
+## Webhooks
+
+This plugin registers **48** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/freshbooks/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/freshbooks/api">
+    Every `freshbooks.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/freshbooks/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

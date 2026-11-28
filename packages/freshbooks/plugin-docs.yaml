@@ -1,0 +1,408 @@
+# Display copy for the generated docs and the catalog, plus one call
+# example per operation. Generated with the plugin from FreshBooks's OpenAPI spec;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: FreshBooks
+domain: freshbooks.com
+description: "FreshBooks accounting: clients, invoices, estimates, payments, expenses, bills, items, taxes, projects, time tracking, team, reports, the ledger and webhook callbacks (191 operations), plus signed webhooks."
+recommendedAuth: oauth_2
+overviewNote: |
+  FreshBooks signs in with OAuth 2. Create an app at my.freshbooks.com/#/developer with an HTTPS redirect URI and the scopes this plugin asks for (`freshbooksOAuthScopes`), then connect the account through the OAuth flow. Access tokens last about 12 hours; refresh tokens are single-use and rotate on every refresh, and the plugin stores each new one. Things to know:
+
+  - **Ids.** Accounting routes use the account id (like `LJArJ4`), projects and time tracking the numeric business id, ledger routes the business uuid. All three are on `users.me` (`business_memberships[].business`). Leave them out and the plugin reads them from users.me when the login belongs to one business, or set the `accountId`, `businessId` and `businessUuid` options.
+  - **Bodies** keep FreshBooks' own shape: `{ client: { fname, email } }`, `{ invoice: { customerid, lines } }`.
+  - **Deletes.** Most accounting deletes are soft (vis_state 1): an update with vis_state 0 restores them. `projects.delete`, `timeEntries.delete`, `taxes.delete` and `businesses.delete` remove the data.
+  - **Email and money.** `invoices.sendEmail` and `estimates.sendEmail` email the client at once; payments, checkout links and gateway setup move or take money. They are marked `destructive`.
+  - **Lists** page with `page` and `per_page` (FreshBooks caps a page at 100) and filter with `search` (sent as `search[<name>]=<value>`) and `include`.
+  - **Webhooks.** `callbacks.create` registers one; FreshBooks then posts `callback.verify` with a verifier. Send it back with `callbacks.verify` and store it as the webhook secret (the `webhookSecret` option or the account's webhook_signature). Every later delivery of that callback is signed with it (X-FreshBooks-Hmac-SHA256), and the plugin checks the signature. Each callback has its own verifier, so with several callbacks on one URL store them all in that one value, separated by commas.
+examples:
+  read:
+    path: invoices.list
+    title: List invoices
+    args: {}
+  write:
+    path: clients.create
+    title: Create a client
+    args: {"client": {"fname": "Ada", "lname": "Lovelace", "email": "ada@example.com", "organization": "Analytical Engines"}}
+apiExamples:
+  abilities.list:
+    args: {}
+  accountGateways.delete:
+    args: {"gatewayId": "12"}
+  accountGateways.list:
+    args: {}
+  adjustmentJournalEntries.create:
+    args: {}
+  adjustmentJournalEntries.list:
+    args: {}
+  adjustmentJournalEntries.update:
+    args: {"journalEntryUuid": "0b6f9d3e-1c2a-4e5b-9d8c-7a6b5c4d3e2f"}
+  applications.create:
+    args: {"application": {}}
+  applications.list:
+    args: {}
+  applications.update:
+    args: {"clientId": "app-client-id", "application": {"name": "My app"}}
+  billPayments.create:
+    args: {"bill_payment": {}}
+  billPayments.delete:
+    args: {"billPaymentId": "7766"}
+  billPayments.get:
+    args: {"billPaymentId": "7766"}
+  billPayments.list:
+    args: {}
+  billPayments.update:
+    args: {"billPaymentId": "7766", "bill_payment": {}}
+  billVendors.create:
+    args: {"bill_vendor": {}}
+  billVendors.delete:
+    args: {"vendorId": "5566"}
+  billVendors.get:
+    args: {"vendorId": "5566"}
+  billVendors.list:
+    args: {}
+  billVendors.update:
+    args: {"vendorId": "5566", "bill_vendor": {}}
+  bills.archive:
+    args: {"billId": "6677"}
+  bills.create:
+    args: {"bill": {}}
+  bills.delete:
+    args: {"billId": "6677"}
+  bills.get:
+    args: {"billId": "6677"}
+  bills.list:
+    args: {}
+  bills.update:
+    args: {"billId": "6677", "bill": {}}
+  businesses.create:
+    args: {"business": {}}
+  businesses.delete:
+    args: {}
+  businesses.listUsers:
+    args: {}
+  callbacks.create:
+    args: {"callback": {"event": "invoice.create", "uri": "https://example.com/hooks/freshbooks"}}
+  callbacks.delete:
+    args: {"callbackId": "2001"}
+  callbacks.get:
+    args: {"callbackId": "2001"}
+  callbacks.list:
+    args: {}
+  callbacks.resendVerification:
+    args: {"callbackId": "2001"}
+  callbacks.verify:
+    args: {"callbackId": "2001", "callback": {"verifier": "scADVVi5QuKuj5qTjVkbJNYQe7V7USpGd"}}
+  checkoutLinks.create:
+    args: {}
+  checkoutLinks.delete:
+    args: {"checkoutLinkId": "8899"}
+  checkoutLinks.setPaymentOptions:
+    args: {"checkoutLinkId": "8899"}
+  checkoutLinks.update:
+    args: {"checkoutLinkId": "8899"}
+  clients.create:
+    args: {"client": {"fname": "Ada", "lname": "Lovelace", "email": "ada@example.com", "organization": "Analytical Engines"}}
+  clients.delete:
+    args: {"clientId": "31006"}
+  clients.get:
+    args: {"clientId": "31006"}
+  clients.list:
+    args: {}
+  clients.update:
+    args: {"clientId": "31006", "client": {"organization": "Analytical Engines Ltd"}}
+  contacts.delete:
+    args: {"contactId": "4501"}
+  contacts.update:
+    args: {"contactId": "4501", "contact": {}}
+  creditNotes.create:
+    args: {"credit_note": {}}
+  creditNotes.delete:
+    args: {"creditId": "30947"}
+  creditNotes.get:
+    args: {"creditId": "30947"}
+  creditNotes.list:
+    args: {}
+  creditNotes.update:
+    args: {"creditId": "30947", "credit_note": {}}
+  estimates.accept:
+    args: {"estimateId": "11223"}
+  estimates.create:
+    args: {"estimate": {}}
+  estimates.delete:
+    args: {"estimateId": "11223"}
+  estimates.get:
+    args: {"estimateId": "11223"}
+  estimates.list:
+    args: {}
+  estimates.markSent:
+    args: {"estimateId": "11223"}
+  estimates.sendEmail:
+    args: {"estimateId": "11223", "estimate": {}}
+  estimates.update:
+    args: {"estimateId": "11223", "estimate": {}}
+  expenseCategories.create:
+    args: {"category": {}}
+  expenseCategories.get:
+    args: {"categoryId": "4455"}
+  expenseCategories.list:
+    args: {}
+  expenseProfiles.create:
+    args: {"expense_profile": {}}
+  expenses.create:
+    args: {"expense": {}}
+  expenses.delete:
+    args: {"expenseId": "99881"}
+  expenses.get:
+    args: {"expenseId": "99881"}
+  expenses.list:
+    args: {}
+  expenses.listVendors:
+    args: {}
+  expenses.summaries:
+    args: {}
+  expenses.update:
+    args: {"expenseId": "99881", "expense": {}}
+  gateways.get:
+    args: {}
+  gateways.provisionFreshBooksPayments:
+    args: {}
+  invitationRates.list:
+    args: {}
+  invitations.create:
+    args: {"invitation": {}}
+  invoicePaymentOptions.create:
+    args: {"invoiceId": "987654"}
+  invoicePaymentOptions.get:
+    args: {"invoiceId": "987654"}
+  invoiceProfilePaymentOptions.create:
+    args: {"invoiceProfileId": "4321"}
+  invoiceProfiles.create:
+    args: {"invoice_profile": {}}
+  invoiceProfiles.delete:
+    args: {"invoiceProfileId": "4321"}
+  invoiceProfiles.get:
+    args: {"invoiceProfileId": "4321"}
+  invoiceProfiles.list:
+    args: {}
+  invoiceProfiles.update:
+    args: {"invoiceProfileId": "4321", "invoice_profile": {}}
+  invoices.create:
+    args: {"invoice": {"customerid": 31006, "create_date": "2026-11-28", "lines": [{"type": 0, "name": "Consulting", "qty": 2, "unit_cost": {"amount": "150.00", "code": "USD"}}]}}
+  invoices.delete:
+    args: {"invoiceId": "987654"}
+  invoices.downloadPdf:
+    args: {"invoiceId": "987654"}
+  invoices.get:
+    args: {"invoiceId": "987654"}
+  invoices.getShareLink:
+    args: {"invoiceId": "987654"}
+  invoices.list:
+    args: {}
+  invoices.listPresentations:
+    args: {}
+  invoices.markSent:
+    args: {"invoiceId": "987654"}
+  invoices.sendEmail:
+    args: {"invoiceId": "987654", "invoice": {"email_recipients": ["billing@example.com"]}}
+  invoices.update:
+    args: {"invoiceId": "987654", "invoice": {}}
+  items.create:
+    args: {"item": {}}
+  items.delete:
+    args: {"itemId": "3344"}
+  items.get:
+    args: {"itemId": "3344"}
+  items.list:
+    args: {}
+  items.update:
+    args: {"itemId": "3344", "item": {}}
+  journalEntries.create:
+    args: {"journal_entry": {}}
+  journalEntryAccounts.list:
+    args: {}
+  journalEntryDetails.list:
+    args: {}
+  ledgerAccountSubTypes.get:
+    args: {"subTypeId": "1"}
+  ledgerAccountSubTypes.list:
+    args: {}
+  ledgerAccountTypes.list:
+    args: {}
+  ledgerAccounts.create:
+    args: {}
+  ledgerAccounts.get:
+    args: {"accountUuid": "1c2d3e4f-5a6b-4c7d-8e9f-0a1b2c3d4e5f"}
+  ledgerAccounts.list:
+    args: {}
+  ledgerAccounts.update:
+    args: {"accountUuid": "1c2d3e4f-5a6b-4c7d-8e9f-0a1b2c3d4e5f"}
+  ledgerReports.accountEntryDetails:
+    args: {"accountUuid": "1c2d3e4f-5a6b-4c7d-8e9f-0a1b2c3d4e5f"}
+  ledgerReports.balanceSheet:
+    args: {}
+  ledgerReports.cashFlow:
+    args: {}
+  ledgerReports.chartOfAccounts:
+    args: {}
+  ledgerReports.expenseDetails:
+    args: {}
+  ledgerReports.generalLedger:
+    args: {}
+  ledgerReports.manualJournalEntries:
+    args: {}
+  ledgerReports.profitAndLoss:
+    args: {}
+  ledgerReports.trialBalance:
+    args: {}
+  otherIncomes.create:
+    args: {"other_income": {}}
+  otherIncomes.delete:
+    args: {"incomeId": "7788"}
+  otherIncomes.get:
+    args: {"incomeId": "7788"}
+  otherIncomes.list:
+    args: {}
+  otherIncomes.update:
+    args: {"incomeId": "7788", "other_income": {}}
+  paymentOptions.getDefault:
+    args: {}
+  payments.create:
+    args: {"payment": {}}
+  payments.delete:
+    args: {"paymentId": "55667"}
+  payments.get:
+    args: {"paymentId": "55667"}
+  payments.list:
+    args: {}
+  payments.update:
+    args: {"paymentId": "55667", "payment": {}}
+  projectThreads.create:
+    args: {"projectId": "12345", "thread": {}}
+  projectThreads.list:
+    args: {"projectId": "12345"}
+  projects.create:
+    args: {"project": {}}
+  projects.delete:
+    args: {"projectId": "12345"}
+  projects.get:
+    args: {"projectId": "12345"}
+  projects.list:
+    args: {}
+  projects.update:
+    args: {"projectId": "12345", "project": {}}
+  projects.updateServiceRate:
+    args: {"projectId": "12345", "serviceId": "6011", "service_rate": {}}
+  reports.accountStatement:
+    args: {}
+  reports.accountsAging:
+    args: {}
+  reports.balanceSheet:
+    args: {}
+  reports.bankReconciliationSummary:
+    args: {}
+  reports.download:
+    args: {"downloadToken": "d0wnl0adt0ken", "fileName": "invoice_details.csv"}
+  reports.expenseDetails:
+    args: {}
+  reports.invoiceDetails:
+    args: {}
+  reports.itemSales:
+    args: {}
+  reports.paymentsCollected:
+    args: {}
+  reports.profitLossEntity:
+    args: {}
+  reports.revenueByClient:
+    args: {}
+  reports.taxSummary:
+    args: {}
+  reports.trialBalance:
+    args: {}
+  retainers.create:
+    args: {"retainer": {}}
+  retainers.delete:
+    args: {"retainerId": "501"}
+  retainers.get:
+    args: {"retainerId": "501"}
+  retainers.list:
+    args: {}
+  retainers.undelete:
+    args: {"retainerId": "501"}
+  retainers.update:
+    args: {"retainerId": "501", "retainer": {}}
+  serviceRates.list:
+    args: {}
+  services.create:
+    args: {"service": {}}
+  services.createRate:
+    args: {"serviceId": "6011", "service_rate": {}}
+  services.get:
+    args: {"serviceId": "6011"}
+  services.getRate:
+    args: {"serviceId": "6011"}
+  services.list:
+    args: {}
+  services.updateRate:
+    args: {"serviceId": "6011", "service_rate": {}}
+  staff.delete:
+    args: {"staffId": "1"}
+  staff.get:
+    args: {"staffId": "1"}
+  staff.list:
+    args: {}
+  staff.update:
+    args: {"staffId": "1", "staff": {}}
+  systems.get:
+    args: {"systemId": "77001"}
+  tasks.create:
+    args: {"task": {}}
+  tasks.delete:
+    args: {"taskId": "2233"}
+  tasks.get:
+    args: {"taskId": "2233"}
+  tasks.list:
+    args: {}
+  tasks.update:
+    args: {"taskId": "2233", "task": {}}
+  taxes.create:
+    args: {"tax": {}}
+  taxes.delete:
+    args: {"taxId": "2211"}
+  taxes.get:
+    args: {"taxId": "2211"}
+  taxes.list:
+    args: {}
+  taxes.update:
+    args: {"taxId": "2211", "tax": {}}
+  teamMemberRates.list:
+    args: {}
+  teamMemberRates.update:
+    args: {"identityId": "43210", "team_member_rate": {}}
+  teamMembers.get:
+    args: {"teamMemberUuid": "7f3e2d1c-0b9a-4876-a543-210fedcba987"}
+  teamMembers.list:
+    args: {}
+  threadComments.create:
+    args: {"threadId": "901", "comment": {}}
+  timeEntries.create:
+    args: {"time_entry": {"is_logged": true, "duration": 3600, "started_at": "2026-11-28T09:00:00.000Z", "note": "Planning"}}
+  timeEntries.delete:
+    args: {"timeEntryId": "5095"}
+  timeEntries.get:
+    args: {"timeEntryId": "5095"}
+  timeEntries.list:
+    args: {}
+  timeEntries.search:
+    args: {}
+  timeEntries.update:
+    args: {"timeEntryId": "5095", "time_entry": {}}
+  tokens.revoke:
+    args: {"client_id": "app-client-id", "client_secret": "app-client-secret", "token": "refresh-token-to-revoke"}
+  uploads.attachment:
+    args: {"content": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  uploads.image:
+    args: {"content": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  uploads.publicImage:
+    args: {"content": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  users.me:
+    args: {}
