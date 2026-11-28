@@ -72,6 +72,7 @@ export const BaseProviders = [
 	'attio',
 	'autom',
 	'ayrshare',
+	'azuredevops',
 	'backendless',
 	'bannerbear',
 	'bart',
@@ -892,6 +893,7 @@ export const ProviderDisplayNames = {
 	attio: 'Attio',
 	autom: 'Autom',
 	ayrshare: 'Ayrshare',
+	azuredevops: 'Azure DevOps',
 	backendless: 'Backendless',
 	bannerbear: 'Bannerbear',
 	bart: 'BART',
@@ -1719,6 +1721,7 @@ export type AllProviders =
 	| 'attio'
 	| 'autom'
 	| 'ayrshare'
+	| 'azuredevops'
 	| 'backendless'
 	| 'bannerbear'
 	| 'bart'

@@ -1,0 +1,140 @@
+---
+title: "Azure DevOps plugin"
+sidebarTitle: "Overview"
+description: "Azure DevOps Services: repositories, pull requests, work items, builds, pipelines, releases, artifacts, test plans, wikis, users and permissions (1058 operations)."
+---
+
+Use **Azure DevOps** through Corsair: one client, typed API calls.
+
+Create a personal access token in Azure DevOps (User settings &gt; Personal access tokens) with the scopes you need, and connect it with the organization name (`fabrikam` for `dev.azure.com/fabrikam`). Things to know before you write:
+
+- **Hosts.** Most routes live on `dev.azure.com/<organization>`. Releases are on `vsrm.dev.azure.com`, artifact feeds on `feeds.` and `pkgs.dev.azure.com`, users and groups on `vssps.` and `vsaex.dev.azure.com`, audit on `auditservice.`, search on `almsearch.`, test results on `vstmr.dev.azure.com`. The plugin picks the host per operation.
+- **API versions.** Each operation sends the api-version Microsoft documents it at (7.1, or 7.1-preview.N for preview APIs).
+- **Work items** are created and updated with a JSON Patch list in `body`: `[{ "op": "add", "path": "/fields/System.Title", "value": "..." }]`.
+- **Paging.** List routes that page with a continuation token return `{ items, nextCursor }`; pass `nextCursor` back as `continuationToken`. Others take `$top` and `$skip`.
+- **What costs money or acts.** Queuing builds and running pipelines use pipeline minutes; adding users or raising access levels can add paid licences; completing a pull request merges it; service connections hold credentials. These and every delete are `destructive`.
+- **Optional segments.** Where Microsoft's route leaves a segment optional, so does the plugin: leave out `project` for an organization-scoped feed or a Git route across projects, `team` for the project's default team, `path` for the area or iteration root (pass `Parent/Child` for a nested node), `timelineId` for a build's main timeline.
+- **New organizations.** Creating an organization now asks for an Azure subscription (seen 2026-11-28), and an Azure free account needs a card and a phone number. A new organization has classic build and release pipelines turned off: classic definitions, task groups and deployment groups answer 400 "classic pipelines are disabled" until an admin turns them on. Creating test plans needs the Basic + Test Plans access level (403 without it).
+- **Records you can't delete.** Test settings answer "in use" to every delete, exploratory test sessions and permissions reports have no delete route, and a team's last dashboard can't be deleted (VS402433).
+- **Not-found as 500.** Some areas (agent clouds, build controllers and templates, security role scopes, hooks, test attachments) answer a missing record with a 500 that says so; reads are retried twice first.
+
+**What you get:**
+
+- 1058 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/azuredevops better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/azuredevops better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/azuredevops better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/azuredevops better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { azuredevops } from '@corsair-dev/azuredevops';
+
+export const corsair = createCorsair({
+	plugins: [
+		azuredevops(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Azure DevOps API key before the first call: `pnpm corsair setup --plugin=azuredevops --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+azuredevops()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'azuredevops',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List projects**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.azuredevops.api.core.projects.list({ $top: 20 });
+```
+
+
+**Create a work item**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.azuredevops.api.wit.workItems.create({
+	project: 'Fabrikam-Fiber',
+	type: 'Task',
+	body: [{ op: 'add', path: '/fields/System.Title', value: 'Write the release notes' }],
+});
+```
+
+
+Every operation, with its input and output types, is in the package's README and in `endpoints/operation-types.ts`.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

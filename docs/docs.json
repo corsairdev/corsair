@@ -660,6 +660,10 @@
                 ]
               },
               {
+                "group": "Azure DevOps",
+                "pages": ["plugins/azuredevops/overview"]
+              },
+              {
                 "group": "Backendless",
                 "pages": [
                   "plugins/backendless/overview",
