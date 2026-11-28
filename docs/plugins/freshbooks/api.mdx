@@ -6632,7 +6632,7 @@ await corsair.freshbooks.api.invoiceProfilePaymentOptions.create({ invoiceProfil
 
 Create a recurring invoice profile. Fields go in `invoice_profile`.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.freshbooks.api.invoiceProfiles.create({
@@ -7087,7 +7087,7 @@ await corsair.freshbooks.api.invoiceProfiles.list({});
 
 Change fields of a recurring invoice profile. FreshBooks updates one phase of fields per call: send vis_state on its own.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.freshbooks.api.invoiceProfiles.update({

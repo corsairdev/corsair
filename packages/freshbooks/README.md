@@ -88,11 +88,11 @@ pnpm add @corsair-dev/freshbooks
 | `invoicePaymentOptions.create` | `freshbooks.api.invoicePaymentOptions.create` | `destructive` | Turn on online payment options (gateway_name, has_credit_card, has_ach...) for an invoice. |
 | `invoicePaymentOptions.get` | `freshbooks.api.invoicePaymentOptions.get` | `read` | Read which online payment gateways an invoice accepts. |
 | `invoiceProfilePaymentOptions.create` | `freshbooks.api.invoiceProfilePaymentOptions.create` | `destructive` | Turn on online payment options for a recurring invoice profile. |
-| `invoiceProfiles.create` | `freshbooks.api.invoiceProfiles.create` | `write` | Create a recurring invoice profile. Fields go in `invoice_profile`. |
+| `invoiceProfiles.create` | `freshbooks.api.invoiceProfiles.create` | `destructive` | Create a recurring invoice profile. Fields go in `invoice_profile`. |
 | `invoiceProfiles.delete` | `freshbooks.api.invoiceProfiles.delete` | `destructive` | Delete a recurring invoice profile (sets vis_state to 1). FreshBooks keeps it: an update with vis_state 0 restores it. |
 | `invoiceProfiles.get` | `freshbooks.api.invoiceProfiles.get` | `read` | Read one recurring invoice profile. (GET /accounting/account/{accountId}/invoice_profiles/invoice_profiles/{invoiceProfileId}) |
 | `invoiceProfiles.list` | `freshbooks.api.invoiceProfiles.list` | `read` | List recurring invoice profiles, newest first, with search filters, includes and paging. |
-| `invoiceProfiles.update` | `freshbooks.api.invoiceProfiles.update` | `write` | Change fields of a recurring invoice profile. FreshBooks updates one phase of fields per call: send vis_state on its own. |
+| `invoiceProfiles.update` | `freshbooks.api.invoiceProfiles.update` | `destructive` | Change fields of a recurring invoice profile. FreshBooks updates one phase of fields per call: send vis_state on its own. |
 | `invoices.create` | `freshbooks.api.invoices.create` | `write` | Create a invoice. Fields go in `invoice`. |
 | `invoices.delete` | `freshbooks.api.invoices.delete` | `destructive` | Delete a invoice (sets vis_state to 1). FreshBooks keeps it: an update with vis_state 0 restores it. |
 | `invoices.downloadPdf` | `freshbooks.api.invoices.downloadPdf` | `read` | Download the invoice as a PDF. (GET /accounting/account/{accountId}/invoices/invoices/{invoiceId}/pdf) |

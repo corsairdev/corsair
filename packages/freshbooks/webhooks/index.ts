@@ -178,19 +178,25 @@ export function verifyFreshBooksSignature(
 	secret: string,
 ): boolean {
 	const supplied = header(request.headers, 'x-freshbooks-hmac-sha256');
-	if (!supplied || !secret.trim()) return false;
+	// FreshBooks gives every callback its own verifier, and one URL usually takes
+	// several callbacks (one per event or noun): the secret may list them all,
+	// separated by commas or whitespace.
+	const verifiers = secret.split(/[\s,]+/).filter(Boolean);
+	if (!supplied || verifiers.length === 0) return false;
 	const fields = freshbooksFormFields(request);
 	if (fields.length === 0) return false;
-	const expected = createHmac('sha256', secret)
-		.update(freshbooksSignedText(fields), 'utf8')
-		.digest();
-	let given: Buffer;
-	try {
-		given = Buffer.from(supplied.trim(), 'base64');
-	} catch {
-		return false;
+	const text = freshbooksSignedText(fields);
+	const given = Buffer.from(supplied.trim(), 'base64');
+	let ok = false;
+	for (const verifier of verifiers) {
+		const expected = createHmac('sha256', verifier)
+			.update(text, 'utf8')
+			.digest();
+		if (given.length === expected.length && timingSafeEqual(given, expected)) {
+			ok = true;
+		}
 	}
-	return given.length === expected.length && timingSafeEqual(given, expected);
+	return ok;
 }
 
 /** The event a FreshBooks delivery carries, if it is one. */

@@ -522,6 +522,18 @@ export function createFreshBooksOperation<Id extends FreshBooksOperationId>(
 			...(operation.host ? { host: operation.host } : {}),
 			sensitive: customerMapKeys(operation.input, parsedInput.data),
 		};
+		for (const [key, names] of Object.entries(operation.refusedBody ?? {})) {
+			const resource = valid[key];
+			if (typeof resource !== 'object' || resource === null) continue;
+			const sent = names.filter(
+				(name) => (resource as Record<string, unknown>)[name] !== undefined,
+			);
+			if (sent.length > 0) {
+				throw new Error(
+					`Invalid input for freshbooks ${id}: ${key}.${sent.join(', ')} is not taken here; use ${id.split('.')[0]}.sendEmail to email it`,
+				);
+			}
+		}
 		// Fields the vendor sets itself never go back, even when the caller passes an object it read.
 		for (const name of operation.serverSetFields ?? []) delete valid[name];
 		// `unknown` because each body field keeps its validated type.

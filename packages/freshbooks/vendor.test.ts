@@ -252,6 +252,17 @@ describe('requests', () => {
 		});
 	});
 
+	it('refuses an email action on a plain update', async () => {
+		replies([200, { response: { result: { invoice: { id: 5 } } } }]);
+		await expect(
+			freshbooksEndpointsNested.invoices.update(ctx({ accountId: 'A1' }), {
+				invoiceId: 5,
+				invoice: { action_email: true },
+			}),
+		).rejects.toThrow(/use invoices.sendEmail/);
+		expect(calls).toHaveLength(0);
+	});
+
 	it('writes include[] and search[...] the way FreshBooks reads them', async () => {
 		replies([200, { response: { result: { invoices: [] } } }]);
 		await freshbooksEndpointsNested.invoices.list(ctx({ accountId: 'A1' }), {
@@ -312,6 +323,19 @@ describe('webhooks', () => {
 		).toBe(true);
 		expect(
 			verifyFreshBooksSignature(delivery(v.form, v.signature), 'other'),
+		).toBe(false);
+	});
+
+	it('accepts any of several stored verifiers (one per callback)', () => {
+		const [v] = VECTORS as [(typeof VECTORS)[number]];
+		expect(
+			verifyFreshBooksSignature(
+				delivery(v.form, v.signature),
+				`otherVerifier1, ${VERIFIER}\notherVerifier2`,
+			),
+		).toBe(true);
+		expect(
+			verifyFreshBooksSignature(delivery(v.form, v.signature), 'a, b'),
 		).toBe(false);
 	});
 

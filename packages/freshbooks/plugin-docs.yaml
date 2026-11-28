@@ -13,7 +13,7 @@ overviewNote: |
   - **Deletes.** Most accounting deletes are soft (vis_state 1): an update with vis_state 0 restores them. `projects.delete`, `timeEntries.delete`, `taxes.delete` and `businesses.delete` remove the data.
   - **Email and money.** `invoices.sendEmail` and `estimates.sendEmail` email the client at once; payments, checkout links and gateway setup move or take money. They are marked `destructive`.
   - **Lists** page with `page` and `per_page` (FreshBooks caps a page at 100) and filter with `search` (sent as `search[<name>]=<value>`) and `include`.
-  - **Webhooks.** `callbacks.create` registers one; FreshBooks then posts `callback.verify` with a verifier. Send it back with `callbacks.verify` and store it as the webhook secret: every later delivery is signed with it (X-FreshBooks-Hmac-SHA256), and the plugin checks that signature.
+  - **Webhooks.** `callbacks.create` registers one; FreshBooks then posts `callback.verify` with a verifier. Send it back with `callbacks.verify` and store it as the webhook secret (the `webhookSecret` option or the account's webhook_signature). Every later delivery of that callback is signed with it (X-FreshBooks-Hmac-SHA256), and the plugin checks the signature. Each callback has its own verifier, so with several callbacks on one URL store them all in that one value, separated by commas.
 examples:
   read:
     path: invoices.list

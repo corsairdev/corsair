@@ -54,6 +54,8 @@ export const freshbooksOAuthScopes = [
 	'user:journal_entries:read',
 	'user:journal_entries:write',
 	'user:reports:read',
+	'user:retainers:read',
+	'user:retainers:write',
 	'user:uploads:read',
 	'user:uploads:write',
 ] as const;
@@ -104,16 +106,26 @@ const ID_FIELD: Record<IdName, string> = {
 };
 
 const MAX_CACHED_IDENTITIES = 50;
+/** How long a users.me answer stays in use: memberships change when a login joins a business. */
+const IDENTITY_TTL_MS = 10 * 60_000;
 // `unknown` because each business is untrusted JSON until an id is read from it.
-const identities = new Map<string, Promise<Array<Record<string, unknown>>>>();
+const identities = new Map<
+	string,
+	{ at: number; pending: Promise<Array<Record<string, unknown>>> }
+>();
 
 /** The businesses the token's identity belongs to, read once per token. */
 async function businessesFor(ctx: {
 	key: string;
 	options: FreshBooksAuthOptions;
 }): Promise<Array<Record<string, unknown>>> {
-	let pending = identities.get(ctx.key);
+	const cached = identities.get(ctx.key);
+	let pending =
+		cached && Date.now() - cached.at < IDENTITY_TTL_MS
+			? cached.pending
+			: undefined;
 	if (!pending) {
+		identities.delete(ctx.key);
 		pending = (async () => {
 			const answer = await makeFreshBooksRequest(ctx, {
 				method: 'GET',
@@ -144,7 +156,7 @@ async function businessesFor(ctx: {
 			const oldest = identities.keys().next().value;
 			if (oldest !== undefined) identities.delete(oldest);
 		}
-		identities.set(ctx.key, pending);
+		identities.set(ctx.key, { at: Date.now(), pending });
 	}
 	return pending;
 }

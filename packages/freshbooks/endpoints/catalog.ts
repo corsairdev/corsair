@@ -922,7 +922,7 @@ export const freshbooksEndpointMeta = {
 			'Turn on online payment options for a recurring invoice profile.',
 	},
 	'invoiceProfiles.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create a recurring invoice profile. Fields go in `invoice_profile`.',
 	},
@@ -942,7 +942,7 @@ export const freshbooksEndpointMeta = {
 			'List recurring invoice profiles, newest first, with search filters, includes and paging.',
 	},
 	'invoiceProfiles.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Change fields of a recurring invoice profile. FreshBooks updates one phase of fields per call: send vis_state on its own.',
 	},

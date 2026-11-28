@@ -6433,6 +6433,9 @@
       "summary": "Change fields of a estimate. FreshBooks updates one phase of fields per call: send vis_state on its own",
       "request": "json",
       "response": "json",
+      "refusedBody": {
+        "estimate": ["action_email"]
+      },
       "input": {
         "type": "object",
         "properties": {
@@ -10015,6 +10018,9 @@
       "summary": "Change fields of a invoice. FreshBooks updates one phase of fields per call: send vis_state on its own",
       "request": "json",
       "response": "json",
+      "refusedBody": {
+        "invoice": ["action_email"]
+      },
       "input": {
         "type": "object",
         "properties": {

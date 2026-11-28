@@ -76,6 +76,11 @@ const OperationSchema = z
 		fixedBody: z
 			.record(z.string(), z.record(z.string(), z.unknown()))
 			.optional(),
+		/**
+		 * Body fields the route refuses (`{ invoice: ['action_email'] }`): an
+		 * update must not send email; the send operation does that.
+		 */
+		refusedBody: z.record(z.string(), z.array(z.string())).optional(),
 		/** Headers every call of the route sends (the ledger API's x-api-version). */
 		fixedHeaders: z.record(z.string(), z.string()).optional(),
 		/** Query values every call sends (an API version the route is documented at). */
