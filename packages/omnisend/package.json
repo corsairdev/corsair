@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/omnisend",
   "version": "0.1.0",
-  "description": "Omnisend plugin for Corsair",
+  "description": "Email and SMS marketing with Omnisend: contacts and tags, campaigns (send, A/B tests, UTM), automations, segments, email templates and layouts, forms, products and categories, events, images, analytics reports and batches (108 operations).",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -35,7 +35,12 @@
   "keywords": [
     "corsair",
     "omnisend",
-    "plugin"
+    "plugin",
+    "email-marketing",
+    "sms",
+    "ecommerce",
+    "automation",
+    "campaigns"
   ],
   "author": "Corsair (https://corsair.dev)",
   "license": "Apache-2.0",

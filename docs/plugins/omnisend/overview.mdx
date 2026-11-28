@@ -1,28 +1,22 @@
 ---
 title: "Omnisend plugin"
 sidebarTitle: "Overview"
-description: "Email and SMS marketing automation for ecommerce from Omnisend - sync contacts and catalog products, trigger automations through events, and manage campaigns and templates."
+description: "Email and SMS marketing with Omnisend: contacts and tags, campaigns (send, A/B tests, UTM), automations, segments, email templates and layouts, forms, products, categories, events, images, analytics and batches (108 operations)."
 ---
 
 Use **Omnisend** through Corsair: one client, typed API calls.
 
-Create an API key in Omnisend at app.omnisend.com under Store settings, API keys, and copy it immediately: the key is shown only once. It goes in the `Authorization` header as `Omnisend-API-Key <key>`, which is not a bearer token. This plugin talks to the current API, version 2026-03-15, and every request carries the mandatory `Omnisend-Version` header for it. The older v3 API (`api.omnisend.com/v3` with `X-API-KEY`) is legacy and not supported here.
+Create an API key in Omnisend under Store settings &gt; API keys and give it the scopes you need (contacts, campaigns, automations, products and so on). Things to know before you write:
 
-Things that shape the calls:
-
-- **Paging differs per group.** Contacts, campaigns and templates page by cursor: pass `after` from one response as `after` on the next, up to 250 rows (100 for templates). Products, categories and batches page by `offset` and `limit`, and this plugin parses the next offset out of `paging.next` for you.
-- **Contact tags replace.** Sending `tags` on any contact write removes every tag not sent; an empty array removes all of them. To add or remove individual tags, use `contacts.addTags` and `contacts.removeTags`, which run asynchronously and answer 202.
-- **Events are one-way.** `events.send` queues the event (202) and can trigger automations that email real customers; there is no read-back, edit or delete. Orders and carts are not resources: they arrive as `placed order`-style events with `eventVersion: v2`, so importing history can email customers.
-- **Event schemas are typed once.** A property type declared with `events.defineSchema` cannot change, and `events.updateSchema` merges without deleting.
-- **Batches are the bulk path.** `batches.create` queues up to 100 writes and `batches.get` polls until the status is `finished` or `stopped`; there is no cancel. Categories batches can be created but not listed.
-- **Prices are floats** in the store currency, not the integer cents the legacy v3 API used.
-- **There is no sandbox.** The closest thing to a dry run is `campaigns.sendTestEmail` and the two `render` endpoints, which produce HTML without sending anything.
-- **Omnisend sends no inbound webhooks** to receive, and the REST API exposes none to manage.
-- **Rate limits** run per brand on a sliding window shared across every key: 400 requests per minute overall, with tighter windows on segment writes, renders and the analytics routes. A 429 carries `retryAfter` (seconds) in the body.
+- **Sending is final.** `campaigns.send` emails or texts the campaign's whole audience and `campaigns.selectAbTestWinner` sends the winning variant to the rest; both are `destructive`. `campaigns.sendTestEmail` and `automations.sendBlockTestEmail` send real mail to the addresses you give. `automations.enable` turns on a flow that messages contacts whenever its trigger fires.
+- **Events trigger automations.** `events.send` records a customer event (placed order, custom events) and creates or updates the contact; it can start automations that email real customers and cannot be edited or deleted afterwards.
+- **Tags replace.** `contacts.update`, `contacts.updateByEmail` and `contacts.upsert` replace a contact's tag list with the one you send. Use `contacts.addTags` / `contacts.removeTags` to change tags on up to 250 contacts or a whole segment (queued, 202).
+- **Batches.** `batches.create` queues up to 100 contact, product, category or event writes; read progress with `batches.get` and per-item results with `batches.listItems`.
+- **Paging.** Most lists page with `after` / `before` cursors from `paging.cursors` and stop when `paging.hasMore` is false; a few take `offset` and `limit`.
 
 **What you get:**
 
-- 47 typed API operations
+- 108 typed API operations
 
 ## Setup
 
@@ -108,21 +102,21 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**Find contacts by email domain filter**
+**List contacts**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.omnisend.api.contacts.list({ limit: 20, status: 'subscribed' });
+await tenant.omnisend.api.contacts.list({});
 ```
 
 
-**Create or update a contact**
+**Tag contacts**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.omnisend.api.contacts.upsert({
-	identifiers: [{ id: 'jordan@acme.com', type: 'email' }],
-	firstName: 'Jordan',
+await tenant.omnisend.api.contacts.addTags({
+	emails: ['ada@example.com'],
+	tags: ['vip'],
 });
 ```
 

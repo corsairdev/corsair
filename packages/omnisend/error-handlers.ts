@@ -1,138 +1,101 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { OmnisendAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { omnisendEndpointMeta } from './endpoints/catalog';
+import { omnisendOperations } from './endpoints/manifest';
 
-function statusOf(error: Error): number | undefined {
-	return error instanceof OmnisendAPIError ? error.status : undefined;
+// Omnisend answers errors as RFC 9457 problem details `{type, title, status, detail, errors[]}`: 400 bad input, 401 bad key, 402 over the plan, 403 missing scope, 404, 409 wrong state, 410 gone, 422, 429 over the rate limit.
+// The status is the signal; the message text is a fallback for an error that
+// lost it.
+function text(error: Error): string {
+	return error.message.toLowerCase();
 }
 
-function typeOf(error: Error): string | undefined {
-	return error instanceof OmnisendAPIError ? error.problemType : undefined;
+function status(error: Error): number | undefined {
+	return error instanceof ApiError ? error.status : undefined;
 }
 
-/** Milliseconds from the 429 delay, taken from the problem body's retryAfter. */
-function retryAfterOf(error: Error): number | undefined {
-	return error instanceof OmnisendAPIError ? error.retryAfter : undefined;
+/** Routes that only read, whatever their method (a search sent as POST). */
+const READ_ROUTES = new Set(
+	omnisendOperations
+		.filter(
+			(operation) =>
+				omnisendEndpointMeta[operation.id as keyof typeof omnisendEndpointMeta]
+					?.riskLevel === 'read',
+		)
+		.map((operation) => `${operation.method} ${operation.path}`),
+);
+
+function isRead(error: Error): boolean {
+	if (!(error instanceof ApiError)) return false;
+	const method = error.request?.method;
+	if (method === 'GET') return true;
+	return READ_ROUTES.has(`${method} ${error.request?.url}`);
 }
 
 export const errorHandlers = {
-	// 402: the campaign audience exceeds the brand's billing tier (email credits
-	// or subscriber count). No retry can fix it; upgrade or shrink the audience.
-	// Declared before RATE_LIMIT_ERROR so a billing refusal is never mistaken
-	// for a throughput limit.
-	BILLING_ERROR: {
-		match: (error: Error) => statusOf(error) === 402,
-		handler: async () => ({ maxRetries: 0 }),
-	},
-	// 401: the key is wrong, revoked, or lacks the route's scope.
-	AUTH_ERROR: {
-		match: (error: Error) => statusOf(error) === 401,
-		handler: async () => ({ maxRetries: 0 }),
-	},
-	// 403: the key's scopes do not cover this route.
-	PERMISSION_ERROR: {
-		match: (error: Error) => statusOf(error) === 403,
-		handler: async () => ({ maxRetries: 0 }),
-	},
-	// 404: an id no resource carries.
-	NOT_FOUND_ERROR: {
-		match: (error: Error) => statusOf(error) === 404,
-		handler: async () => ({ maxRetries: 0 }),
-	},
-	// 410: the request named a retired API version in Omnisend-Version.
-	GONE_ERROR: {
-		match: (error: Error) => statusOf(error) === 410,
-		handler: async () => ({ maxRetries: 0 }),
-	},
-	// 400 or 422: a malformed body or an event name Omnisend does not know. A
-	// retry sends the same thing. 422 also covers campaign creation without a verified sender.
-	VALIDATION_ERROR: {
+	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			const status = statusOf(error);
-			return error.name === 'ZodError' || status === 400 || status === 422;
+			const code = status(error);
+			if (code !== undefined) return code === 429;
+			const msg = text(error);
+			return msg.includes('too many requests') || msg.includes('rate limit');
+		},
+		// Core's request() has already retried this 429 (three times, honouring
+		// Retry-After) before it reaches a handler. Retrying the endpoint again
+		// would multiply the attempts.
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	AUTH_ERROR: {
+		match: (error: Error) => {
+			const code = status(error);
+			if (code !== undefined) return code === 401 || code === 403;
+			const msg = text(error);
+			return msg.includes('unauthorized') || msg.includes('forbidden');
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 409: a conflict, such as a campaign update outside draft status or an
-	// event property type that collides with a declared one.
-	CONFLICT_ERROR: {
-		match: (error: Error) => statusOf(error) === 409,
+	NOT_FOUND_ERROR: {
+		match: (error: Error) => {
+			const code = status(error);
+			if (code !== undefined) return code === 404;
+			return text(error).includes('not found');
+		},
+		// A record that was deleted: retrying won't bring it back.
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 429: limits are per brand on a sliding window, shared across every key.
-	// The delay arrives in the problem body's `retryAfter` (seconds); a minute
-	// is the fallback when none was sent, since the default window is per
-	// minute. Some routes are far tighter (segment writes 15/min, analytics
-	// POST 55 per 24 hours), which the real value covers when present.
-	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			statusOf(error) === 429 ||
-			typeOf(error)?.endsWith('/rate-limit-exceeded') === true,
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs: retryAfterOf(error) ?? 60_000,
-		}),
+	BAD_REQUEST_ERROR: {
+		match: (error: Error) => {
+			const code = status(error);
+			if (code !== undefined)
+				return (
+					code === 400 ||
+					code === 402 ||
+					code === 405 ||
+					code === 406 ||
+					code === 409 ||
+					code === 413 ||
+					code === 415 ||
+					code === 422
+				);
+			const msg = text(error);
+			return msg.includes('bad request') || msg.includes('invalid input');
+		},
+		handler: async () => ({ maxRetries: 0 }),
 	},
-	/**
-	 * 5xx: retried with backoff, but only where a replay cannot duplicate work.
-	 *
-	 * A POST is never replayed: batches.create would queue a second batch, and
-	 * events.send is append-only. A GET always is. A PATCH, PUT or DELETE is
-	 * replayed only because each is addressed by an id, so a repeat lands on
-	 * the same resource rather than creating a second one.
-	 */
 	SERVER_ERROR: {
 		match: (error: Error) => {
-			const status = statusOf(error);
-			return status !== undefined && status >= 500;
+			const code = status(error);
+			return code !== undefined && code >= 500;
 		},
-		handler: async (error: Error) => ({
-			maxRetries:
-				error instanceof OmnisendAPIError && error.method === 'POST' ? 0 : 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
-	},
-	// A dropped connection never reached the provider, so a read is replayed
-	// and a write waits for the caller instead.
-	TIMEOUT_ERROR: {
-		match: (error: Error) =>
-			error instanceof OmnisendAPIError &&
-			(error.status === 408 || error.name === 'TimeoutError'),
-		handler: async (error: Error) => ({
-			maxRetries:
-				error instanceof OmnisendAPIError && error.method === 'GET' ? 2 : 0,
-		}),
-	},
-	NETWORK_ERROR: {
-		match: (error: Error) =>
-			error instanceof OmnisendAPIError &&
-			error.status === undefined &&
-			error.method !== undefined,
-		handler: async (error: Error) => ({
-			maxRetries:
-				error instanceof OmnisendAPIError && error.method === 'GET' ? 2 : 0,
-		}),
+		// Only reads are retried: a write may already have happened, and
+		// Omnisend documents no idempotency keys.
+		handler: async (error: Error) =>
+			isRead(error)
+				? { maxRetries: 2, retryStrategy: 'exponential_backoff' as const }
+				: { maxRetries: 0 },
 	},
 	DEFAULT: {
 		match: () => true,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 } satisfies CorsairErrorHandler;
-
-// Handlers match in key order and DEFAULT matches everything, so it stays last
-// even when the caller adds or overrides handlers. Caller keys come first, so
-// a caller handler for a status no builtin covers is the one that runs.
-export function mergeErrorHandlers(
-	builtin: CorsairErrorHandler,
-	user: CorsairErrorHandler | undefined,
-): CorsairErrorHandler {
-	if (!user) return builtin;
-	const { DEFAULT: builtinDefault, ...builtinRest } = builtin;
-	const { DEFAULT: userDefault, ...userRest } = user;
-	const merged: CorsairErrorHandler = { ...userRest };
-	for (const [name, entry] of Object.entries(builtinRest)) {
-		if (!(name in merged)) merged[name] = entry;
-	}
-	const fallback = userDefault ?? builtinDefault;
-	if (fallback) merged.DEFAULT = fallback;
-	return merged;
-}
