@@ -76,11 +76,22 @@ function readErrorMessage(body: unknown): string | undefined {
 		: undefined;
 }
 
-const EMAIL_PATTERN = /[^\s@"'<>(),;:]+@[^\s@"'<>(),;:]+\.[^\s@"'<>(),;:]+/g;
+function looksLikeEmail(word: string): boolean {
+	const at = word.indexOf('@');
+	if (at < 1) return false;
+	const dot = word.indexOf('.', at + 2);
+	return dot > at + 1 && dot < word.length - 1;
+}
 
-/** DocuSeal echoes submitter input in some messages; addresses are replaced. */
+/**
+ * Replaces words that look like an email address. A split instead of a
+ * regex keeps this linear on any input.
+ */
 export function redactEmails(text: string): string {
-	return text.replace(EMAIL_PATTERN, '[email]');
+	return text
+		.split(' ')
+		.map((word) => (looksLikeEmail(word) ? '[email]' : word))
+		.join(' ');
 }
 
 // unknown: the error body is an open shape, narrowed below one field at a time.
