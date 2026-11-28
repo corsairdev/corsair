@@ -1,0 +1,1117 @@
+# Display copy for the generated docs and the catalog, plus one call
+# example per operation. Generated with the plugin from Chargebee's OpenAPI spec;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: Chargebee
+domain: chargebee.com
+description: "Subscription billing with Chargebee: customers, subscriptions, items and prices, invoices, credit notes, payments, coupons, quotes, estimates, hosted pages, usage, entitlements and exports, on Product Catalog 2.0 and 1.0 sites (546 operations)."
+recommendedAuth: api_key
+overviewNote: |
+  Connect with a Chargebee API key and your site name (the part before `.chargebee.com`; a test site's name ends in `-test`). Test and live sites have separate keys. Things to know before you write:
+
+  - **Product Catalog.** Sites made since 2021 use Product Catalog 2.0: items, item prices and `subscriptions.createForItems` / `customers.createSubscriptionForItems`. Older sites use 1.0: plans, addons and the routes marked "Product Catalog 1.0 sites only". A route from the other catalog answers 400.
+  - **Money moves.** Creating or updating a subscription, invoicing, collecting payment, charging, refunding and voiding are `destructive`: on a live site they charge real cards. Estimates (`estimates.*`, `*Estimate`) compute the same numbers without changing anything.
+  - **Lists** take `limit` (up to 100) and `offset`; pass the response's `next_offset` back as `offset`. Filters use Chargebee's operators: `status: { is: 'active' }`, `created_at: { after: 1700000000 }`.
+  - **Nested fields** follow the API reference: `billing_address: { city }`, `subscription_items: { item_price_id: ['plan-USD-monthly'], quantity: [1] }` (one list per field, index by index). The plugin sends them in Chargebee's bracket form. `meta_data` is a JSON object.
+  - **Time machine** (`timeMachines.*`) works on test sites only and resets or moves the whole site.
+examples:
+  read:
+    path: customers.list
+    title: List customers
+    args: {"limit": 10}
+  write:
+    path: customers.create
+    title: Create a customer
+    args: {"first_name": "Ada", "last_name": "Lovelace", "email": "ada@example.com"}
+apiExamples:
+  addons.copy:
+    args: {"from_site": "example", "id_at_from_site": "example"}
+  addons.create:
+    args: {"charge_type": "recurring", "id": "cust_8gsnbYfsMLds", "name": "example"}
+  addons.delete:
+    args: {"addonId": "example"}
+  addons.get:
+    args: {"addonId": "example"}
+  addons.list:
+    args: {}
+  addons.unarchive:
+    args: {"addonId": "example"}
+  addons.update:
+    args: {"addonId": "example"}
+  addresses.create:
+    args: {"label": "example", "subscription_id": "example"}
+  addresses.list:
+    args: {"subscription_id": "example", "label": "example"}
+  alerts.create:
+    args: {"name": "example", "type": "usage_exceeded"}
+  alerts.delete:
+    args: {"alertId": "example"}
+  alerts.get:
+    args: {"alertId": "example"}
+  alerts.list:
+    args: {}
+  alerts.listStatuses:
+    args: {"alertId": "example"}
+  alerts.update:
+    args: {"alertId": "example"}
+  attachedItems.delete:
+    args: {"attachedItemId": "example", "parent_item_id": "example"}
+  attachedItems.get:
+    args: {"parent_item_id": "example", "attachedItemId": "example"}
+  attachedItems.update:
+    args: {"attachedItemId": "example", "parent_item_id": "example"}
+  batch.ingestUsages:
+    args: {}
+  businessEntities.create:
+    args: {"name": "example", "status": "active"}
+  businessEntities.get:
+    args: {"businessEntityId": "example"}
+  businessEntities.list:
+    args: {}
+  businessEntities.listTransfers:
+    args: {}
+  businessEntities.transfer:
+    args: {"active_resource_ids": ["example"], "destination_business_entity_ids": ["example"], "reason_codes": ["example"]}
+  businessEntities.update:
+    args: {"businessEntityId": "example"}
+  businessRules.activate:
+    args: {"businessRuleId": "example"}
+  businessRules.apply:
+    args: {}
+  businessRules.create:
+    args: {"name": "example", "structured_expression": {}}
+  businessRules.deactivate:
+    args: {"businessRuleId": "example"}
+  businessRules.delete:
+    args: {"businessRuleId": "example"}
+  businessRules.deleteDraft:
+    args: {"businessRuleId": "example"}
+  businessRules.get:
+    args: {"businessRuleId": "example"}
+  businessRules.getDraft:
+    args: {"businessRuleId": "example"}
+  businessRules.list:
+    args: {}
+  businessRules.release:
+    args: {"businessRuleId": "example"}
+  businessRules.updateDraft:
+    args: {"businessRuleId": "example", "name": "example", "structured_expression": {}}
+  businessRulesets.activate:
+    args: {"businessRulesetId": "example"}
+  businessRulesets.addRules:
+    args: {"businessRulesetId": "example"}
+  businessRulesets.create:
+    args: {"name": "example"}
+  businessRulesets.deactivate:
+    args: {"businessRulesetId": "example"}
+  businessRulesets.delete:
+    args: {"businessRulesetId": "example"}
+  businessRulesets.get:
+    args: {"businessRulesetId": "example"}
+  businessRulesets.list:
+    args: {}
+  businessRulesets.listRules:
+    args: {"businessRulesetId": "example"}
+  businessRulesets.removeRules:
+    args: {"businessRulesetId": "example"}
+  businessRulesets.update:
+    args: {"businessRulesetId": "example", "name": "example"}
+  cards.get:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  collectionsPaymentPromises.cancel:
+    args: {"collectionsPaymentPromiseId": "example"}
+  collectionsPaymentPromises.create:
+    args: {"amount": 1, "customer_id": "example", "promised_on": 1}
+  collectionsPaymentPromises.get:
+    args: {"collectionsPaymentPromiseId": "example"}
+  collectionsPaymentPromises.list:
+    args: {}
+  collectionsPaymentPromises.update:
+    args: {"collectionsPaymentPromiseId": "example"}
+  comments.create:
+    args: {"entity_id": "example", "entity_type": "customer", "notes": "example"}
+  comments.delete:
+    args: {"commentId": "example"}
+  comments.get:
+    args: {"commentId": "example"}
+  comments.list:
+    args: {}
+  configurations.list:
+    args: {}
+  couponCodes.archive:
+    args: {"couponCodeCode": "example"}
+  couponCodes.get:
+    args: {"couponCodeCode": "example"}
+  couponCodes.list:
+    args: {}
+  couponSets.addCouponCodes:
+    args: {"couponSetId": "example"}
+  couponSets.create:
+    args: {"coupon_id": "example", "id": "cust_8gsnbYfsMLds", "name": "example"}
+  couponSets.delete:
+    args: {"couponSetId": "example"}
+  couponSets.deleteUnusedCouponCodes:
+    args: {"couponSetId": "example"}
+  couponSets.get:
+    args: {"couponSetId": "example"}
+  couponSets.list:
+    args: {}
+  couponSets.update:
+    args: {"couponSetId": "example"}
+  coupons.copy:
+    args: {"from_site": "example", "id_at_from_site": "example"}
+  coupons.create:
+    args: {"apply_on": "invoice_amount", "id": "cust_8gsnbYfsMLds", "name": "example"}
+  coupons.createForItems:
+    args: {"apply_on": "invoice_amount", "id": "cust_8gsnbYfsMLds", "name": "example"}
+  coupons.delete:
+    args: {"couponId": "WELCOME10"}
+  coupons.get:
+    args: {"couponId": "WELCOME10"}
+  coupons.list:
+    args: {}
+  coupons.unarchive:
+    args: {"couponId": "WELCOME10"}
+  coupons.update:
+    args: {"couponId": "WELCOME10"}
+  coupons.updateForItems:
+    args: {"couponId": "WELCOME10"}
+  creditNotes.create:
+    args: {"type": "adjustment"}
+  creditNotes.delete:
+    args: {"creditNoteId": "example"}
+  creditNotes.downloadEinvoice:
+    args: {"creditNoteId": "example"}
+  creditNotes.get:
+    args: {"creditNoteId": "example"}
+  creditNotes.getPdf:
+    args: {"creditNoteId": "example"}
+  creditNotes.import:
+    args: {"create_reason_code": "example", "date": 1, "id": "cust_8gsnbYfsMLds", "reference_invoice_id": "example", "type": "adjustment"}
+  creditNotes.list:
+    args: {}
+  creditNotes.recordRefund:
+    args: {"creditNoteId": "example"}
+  creditNotes.refund:
+    args: {"creditNoteId": "example"}
+  creditNotes.removeTaxWithheldRefund:
+    args: {"creditNoteId": "example"}
+  creditNotes.resendEinvoice:
+    args: {"creditNoteId": "example"}
+  creditNotes.sendEinvoice:
+    args: {"creditNoteId": "example"}
+  creditNotes.sendEmail:
+    args: {"creditNoteId": "example"}
+  creditNotes.update:
+    args: {"creditNoteId": "example"}
+  creditNotes.void:
+    args: {"creditNoteId": "example"}
+  creditUnits.archive:
+    args: {"creditUnitId": "example"}
+  creditUnits.create:
+    args: {"id": "cust_8gsnbYfsMLds", "is_unlimited": true, "name": "example"}
+  creditUnits.list:
+    args: {}
+  creditUnits.reactivate:
+    args: {"creditUnitId": "example"}
+  creditUnits.update:
+    args: {"creditUnitId": "example"}
+  csvTaxRules.create:
+    args: {}
+  currencies.addSchedule:
+    args: {"siteCurrencyId": "example", "manual_exchange_rate": "example", "schedule_at": 1}
+  currencies.create:
+    args: {"currency_code": "exa", "forex_type": "manual"}
+  currencies.get:
+    args: {"siteCurrencyId": "example"}
+  currencies.getList:
+    args: {}
+  currencies.removeSchedule:
+    args: {"siteCurrencyId": "example"}
+  currencies.update:
+    args: {"siteCurrencyId": "example", "forex_type": "manual"}
+  customFieldConfigs.getMetadata:
+    args: {"entity_type": "customer", "api_name": "example"}
+  customFieldConfigs.list:
+    args: {}
+  customers.addContact:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  customers.assignPaymentRole:
+    args: {"customerId": "cust_8gsnbYfsMLds", "payment_source_id": "example", "role": "primary"}
+  customers.changeBillingDate:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  customers.clearPersonalData:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  customers.collectPayment:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  customers.copyCard:
+    args: {"customerId": "cust_8gsnbYfsMLds", "gateway_account_id": "example"}
+  customers.create:
+    args: {"first_name": "Ada", "last_name": "Lovelace", "email": "ada@example.com"}
+  customers.createSubscription:
+    args: {"customerId": "cust_8gsnbYfsMLds", "plan_id": "example"}
+  customers.createSubscriptionEstimate:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  customers.createSubscriptionForItems:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  customers.createSubscriptionForItemsEstimate:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  customers.createSubscriptionQuote:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  customers.createSubscriptionQuoteForItems:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  customers.delete:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  customers.deleteCard:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  customers.deleteContact:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  customers.delink:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  customers.get:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  customers.getHierarchy:
+    args: {"hierarchy_operation_type": "complete_hierarchy", "customerId": "cust_8gsnbYfsMLds"}
+  customers.getUpcomingInvoicesEstimate:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  customers.importSubscription:
+    args: {"customerId": "cust_8gsnbYfsMLds", "plan_id": "example", "status": "future"}
+  customers.importSubscriptionForItems:
+    args: {"customerId": "cust_8gsnbYfsMLds", "status": "future"}
+  customers.link:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  customers.list:
+    args: {"limit": 10}
+  customers.listContacts:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  customers.listEmailLogs:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  customers.listEntitlements:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  customers.listHierarchyDetails:
+    args: {"customerId": "cust_8gsnbYfsMLds", "hierarchy_operation_type": "complete_hierarchy"}
+  customers.listPaymentVouchers:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  customers.merge:
+    args: {"from_customer_id": "example", "to_customer_id": "example"}
+  customers.move:
+    args: {"from_site": "example", "id_at_from_site": "example"}
+  customers.recordExcessPayment:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  customers.sendPaymentRequest:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  customers.switchGateway:
+    args: {"customerId": "cust_8gsnbYfsMLds", "gateway_account_id": "example"}
+  customers.update:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  customers.updateBillingInfo:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  customers.updateCard:
+    args: {"customerId": "cust_8gsnbYfsMLds", "expiry_month": 1, "expiry_year": 1, "number": "example"}
+  customers.updateContact:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  customers.updateHierarchySettings:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  customers.updatePaymentMethod:
+    args: {"customerId": "cust_8gsnbYfsMLds"}
+  differentialPrices.delete:
+    args: {"differentialPriceId": "example", "item_price_id": "example"}
+  differentialPrices.get:
+    args: {"item_price_id": "example", "differentialPriceId": "example"}
+  differentialPrices.list:
+    args: {}
+  differentialPrices.update:
+    args: {"differentialPriceId": "example", "item_price_id": "example"}
+  disputes.get:
+    args: {"disputeId": "example"}
+  disputes.list:
+    args: {}
+  einvoices.get:
+    args: {"einvoiceId": "example"}
+  einvoices.list:
+    args: {}
+  entitlements.create:
+    args: {"action": "upsert"}
+  entitlements.list:
+    args: {}
+  estimates.createInvoice:
+    args: {}
+  estimates.createInvoiceForItems:
+    args: {}
+  estimates.createSubscription:
+    args: {}
+  estimates.createSubscriptionForItems:
+    args: {}
+  estimates.giftSubscription:
+    args: {}
+  estimates.giftSubscriptionForItems:
+    args: {}
+  estimates.paymentSchedules:
+    args: {"scheme_id": "example"}
+  estimates.updateSubscription:
+    args: {}
+  estimates.updateSubscriptionForItems:
+    args: {}
+  events.get:
+    args: {"eventId": "example"}
+  events.list:
+    args: {}
+  exports.addons:
+    args: {}
+  exports.attachedItems:
+    args: {}
+  exports.coupons:
+    args: {}
+  exports.creditNotes:
+    args: {}
+  exports.customers:
+    args: {}
+  exports.deferredRevenue:
+    args: {"report_by": "customer", "report_from_month": 1, "report_from_year": 1, "report_to_month": 1, "report_to_year": 1}
+  exports.differentialPrices:
+    args: {}
+  exports.get:
+    args: {"exportId": "example"}
+  exports.invoices:
+    args: {}
+  exports.itemFamilies:
+    args: {}
+  exports.itemPrices:
+    args: {}
+  exports.items:
+    args: {}
+  exports.orders:
+    args: {}
+  exports.plans:
+    args: {}
+  exports.priceVariants:
+    args: {}
+  exports.ramps:
+    args: {}
+  exports.revenueRecognition:
+    args: {"report_by": "customer", "report_from_month": 1, "report_from_year": 1, "report_to_month": 1, "report_to_year": 1}
+  exports.subscriptions:
+    args: {}
+  exports.transactions:
+    args: {}
+  features.activate:
+    args: {"featureId": "example"}
+  features.archive:
+    args: {"featureId": "example"}
+  features.create:
+    args: {"name": "example"}
+  features.delete:
+    args: {"featureId": "example"}
+  features.get:
+    args: {"featureId": "example"}
+  features.list:
+    args: {}
+  features.listItemEntitlements:
+    args: {"featureId": "example"}
+  features.reactivate:
+    args: {"featureId": "example"}
+  features.update:
+    args: {"featureId": "example"}
+  features.upsertItemEntitlements:
+    args: {"featureId": "example", "action": "upsert"}
+  fullExports.getStatus:
+    args: {"table": "example", "date": "example"}
+  gatewayRequestLogs.get:
+    args: {"gatewayRequestLogLogId": "example"}
+  gatewayRequestLogs.list:
+    args: {}
+  gatewayWebhookLogs.get:
+    args: {"gatewayWebhookLogWebhookId": "example"}
+  gatewayWebhookLogs.list:
+    args: {}
+  gifts.cancel:
+    args: {"giftId": "example"}
+  gifts.claim:
+    args: {"giftId": "example"}
+  gifts.create:
+    args: {}
+  gifts.createForItems:
+    args: {}
+  gifts.get:
+    args: {"giftId": "example"}
+  gifts.list:
+    args: {}
+  gifts.update:
+    args: {"giftId": "example"}
+  grantBlocks.list:
+    args: {"subscription_id": {}}
+  hostedPages.acceptQuote:
+    args: {}
+  hostedPages.acknowledge:
+    args: {"hostedPageId": "example"}
+  hostedPages.checkoutExisting:
+    args: {}
+  hostedPages.checkoutExistingForItems:
+    args: {}
+  hostedPages.checkoutGift:
+    args: {}
+  hostedPages.checkoutGiftForItems:
+    args: {}
+  hostedPages.checkoutNew:
+    args: {}
+  hostedPages.checkoutNewForItems:
+    args: {}
+  hostedPages.checkoutOneTime:
+    args: {}
+  hostedPages.checkoutOneTimeForItems:
+    args: {}
+  hostedPages.claimGift:
+    args: {}
+  hostedPages.collectNow:
+    args: {}
+  hostedPages.extendSubscription:
+    args: {}
+  hostedPages.get:
+    args: {"hostedPageId": "example"}
+  hostedPages.list:
+    args: {}
+  hostedPages.managePaymentSources:
+    args: {}
+  hostedPages.notifyEvent:
+    args: {"event_data": {}, "event_name": "cancellation_page_loaded"}
+  hostedPages.preCancel:
+    args: {}
+  hostedPages.retrieveAgreementPdf:
+    args: {"payment_source_id": "example"}
+  hostedPages.viewVoucher:
+    args: {}
+  inAppSubscriptions.importReceipt:
+    args: {"inAppSubscriptionAppId": "example", "receipt": "example"}
+  inAppSubscriptions.importSubscription:
+    args: {"inAppSubscriptionAppId": "example"}
+  inAppSubscriptions.processPurchase:
+    args: {"inAppSubscriptionAppId": "example", "receipt": "example"}
+  inAppSubscriptions.retrieveStoreSubscription:
+    args: {"inAppSubscriptionAppId": "example", "receipt": "example"}
+  invoices.addAddonCharge:
+    args: {"invoiceId": "inv_1001", "addon_id": "example"}
+  invoices.addCharge:
+    args: {"invoiceId": "inv_1001", "amount": 1, "description": "example"}
+  invoices.addChargeItem:
+    args: {"invoiceId": "inv_1001"}
+  invoices.applyCredits:
+    args: {"invoiceId": "inv_1001"}
+  invoices.applyPaymentScheduleScheme:
+    args: {"invoiceId": "inv_1001", "scheme_id": "example"}
+  invoices.applyPayments:
+    args: {"invoiceId": "inv_1001"}
+  invoices.charge:
+    args: {"description": "example"}
+  invoices.chargeAddon:
+    args: {"addon_id": "example"}
+  invoices.close:
+    args: {"invoiceId": "inv_1001"}
+  invoices.collectPayment:
+    args: {"invoiceId": "inv_1001"}
+  invoices.create:
+    args: {}
+  invoices.createForChargeItemsAndCharges:
+    args: {}
+  invoices.delete:
+    args: {"invoiceId": "inv_1001"}
+  invoices.deleteLineItems:
+    args: {"invoiceId": "inv_1001"}
+  invoices.downloadEinvoice:
+    args: {"invoiceId": "inv_1001"}
+  invoices.get:
+    args: {"invoiceId": "inv_1001"}
+  invoices.getPaymentSchedules:
+    args: {"invoiceId": "inv_1001"}
+  invoices.getPdf:
+    args: {"invoiceId": "inv_1001"}
+  invoices.import:
+    args: {"date": 1, "id": "cust_8gsnbYfsMLds", "total": 1}
+  invoices.list:
+    args: {}
+  invoices.listPaymentReferenceNumbers:
+    args: {}
+  invoices.listPaymentVouchers:
+    args: {"invoiceId": "inv_1001"}
+  invoices.listPayments:
+    args: {"invoiceId": "inv_1001"}
+  invoices.pauseDunning:
+    args: {"invoiceId": "inv_1001", "expected_payment_date": 1}
+  invoices.recordPayment:
+    args: {"invoiceId": "inv_1001"}
+  invoices.recordRefund:
+    args: {"invoiceId": "inv_1001"}
+  invoices.recordTaxWithheld:
+    args: {"invoiceId": "inv_1001"}
+  invoices.refund:
+    args: {"invoiceId": "inv_1001"}
+  invoices.removeCreditNote:
+    args: {"invoiceId": "inv_1001"}
+  invoices.removePayment:
+    args: {"invoiceId": "inv_1001"}
+  invoices.removePaymentScheduleScheme:
+    args: {"invoiceId": "inv_1001"}
+  invoices.removeTaxWithheld:
+    args: {"invoiceId": "inv_1001"}
+  invoices.resendEinvoice:
+    args: {"invoiceId": "inv_1001"}
+  invoices.resumeDunning:
+    args: {"invoiceId": "inv_1001"}
+  invoices.sendEinvoice:
+    args: {"invoiceId": "inv_1001"}
+  invoices.sendEmail:
+    args: {"invoiceId": "inv_1001"}
+  invoices.stopDunning:
+    args: {"invoiceId": "inv_1001"}
+  invoices.syncUsages:
+    args: {"invoiceId": "inv_1001"}
+  invoices.updateDetails:
+    args: {"invoiceId": "inv_1001"}
+  invoices.void:
+    args: {"invoiceId": "inv_1001"}
+  invoices.voidBeforeCapture:
+    args: {"invoiceId": "inv_1001"}
+  invoices.writeOff:
+    args: {"invoiceId": "inv_1001"}
+  itemFamilies.create:
+    args: {"id": "cust_8gsnbYfsMLds", "name": "example"}
+  itemFamilies.delete:
+    args: {"itemFamilyId": "example"}
+  itemFamilies.get:
+    args: {"itemFamilyId": "example"}
+  itemFamilies.list:
+    args: {}
+  itemFamilies.update:
+    args: {"itemFamilyId": "example"}
+  itemPrices.create:
+    args: {"id": "cust_8gsnbYfsMLds", "item_id": "example", "name": "example"}
+  itemPrices.createDifferentialPrice:
+    args: {"itemPriceId": "silver-USD-monthly", "parent_item_id": "example"}
+  itemPrices.delete:
+    args: {"itemPriceId": "silver-USD-monthly"}
+  itemPrices.get:
+    args: {"itemPriceId": "silver-USD-monthly"}
+  itemPrices.list:
+    args: {}
+  itemPrices.listApplicableItemPrices:
+    args: {"itemPriceId": "silver-USD-monthly"}
+  itemPrices.listApplicableItems:
+    args: {"itemPriceId": "silver-USD-monthly"}
+  itemPrices.update:
+    args: {"itemPriceId": "silver-USD-monthly"}
+  items.create:
+    args: {"id": "cust_8gsnbYfsMLds", "item_family_id": "example", "name": "example", "type": "plan"}
+  items.createAttachedItem:
+    args: {"itemId": "silver", "item_id": "example"}
+  items.delete:
+    args: {"itemId": "silver"}
+  items.get:
+    args: {"itemId": "silver"}
+  items.list:
+    args: {}
+  items.listAttachedItems:
+    args: {"itemId": "silver"}
+  items.listItemEntitlements:
+    args: {"itemId": "silver"}
+  items.update:
+    args: {"itemId": "silver"}
+  items.upsertItemEntitlements:
+    args: {"itemId": "silver", "action": "upsert"}
+  ledgerAccountBalances.list:
+    args: {"subscription_id": {}}
+  ledgerAccountBalances.updateOverdraftLimit:
+    args: {"is_unlimited": true, "subscription_id": "example", "unit_id": "example"}
+  ledgerOperations.allocate:
+    args: {"amount": "example", "expires_at": 1, "subscription_id": "example", "unit_id": "example"}
+  ledgerOperations.authorize:
+    args: {"amount": "example", "ledger_operation_timestamp": 1, "subscription_id": "example", "unit_id": "example"}
+  ledgerOperations.capture:
+    args: {"amount": "example", "ledger_operation_timestamp": 1, "subscription_id": "example", "unit_id": "example"}
+  ledgerOperations.captureAuthorization:
+    args: {"amount": "example", "authorization_id": "example", "ledger_operation_timestamp": 1}
+  ledgerOperations.get:
+    args: {"ledgerOperationId": "example"}
+  ledgerOperations.list:
+    args: {"subscription_id": {}}
+  ledgerOperations.releaseAuthorization:
+    args: {"authorization_id": "example", "ledger_operation_timestamp": 1}
+  meteredFeatures.archive:
+    args: {"meteredFeatureId": "example"}
+  meteredFeatures.create:
+    args: {"feature_unit": "example", "name": "example", "query": "example"}
+  meteredFeatures.delete:
+    args: {"meteredFeatureId": "example"}
+  meteredFeatures.reactivate:
+    args: {"meteredFeatureId": "example"}
+  meters.list:
+    args: {}
+  nonSubscriptions.oneTimePurchase:
+    args: {"nonSubscriptionAppId": "example", "receipt": "example"}
+  offerEvents.create:
+    args: {"personalized_offer_id": "example", "type": "viewed"}
+  offerFulfillments.create:
+    args: {"option_id": "example", "personalized_offer_id": "example"}
+  offerFulfillments.get:
+    args: {"offerFulfillmentId": "example"}
+  offerFulfillments.update:
+    args: {"offerFulfillmentId": "example", "id": "cust_8gsnbYfsMLds", "status": "completed"}
+  omnichannelOneTimeOrders.get:
+    args: {"omnichannelOneTimeOrderId": "example"}
+  omnichannelOneTimeOrders.list:
+    args: {}
+  omnichannelSubscriptionItems.listScheduledChanges:
+    args: {"omnichannelSubscriptionItemId": "example"}
+  omnichannelSubscriptions.get:
+    args: {"omnichannelSubscriptionId": "example"}
+  omnichannelSubscriptions.list:
+    args: {}
+  omnichannelSubscriptions.listTransactions:
+    args: {"omnichannelSubscriptionId": "example"}
+  omnichannelSubscriptions.move:
+    args: {"omnichannelSubscriptionId": "example", "to_customer_id": "example"}
+  orders.assignOrderNumber:
+    args: {"orderId": "example"}
+  orders.cancel:
+    args: {"orderId": "example", "cancellation_reason": "shipping_cut_off_passed"}
+  orders.create:
+    args: {"invoice_id": "example"}
+  orders.createRefundableCreditNote:
+    args: {"orderId": "example"}
+  orders.delete:
+    args: {"orderId": "example"}
+  orders.get:
+    args: {"orderId": "example"}
+  orders.import:
+    args: {"created_at": 1, "invoice_id": "example", "order_date": 1, "shipping_date": 1, "status": "cancelled"}
+  orders.list:
+    args: {}
+  orders.reopen:
+    args: {"orderId": "example"}
+  orders.resend:
+    args: {"orderId": "example"}
+  orders.update:
+    args: {"orderId": "example"}
+  organizationDetails.create:
+    args: {"address_line1": "example", "city": "example", "organization_name": "example", "phone": "example", "state": "example", "zip": "example"}
+  organizationDetails.get:
+    args: {"organizationDetailId": "example"}
+  organizationDetails.list:
+    args: {}
+  paymentIntents.create:
+    args: {"amount": 1, "currency_code": "exa"}
+  paymentIntents.get:
+    args: {"paymentIntentId": "example"}
+  paymentIntents.update:
+    args: {"paymentIntentId": "example"}
+  paymentScheduleSchemes.create:
+    args: {"name": "example", "number_of_schedules": 1, "period_unit": "day"}
+  paymentScheduleSchemes.delete:
+    args: {"paymentScheduleSchemeId": "example"}
+  paymentScheduleSchemes.get:
+    args: {"paymentScheduleSchemeId": "example"}
+  paymentScheduleSchemes.list:
+    args: {}
+  paymentSchedules.list:
+    args: {}
+  paymentSources.createBankAccount:
+    args: {"customer_id": "example"}
+  paymentSources.createCard:
+    args: {"customer_id": "example"}
+  paymentSources.createUsingPaymentIntent:
+    args: {"customer_id": "example"}
+  paymentSources.createUsingPermanentToken:
+    args: {"customer_id": "example", "type": "card"}
+  paymentSources.createUsingTempToken:
+    args: {"customer_id": "example", "tmp_token": "example", "type": "card"}
+  paymentSources.createUsingToken:
+    args: {"customer_id": "example", "token_id": "example"}
+  paymentSources.createVoucherPaymentSource:
+    args: {"customer_id": "example"}
+  paymentSources.delete:
+    args: {"custPaymentSourceId": "example"}
+  paymentSources.deleteLocal:
+    args: {"custPaymentSourceId": "example"}
+  paymentSources.export:
+    args: {"custPaymentSourceId": "example", "gateway_account_id": "example"}
+  paymentSources.get:
+    args: {"custPaymentSourceId": "example"}
+  paymentSources.list:
+    args: {}
+  paymentSources.listGatewayPaymentMethodTokens:
+    args: {"custPaymentSourceId": "example"}
+  paymentSources.switchGatewayAccount:
+    args: {"custPaymentSourceId": "example", "gateway_account_id": "example"}
+  paymentSources.updateBankAccount:
+    args: {"custPaymentSourceId": "example"}
+  paymentSources.updateCard:
+    args: {"custPaymentSourceId": "example"}
+  paymentSources.verifyBankAccount:
+    args: {"custPaymentSourceId": "example", "amount1": 1, "amount2": 1}
+  paymentVouchers.create:
+    args: {"customer_id": "example"}
+  paymentVouchers.get:
+    args: {"paymentVoucherId": "example"}
+  pc2MigrationItemFamilies.create:
+    args: {"id": "cust_8gsnbYfsMLds", "name": "example", "pc2_migration_id": "example"}
+  pc2MigrationItemFamilies.delete:
+    args: {"pc2MigrationItemFamilyId": "example"}
+  pc2MigrationItemFamilies.get:
+    args: {"pc2MigrationItemFamilyId": "example"}
+  pc2MigrationItemFamilies.list:
+    args: {"pc2_migration_id": {}}
+  pc2MigrationItemFamilies.update:
+    args: {"pc2MigrationItemFamilyId": "example"}
+  pc2MigrationItemPrices.delete:
+    args: {"pc2MigrationItemPriceId": "example"}
+  pc2MigrationItemPrices.get:
+    args: {"pc2MigrationItemPriceId": "example"}
+  pc2MigrationItemPrices.list:
+    args: {}
+  pc2MigrationItemPrices.update:
+    args: {"pc2MigrationItemPriceId": "example"}
+  pc2MigrationItems.create:
+    args: {"id": "cust_8gsnbYfsMLds", "name": "example", "pc1_type": "plan", "pc2_migration_id": "example"}
+  pc2MigrationItems.delete:
+    args: {"pc2MigrationItemId": "example"}
+  pc2MigrationItems.get:
+    args: {"pc2MigrationItemId": "example"}
+  pc2MigrationItems.list:
+    args: {"pc2_migration_item_family": {}}
+  pc2MigrationItems.listApplicableItems:
+    args: {"is_recurring": {}}
+  pc2MigrationItems.update:
+    args: {"pc2MigrationItemId": "example"}
+  pc2Migrations.contactSupport:
+    args: {"pc2MigrationId": "example"}
+  pc2Migrations.create:
+    args: {}
+  pc2Migrations.get:
+    args: {"pc2MigrationId": "example"}
+  pc2Migrations.initiate:
+    args: {"pc2MigrationId": "example"}
+  personalizedOffers.create:
+    args: {"customer_id": "example"}
+  plans.copy:
+    args: {"from_site": "example", "id_at_from_site": "example"}
+  plans.create:
+    args: {"id": "cust_8gsnbYfsMLds", "name": "example"}
+  plans.delete:
+    args: {"planId": "example"}
+  plans.get:
+    args: {"planId": "example"}
+  plans.list:
+    args: {}
+  plans.unarchive:
+    args: {"planId": "example"}
+  plans.update:
+    args: {"planId": "example"}
+  portalSessions.activate:
+    args: {"portalSessionId": "example", "token": "example"}
+  portalSessions.create:
+    args: {}
+  portalSessions.get:
+    args: {"portalSessionId": "example"}
+  portalSessions.logout:
+    args: {"portalSessionId": "example"}
+  priceRamps.create:
+    args: {"item_price_id": "example"}
+  priceRamps.delete:
+    args: {"priceRampId": "example"}
+  priceRamps.get:
+    args: {"priceRampId": "example"}
+  priceRamps.list:
+    args: {}
+  priceRamps.update:
+    args: {"priceRampId": "example"}
+  priceVariants.create:
+    args: {"id": "cust_8gsnbYfsMLds", "name": "example"}
+  priceVariants.delete:
+    args: {"priceVariantId": "example"}
+  priceVariants.get:
+    args: {"priceVariantId": "example"}
+  priceVariants.list:
+    args: {}
+  priceVariants.update:
+    args: {"priceVariantId": "example"}
+  pricingPageSessions.createForExistingSubscription:
+    args: {}
+  pricingPageSessions.createForNewSubscription:
+    args: {}
+  products.create:
+    args: {"external_name": "example", "name": "example", "status": "active"}
+  products.createVariant:
+    args: {"productId": "example", "name": "example"}
+  products.delete:
+    args: {"productId": "example"}
+  products.get:
+    args: {"productId": "example"}
+  products.list:
+    args: {}
+  products.listVariants:
+    args: {"productId": "example"}
+  products.update:
+    args: {"productId": "example"}
+  products.updateOptions:
+    args: {"productId": "example"}
+  promotionalCredits.add:
+    args: {"customer_id": "example", "description": "example"}
+  promotionalCredits.deduct:
+    args: {"customer_id": "example", "description": "example"}
+  promotionalCredits.get:
+    args: {"accountCreditId": "example"}
+  promotionalCredits.list:
+    args: {}
+  promotionalCredits.set:
+    args: {"customer_id": "example", "description": "example"}
+  promotionalGrants.create:
+    args: {"amount": "example", "expires_at": 1, "subscription_id": "example", "unit_id": "example"}
+  purchases.create:
+    args: {"customer_id": "example"}
+  purchases.estimate:
+    args: {}
+  quotes.convert:
+    args: {"quoteId": "example"}
+  quotes.createForChargeItemsAndCharges:
+    args: {"customer_id": "example"}
+  quotes.createForOnetimeCharges:
+    args: {"customer_id": "example"}
+  quotes.delete:
+    args: {"quoteId": "example"}
+  quotes.editCreateSubscriptionQuote:
+    args: {"quoteId": "example"}
+  quotes.editCreateSubscriptionQuoteForItems:
+    args: {"quoteId": "example"}
+  quotes.editForChargeItemsAndCharges:
+    args: {"quoteId": "example"}
+  quotes.editOneTimeQuote:
+    args: {"quoteId": "example"}
+  quotes.editUpdateSubscriptionQuote:
+    args: {"quoteId": "example"}
+  quotes.editUpdateSubscriptionQuoteForItems:
+    args: {"quoteId": "example"}
+  quotes.extendExpiryDate:
+    args: {"quoteId": "example", "valid_till": 1}
+  quotes.get:
+    args: {"quoteId": "example"}
+  quotes.getPdf:
+    args: {"quoteId": "example"}
+  quotes.list:
+    args: {}
+  quotes.listEntitlements:
+    args: {"quoteId": "example"}
+  quotes.listLineGroups:
+    args: {"quoteId": "example"}
+  quotes.updateStatus:
+    args: {"quoteId": "example", "status": "accepted"}
+  quotes.updateSubscriptionQuote:
+    args: {}
+  quotes.updateSubscriptionQuoteForItems:
+    args: {}
+  ramps.delete:
+    args: {"rampId": "example"}
+  ramps.get:
+    args: {"rampId": "example"}
+  ramps.list:
+    args: {"subscription_id": {}}
+  ramps.update:
+    args: {"rampId": "example", "effective_from": 1}
+  recordedPurchases.create:
+    args: {"app_id": "example"}
+  recordedPurchases.get:
+    args: {"recordedPurchaseId": "example"}
+  resourceMigrations.getLatest:
+    args: {"from_site": "example", "entity_type": "customer", "entity_id": "example"}
+  retrySegments.get:
+    args: {"retrySegmentId": "example"}
+  rules.get:
+    args: {"ruleId": "example"}
+  siteMigrationDetails.list:
+    args: {}
+  sitePcMetaRecords.list:
+    args: {}
+  subscriptions.addChargeAtTermEnd:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds", "description": "example"}
+  subscriptions.advanceInvoiceEstimate:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.cancel:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.cancelForItems:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.cancelSubscriptionEstimate:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.cancelSubscriptionForItemsEstimate:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.changeTermEnd:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds", "term_ends_at": 1}
+  subscriptions.changeTermEndEstimate:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds", "term_ends_at": 1}
+  subscriptions.chargeAddonAtTermEnd:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds", "addon_id": "example"}
+  subscriptions.chargeFutureRenewals:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.create:
+    args: {"plan_id": "example"}
+  subscriptions.createRamp:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds", "effective_from": 1}
+  subscriptions.createUsage:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds", "item_price_id": "example", "quantity": "example", "usage_date": 1}
+  subscriptions.delete:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.deleteUsage:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds", "id": "cust_8gsnbYfsMLds"}
+  subscriptions.editAdvanceInvoiceSchedule:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.get:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.getAdvanceInvoiceSchedule:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.getScheduledChanges:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.getUsage:
+    args: {"id": "cust_8gsnbYfsMLds", "subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.getUsageCharges:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.getUsageSummary:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds", "feature_id": "example"}
+  subscriptions.getWithScheduledChanges:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.importContractTerm:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.importSubscription:
+    args: {"plan_id": "example", "status": "future"}
+  subscriptions.importUnbilledCharges:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.list:
+    args: {}
+  subscriptions.listAlertStatuses:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.listApplicableAlerts:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.listContractTerms:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.listDiscounts:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.listEntitlementOverrides:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.listEntitlements:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.move:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds", "to_customer_id": "example"}
+  subscriptions.overrideBillingProfile:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.pause:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.pauseSubscriptionEstimate:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.reactivate:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.regenerateInvoice:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.regenerateInvoiceEstimate:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.removeAdvanceInvoiceSchedule:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.removeCoupons:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.removeScheduledCancellation:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.removeScheduledChanges:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.removeScheduledPause:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.removeScheduledResumption:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.renewalEstimate:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.resume:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.resumeSubscriptionEstimate:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.setAvailability:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds", "is_enabled": true}
+  subscriptions.update:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.updateForItems:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.updateScheduledChanges:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  subscriptions.upsertEntitlementOverrides:
+    args: {"subscriptionId": "sub_8gsnbYfsMLds"}
+  timeMachines.get:
+    args: {"timeMachineName": "example"}
+  timeMachines.startAfresh:
+    args: {"timeMachineName": "example"}
+  timeMachines.travelForward:
+    args: {"timeMachineName": "example"}
+  tokens.createForCard:
+    args: {}
+  tokens.createUsingTempToken:
+    args: {"id_at_vault": "example", "payment_method_type": "card"}
+  tokens.get:
+    args: {"cbTokenId": "example"}
+  transactions.createAuthorization:
+    args: {"amount": 1, "customer_id": "example"}
+  transactions.deleteOfflineTransaction:
+    args: {"transactionId": "example"}
+  transactions.get:
+    args: {"transactionId": "example"}
+  transactions.list:
+    args: {}
+  transactions.reconcile:
+    args: {"transactionId": "example"}
+  transactions.recordRefund:
+    args: {"transactionId": "example", "date": 1, "payment_method": "cash"}
+  transactions.refund:
+    args: {"transactionId": "example"}
+  transactions.void:
+    args: {"transactionId": "example"}
+  unbilledCharges.create:
+    args: {"subscription_id": "example"}
+  unbilledCharges.createForItems:
+    args: {"subscription_id": "example"}
+  unbilledCharges.delete:
+    args: {"unbilledChargeId": "example"}
+  unbilledCharges.invoiceNowEstimate:
+    args: {}
+  unbilledCharges.invoiceUnbilledCharges:
+    args: {}
+  unbilledCharges.list:
+    args: {}
+  usageEvents.create:
+    args: {"deduplication_id": "example", "properties": {}, "subscription_id": "example", "usage_timestamp": 1}
+  usageFiles.getProcessingStatus:
+    args: {"usageFileId": "example"}
+  usageFiles.getUploadUrl:
+    args: {"file_name": "example", "mime_type": "example"}
+  usages.getPdf:
+    args: {}
+  usages.list:
+    args: {}
+  variants.delete:
+    args: {"productVariantId": "example"}
+  variants.get:
+    args: {"productVariantId": "example"}
+  variants.update:
+    args: {"productVariantId": "example"}
+  vaultedPaymentMethods.get:
+    args: {"vaultedPaymentMethodId": "example"}
+  virtualBankAccounts.create:
+    args: {"customer_id": "example"}
+  virtualBankAccounts.createUsingPermanentToken:
+    args: {"customer_id": "example", "reference_id": "example"}
+  virtualBankAccounts.delete:
+    args: {"virtualBankAccountId": "example"}
+  virtualBankAccounts.deleteLocal:
+    args: {"virtualBankAccountId": "example"}
+  virtualBankAccounts.get:
+    args: {"virtualBankAccountId": "example"}
+  virtualBankAccounts.list:
+    args: {}
+  webhookEndpoints.create:
+    args: {"name": "example", "url": "https://example.com/article"}
+  webhookEndpoints.delete:
+    args: {"webhookEndpointId": "example"}
+  webhookEndpoints.get:
+    args: {"webhookEndpointId": "example"}
+  webhookEndpoints.list:
+    args: {}
+  webhookEndpoints.update:
+    args: {"webhookEndpointId": "example"}
