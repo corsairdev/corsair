@@ -34,7 +34,7 @@ await corsair.docraptor.api.documents.create({ type: 'pdf', test: true, name: 'i
 | `strict` | `none \| html` | No | Force strict HTML validation. |
 | `javascript` | `boolean` | No | Enable DocRaptor JavaScript parsing. |
 | `ignore_resource_errors` | `boolean` | No | Failed loading of images, stylesheets and scripts does not stop rendering. Defaults to true. |
-| `ignore_console_messages` | `boolean` | No | Prevent console.log from stopping rendering during JavaScript execution. Defaults to false. |
+| `ignore_console_messages` | `boolean` | No | Prevent console.log from stopping rendering during JavaScript execution. Defaults to true on Pipeline 7 and later, false on older pipelines. |
 | `tag` | `string` | No | A small amount of metadata stored with the document. |
 | `help` | `boolean` | No | Request support help with this request if it succeeds. |
 | `pipeline` | `string` | No | A specific DocRaptor Pipeline version to use. |
@@ -128,7 +128,7 @@ await corsair.docraptor.api.documents.createAsync({ type: 'pdf', test: true, doc
 | `strict` | `none \| html` | No | Force strict HTML validation. |
 | `javascript` | `boolean` | No | Enable DocRaptor JavaScript parsing. |
 | `ignore_resource_errors` | `boolean` | No | Failed loading of images, stylesheets and scripts does not stop rendering. Defaults to true. |
-| `ignore_console_messages` | `boolean` | No | Prevent console.log from stopping rendering during JavaScript execution. Defaults to false. |
+| `ignore_console_messages` | `boolean` | No | Prevent console.log from stopping rendering during JavaScript execution. Defaults to true on Pipeline 7 and later, false on older pipelines. |
 | `tag` | `string` | No | A small amount of metadata stored with the document. |
 | `help` | `boolean` | No | Request support help with this request if it succeeds. |
 | `pipeline` | `string` | No | A specific DocRaptor Pipeline version to use. |
@@ -216,7 +216,7 @@ await corsair.docraptor.api.documents.createHosted({ type: 'pdf', hosted_downloa
 | `strict` | `none \| html` | No | Force strict HTML validation. |
 | `javascript` | `boolean` | No | Enable DocRaptor JavaScript parsing. |
 | `ignore_resource_errors` | `boolean` | No | Failed loading of images, stylesheets and scripts does not stop rendering. Defaults to true. |
-| `ignore_console_messages` | `boolean` | No | Prevent console.log from stopping rendering during JavaScript execution. Defaults to false. |
+| `ignore_console_messages` | `boolean` | No | Prevent console.log from stopping rendering during JavaScript execution. Defaults to true on Pipeline 7 and later, false on older pipelines. |
 | `tag` | `string` | No | A small amount of metadata stored with the document. |
 | `help` | `boolean` | No | Request support help with this request if it succeeds. |
 | `pipeline` | `string` | No | A specific DocRaptor Pipeline version to use. |
@@ -308,7 +308,7 @@ await corsair.docraptor.api.documents.createHostedAsync({ type: 'pdf', document_
 | `strict` | `none \| html` | No | Force strict HTML validation. |
 | `javascript` | `boolean` | No | Enable DocRaptor JavaScript parsing. |
 | `ignore_resource_errors` | `boolean` | No | Failed loading of images, stylesheets and scripts does not stop rendering. Defaults to true. |
-| `ignore_console_messages` | `boolean` | No | Prevent console.log from stopping rendering during JavaScript execution. Defaults to false. |
+| `ignore_console_messages` | `boolean` | No | Prevent console.log from stopping rendering during JavaScript execution. Defaults to true on Pipeline 7 and later, false on older pipelines. |
 | `tag` | `string` | No | A small amount of metadata stored with the document. |
 | `help` | `boolean` | No | Request support help with this request if it succeeds. |
 | `pipeline` | `string` | No | A specific DocRaptor Pipeline version to use. |
@@ -521,7 +521,7 @@ The download_url of a non-hosted document allows only a few fetches and expires 
 
 `ips.list`
 
-List DocRaptor's outbound IP addresses, for allowlisting callbacks
+List the IP addresses DocRaptor downloads document assets from (document_url, images, stylesheets), for allowlisting on your servers
 
 **Risk:** `read`
 

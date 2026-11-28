@@ -20,7 +20,7 @@ pnpm add @corsair-dev/docraptor
 | `documents.expire` | `docraptor.api.documents.expire` | `destructive` | Permanently remove a hosted document so its public URL stops working; this cannot be undone |
 | `documents.list` | `docraptor.api.documents.list` | `read` | List generated documents with paging; test-mode keys are denied this listing |
 | `documents.status` | `docraptor.api.documents.status` | `read` | Read where an asynchronous document stands: queued or working, completed with its download_url, or failed with validation errors |
-| `ips.list` | `docraptor.api.ips.list` | `read` | List DocRaptor's outbound IP addresses, for allowlisting callbacks |
+| `ips.list` | `docraptor.api.ips.list` | `read` | List the IP addresses DocRaptor downloads document assets from (document_url, images, stylesheets), for allowlisting on your servers |
 
 ## Auth
 

@@ -185,7 +185,7 @@ const docRaptorEndpointMeta = {
 	'ips.list': {
 		riskLevel: 'read',
 		description:
-			"List DocRaptor's outbound IP addresses, for allowlisting callbacks",
+			'List the IP addresses DocRaptor downloads document assets from (document_url, images, stylesheets), for allowlisting on your servers',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof docRaptorEndpointsNested

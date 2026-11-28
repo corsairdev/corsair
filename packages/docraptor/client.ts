@@ -166,7 +166,37 @@ export async function makeDocRaptorRequest(
 		...(responseType ? { responseType } : {}),
 	};
 
-	return await request<unknown>(config, requestOptions, {
-		rateLimitConfig: DOCRAPTOR_RATE_LIMIT_CONFIG,
-	});
+	try {
+		return await request<unknown>(config, requestOptions, {
+			rateLimitConfig: DOCRAPTOR_RATE_LIMIT_CONFIG,
+		});
+	} catch (error) {
+		throw error instanceof ApiError ? withoutRequestBody(error) : error;
+	}
+}
+
+/**
+ * Core's ApiError keeps the request body: the document content and any
+ * prince_options.http_password or PDF passwords. It is rebuilt without it
+ * (R8 allows this), keeping method, path, status, the error body and the
+ * rate-limit fields, so the throttle check and retries work as before.
+ */
+function withoutRequestBody(error: ApiError): ApiError {
+	return new ApiError(
+		{ method: error.request.method, url: error.request.url },
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		error.message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }

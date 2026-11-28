@@ -344,4 +344,12 @@ describe('file operations', () => {
 		})) as { filename: string };
 		expect(result.filename).toBe('x1.xlsx');
 	});
+
+	it('documents.download names an old Excel file .xls', async () => {
+		respondFile([0xd0, 0xcf], 'application/vnd.ms-excel');
+		const result = (await invoke(Documents.download, {
+			downloadId: 'x2',
+		})) as { filename: string };
+		expect(result.filename).toBe('x2.xls');
+	});
 });

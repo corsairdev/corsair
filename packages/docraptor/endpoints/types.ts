@@ -142,7 +142,7 @@ const DocCreateBaseSchema = z.object({
 		.boolean()
 		.optional()
 		.describe(
-			'Prevent console.log from stopping rendering during JavaScript execution. Defaults to false.',
+			'Prevent console.log from stopping rendering during JavaScript execution. Defaults to true on Pipeline 7 and later, false on older pipelines.',
 		),
 	tag: z
 		.string()

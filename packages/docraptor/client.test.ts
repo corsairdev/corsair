@@ -205,6 +205,27 @@ describe('makeDocRaptorRequest', () => {
 		);
 	});
 
+	it('drops the request body (document content, passwords) from errors', async () => {
+		respond(xmlError, 401);
+
+		const error = await failure(
+			makeDocRaptorRequest(API_KEY, {
+				method: 'POST',
+				path: '/docs',
+				body: {
+					type: 'pdf',
+					document_content: '<p>private invoice</p>',
+					prince_options: { http_password: 'asset-secret' },
+				},
+			}),
+		);
+		expect(error.status).toBe(401);
+		expect(error.request).toEqual({ method: 'POST', url: '/docs' });
+		const dump = util.inspect(error) + JSON.stringify(error);
+		expect(dump).not.toContain('private invoice');
+		expect(dump).not.toContain('asset-secret');
+	});
+
 	it('reads a binary answer as bytes', async () => {
 		fetchMock.mockResolvedValueOnce(
 			new Response(new Uint8Array([0x25, 0x50, 0x44, 0x46]), {

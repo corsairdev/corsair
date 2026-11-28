@@ -69,9 +69,12 @@ export const download: DocRaptorEndpoints['documentsDownload'] = (ctx, input) =>
 		{
 			shape: (raw, { downloadId }) => {
 				const binary = raw as { contentType?: string } | undefined;
-				const extension = /excel|spreadsheet/i.test(binary?.contentType ?? '')
+				const type = binary?.contentType ?? '';
+				const extension = /spreadsheetml/i.test(type)
 					? 'xlsx'
-					: 'pdf';
+					: /ms-excel/i.test(type)
+						? 'xls'
+						: 'pdf';
 				return toDocumentFile(raw, `${downloadId}.${extension}`);
 			},
 			log: ({ downloadId }, result) => ({
