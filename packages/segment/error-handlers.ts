@@ -1,87 +1,101 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { SegmentAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { segmentEndpointMeta } from './endpoints/catalog';
+import { segmentOperations } from './endpoints/manifest';
 
-function statusOf(error: Error): number | undefined {
-	return error instanceof SegmentAPIError ? error.status : undefined;
+// Segment answers errors with `{ errors: [{ type, message, field? }] }`: 400/422 bad input, 401 a missing or wrong token, 403 a token without the role or a plan without the feature, 404, 429 (Retry-After, and `data.msBeforeNext` on per-route limits).
+// The status is the signal; the message text is a fallback for an error that
+// lost it.
+function text(error: Error): string {
+	return error.message.toLowerCase();
 }
 
-// Segment checks auth before routing: with an invalid token every path
-// (including paths that do not exist) answers 403 forbidden, and only a
-// missing Authorization header gets 401. A 403 is therefore a bad or wrong-scoped
-// token, not a missing resource.
+function status(error: Error): number | undefined {
+	return error instanceof ApiError ? error.status : undefined;
+}
+
+/** Routes that only read, whatever their method (a search sent as POST). */
+const READ_ROUTES = new Set(
+	segmentOperations
+		.filter(
+			(operation) =>
+				segmentEndpointMeta[operation.id as keyof typeof segmentEndpointMeta]
+					?.riskLevel === 'read',
+		)
+		.map((operation) => `${operation.method} ${operation.path}`),
+);
+
+function isRead(error: Error): boolean {
+	if (!(error instanceof ApiError)) return false;
+	const method = error.request?.method;
+	if (method === 'GET') return true;
+	return READ_ROUTES.has(`${method} ${error.request?.url}`);
+}
+
 export const errorHandlers = {
-	// Token-level and per-endpoint limits both answer 429. Token-level 429s
-	// always carry Retry-After; per-endpoint ones fall back to the body's
-	// msBeforeNext, which the client reads into the same field.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => statusOf(error) === 429,
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs:
-				error instanceof SegmentAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		match: (error: Error) => {
+			const code = status(error);
+			if (code !== undefined) return code === 429;
+			const msg = text(error);
+			return msg.includes('too many requests') || msg.includes('rate limit');
+		},
+		// Core's request() has already retried this 429 (three times, honouring
+		// Retry-After) before it reaches a handler. Retrying the endpoint again
+		// would multiply the attempts.
+		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 403 with an invalid token and 401 with a missing header are both auth
-	// problems; no retry can fix either.
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			const status = statusOf(error);
-			return status === 401 || status === 403;
+			const code = status(error);
+			if (code !== undefined) return code === 401 || code === 403;
+			const msg = text(error);
+			return msg.includes('unauthorized') || msg.includes('forbidden');
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 400 invalid input and 404 missing id: a retry sends the same request.
-	VALIDATION_ERROR: {
+	NOT_FOUND_ERROR: {
 		match: (error: Error) => {
-			const status = statusOf(error);
-			return error.name === 'ZodError' || status === 400 || status === 404;
+			const code = status(error);
+			if (code !== undefined) return code === 404;
+			return text(error).includes('not found');
+		},
+		// A record that was deleted: retrying won't bring it back.
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	BAD_REQUEST_ERROR: {
+		match: (error: Error) => {
+			const code = status(error);
+			if (code !== undefined)
+				return (
+					code === 400 ||
+					code === 402 ||
+					code === 405 ||
+					code === 406 ||
+					code === 409 ||
+					code === 413 ||
+					code === 415 ||
+					code === 422
+				);
+			const msg = text(error);
+			return msg.includes('bad request') || msg.includes('invalid input');
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// A dropped connection (reset, DNS, abort) never reached Segment, so
-	// replaying a read is safe. Writes with a transport failure stay on
-	// DEFAULT: a retried delete or regulation create may have gone through.
-	TRANSPORT_ERROR: {
-		match: (error: Error) =>
-			error instanceof SegmentAPIError &&
-			error.method === 'GET' &&
-			error.status === undefined,
-		handler: async () => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
-	},
-	// Segment grants about 3600 requests per short window and does not
-	// document 5xx as transient, and writes here (deletes, regulation creates)
-	// are not safe to replay blind. Only reads get a bounded retry.
 	SERVER_ERROR: {
-		match: (error: Error) =>
-			error instanceof SegmentAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
-		handler: async () => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		match: (error: Error) => {
+			const code = status(error);
+			return code !== undefined && code >= 500;
+		},
+		// Only reads are retried: a write may already have happened, and
+		// Segment documents no idempotency keys.
+		handler: async (error: Error) =>
+			isRead(error)
+				? { maxRetries: 2, retryStrategy: 'exponential_backoff' as const }
+				: { maxRetries: 0 },
 	},
 	DEFAULT: {
 		match: () => true,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 } satisfies CorsairErrorHandler;
-
-// Handlers match in key order and DEFAULT matches everything, so it stays
-// last even when the caller adds or overrides handlers.
-export function mergeErrorHandlers(
-	builtin: CorsairErrorHandler,
-	user: CorsairErrorHandler | undefined,
-): CorsairErrorHandler {
-	if (!user) return builtin;
-	const { DEFAULT: builtinDefault, ...builtinRest } = builtin;
-	const { DEFAULT: userDefault, ...userRest } = user;
-	const fallback = userDefault ?? builtinDefault;
-	return fallback
-		? { ...builtinRest, ...userRest, DEFAULT: fallback }
-		: { ...builtinRest, ...userRest };
-}

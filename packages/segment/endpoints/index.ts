@@ -1,20 +1,11 @@
-import * as Catalog from './catalog';
-import * as Destinations from './destinations';
-import * as Functions from './functions';
-import * as Regulations from './regulations';
-import * as Sources from './sources';
-import * as TrackingPlans from './tracking-plans';
-import * as Warehouses from './warehouses';
-import * as Workspaces from './workspaces';
-
 export {
-	Catalog,
-	Destinations,
-	Functions,
-	Regulations,
-	Sources,
-	TrackingPlans,
-	Warehouses,
-	Workspaces,
-};
-export * from './types';
+	segmentEndpointMeta,
+	segmentEndpointSchemas,
+	segmentEndpointsNested,
+} from './catalog';
+export {
+	getSegmentInputSchema,
+	getSegmentOutputSchema,
+} from './openapi-schema';
+export { SEGMENT_OPERATION_IDS } from './operation-types';
+export { createSegmentOperation } from './operations';

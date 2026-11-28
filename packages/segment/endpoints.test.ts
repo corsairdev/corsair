@@ -1,359 +1,453 @@
-import { SEGMENT_DEFAULT_PAGE_SIZE } from './client';
+import { ApiError } from 'corsair/http';
 import {
-	Catalog,
-	Destinations,
-	Functions,
-	Regulations,
-	Sources,
-	TrackingPlans,
-	Warehouses,
-	Workspaces,
-} from './endpoints';
-import {
-	DESTINATION,
-	DESTINATION_METADATA,
-	errorBody,
-	forbiddenBody,
-	PAGINATION,
-	REGULATION,
-	REGULATION_ENTRY,
-	RULE,
-	rateLimitedBody,
-	SOURCE,
-	SOURCE_METADATA,
-	sourceEnvelope,
-	WORKSPACE,
-} from './test-fixtures';
+	makeSegmentRequest,
+	segmentErrorMessage,
+	withoutRequestData,
+} from './client';
+import { segmentEndpointsNested } from './endpoints/catalog';
+import { segmentDefinitions, segmentOperations } from './endpoints/manifest';
+import { customerMapKeys } from './endpoints/openapi-schema';
+import { queryValue } from './endpoints/operations';
+import type { SegmentContext } from './index';
 
-// never parameters: every concrete endpoint is assignable to this because
-// parameters are contravariant. Each endpoint returns its own output type,
-// so the shared return is left untyped.
-// unknown: each endpoint has its own output type, so no shared return type
-// exists narrower than unknown.
-type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
+// Every call goes through the real client and core transport; only fetch is fake.
 
-jest.mock('corsair/core', () => ({
-	...jest.requireActual('corsair/core'),
-	logEventFromContext: jest.fn().mockResolvedValue(null),
-}));
+type Captured = {
+	url: string;
+	method: string;
+	headers: Record<string, string>;
+	// `unknown` because the sent body is a JSON string, a FormData or a Blob.
+	body: unknown;
+};
 
-const TOKEN = 'sst-test-token';
+let calls: Captured[] = [];
 
-let fetchMock: jest.SpyInstance;
-
-// unknown: response bodies are arbitrary JSON.
-function respond(body: unknown, status = 200) {
-	fetchMock.mockResolvedValueOnce(
-		new Response(JSON.stringify(body), {
+function reply(
+	status: number,
+	// `unknown` because each case answers its own JSON body.
+	body: unknown,
+	contentType = 'application/json',
+) {
+	jest.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
+		const headers: Record<string, string> = {};
+		new Headers(init?.headers).forEach((value, key) => {
+			headers[key] = value;
+		});
+		calls.push({
+			url: String(input),
+			method: init?.method ?? 'GET',
+			headers,
+			body: init?.body,
+		});
+		const payload =
+			body instanceof Uint8Array
+				? body
+				: body === undefined
+					? null
+					: typeof body === 'string' && contentType !== 'application/json'
+						? body
+						: JSON.stringify(body);
+		return new Response(payload, {
 			status,
-			headers: { 'Content-Type': 'application/json' },
-		}),
-	);
+			headers: body === undefined ? {} : { 'content-type': contentType },
+		});
+	});
 }
 
-// unknown: negative cases pass values no schema accepts.
-function invoke(endpoint: AnyEndpoint, input: unknown) {
-	// The fake context only carries what the endpoints read (ctx.key).
-	return endpoint({ key: TOKEN } as never, input as never);
+// jest-yaml-transform turns the yaml into a plain object.
+const docs = require('./plugin-docs.yaml') as {
+	// `unknown` because example args are free-form YAML values.
+	apiExamples: Record<string, { args: Record<string, unknown> }>;
+};
+
+const KEY = 'sgp_test_token';
+/** The plugin options every case runs with (the site the key belongs to). */
+const OPTIONS = { writeKey: 'test-write-key' };
+/** Where those options send calls. */
+const BASE = 'https://api.segmentapis.com';
+
+function ctx(options: Record<string, string> = OPTIONS): SegmentContext {
+	return {
+		endpoints: {},
+		$getAccountId: () => Promise.resolve('test-account'),
+		key: KEY,
+		options,
+		keys: { get_api_key: () => Promise.resolve(KEY) },
+		db: {},
+		// `unknown` because a test context fills only the fields the endpoints read.
+	} as unknown as SegmentContext;
+}
+
+// `unknown` because the endpoint tree holds functions of many input types.
+type AnyEndpoint = (ctx: SegmentContext, input: unknown) => Promise<unknown>;
+
+function endpointFor(id: string): AnyEndpoint {
+	// `unknown` because the walk goes through nested groups of endpoints.
+	let node: unknown = segmentEndpointsNested;
+	for (const part of id.split('.')) {
+		node = (node as Record<string, unknown>)[part];
+	}
+	if (typeof node !== 'function') throw new Error(`no endpoint ${id}`);
+	return node as AnyEndpoint;
+}
+
+// `unknown` because the schema is raw JSON Schema from the manifest.
+function resolveSchema(schema: unknown): Record<string, unknown> {
+	let current = schema as Record<string, unknown> | undefined;
+	for (let i = 0; i < 10 && typeof current?.$ref === 'string'; i++) {
+		current = segmentDefinitions[current.$ref];
+	}
+	return current ?? {};
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	calls = [];
 });
 
 afterEach(() => {
-	fetchMock.mockRestore();
+	jest.restoreAllMocks();
 });
 
-describe('output parsing', () => {
-	it('workspaces.get returns the workspace', async () => {
-		respond({ data: { workspace: WORKSPACE } });
-		await expect(invoke(Workspaces.get, {})).resolves.toEqual({
-			data: { workspace: WORKSPACE },
-		});
-	});
-
-	it('sources.list returns sources with pagination and keeps write keys', async () => {
-		respond({
-			data: {
-				sources: [SOURCE],
-				pagination: { ...PAGINATION, next: 'Mg==' },
-			},
-		});
-		await expect(invoke(Sources.list, {})).resolves.toEqual({
-			data: {
-				sources: [SOURCE],
-				pagination: {
-					current: PAGINATION.current,
-					totalEntries: 2,
-					next: 'Mg==',
-				},
-			},
-		});
-	});
-
-	it('sources.get returns the source and a null trackingPlanId', async () => {
-		respond(sourceEnvelope);
-		await expect(invoke(Sources.get, { sourceId: 'qQ1' })).resolves.toEqual(
-			sourceEnvelope,
-		);
-	});
-
-	it('sources.createWriteKey returns the updated source with its new key', async () => {
-		const keyed = { ...SOURCE, writeKeys: [...SOURCE.writeKeys, 'wk-new'] };
-		respond({ data: { source: keyed } });
-		await expect(
-			invoke(Sources.createWriteKey, { sourceId: 'qQ1' }),
-		).resolves.toEqual({ data: { source: keyed } });
-	});
-
-	it('destinations.list passes the catalog-free destination shape through', async () => {
-		respond({
-			data: { destinations: [DESTINATION], pagination: PAGINATION },
-		});
-		await expect(invoke(Destinations.list, {})).resolves.toEqual({
-			data: { destinations: [DESTINATION], pagination: PAGINATION },
-		});
-	});
-
-	it('warehouses.getConnectionState returns the enum', async () => {
-		respond({ data: { connectionState: 'FAILED' } });
-		await expect(
-			invoke(Warehouses.getConnectionState, { warehouseId: 'kjU' }),
-		).resolves.toEqual({ data: { connectionState: 'FAILED' } });
-	});
-
-	it('warehouses.validate returns CONNECTED or FAILED without a job', async () => {
-		respond({ data: { status: 'CONNECTED' } });
-		await expect(
-			invoke(Warehouses.validate, {
-				metadataId: '55d3d3aea3c',
-				settings: { host: 'db.example.com' },
-			}),
-		).resolves.toEqual({ data: { status: 'CONNECTED' } });
-	});
-
-	it('trackingPlans.listRules returns rules with their JSON schemas', async () => {
-		respond({ data: { rules: [RULE], pagination: PAGINATION } });
-		await expect(
-			invoke(TrackingPlans.listRules, { trackingPlanId: 'tp_1' }),
-		).resolves.toEqual({ data: { rules: [RULE], pagination: PAGINATION } });
-	});
-
-	it('functions.get accepts the documented null function', async () => {
-		respond({ data: { function: null } });
-		await expect(
-			invoke(Functions.get, { functionId: 'fn_1' }),
-		).resolves.toEqual({ data: { function: null } });
-	});
-
-	it('functions.deploy returns the deployment status object', async () => {
-		respond({ data: { functionDeployment: { status: 'SUCCESS' } } });
-		await expect(
-			invoke(Functions.deploy, { functionId: 'fn_1' }),
-		).resolves.toEqual({ data: { functionDeployment: { status: 'SUCCESS' } } });
-	});
-
-	it('catalog.getDestination returns the catalog item', async () => {
-		respond({ data: { destinationMetadata: DESTINATION_METADATA } });
-		await expect(
-			invoke(Catalog.getDestination, { destinationMetadataId: '5gPpjD6ikn' }),
-		).resolves.toEqual({
-			data: { destinationMetadata: DESTINATION_METADATA },
-		});
-	});
-
-	it('catalog.listSources returns the catalog page', async () => {
-		respond({
-			data: { sourcesCatalog: [SOURCE_METADATA], pagination: PAGINATION },
-		});
-		await expect(invoke(Catalog.listSources, {})).resolves.toEqual({
-			data: { sourcesCatalog: [SOURCE_METADATA], pagination: PAGINATION },
-		});
-	});
-
-	it('regulations.list returns entries whose status field is the enum', async () => {
-		respond({
-			data: { regulations: [REGULATION_ENTRY], pagination: PAGINATION },
-		});
-		await expect(invoke(Regulations.list, {})).resolves.toEqual({
-			data: { regulations: [REGULATION_ENTRY], pagination: PAGINATION },
-		});
-	});
-
-	it('regulations.get returns the regulation with overallStatus', async () => {
-		respond({ data: { regulation: REGULATION } });
-		await expect(
-			invoke(Regulations.get, { regulateId: '1qJ' }),
-		).resolves.toEqual({ data: { regulation: REGULATION } });
-	});
-
-	it('regulations.create returns only the regulateId', async () => {
-		respond({ data: { regulateId: '1qJkfE1tpwvQcklImGksLN629wn' } });
-		await expect(
-			invoke(Regulations.create, {
-				regulationType: 'DELETE_ONLY',
-				subjectType: 'USER_ID',
-				subjectIds: ['user_123'],
-			}),
-		).resolves.toEqual({ data: { regulateId: '1qJkfE1tpwvQcklImGksLN629wn' } });
-	});
-});
-
-describe('rejections', () => {
-	it.each([
-		['sources.list', Sources.list, { count: 0 }],
-		['sources.list page over the cap', Sources.list, { count: 1001 }],
-		['sources.get', Sources.get, {}],
-		['sources.create', Sources.create, { slug: 'x', metadataId: 'm' }],
-		[
-			'sources.create bad slug',
-			Sources.create,
-			{ metadataId: 'm', enabled: true },
-		],
-		['sources.removeWriteKey', Sources.removeWriteKey, { sourceId: 'qQ1' }],
-		[
-			'destinations.create',
-			Destinations.create,
-			{ sourceId: 'qQ1', metadataId: 'm' },
-		],
-		['warehouses.create', Warehouses.create, { metadataId: 'm' }],
-		['warehouses.validate', Warehouses.validate, { metadataId: 'm' }],
-		[
-			'trackingPlans.create wrong type',
-			TrackingPlans.create,
-			{ name: 'x', type: 'LEGACY' },
-		],
-		[
-			'trackingPlans.replaceRules',
-			TrackingPlans.replaceRules,
-			{ trackingPlanId: 'tp_1' },
-		],
-		[
-			'trackingPlans.replaceRules empty',
-			TrackingPlans.replaceRules,
-			{ trackingPlanId: 'tp_1', rules: [] },
-		],
-		['functions.list', Functions.list, {}],
-		['functions.create', Functions.create, { code: 'x', displayName: 'n' }],
-		[
-			'regulations.create',
-			Regulations.create,
-			{ regulationType: 'DELETE_ONLY', subjectIds: ['u'] },
-		],
-		[
-			'regulations.create empty subjects',
-			Regulations.create,
-			{ regulationType: 'DELETE_ONLY', subjectType: 'USER_ID', subjectIds: [] },
-		],
-		['catalog.getDestination', Catalog.getDestination, {}],
-	])(
-		'%s rejects %o before calling Segment',
-		async (_name, endpoint: AnyEndpoint, input) => {
-			await expect(invoke(endpoint, input)).rejects.toThrow();
-			expect(fetchMock).not.toHaveBeenCalled();
+describe('every operation', () => {
+	it.each(segmentOperations.map((o) => [o.id, o] as const))(
+		'%s sends its documented method, route and auth',
+		async (id, operation) => {
+			const documented = resolveSchema(operation.output);
+			// A union answer (a count or the rows): the mock answers its first shape.
+			const output = Array.isArray(documented.anyOf)
+				? resolveSchema(documented.anyOf[0])
+				: documented;
+			if (operation.response === 'file') {
+				reply(200, new Uint8Array([80, 75, 3, 4]), 'application/octet-stream');
+			} else if (operation.response === 'text') {
+				reply(200, '# profile', 'text/markdown');
+			} else if (operation.response === 'empty') {
+				reply(204, undefined);
+			} else {
+				reply(
+					200,
+					output.type === 'array'
+						? []
+						: output.type === 'string'
+							? 'ok'
+							: output.type === 'integer' || output.type === 'number'
+								? 1
+								: output.type === 'boolean'
+									? true
+									: {},
+				);
+			}
+			const args = docs.apiExamples[id]?.args ?? {};
+			const result = await endpointFor(id)(ctx(), args);
+			expect(calls).toHaveLength(1);
+			if (operation.response === 'empty') {
+				expect(result).toEqual({ success: true });
+			}
+			const url = new URL(String(calls[0]?.url));
+			const base = new URL(
+				operation.host
+					? operation.host === 'api.segment.io'
+						? 'https://api.segment.io/v1'
+						: `https://${operation.host}`
+					: BASE,
+			);
+			const properties = (operation.input.properties ?? {}) as Record<
+				string,
+				// `unknown` because property schemas are raw JSON Schema documents.
+				Record<string, unknown>
+			>;
+			const byWire = new Map(
+				Object.entries(properties)
+					// A body field may share a path parameter's wire name (a folder's new path).
+					.filter(([, schema]) => schema['x-corsair-in'] === 'path')
+					.map(([name, schema]) => [
+						(schema['x-corsair-name'] as string | undefined) ?? name,
+						name,
+					]),
+			);
+			const route = operation.path.replace(/\{(\w+)\}/g, (_, wire: string) =>
+				encodeURIComponent(String(args[byWire.get(wire) ?? wire])),
+			);
+			expect(url.host).toBe(base.host);
+			expect(decodeURIComponent(url.pathname)).toBe(
+				decodeURIComponent(`${base.pathname.replace(/\/$/, '')}${route}`),
+			);
+			expect(calls[0]?.method).toBe(operation.method);
+			expect(calls[0]?.headers.authorization).toBe(
+				operation.host
+					? `Basic ${Buffer.from('test-write-key:').toString('base64')}`
+					: `Bearer ${KEY}`,
+			);
+			if (operation.request === 'json' && !operation.bodyField) {
+				const sent = JSON.parse(String(calls[0]?.body ?? '{}'));
+				// An enveloped body goes as { <key>: [body] }.
+				const body = operation.bodyEnvelope
+					? sent[operation.bodyEnvelope]?.[0]
+					: sent;
+				for (const [name, value] of Object.entries(args)) {
+					const where = properties[name]?.['x-corsair-in'] ?? 'body';
+					const wire =
+						(properties[name]?.['x-corsair-name'] as string | undefined) ??
+						name;
+					if (where === 'body') {
+						// Every body field of the example goes out as sent.
+						expect([wire, body[wire]]).toEqual([wire, value]);
+					} else {
+						expect(body).not.toHaveProperty(name);
+					}
+				}
+			}
+			if (operation.request === 'json' && operation.bodyField) {
+				const body = JSON.parse(String(calls[0]?.body ?? 'null'));
+				expect(body).toEqual(args[operation.bodyField]);
+			}
+			if (operation.request === 'multipart') {
+				expect(calls[0]?.body).toBeInstanceOf(FormData);
+			}
+			// Every query field of the example reaches the URL.
+			for (const [name, value] of Object.entries(args)) {
+				if (properties[name]?.['x-corsair-in'] !== 'query') continue;
+				// Maps go out as name[key]=value; vendor tests check those.
+				if (
+					typeof value === 'object' &&
+					value !== null &&
+					!Array.isArray(value)
+				)
+					continue;
+				const wire =
+					(properties[name]?.['x-corsair-name'] as string | undefined) ?? name;
+				const join = properties[name]?.['x-corsair-join'] as string | undefined;
+				const sent = queryValue(value, join);
+				expect([wire, url.searchParams.getAll(wire)]).toEqual([
+					wire,
+					(Array.isArray(sent) ? sent : [sent]).map(String),
+				]);
+			}
 		},
 	);
 });
 
-describe('malformed responses', () => {
-	it('rejects a list that lost its pagination object', async () => {
-		respond({ data: { sources: [SOURCE] } });
-		await expect(invoke(Sources.list, {})).rejects.toMatchObject({
-			name: 'ZodError',
-		});
+describe('requests', () => {
+	it('encodes path values so they stay one segment', async () => {
+		// A GET whose path field takes free text (no pattern or format).
+		let found: [string, string] | undefined;
+		for (const o of segmentOperations) {
+			if (o.method !== 'GET') continue;
+			const free = Object.entries(
+				(o.input.properties ?? {}) as Record<
+					string,
+					// `unknown` because property schemas are raw JSON Schema documents.
+					Record<string, unknown>
+				>,
+			).find(
+				([, schema]) =>
+					schema['x-corsair-in'] === 'path' &&
+					schema.type === 'string' &&
+					!schema.pattern &&
+					!schema.format &&
+					!schema.enum,
+			);
+			if (free) {
+				found = [o.id, free[0]];
+				break;
+			}
+		}
+		if (!found) return;
+		const [id, field] = found;
+		reply(200, {});
+		const args = { ...(docs.apiExamples[id]?.args ?? {}) };
+		args[field] = 'a/../b c';
+		await endpointFor(id)(ctx(), args).catch(() => undefined);
+		expect(calls[0]?.url).toContain('a%2F..%2Fb%20c');
 	});
 
-	it('rejects a delete whose status is not SUCCESS', async () => {
-		respond({ data: { status: 'PENDING' } });
-		await expect(
-			invoke(Sources.remove, { sourceId: 'qQ1' }),
-		).rejects.toMatchObject({ name: 'ZodError' });
-	});
-
-	it('rejects a body that lost its data envelope', async () => {
-		respond({ workspace: WORKSPACE });
-		await expect(invoke(Workspaces.get, {})).rejects.toMatchObject({
-			name: 'ZodError',
-		});
-	});
-
-	it('rejects a connection state outside the enum', async () => {
-		respond({ data: { connectionState: 'PENDING' } });
-		await expect(
-			invoke(Warehouses.getConnectionState, { warehouseId: 'kjU' }),
-		).rejects.toMatchObject({ name: 'ZodError' });
-	});
-
-	it('rejects a regulation status outside the documented set', async () => {
-		respond({
-			data: { regulation: { ...REGULATION, overallStatus: 'ARCHIVED' } },
-		});
-		await expect(
-			invoke(Regulations.get, { regulateId: '1qJ' }),
-		).rejects.toMatchObject({ name: 'ZodError' });
-	});
-
-	it('keeps fields and statuses it does not know', async () => {
-		respond({
-			data: {
-				workspace: { ...WORKSPACE, brandNewField: true },
-			},
-		});
-		await expect(invoke(Workspaces.get, {})).resolves.toEqual({
-			data: { workspace: { ...WORKSPACE, brandNewField: true } },
-		});
+	it('rejects bad input before sending anything', async () => {
+		const operation = segmentOperations.find(
+			(o) => (o.input.required as string[] | undefined)?.length,
+		);
+		if (!operation) return;
+		reply(200, {});
+		await expect(endpointFor(operation.id)(ctx(), {})).rejects.toThrow(
+			/Invalid input/,
+		);
+		expect(calls).toHaveLength(0);
 	});
 });
 
-describe('error shapes surface to the caller', () => {
-	it('surfaces a 403 forbidden with its message', async () => {
-		respond(forbiddenBody, 403);
-		await expect(invoke(Sources.list, {})).rejects.toMatchObject({
-			status: 403,
-			message: expect.stringContaining('Not authorized'),
-		});
-	});
-
-	it('surfaces a 404 not found', async () => {
-		respond(errorBody('NotFound', 'Resource not found'), 404);
-		await expect(
-			invoke(Sources.get, { sourceId: 'nope' }),
-		).rejects.toMatchObject({ status: 404 });
-	});
-
-	it('surfaces a 429 with its ms delay', async () => {
-		respond(rateLimitedBody, 429);
-		await expect(invoke(Sources.list, {})).rejects.toMatchObject({
-			status: 429,
-			retryAfter: 2500,
-		});
-	});
-
-	it('surfaces a field-scoped validation failure', async () => {
-		respond(
-			errorBody(
-				'input-validation',
-				'settings is required',
-				'warehouse.metadataId',
-			),
-			422,
+describe('responses', () => {
+	it('refuses a JSON route that answers something other than JSON', async () => {
+		const operation = segmentOperations.find(
+			(o) => o.response === 'json' && o.emptyOk,
 		);
+		if (!operation) return;
+		reply(200, '<html>proxy</html>', 'text/html');
 		await expect(
-			invoke(Warehouses.validate, {
-				metadataId: 'x',
-				settings: { host: 'h' },
-			}),
-		).rejects.toMatchObject({
-			status: 422,
-			message: expect.stringContaining('settings is required'),
-		});
+			endpointFor(operation.id)(
+				ctx(),
+				docs.apiExamples[operation.id]?.args ?? {},
+			),
+		).rejects.toThrow(/not JSON/);
 	});
 
-	it('omits the page-size argument when the caller sends none', async () => {
-		respond({ data: { sources: [], pagination: PAGINATION } });
-		await invoke(Sources.list, {});
-		const [url] = fetchMock.mock.calls[0] as [string, RequestInit];
-		expect(url).toContain(`pagination.count=${SEGMENT_DEFAULT_PAGE_SIZE}`);
+	it('refuses an object route that answers a list', async () => {
+		const operation = segmentOperations.find(
+			(o) =>
+				o.response === 'json' &&
+				!o.emptyOk &&
+				resolveSchema(o.output).type === 'object',
+		);
+		if (!operation) return;
+		reply(200, [1, 2]);
+		await expect(
+			endpointFor(operation.id)(
+				ctx(),
+				docs.apiExamples[operation.id]?.args ?? {},
+			),
+		).rejects.toThrow(/did not match its documented schema/);
+	});
+});
+
+describe('errors', () => {
+	it('keeps the status and reason and drops the request data', async () => {
+		const operation = segmentOperations.find((o) => o.request === 'json');
+		if (!operation) return;
+		reply(400, { message: 'bad thing', input: 'echoed secret' });
+		const error = await endpointFor(operation.id)(
+			ctx(),
+			docs.apiExamples[operation.id]?.args ?? {},
+		).catch((e: unknown) => e);
+		expect(error).toBeInstanceOf(ApiError);
+		const api = error as ApiError;
+		expect(api.status).toBe(400);
+		expect(api.message).toBe('Segment 400: bad thing');
+		expect(JSON.stringify(api.body)).not.toContain('echoed secret');
+		expect(api.request.headers).toBeUndefined();
+		expect(JSON.stringify(api.request)).not.toContain(KEY);
+	});
+
+	it('scrubs sent strings and the key from the error body', () => {
+		const error = new ApiError(
+			{
+				method: 'POST',
+				url: '/things/{id}',
+				path: { id: 'thing-42' },
+				body: { content: 'my private memory about Ada' },
+			},
+			{
+				url: `${BASE}/things/thing-42`,
+				ok: false,
+				status: 422,
+				statusText: 'Unprocessable',
+				body: {
+					detail: `bad content my private memory about Ada for thing-42 with ${KEY}`,
+				},
+			},
+			'x',
+		);
+		const clean = withoutRequestData(error, KEY, BASE);
+		const text = JSON.stringify(clean.body);
+		expect(text).not.toContain('my private memory');
+		expect(text).not.toContain('thing-42');
+		expect(text).not.toContain(KEY);
+		expect(clean.url).toBe(`${BASE}/things/{id}`);
+		expect(clean.status).toBe(422);
+	});
+
+	it('scrubs file names and map keys the caller chose', () => {
+		const form = new FormData();
+		form.append('note', 'quarterly plan');
+		form.append(
+			'file',
+			new File([new Uint8Array([1])], 'alice@example.test.pdf'),
+		);
+		const error = new ApiError(
+			{ method: 'POST', url: '/upload', formData: undefined, body: form },
+			{
+				url: `${BASE}/upload`,
+				ok: false,
+				status: 400,
+				statusText: 'Bad',
+				body: {
+					message:
+						'alice@example.test.pdf rejected; key bob@example.test unknown; quarterly plan',
+				},
+			},
+			'x',
+		);
+		const clean = withoutRequestData(error, KEY, BASE, ['bob@example.test']);
+		expect(clean.message).not.toContain('alice@example.test');
+		expect(clean.message).not.toContain('bob@example.test');
+		expect(clean.message).not.toContain('quarterly plan');
+	});
+
+	it('finds the keys a caller chose inside map fields', () => {
+		const schema = {
+			type: 'object',
+			properties: {
+				name: { type: 'string' },
+				metadata: { type: 'object', additionalProperties: { type: 'string' } },
+			},
+		};
+		expect(
+			customerMapKeys(schema, {
+				name: 'x',
+				metadata: { 'carol@example.test': 'y' },
+			}),
+		).toEqual(['carol@example.test']);
+	});
+
+	it('sends a single-attempt request once, even on a 429', async () => {
+		reply(429, { message: 'daily limit reached' });
+		const error = await makeSegmentRequest(
+			{ key: KEY, options: OPTIONS },
+			{ method: 'GET', path: '/single-attempt', singleAttempt: true },
+		).catch((e: unknown) => e);
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(429);
+		expect(calls).toHaveLength(1);
+	});
+
+	it('marks every single-attempt route in the manifest', async () => {
+		const operation = segmentOperations.find((o) => o.singleAttempt);
+		if (!operation) return;
+		reply(429, { message: 'daily limit reached' });
+		const error = await endpointFor(operation.id)(
+			ctx(),
+			docs.apiExamples[operation.id]?.args ?? {},
+		).catch((e: unknown) => e);
+		expect((error as ApiError).status).toBe(429);
+		expect(calls).toHaveLength(1);
+	});
+
+	it('refuses an HTML page on a text route', async () => {
+		const operation = segmentOperations.find((o) => o.response === 'text');
+		if (!operation) return;
+		reply(200, '<html>login</html>', 'text/html');
+		await expect(
+			endpointFor(operation.id)(
+				ctx(),
+				docs.apiExamples[operation.id]?.args ?? {},
+			),
+		).rejects.toThrow(/not text/);
+	});
+
+	it('reads the common error body shapes', () => {
+		expect(segmentErrorMessage(404, 'Not Found', { message: 'gone' })).toBe(
+			'Segment 404: gone',
+		);
+		expect(segmentErrorMessage(400, 'Bad', { error: 'nope' })).toBe(
+			'Segment 400: nope',
+		);
+		expect(
+			segmentErrorMessage(400, 'Bad', { error: { message: 'nested' } }),
+		).toBe('Segment 400: nested');
+		expect(
+			segmentErrorMessage(422, 'Bad', {
+				detail: [{ loc: ['body', 'name'], msg: 'field required' }],
+			}),
+		).toBe('Segment 422: name: field required');
+		expect(segmentErrorMessage(502, 'Bad Gateway', '<html></html>')).toBe(
+			'Segment 502: Bad Gateway',
+		);
 	});
 });

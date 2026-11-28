@@ -5359,7 +5359,8 @@
                 "pages": [
                   "plugins/segment/overview",
                   "plugins/segment/api",
-                  "plugins/segment/database"
+                  "plugins/segment/database",
+                  "plugins/segment/webhooks"
                 ]
               },
               {
