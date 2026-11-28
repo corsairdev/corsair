@@ -272,3 +272,76 @@ describe('response rejections', () => {
 		await expect(invoke(Ips.list, {})).rejects.toThrow();
 	});
 });
+
+describe('file operations', () => {
+	function respondFile(bytes: number[], contentType: string) {
+		fetchMock.mockResolvedValueOnce(
+			new Response(new Uint8Array(bytes), {
+				status: 200,
+				headers: { 'Content-Type': contentType },
+			}),
+		);
+	}
+
+	it('documents.create posts to /docs and returns the PDF as a file', async () => {
+		respondFile([0x25, 0x50, 0x44, 0x46, 0x2d], 'application/pdf');
+
+		const result = (await invoke(Documents.create, {
+			type: 'pdf',
+			name: 'invoice',
+			test: true,
+			document_content: '<h1>Invoice</h1>',
+		})) as {
+			contentType: string;
+			byteLength: number;
+			filename: string;
+			contentBase64: string;
+		};
+
+		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		expect(url).toBe('https://api.docraptor.com/docs');
+		expect(init.method).toBe('POST');
+		expect(JSON.parse(String(init.body))).toMatchObject({
+			type: 'pdf',
+			test: true,
+			document_content: '<h1>Invoice</h1>',
+		});
+		expect(result).toMatchObject({
+			contentType: 'application/pdf',
+			byteLength: 5,
+			filename: 'invoice.pdf',
+		});
+		expect(Buffer.from(result.contentBase64, 'base64').toString()).toBe(
+			'%PDF-',
+		);
+	});
+
+	it('documents.create refuses input without a content source before any request', async () => {
+		await expect(invoke(Documents.create, { type: 'pdf' })).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('documents.download reads /download/{id} as a file', async () => {
+		respondFile([0x25, 0x50, 0x44, 0x46], 'application/pdf');
+
+		const result = (await invoke(Documents.download, {
+			downloadId: 'a b/c',
+		})) as { filename: string; byteLength: number };
+
+		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		expect(url).toBe('https://api.docraptor.com/download/a%20b%2Fc');
+		expect(init.method).toBe('GET');
+		expect(result).toMatchObject({ filename: 'a b/c.pdf', byteLength: 4 });
+	});
+
+	it('documents.download names an Excel file .xlsx', async () => {
+		respondFile(
+			[0x50, 0x4b],
+			'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+		);
+		const result = (await invoke(Documents.download, {
+			downloadId: 'x1',
+		})) as { filename: string };
+		expect(result.filename).toBe('x1.xlsx');
+	});
+});

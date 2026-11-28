@@ -20,9 +20,11 @@ function buildKey(
 }
 
 const operations = [
+	'documents.create',
 	'documents.createAsync',
 	'documents.createHosted',
 	'documents.createHostedAsync',
+	'documents.download',
 	'documents.expire',
 	'documents.list',
 	'documents.status',
@@ -41,7 +43,7 @@ describe('docraptor plugin definition', () => {
 		).toBe(false);
 	});
 
-	it('exposes exactly the seven catalog operations', () => {
+	it('exposes exactly the nine catalog operations', () => {
 		const nested = Object.entries(plugin.endpoints ?? {}).flatMap(
 			([group, fns]) => Object.keys(fns).map((name) => `${group}.${name}`),
 		);
@@ -59,10 +61,12 @@ describe('docraptor plugin definition', () => {
 				Object.entries(meta).map(([name, entry]) => [name, entry.riskLevel]),
 			),
 		).toEqual({
-			'documents.createAsync': 'write',
-			'documents.createHosted': 'write',
-			'documents.createHostedAsync': 'write',
+			'documents.create': 'destructive',
+			'documents.createAsync': 'destructive',
+			'documents.createHosted': 'destructive',
+			'documents.createHostedAsync': 'destructive',
 			'documents.status': 'read',
+			'documents.download': 'read',
 			'documents.list': 'read',
 			'documents.expire': 'destructive',
 			'ips.list': 'read',

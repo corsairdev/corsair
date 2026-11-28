@@ -1,15 +1,13 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { DocRaptorAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { isDocRaptorThrottle } from './client';
 
-function asDocRaptorError(error: Error): DocRaptorAPIError | undefined {
-	return error instanceof DocRaptorAPIError ? error : undefined;
+function statusOf(error: Error): number | undefined {
+	return error instanceof ApiError ? error.status : undefined;
 }
 
-// No status means the request never reached DocRaptor: transport failures
-// (reset, DNS, abort, timeout) surface here with no HTTP status at all.
-function isTransportError(error: Error): boolean {
-	const docError = asDocRaptorError(error);
-	return docError !== undefined && docError.status === undefined;
+function isRead(error: Error): boolean {
+	return error instanceof ApiError && error.request.method === 'GET';
 }
 
 export const errorHandlers = {
@@ -18,30 +16,24 @@ export const errorHandlers = {
 	// a queued generation finishes or other requests drain, and polling
 	// status again is safe. Writes never replay.
 	THROTTLE_ERROR: {
-		match: (error: Error) => {
-			const docError = asDocRaptorError(error);
-			return (
-				docError !== undefined &&
-				docError.isThrottle &&
-				docError.method === 'GET'
-			);
-		},
+		match: (error: Error) => isDocRaptorThrottle(error) && isRead(error),
 		handler: async (error: Error) => ({
 			maxRetries: 1,
-			headersRetryAfterMs: asDocRaptorError(error)?.retryAfter ?? undefined,
+			headersRetryAfterMs:
+				error instanceof ApiError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
 	// 401: a wrong or missing key.
 	AUTH_ERROR: {
-		match: (error: Error) => asDocRaptorError(error)?.status === 401,
+		match: (error: Error) => statusOf(error) === 401,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 403 that is not the throttle: no permission for that document, or the
-	// empty-body denial of GET /docs.json with a test-mode key. Retrying
-	// cannot change either.
+	// denial of GET /docs.json with the public test key. Retrying cannot
+	// change either.
 	PERMISSION_ERROR: {
-		match: (error: Error) => asDocRaptorError(error)?.status === 403,
+		match: (error: Error) => statusOf(error) === 403,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 400 invalid document input (validation errors come back in the body)
@@ -49,7 +41,7 @@ export const errorHandlers = {
 	// to change.
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
-			const status = asDocRaptorError(error)?.status;
+			const status = statusOf(error);
 			return error.name === 'ZodError' || status === 400 || status === 404;
 		},
 		handler: async () => ({ maxRetries: 0 }),
@@ -59,26 +51,9 @@ export const errorHandlers = {
 	// failed-looking create can double-bill; expire permanently removes a
 	// hosted document and is never replayed either.
 	SERVER_ERROR: {
-		match: (error: Error) => {
-			const docError = asDocRaptorError(error);
-			return (
-				docError !== undefined &&
-				docError.method === 'GET' &&
-				(docError.status ?? 0) >= 500
-			);
-		},
+		match: (error: Error) => isRead(error) && (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
-	},
-	// A dropped connection never reached DocRaptor, so replaying a read
-	// cannot repeat anything. Writes stay gated on the method check.
-	TRANSPORT_ERROR: {
-		match: (error: Error) =>
-			isTransportError(error) && asDocRaptorError(error)?.method === 'GET',
-		handler: async () => ({
-			maxRetries: 1,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},

@@ -1,24 +1,26 @@
 displayName: DocRaptor
-description: Convert HTML into PDF and XML into Excel with DocRaptor - queue asynchronous conversions, poll them to completion, host finished documents at paid public URLs and expire them again.
+description: Convert HTML into PDF and XML into Excel with DocRaptor - create a document and get the file back, queue asynchronous conversions and download them when done, host finished documents at paid public URLs and expire them again.
 domain: docraptor.com
 recommendedAuth: api_key
 overviewNote: |
-  Sign up at https://docraptor.com/signup and read the API key from your account dashboard. The key is the HTTP Basic username with an empty password, and the plugin builds that header for you. Things to know before you send:
+  Sign up at https://docraptor.com/signup and read the API key from your account dashboard. The key is the HTTP Basic username with an empty password, and the plugin builds that header for you. DocRaptor's public test key `YOUR_API_KEY_HERE` makes test documents too. Things to know before you send:
 
-  - **Test mode is free.** Pass `test: true` (the default) and documents are not charged against the plan, but PDFs carry a watermark and Excel output is cut to 20 rows. Omit `test` or set it to false only when you mean to spend quota.
-  - **Asynchronous is the plugin path.** `documents.createAsync` queues a conversion and returns a `status_id`; `documents.status` reads it back with `queued`, `working`, `completed` or `failed`. The synchronous creation endpoint answers with the raw PDF or Excel bytes, which this plugin does not expose because the bytes would arrive garbled; fetch the `download_url` from `documents.status` yourself when the document is completed.
-  - **Download URLs are single-use-ish.** A `download_url` can be fetched only a few times (as few as once, depending on the account's data retention setting) and disappears when retention expires. Never cache it; download and store the file yourself.
-  - **Hosted documents are a paid add-on.** `documents.createHosted` and `documents.createHostedAsync` put the finished document on a public unbranded URL that is billed per download. `hosted_download_limit` caps the fetches and `hosted_expires_at` sets the removal time.
-  - **Expiring is permanent.** `documents.expire` removes a hosted document immediately and cannot be undone. Expiring a test-mode document is not needed; test documents are not hosted.
-  - **The throttle is a 403, not a 429.** More than 30 simultaneous generation requests are refused with a 403 whose message names simultaneous requests; the plugin retries that once on reads. Other 403s mean a missing permission or a denied listing and are never retried.
-  - **Listing needs a real key.** `documents.list` is implemented from the documentation, but a test-mode key is denied the listing with an empty 403, so its row fields are unverified.
-  - **Webhooks.** The plugin does not receive webhooks; DocRaptor's `callback_url` parameter can post completion notices to your own endpoint instead.
+  - **Test mode is the default.** The plugin sends `test: true` unless you set `test: false`, so documents are not charged against the plan, but PDFs carry a watermark and Excel output is cut to 20 rows. Set `test: false` only when you mean to spend quota. Every create is marked destructive, so the permission check runs before it.
+  - **Synchronous or asynchronous.** `documents.create` waits for the conversion (up to 60 seconds) and returns the file itself: base64 under the inline limit, or a file id when the host keeps files. `documents.createAsync` queues a conversion and returns a `status_id`; `documents.status` reads it back with `queued`, `working`, `completed` or `failed`, and `documents.download` fetches the finished file by its `download_id`.
+  - **Download URLs allow few fetches.** A non-hosted `download_url` can be fetched only a few times (as few as once, depending on the account's data retention setting) and disappears when retention expires. Download and store the file yourself.
+  - **Hosted documents are a paid add-on.** `documents.createHosted` and `documents.createHostedAsync` put the finished document on a public unbranded URL that is billed per download. The account's retention setting does not apply to them: a hosted URL stays up until `hosted_download_limit` fetches are used, `hosted_expires_at` passes, or `documents.expire` removes it. Hosted test documents allow five downloads and expire after one day.
+  - **Expiring is permanent.** `documents.expire` removes a hosted document immediately and cannot be undone.
+  - **The throttle is a 403, not a 429.** More than 30 simultaneous generation requests are refused with a 403 whose message names simultaneous requests; the plugin retries that once on reads. Other 403s mean a missing permission or a denied listing and are never retried. Errors are core `ApiError`s whose `body` holds DocRaptor's XML or JSON error text; `describeDocRaptorErrorBody` reads it.
+  - **Listing needs a real key.** The public test key is refused `documents.list` with a 403, so its row fields are unverified and pass through as sent.
+  - **Webhooks.** DocRaptor's `callback_url` posts completion notices to your own endpoint. The callback is not signed, so the plugin does not receive it as a webhook; poll `documents.status` instead.
 apiNotes:
-  documents.createAsync: 'Asynchronous creation is the plugin path. The synchronous POST /docs and the GET /download endpoint answer with raw PDF or Excel bytes, which would arrive garbled through this client, so they are not exposed; fetch the download_url from documents.status yourself once the document is completed.'
+  documents.create: 'Synchronous: the answer is the PDF or Excel file, returned as core file output (contentType, byteLength, filename, contentBase64 or fileId). A conversion that runs past 60 seconds fails; use documents.createAsync for long documents.'
+  documents.createAsync: 'Returns a status_id. Poll documents.status until completed, then documents.download with its download_id.'
   documents.createHostedAsync: 'Same asynchronous flow as documents.createAsync, for a paid hosted document; poll documents.status for the public download_url.'
-  documents.status: 'The download_url allows only a few fetches and expires with the account''s data retention setting, so never cache it; each fetch can count against the limit and hosted downloads are billed per fetch.'
-  documents.createHosted: 'Hosted documents are a paid add-on. Their success shape follows the documentation example and was not verifiable with a test-mode key.'
-  documents.list: 'Unverified: DocRaptor denies this listing to test-mode keys with an empty 403 body, so the row fields pass through exactly as a paid account receives them.'
+  documents.status: 'The download_url of a non-hosted document allows only a few fetches and expires with the account''s data retention setting, so do not cache it. Hosted URLs follow hosted_download_limit and hosted_expires_at instead.'
+  documents.download: 'Fetches the finished file by download_id, which uses up one of its few allowed fetches.'
+  documents.createHosted: 'Hosted documents are a paid add-on; a test-mode hosted document is free, allows five downloads and expires after one day.'
+  documents.list: 'The public test key is refused this listing with a 403, so the row fields pass through exactly as a paid account receives them.'
   ips.list: 'Public endpoint served from docraptor.com; the standard auth header is sent and ignored.'
 examples:
   read:
@@ -32,6 +34,10 @@ examples:
     args:
       downloadId: '123-456-abc'
 apiExamples:
+  documents.create:
+    call: "{ type: 'pdf', test: true, name: 'invoice', document_content: '<html><body><h1>Invoice</h1></body></html>' }"
+  documents.download:
+    call: "{ downloadId: '123-456-abc' }"
   documents.createAsync:
     call: "{ type: 'pdf', test: true, document_content: '<html><body><h1>Invoice</h1></body></html>' }"
   documents.createHosted:

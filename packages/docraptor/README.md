@@ -12,9 +12,11 @@ pnpm add @corsair-dev/docraptor
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `documents.createAsync` | `docraptor.api.documents.createAsync` | `write` | Queue an HTML-to-PDF or XML-to-Excel conversion and return its status_id; poll documents.status for the download_url |
-| `documents.createHosted` | `docraptor.api.documents.createHosted` | `write` | Generate a document and host it at a public DocRaptor URL, a paid add-on; the URL is billed per download |
-| `documents.createHostedAsync` | `docraptor.api.documents.createHostedAsync` | `write` | Queue a hosted document (paid add-on) and return its status_id; poll documents.status for the public download_url |
+| `documents.create` | `docraptor.api.documents.create` | `destructive` | Convert HTML or a URL to a PDF or Excel file and return the file itself (synchronous, up to 60 seconds); billed unless test is true |
+| `documents.createAsync` | `docraptor.api.documents.createAsync` | `destructive` | Queue an HTML-to-PDF or XML-to-Excel conversion and return its status_id; poll documents.status for the download_url |
+| `documents.createHosted` | `docraptor.api.documents.createHosted` | `destructive` | Generate a document and host it at a public DocRaptor URL, a paid add-on; the URL is billed per download |
+| `documents.createHostedAsync` | `docraptor.api.documents.createHostedAsync` | `destructive` | Queue a hosted document (paid add-on) and return its status_id; poll documents.status for the public download_url |
+| `documents.download` | `docraptor.api.documents.download` | `read` | Download a finished asynchronous document by its download_id and return the file (each download_url allows only a few fetches) |
 | `documents.expire` | `docraptor.api.documents.expire` | `destructive` | Permanently remove a hosted document so its public URL stops working; this cannot be undone |
 | `documents.list` | `docraptor.api.documents.list` | `read` | List generated documents with paging; test-mode keys are denied this listing |
 | `documents.status` | `docraptor.api.documents.status` | `read` | Read where an asynchronous document stands: queued or working, completed with its download_url, or failed with validation errors |

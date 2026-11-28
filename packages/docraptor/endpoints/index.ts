@@ -1,7 +1,9 @@
 import {
+	create,
 	createAsync,
 	createHosted,
 	createHostedAsync,
+	download,
 	expire,
 	list,
 	status,
@@ -9,10 +11,12 @@ import {
 import { list as listIps } from './ips';
 
 export const Documents = {
+	create,
 	createAsync,
 	createHosted,
 	createHostedAsync,
 	status,
+	download,
 	list,
 	expire,
 };

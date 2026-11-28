@@ -1,3 +1,4 @@
+import { toFileOutput } from 'corsair/http';
 import { z } from 'zod';
 import type { DocRaptorEndpoints } from '..';
 import { segment } from '../client';
@@ -8,12 +9,77 @@ import {
 	DocRaptorEndpointOutputSchemas as Outputs,
 } from './types';
 
-// POST /docs (synchronous) and GET /download/{id} are deliberately not
-// exposed: both answer with the raw document bytes, which the corsair client
-// reads as body text and would return garbled. The async creates below are
-// the plugin path for documents; callers fetch the `download_url` from
-// documents.status themselves (it allows only a few fetches, so it is not
-// a signed URL to store).
+// POST /docs (synchronous) and GET /download/{id} answer with the document
+// itself. They are read as binary and returned as core's file output, so the
+// bytes are not garbled as text. The `download_url` documents.status returns
+// allows only a few fetches, so it is not a URL to store.
+
+function fileName(name: string | undefined, type: string): string {
+	return `${name || 'document'}.${type}`;
+}
+
+// unknown: raw is core's BinaryResponse; anything else fails the schema.
+function toDocumentFile(raw: unknown, filename: string) {
+	const binary = raw as
+		| { bytes?: Uint8Array; contentType?: string }
+		| undefined;
+	if (!binary?.bytes) {
+		throw new Error('DocRaptor answered without a document body');
+	}
+	return toFileOutput(binary.bytes, binary.contentType, {
+		filename,
+		text: false,
+	});
+}
+
+export const create: DocRaptorEndpoints['documentsCreate'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'documents.create',
+			input: Inputs.documentsCreate,
+			output: Outputs.documentsCreate,
+		},
+		input,
+		(body) => ({ method: 'POST', path: '/docs', body, responseType: 'binary' }),
+		{
+			shape: (raw, { name, type }) => toDocumentFile(raw, fileName(name, type)),
+			log: ({ type, test }, result) => ({
+				type,
+				test: test ?? true,
+				byteLength: result.byteLength,
+			}),
+		},
+	);
+
+export const download: DocRaptorEndpoints['documentsDownload'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'documents.download',
+			input: Inputs.documentsDownload,
+			output: Outputs.documentsDownload,
+		},
+		input,
+		({ downloadId }) => ({
+			method: 'GET',
+			path: `/download/${segment(downloadId)}`,
+			responseType: 'binary',
+		}),
+		{
+			shape: (raw, { downloadId }) => {
+				const binary = raw as { contentType?: string } | undefined;
+				const extension = /excel|spreadsheet/i.test(binary?.contentType ?? '')
+					? 'xlsx'
+					: 'pdf';
+				return toDocumentFile(raw, `${downloadId}.${extension}`);
+			},
+			log: ({ downloadId }, result) => ({
+				downloadId,
+				byteLength: result.byteLength,
+			}),
+		},
+	);
 
 export const createAsync: DocRaptorEndpoints['documentsCreateAsync'] = (
 	ctx,

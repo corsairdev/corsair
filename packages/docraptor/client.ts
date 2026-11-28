@@ -49,6 +49,8 @@ export type DocRaptorRequest = {
 	query?: DocRaptorQuery;
 	// unknown: the endpoint's input schema has already validated the body.
 	body?: unknown;
+	/** `binary` returns `{ bytes, contentType }` for the routes that answer with the document itself. */
+	responseType?: 'binary';
 };
 
 /**
@@ -94,39 +96,13 @@ export function describeDocRaptorErrorBody(
 	return fallback;
 }
 
-export class DocRaptorAPIError extends Error {
-	readonly status?: number;
-	/** Milliseconds from a Retry-After header, when DocRaptor sent one. */
-	readonly retryAfter?: number;
-	/** The HTTP method of the failed request. */
-	readonly method?: string;
-
-	constructor(
-		message: string,
-		options: {
-			status?: number;
-			retryAfter?: number;
-			method?: string;
-			// Retained only for transport failures (reset, DNS, abort), which
-			// never carried a request body, so no credential can leak through it.
-			cause?: Error;
-		} = {},
-	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
-		this.name = 'DocRaptorAPIError';
-		this.status = options.status;
-		this.retryAfter = options.retryAfter;
-		this.method = options.method;
-	}
-
-	/**
-	 * The 403 throttle: DocRaptor answers more than 30 simultaneous generation
-	 * requests with 403 instead of 429. Its message names the cause; the other
-	 * two 403 meanings (no permission, listing denied) do not.
-	 */
-	get isThrottle(): boolean {
-		return this.status === 403 && /simultaneous|throttl/i.test(this.message);
-	}
+/** Whether an error is DocRaptor's throttle: a 403 naming simultaneous requests (more than 30 at once) instead of a 429. */
+export function isDocRaptorThrottle(error: unknown): boolean {
+	return (
+		error instanceof ApiError &&
+		error.status === 403 &&
+		/simultaneous|throttl/i.test(describeDocRaptorErrorBody(error.body, ''))
+	);
 }
 
 /** Encodes one path segment. */
@@ -135,10 +111,12 @@ export function segment(value: string | number): string {
 }
 
 // Callers parse the body with the endpoint's zod output schema; it is
-// undefined for the bodyless answers (200 empty on expire).
+// undefined for the bodyless answers (200 empty on expire). Core's ApiError
+// passes through unchanged: its body holds DocRaptor's XML or JSON error
+// (`describeDocRaptorErrorBody` reads it), never the request's content.
 export async function makeDocRaptorRequest(
 	apiKey: string,
-	{ method, host = 'api', path, query, body }: DocRaptorRequest,
+	{ method, host = 'api', path, query, body, responseType }: DocRaptorRequest,
 ): Promise<unknown> {
 	const config: OpenAPIConfig = {
 		BASE: DOCRAPTOR_HOSTS[host],
@@ -147,7 +125,7 @@ export async function makeDocRaptorRequest(
 		CREDENTIALS: 'omit',
 		TIMEOUT: DOCRAPTOR_TIMEOUT_MS,
 		HEADERS: {
-			Accept: 'application/json',
+			Accept: responseType === 'binary' ? '*/*' : 'application/json',
 			// The API key is the Basic USERNAME with an EMPTY password. corsair's
 			// USERNAME/PASSWORD auth config rejects an empty password, so the
 			// header is built literally instead.
@@ -161,29 +139,10 @@ export async function makeDocRaptorRequest(
 		query,
 		body,
 		mediaType: body === undefined ? undefined : 'application/json',
+		...(responseType ? { responseType } : {}),
 	};
 
-	try {
-		return await request<unknown>(config, requestOptions, {
-			rateLimitConfig: DOCRAPTOR_RATE_LIMIT_CONFIG,
-		});
-	} catch (error) {
-		if (error instanceof ApiError) {
-			// The cause ApiError is dropped: its body echoes request data, and
-			// status plus the extracted message carry everything callers need.
-			throw new DocRaptorAPIError(
-				describeDocRaptorErrorBody(error.body, error.message),
-				{
-					status: error.status,
-					retryAfter: error.retryAfter,
-					method,
-				},
-			);
-		}
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new DocRaptorAPIError(error.message, { cause: error, method });
-		}
-		throw new DocRaptorAPIError('Unknown DocRaptor error', { method });
-	}
+	return await request<unknown>(config, requestOptions, {
+		rateLimitConfig: DOCRAPTOR_RATE_LIMIT_CONFIG,
+	});
 }

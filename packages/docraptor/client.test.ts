@@ -1,7 +1,8 @@
 import util from 'node:util';
+import { ApiError } from 'corsair/http';
 import {
-	DocRaptorAPIError,
 	describeDocRaptorErrorBody,
+	isDocRaptorThrottle,
 	makeDocRaptorRequest,
 	segment,
 } from './client';
@@ -31,10 +32,10 @@ function respond(
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(promise: Promise<unknown>): Promise<DocRaptorAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await promise.catch((caught: unknown) => caught);
-	expect(error).toBeInstanceOf(DocRaptorAPIError);
-	if (!(error instanceof DocRaptorAPIError)) throw error;
+	expect(error).toBeInstanceOf(ApiError);
+	if (!(error instanceof ApiError)) throw error;
 	return error;
 }
 
@@ -93,7 +94,7 @@ describe('makeDocRaptorRequest', () => {
 		expect(JSON.parse(String(init.body))).toEqual({ type: 'pdf', test: true });
 	});
 
-	it('extracts the message from an XML error body', async () => {
+	it('lets core ApiError through with the XML error body', async () => {
 		respond(xmlError, 401);
 
 		const error = await failure(
@@ -103,11 +104,13 @@ describe('makeDocRaptorRequest', () => {
 			}),
 		);
 		expect(error.status).toBe(401);
-		expect(error.message).toBe('Please provide a valid API key.');
-		expect(error.method).toBe('GET');
+		expect(describeDocRaptorErrorBody(error.body, '')).toBe(
+			'Please provide a valid API key.',
+		);
+		expect(error.request.method).toBe('GET');
 	});
 
-	it('extracts the message from a JSON error body', async () => {
+	it('keeps a JSON error body readable', async () => {
 		respond(
 			{
 				errors: [
@@ -124,12 +127,12 @@ describe('makeDocRaptorRequest', () => {
 			}),
 		);
 		expect(error.status).toBe(422);
-		expect(error.message).toBe(
+		expect(describeDocRaptorErrorBody(error.body, '')).toBe(
 			'[Invalid Action Error] Requested document cannot be expired.',
 		);
 	});
 
-	it('falls back to a generic message on an empty error body', async () => {
+	it('an empty 403 is not the throttle', async () => {
 		fetchMock.mockResolvedValueOnce(new Response(null, { status: 403 }));
 
 		const error = await failure(
@@ -139,8 +142,7 @@ describe('makeDocRaptorRequest', () => {
 			}),
 		);
 		expect(error.status).toBe(403);
-		expect(error.message).toBeTruthy();
-		expect(error.isThrottle).toBe(false);
+		expect(isDocRaptorThrottle(error)).toBe(false);
 	});
 
 	it('flags the 403 concurrency throttle by its message', async () => {
@@ -156,7 +158,7 @@ describe('makeDocRaptorRequest', () => {
 			}),
 		);
 		expect(error.status).toBe(403);
-		expect(error.isThrottle).toBe(true);
+		expect(isDocRaptorThrottle(error)).toBe(true);
 	});
 
 	it('reads a Retry-After header into the error on the throttle 403', async () => {
@@ -176,24 +178,18 @@ describe('makeDocRaptorRequest', () => {
 		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 
-	it('wraps network failures with the cause kept', async () => {
+	it('lets a network failure through as it was thrown', async () => {
 		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
 
-		const error = await failure(
-			makeDocRaptorRequest(API_KEY, {
-				method: 'GET',
-				path: '/status/abc',
-			}),
-		);
-		expect(error.message).toContain('fetch failed');
-		expect(error.status).toBeUndefined();
-		expect(error.method).toBe('GET');
-		expect(error.cause).toBeInstanceOf(TypeError);
+		const error = await makeDocRaptorRequest(API_KEY, {
+			method: 'GET',
+			path: '/status/abc',
+		}).catch((caught: unknown) => caught);
+		expect(error).toBeInstanceOf(Error);
+		expect(String(error)).toContain('fetch failed');
 	});
 
 	it('keeps the key out of the error, its JSON and its inspect output', async () => {
-		// The ApiError body and cause hold request data; neither may be copied
-		// onto the thrown error, or they would print through console and inspect.
 		respond(xmlError, 401);
 
 		const error = await failure(
@@ -202,9 +198,31 @@ describe('makeDocRaptorRequest', () => {
 				path: '/status/abc',
 			}),
 		);
-		expect(error.message).toBe('Please provide a valid API key.');
 		expect(util.inspect(error)).not.toContain(API_KEY);
 		expect(JSON.stringify(error)).not.toContain(API_KEY);
+		expect(util.inspect(error)).not.toContain(
+			Buffer.from(`${API_KEY}:`).toString('base64'),
+		);
+	});
+
+	it('reads a binary answer as bytes', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(new Uint8Array([0x25, 0x50, 0x44, 0x46]), {
+				status: 200,
+				headers: { 'Content-Type': 'application/pdf' },
+			}),
+		);
+
+		const result = (await makeDocRaptorRequest(API_KEY, {
+			method: 'POST',
+			path: '/docs',
+			body: { type: 'pdf', document_content: '<p>x</p>' },
+			responseType: 'binary',
+		})) as { bytes: Uint8Array; contentType: string };
+		expect(Buffer.from(result.bytes).toString()).toBe('%PDF');
+		expect(result.contentType).toBe('application/pdf');
+		const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		expect(new Headers(init.headers).get('accept')).toBe('*/*');
 	});
 });
 

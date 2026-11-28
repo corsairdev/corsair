@@ -1,5 +1,5 @@
+import { ApiError } from 'corsair/http';
 import { ZodError } from 'zod';
-import { DocRaptorAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { throttleError } from './test-fixtures';
 
@@ -23,7 +23,24 @@ function apiError(
 	message: string,
 	options: { retryAfter?: number; method?: string } = {},
 ) {
-	return new DocRaptorAPIError(message, { status, ...options });
+	// DocRaptor's errors come as XML; the message sits in the body.
+	return new ApiError(
+		{
+			method: (options.method ?? 'GET') as 'GET',
+			url: '/status/abc',
+		},
+		{
+			url: 'https://api.docraptor.com/status/abc',
+			ok: false,
+			status,
+			statusText: '',
+			body: `<errors><error>${message}</error></errors>`,
+		},
+		message,
+		options.retryAfter === undefined
+			? undefined
+			: { retryAfter: options.retryAfter },
+	);
 }
 
 describe('DocRaptor error handlers', () => {
@@ -107,24 +124,8 @@ describe('DocRaptor error handlers', () => {
 		expect(classify(error)).not.toBe('SERVER_ERROR');
 	});
 
-	it('replays a transport failure on a GET read once', async () => {
-		const error = new DocRaptorAPIError('fetch failed', {
-			method: 'GET',
-			cause: new TypeError('fetch failed'),
-		});
-		expect(classify(error)).toBe('TRANSPORT_ERROR');
-		expect(await strategy(error)).toEqual({
-			maxRetries: 1,
-			retryStrategy: 'exponential_backoff',
-		});
-	});
-
-	it('does not replay a transport failure on a POST', async () => {
-		const error = new DocRaptorAPIError('fetch failed', {
-			method: 'POST',
-			cause: new TypeError('fetch failed'),
-		});
-		expect(classify(error)).toBe('DEFAULT');
+	it('does not replay a transport failure (no status, method unknown)', () => {
+		expect(classify(new TypeError('fetch failed'))).toBe('DEFAULT');
 	});
 });
 
@@ -157,7 +158,7 @@ describe('mergeErrorHandlers', () => {
 	it('gives a caller handler for an uncovered status the position, not DEFAULT', () => {
 		const callerHandler = {
 			match: (error: Error) =>
-				error instanceof DocRaptorAPIError && error.status === 418,
+				error instanceof ApiError && error.status === 418,
 			handler: async () => ({ maxRetries: 4 }),
 		};
 		const merged = mergeErrorHandlers(builtin, { TEAPOT_ERROR: callerHandler });

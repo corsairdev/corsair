@@ -89,8 +89,24 @@ describe('documents.createAsync', () => {
 			path: '/async_docs',
 			query: {},
 		});
-		expect(lastRequest().body).toEqual(input);
+		// test is filled in: DocRaptor's own default is a billed document.
+		expect(lastRequest().body).toEqual({ ...input, test: true });
 		expect(result).toEqual(asyncCreated);
+	});
+
+	it('keeps an explicit test: false for a billed document', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify(asyncCreated), {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+		await Documents.createHostedAsync({ key: 'k' } as never, {
+			type: 'pdf',
+			test: false,
+			document_content: '<p>x</p>',
+		});
+		expect(lastRequest().body).toMatchObject({ test: false });
 	});
 });
 
@@ -111,7 +127,7 @@ describe('documents.createHostedAsync', () => {
 			method: 'POST',
 			path: '/hosted_async_docs',
 		});
-		expect(lastRequest().body).toEqual(input);
+		expect(lastRequest().body).toEqual({ ...input, test: true });
 		expect(result).toEqual(asyncCreated);
 	});
 });

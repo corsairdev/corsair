@@ -1,3 +1,4 @@
+import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 // Inputs use DocRaptor's own parameter names. Outputs are `.loose()` and
@@ -115,11 +116,13 @@ const DocCreateBaseSchema = z.object({
 		.min(1)
 		.optional()
 		.describe('A URL whose content is fetched and transformed.'),
+	// Sent on every create: DocRaptor's own default is false (billed), so
+	// the plugin fills in true unless the caller asks for a real document.
 	test: z
 		.boolean()
-		.optional()
+		.default(true)
 		.describe(
-			'Test mode: not charged, watermarked (PDF) or cut to 20 rows (Excel). Defaults to true.',
+			'Test mode: not charged, watermarked (PDF) or cut to 20 rows (Excel). Defaults to true; set false to make a billed document.',
 		),
 	strict: z
 		.enum(['none', 'html'])
@@ -197,10 +200,10 @@ const HostedDocCreateBaseSchema = DocCreateBaseSchema.extend({
 		),
 	hosted_expires_at: z
 		.string()
-		.datetime({ offset: true })
+		.datetime({ offset: true, local: true })
 		.optional()
 		.describe(
-			'When the hosted document is removed, as an ISO 8601 datetime with an offset, like 1981-01-23T08:02:30-05:00.',
+			'When the hosted document is removed, as an ISO 8601 datetime, like 1981-01-23T08:02:30-05:00; without an offset DocRaptor reads it as UTC.',
 		),
 });
 
@@ -340,9 +343,31 @@ const IpsListResponseSchema = z.object({
 
 export type IpsListResponse = z.infer<typeof IpsListResponseSchema>;
 
+// ── documents.create / documents.download ─────────────────────────────────
+
+// POST /docs and GET /download/{id} answer with the document itself
+// (application/pdf, or an Excel type). The bytes come back as core's file
+// output: base64 under the inline limit, else a host-kept fileId.
+const DocumentFileSchema = FileOutputSchema;
+
+export type DocumentFile = z.infer<typeof DocumentFileSchema>;
+
+const DownloadInputSchema = z.object({
+	downloadId: z
+		.string()
+		.min(1)
+		.describe(
+			'The `download_id` from documents.status once an async document has completed.',
+		),
+});
+
+export type DownloadInput = z.input<typeof DownloadInputSchema>;
+
 // ── Registry ──────────────────────────────────────────────────────────────
 
 export type DocRaptorEndpointInputs = {
+	documentsCreate: DocCreateInput;
+	documentsDownload: DownloadInput;
 	documentsCreateAsync: DocCreateInput;
 	documentsCreateHosted: HostedDocCreateInput;
 	documentsCreateHostedAsync: HostedDocCreateInput;
@@ -353,6 +378,8 @@ export type DocRaptorEndpointInputs = {
 };
 
 export type DocRaptorEndpointOutputs = {
+	documentsCreate: DocumentFile;
+	documentsDownload: DocumentFile;
 	documentsCreateAsync: AsyncDocResponse;
 	documentsCreateHosted: HostedDocResponse;
 	documentsCreateHostedAsync: AsyncDocResponse;
@@ -363,6 +390,8 @@ export type DocRaptorEndpointOutputs = {
 };
 
 export const DocRaptorEndpointInputSchemas = {
+	documentsCreate: DocCreateInputSchema,
+	documentsDownload: DownloadInputSchema,
 	documentsCreateAsync: DocCreateInputSchema,
 	documentsCreateHosted: HostedDocCreateInputSchema,
 	documentsCreateHostedAsync: HostedDocCreateInputSchema,
@@ -373,6 +402,8 @@ export const DocRaptorEndpointInputSchemas = {
 } as const;
 
 export const DocRaptorEndpointOutputSchemas = {
+	documentsCreate: DocumentFileSchema,
+	documentsDownload: DocumentFileSchema,
 	documentsCreateAsync: AsyncDocResponseSchema,
 	documentsCreateHosted: HostedDocResponseSchema,
 	documentsCreateHostedAsync: AsyncDocResponseSchema,

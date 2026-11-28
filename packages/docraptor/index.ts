@@ -51,6 +51,8 @@ type DocRaptorEndpoint<K extends keyof DocRaptorEndpointOutputs> =
 	>;
 
 export type DocRaptorEndpoints = {
+	documentsCreate: DocRaptorEndpoint<'documentsCreate'>;
+	documentsDownload: DocRaptorEndpoint<'documentsDownload'>;
 	documentsCreateAsync: DocRaptorEndpoint<'documentsCreateAsync'>;
 	documentsCreateHosted: DocRaptorEndpoint<'documentsCreateHosted'>;
 	documentsCreateHostedAsync: DocRaptorEndpoint<'documentsCreateHostedAsync'>;
@@ -62,10 +64,12 @@ export type DocRaptorEndpoints = {
 
 const docRaptorEndpointsNested = {
 	documents: {
+		create: Documents.create,
 		createAsync: Documents.createAsync,
 		createHosted: Documents.createHosted,
 		createHostedAsync: Documents.createHostedAsync,
 		status: Documents.status,
+		download: Documents.download,
 		list: Documents.list,
 		expire: Documents.expire,
 	},
@@ -75,6 +79,14 @@ const docRaptorEndpointsNested = {
 } as const;
 
 export const docRaptorEndpointSchemas = {
+	'documents.create': {
+		input: DocRaptorEndpointInputSchemas.documentsCreate,
+		output: DocRaptorEndpointOutputSchemas.documentsCreate,
+	},
+	'documents.download': {
+		input: DocRaptorEndpointInputSchemas.documentsDownload,
+		output: DocRaptorEndpointOutputSchemas.documentsDownload,
+	},
 	'documents.createAsync': {
 		input: DocRaptorEndpointInputSchemas.documentsCreateAsync,
 		output: DocRaptorEndpointOutputSchemas.documentsCreateAsync,
@@ -123,20 +135,28 @@ const ASYNC_DOC_JOB = {
 	},
 } as const;
 
+// Every create starts a generation DocRaptor bills against the plan unless
+// `test` is true (the plugin's default), so creates are destructive: the
+// permission check runs before a billed document can be made.
 const docRaptorEndpointMeta = {
+	'documents.create': {
+		riskLevel: 'destructive',
+		description:
+			'Convert HTML or a URL to a PDF or Excel file and return the file itself (synchronous, up to 60 seconds); billed unless test is true',
+	},
 	'documents.createAsync': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		job: ASYNC_DOC_JOB,
 		description:
 			'Queue an HTML-to-PDF or XML-to-Excel conversion and return its status_id; poll documents.status for the download_url',
 	},
 	'documents.createHosted': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Generate a document and host it at a public DocRaptor URL, a paid add-on; the URL is billed per download',
 	},
 	'documents.createHostedAsync': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		job: ASYNC_DOC_JOB,
 		description:
 			'Queue a hosted document (paid add-on) and return its status_id; poll documents.status for the public download_url',
@@ -145,6 +165,11 @@ const docRaptorEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Read where an asynchronous document stands: queued or working, completed with its download_url, or failed with validation errors',
+	},
+	'documents.download': {
+		riskLevel: 'read',
+		description:
+			'Download a finished asynchronous document by its download_id and return the file (each download_url allows only a few fetches)',
 	},
 	'documents.list': {
 		riskLevel: 'read',
@@ -216,7 +241,7 @@ export function docraptor<const T extends DocRaptorPluginOptions>(
 	} satisfies InternalDocRaptorPlugin;
 }
 
-export { DocRaptorAPIError } from './client';
+export { describeDocRaptorErrorBody, isDocRaptorThrottle } from './client';
 
 export type {
 	AsyncDocResponse,
