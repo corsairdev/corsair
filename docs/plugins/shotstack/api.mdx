@@ -1,0 +1,1147 @@
+---
+title: "Shotstack API reference"
+sidebarTitle: "API"
+description: "API reference for the Shotstack plugin in Corsair: every `shotstack.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Assets
+
+### delete
+
+`assets.delete`
+
+Permanently delete a hosted asset from Shotstack storage and its CDN; there is no undo.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.shotstack.api.assets.delete({ id: 'a4482cbf-e321-42a2-ac8b-947d26886840' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id the create call returned (a UUID). |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`assets.get`
+
+Read one hosted asset: its durable CDN URL, filename, size and status.
+
+**Risk:** `read`
+
+```ts
+await corsair.shotstack.api.assets.get({ id: 'a4482cbf-e321-42a2-ac8b-947d26886840' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id the create call returned (a UUID). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `owner` | `string` | Yes | — |
+| `status` | `importing \| ready \| failed \| deleted \| string` | Yes | importing, ready, failed or deleted. |
+| `region` | `string \| null` | No | — |
+| `renderId` | `string \| null` | No | — |
+| `providerId` | `string \| null` | No | — |
+| `filename` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `updated` | `string \| null` | No | — |
+
+
+
+---
+
+### getByRenderId
+
+`assets.getByRenderId`
+
+List the assets a render produced (video, poster, thumbnail), including the durable CDN URL to serve them from.
+
+**Risk:** `read`
+
+```ts
+await corsair.shotstack.api.assets.getByRenderId({ id: '2abd5c11-0f3d-4c6d-ba20-235fc9b8e8b7' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The render id whose assets to list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assets` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="assets full type">
+
+```ts
+{
+  id: string,
+  owner: string,
+  status: importing | ready | failed | deleted | string,
+  region?: string | null,
+  renderId?: string | null,
+  providerId?: string | null,
+  filename?: string | null,
+  url?: string | null,
+  created?: string | null,
+  updated?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### transfer
+
+`assets.transfer`
+
+Copy a file to external destinations such as Shotstack hosting, S3, Google Cloud Storage, Mux, Vimeo or Google Drive (set up under Integrations in the dashboard). Answers queued; the copy runs afterwards. The hosted copy is listed by assets.getByRenderId with the id you passed.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.shotstack.api.assets.transfer({ url: 'https://s3.amazonaws.com/my-bucket/video.mp4', id: '018e8937-5015-75ee-aab6-03f214981133', destinations: [{ provider: 'shotstack' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The file URL to fetch and transfer. |
+| `id` | `string` | Yes | Your identifier for the asset; it does not need to be unique. |
+| `destinations` | `object[]` | Yes | Where to send the file, e.g. [&#123; provider: "shotstack" &#125;] or an s3 / mux / vimeo destination. |
+
+<AccordionGroup>
+<Accordion title="destinations full type">
+
+```ts
+{
+  provider: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `owner` | `string \| null` | No | — |
+| `status` | `queued \| failed \| string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+
+
+
+---
+
+## Generations
+
+### create
+
+`generations.create`
+
+Generate an image, video or audio asset from a prompt with an AI model; spends generation credits. Follow it with generations.get until status is done or failed. Pass idempotencyKey to make retries safe.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.shotstack.api.generations.create({ asset: { type: 'image', prompt: 'A lighthouse on a rocky coast at sunset' }, idempotencyKey: 'my-job-42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset` | `object` | Yes | — |
+| `length` | `number` | No | Seconds of clip the asset fills; duration-generating models take their length from this. |
+| `idempotencyKey` | `string` | No | Makes this create replay-safe: a retry with the same key returns the job it first created instead of generating and billing again. |
+
+<AccordionGroup>
+<Accordion title="asset full type">
+
+```ts
+{
+  type: image | video | audio,
+  prompt?: string,
+  src?: string,
+  model?: string,
+  options?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `queued \| processing \| done \| failed \| string` | Yes | queued, processing, then done or failed. |
+| `url` | `string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`generations.get`
+
+Where a generation job stands. Once done it returns the public URL of the generated asset.
+
+**Risk:** `read`
+
+```ts
+await corsair.shotstack.api.generations.get({ id: '8a1f2c3d-4e5b-5a6c-9d7e-1f2a3b4c5d6e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id the create call returned (a UUID). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `queued \| processing \| done \| failed \| string` | Yes | queued, processing, then done or failed. |
+| `url` | `string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+
+
+---
+
+### getModel
+
+`generations.getModel`
+
+Read one generation model, including the JSON Schema of the options it accepts.
+
+**Risk:** `read`
+
+```ts
+await corsair.shotstack.api.generations.getModel({ id: 'seedance-2.0-text-to-video' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The model identifier from generations.listModels, e.g. flux-schnell. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | — |
+| `type` | `image \| video \| audio` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `options` | `Record<string, any> \| null` | No | — |
+| `available` | `boolean \| null` | No | — |
+| `unavailableReason` | `AiCapabilityNotIncluded \| AiDisabled \| AiAccessUnavailable \| null` | No | — |
+
+
+
+---
+
+### listModels
+
+`generations.listModels`
+
+List the generation models available to this account, each with the asset type it generates and whether the plan includes it. Pass expand: 'options' to include each model's option schema.
+
+**Risk:** `read`
+
+```ts
+await corsair.shotstack.api.generations.listModels({ expand: 'options' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expand` | `options` | No | 'options' to include each model's option schema; left out by default. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `models` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="models full type">
+
+```ts
+{
+  model: string,
+  type: image | video | audio,
+  name?: string | null,
+  description?: string | null,
+  options?: Record<string, any> | null,
+  available?: boolean | null,
+  unavailableReason?: AiCapabilityNotIncluded | AiDisabled | AiAccessUnavailable | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### quote
+
+`generations.quote`
+
+Estimate the generation credits an asset would cost, without reserving credits or generating anything.
+
+**Risk:** `read`
+
+```ts
+await corsair.shotstack.api.generations.quote({ asset: { type: 'image', prompt: 'A lighthouse on a rocky coast at sunset' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset` | `object` | Yes | — |
+| `length` | `number` | No | Seconds of clip the asset fills; duration-generating models take their length from this. |
+
+<AccordionGroup>
+<Accordion title="asset full type">
+
+```ts
+{
+  type: image | video | audio,
+  prompt?: string,
+  src?: string,
+  model?: string,
+  options?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credits` | `number` | Yes | — |
+| `ceiling` | `boolean` | Yes | — |
+
+
+
+---
+
+## Media
+
+### probe
+
+`media.probe`
+
+Inspect a media file at a remote URL and return its FFprobe metadata: width, height, duration, fps and type.
+
+**Risk:** `read`
+
+```ts
+await corsair.shotstack.api.media.probe({ url: 'https://shotstack-assets.s3.amazonaws.com/footage/beach.mp4' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The media URL to inspect. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string` | Yes | — |
+| `response` | `Record<string, any>` | Yes | — |
+
+
+
+---
+
+## Renders
+
+### create
+
+`renders.create`
+
+Queue a video, image, GIF or audio render of a JSON timeline; spends credits on production (sandbox renders are watermarked). Follow it with renders.get until status is done or failed, or pass a callback URL.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.shotstack.api.renders.create({ timeline: { tracks: [{ clips: [{ asset: { type: 'title', text: 'Hello', color: '#ffffff' }, start: 0, length: 3 }] }] }, output: { format: 'mp4', resolution: 'sd' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timeline` | `object` | Yes | The timeline: tracks, clips and optional soundtrack, background and fonts. See shotstack.io/docs/guide for the clip DSL. |
+| `output` | `object` | Yes | — |
+| `merge` | `object[]` | No | Placeholder replacements applied to the edit before rendering. |
+| `callback` | `string` | No | Webhook URL that receives a notification when the render completes or fails. |
+| `instance` | `s1 \| s2 \| a1` | No | Render instance: s1 (default), s2 (more resources) or a1 (accelerated). |
+
+<AccordionGroup>
+<Accordion title="timeline full type">
+
+```ts
+{
+  tracks: {
+    clips: Record<string, any>[]
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="output full type">
+
+```ts
+{
+  format: mp4 | gif | mp3 | jpg | png | bmp | string,
+  resolution?: 1080 | preview | mobile | sd | hd | 4k | string,
+  aspectRatio?: 16:9 | 9:16 | 1:1 | 4:5 | 4:3 | string,
+  size?: {
+    width: number,
+    height: number
+  },
+  fps?: number,
+  scaleTo?: 1080 | preview | mobile | sd | hd | 4k | string,
+  quality?: verylow | low | medium | high | veryhigh | string,
+  repeat?: boolean,
+  mute?: boolean,
+  range?: {
+    start?: number,
+    length?: number
+  },
+  poster?: {
+    capture: number
+  },
+  thumbnail?: {
+    capture: number,
+    scale?: number
+  },
+  destinations?: {
+    provider: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="merge full type">
+
+```ts
+{
+  find: string,
+  replace: string | number | boolean | null | any[] | Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string` | Yes | — |
+| `response` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  message: string,
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`renders.get`
+
+Where a render stands. Once done it returns the temporary download URL, which expires after 24 hours; serve the asset from its CDN URL via assets.getByRenderId instead.
+
+**Risk:** `read`
+
+```ts
+await corsair.shotstack.api.renders.get({ id: '2abd5c11-0f3d-4c6d-ba20-235fc9b8e8b7' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id the create call returned (a UUID). |
+| `data` | `boolean` | No | True to include the full timeline echo in response.data. Defaults to false, which the plugin always sends: the echo can be huge. |
+| `merged` | `boolean` | No | True to include the merged edit; needs data: true. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string` | Yes | — |
+| `response` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  id: string,
+  owner: string,
+  status: queued | fetching | preprocessing | rendering | generating | saving | done | failed | string,
+  plan?: string | null,
+  error?: string | null,
+  duration?: number | null,
+  renderTime?: number | null,
+  url?: string | null,
+  poster?: string | null,
+  thumbnail?: string | null,
+  data?: Record<string, any> | null,
+  created?: string | null,
+  updated?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sources
+
+### delete
+
+`sources.delete`
+
+Permanently delete an ingested source file; there is no undo.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.shotstack.api.sources.delete({ id: 'zzytey4v-32km-kq1z-aftr-3kcuqi0brad2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id the create call returned (a UUID). |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### fetch
+
+`sources.fetch`
+
+Fetch a file from a URL into Shotstack storage so the Edit API can use it; renditions and transcriptions in outputs spend credits. Follow it with sources.get until status is ready, or pass a callback URL.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.shotstack.api.sources.fetch({ url: 'https://github.com/shotstack/test-media/raw/main/captioning/scott-ko.mp4' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the file to fetch and ingest. |
+| `outputs` | `object` | No | — |
+| `destinations` | `Record<string, any>[]` | No | Storage locations to send the source to, e.g. [&#123; provider: "shotstack" &#125;]. |
+| `callback` | `string` | No | Webhook URL notified when the source is ready. |
+
+<AccordionGroup>
+<Accordion title="outputs full type">
+
+```ts
+{
+  renditions?: Record<string, any>[],
+  transcription?: {
+    format: srt | vtt
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`sources.get`
+
+Read one ingested source file: its hosted URL, status, dimensions and duration.
+
+**Risk:** `read`
+
+```ts
+await corsair.shotstack.api.sources.get({ id: 'zzytey4v-32km-kq1z-aftr-3kcuqi0brad2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id the create call returned (a UUID). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `owner` | `string` | Yes | — |
+| `input` | `string \| null` | No | — |
+| `source` | `string \| null` | No | — |
+| `status` | `queued \| importing \| ready \| failed \| deleted \| overwritten \| string \| null` | No | queued, importing, then ready or failed; deleted or overwritten later. |
+| `outputs` | `Record<string, any> \| null` | No | — |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `duration` | `number \| null` | No | — |
+| `fps` | `number \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `updated` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`sources.list`
+
+List the ingested source files with their status and metadata.
+
+**Risk:** `read`
+
+```ts
+await corsair.shotstack.api.sources.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sources` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="sources full type">
+
+```ts
+{
+  id: string,
+  owner: string,
+  input?: string | null,
+  source?: string | null,
+  status?: queued | importing | ready | failed | deleted | overwritten | string | null,
+  outputs?: Record<string, any> | null,
+  width?: number | null,
+  height?: number | null,
+  duration?: number | null,
+  fps?: number | null,
+  created?: string | null,
+  updated?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Templates
+
+### create
+
+`templates.create`
+
+Save an edit (timeline and output) as a named template that can be rendered with placeholders.
+
+**Risk:** `write`
+
+```ts
+await corsair.shotstack.api.templates.create({ name: 'My lower third', template: { timeline: { tracks: [{ clips: [{ asset: { type: 'title', text: '{{NAME}}' }, start: 0, length: 3 }] }] }, output: { format: 'mp4', resolution: 'hd' } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The template name. |
+| `template` | `object` | No | The saved edit: timeline and output. |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+  timeline: {
+    tracks: {
+      clips: Record<string, any>[]
+    }[]
+  },
+  output: {
+    format: mp4 | gif | mp3 | jpg | png | bmp | string,
+    resolution?: 1080 | preview | mobile | sd | hd | 4k | string,
+    aspectRatio?: 16:9 | 9:16 | 1:1 | 4:5 | 4:3 | string,
+    size?: {
+      width: number,
+      height: number
+    },
+    fps?: number,
+    scaleTo?: 1080 | preview | mobile | sd | hd | 4k | string,
+    quality?: verylow | low | medium | high | veryhigh | string,
+    repeat?: boolean,
+    mute?: boolean,
+    range?: {
+      start?: number,
+      length?: number
+    },
+    poster?: {
+      capture: number
+    },
+    thumbnail?: {
+      capture: number,
+      scale?: number
+    },
+    destinations?: {
+      provider: string
+    }[]
+  },
+  merge?: {
+    find: string,
+    replace: string | number | boolean | null | any[] | Record<string, any>
+  }[],
+  callback?: string,
+  instance?: s1 | s2 | a1
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string` | Yes | — |
+| `response` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  message: string,
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`templates.delete`
+
+Permanently delete a saved template; there is no undo.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.shotstack.api.templates.delete({ id: 'f5493c17-d01f-445c-bb49-535fae65f219' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id the create call returned (a UUID). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `response` | `Record<string, any> \| null` | No | — |
+
+
+
+---
+
+### get
+
+`templates.get`
+
+Read one saved template, including its full edit.
+
+**Risk:** `read`
+
+```ts
+await corsair.shotstack.api.templates.get({ id: 'f5493c17-d01f-445c-bb49-535fae65f219' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id the create call returned (a UUID). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string` | Yes | — |
+| `response` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  owner: string,
+  template: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`templates.list`
+
+List the saved templates with their ids and names.
+
+**Risk:** `read`
+
+```ts
+await corsair.shotstack.api.templates.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string` | Yes | — |
+| `response` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  owner: string,
+  templates: {
+    id: string,
+    name: string,
+    created?: string | null,
+    updated?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### render
+
+`templates.render`
+
+Queue a render of a saved template with placeholder values merged in; spends credits. Poll renders.get for the result.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.shotstack.api.templates.render({ id: 'f5493c17-d01f-445c-bb49-535fae65f219', merge: [{ find: 'NAME', replace: 'Jane' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id the create call returned (a UUID). |
+| `merge` | `object[]` | No | Values for the placeholders saved in the template. |
+
+<AccordionGroup>
+<Accordion title="merge full type">
+
+```ts
+{
+  find: string,
+  replace: string | number | boolean | null | any[] | Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string` | Yes | — |
+| `response` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  message: string,
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`templates.update`
+
+Overwrite a saved template with a new name or edit.
+
+**Risk:** `write`
+
+```ts
+await corsair.shotstack.api.templates.update({ id: 'f5493c17-d01f-445c-bb49-535fae65f219', name: 'My renamed template', template: { timeline: { tracks: [{ clips: [{ asset: { type: 'title', text: '{{NAME}}' }, start: 0, length: 3 }] }] }, output: { format: 'mp4', resolution: 'hd' } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id the create call returned (a UUID). |
+| `name` | `string` | Yes | The new template name. |
+| `template` | `object` | Yes | The replacement edit (timeline and output); required by the API. |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+  timeline: {
+    tracks: {
+      clips: Record<string, any>[]
+    }[]
+  },
+  output: {
+    format: mp4 | gif | mp3 | jpg | png | bmp | string,
+    resolution?: 1080 | preview | mobile | sd | hd | 4k | string,
+    aspectRatio?: 16:9 | 9:16 | 1:1 | 4:5 | 4:3 | string,
+    size?: {
+      width: number,
+      height: number
+    },
+    fps?: number,
+    scaleTo?: 1080 | preview | mobile | sd | hd | 4k | string,
+    quality?: verylow | low | medium | high | veryhigh | string,
+    repeat?: boolean,
+    mute?: boolean,
+    range?: {
+      start?: number,
+      length?: number
+    },
+    poster?: {
+      capture: number
+    },
+    thumbnail?: {
+      capture: number,
+      scale?: number
+    },
+    destinations?: {
+      provider: string
+    }[]
+  },
+  merge?: {
+    find: string,
+    replace: string | number | boolean | null | any[] | Record<string, any>
+  }[],
+  callback?: string,
+  instance?: s1 | s2 | a1
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string` | Yes | — |
+| `response` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  message?: string | null,
+  id?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Uploads
+
+### create
+
+`uploads.create`
+
+Get a signed S3 URL to upload a file directly, so the Edit API can use it as a source. PUT the bytes to the returned url within one hour.
+
+**Risk:** `write`
+
+```ts
+await corsair.shotstack.api.uploads.create({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `url` | `string` | Yes | Signed S3 PUT URL; upload the bytes to it within the hour it stays valid. |
+| `expires` | `string` | Yes | — |
+
+
+
+---
+
